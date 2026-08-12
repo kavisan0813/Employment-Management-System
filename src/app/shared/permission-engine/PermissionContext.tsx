@@ -81,7 +81,9 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
         assignments = [createMockAssignment(user.email, roleId, defaultScope)];
       } else {
         // Fallback to employee
-        assignments = [createMockAssignment(user.email, ROLE_IDS.EMPLOYEE, "self")];
+        assignments = [
+          createMockAssignment(user.email, ROLE_IDS.EMPLOYEE, "self"),
+        ];
       }
     }
 

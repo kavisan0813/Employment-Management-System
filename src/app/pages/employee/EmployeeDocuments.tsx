@@ -15,13 +15,13 @@ import {
   XCircle,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types                                                           */
 /* ─────────────────────────────────────────────────────────────── */
+import * as m from "motion/react-m";
 type DocStatus = "uploaded" | "expiring" | "not-uploaded" | "pending";
-
 interface DocItem {
   name: string;
   status: DocStatus;
@@ -29,7 +29,6 @@ interface DocItem {
   expiryLabel?: string;
   actions: ("view" | "update" | "upload")[];
 }
-
 interface DocCategory {
   id: string;
   title: string;
@@ -68,7 +67,11 @@ const CATEGORIES: DocCategory[] = [
         expiryLabel: "Expires Jun 2026",
         actions: ["view", "update"],
       },
-      { name: "Driving License", status: "not-uploaded", actions: ["upload"] },
+      {
+        name: "Driving License",
+        status: "not-uploaded",
+        actions: ["upload"],
+      },
     ],
   },
   {
@@ -129,7 +132,11 @@ const CATEGORIES: DocCategory[] = [
         uploadedDate: "Uploaded",
         actions: ["view"],
       },
-      { name: "PG Diploma", status: "not-uploaded", actions: ["upload"] },
+      {
+        name: "PG Diploma",
+        status: "not-uploaded",
+        actions: ["upload"],
+      },
     ],
   },
   {
@@ -207,7 +214,6 @@ const CATEGORIES: DocCategory[] = [
     ],
   },
 ];
-
 const DOC_TYPES = [
   "Aadhar Card",
   "PAN Card",
@@ -268,7 +274,6 @@ function StatusChip({
     </span>
   );
 }
-
 function CategoryCard({
   cat,
   onUploadClick,
@@ -284,7 +289,6 @@ function CategoryCard({
   const hasIssues =
     cat.items.some((i) => i.status === "expiring") ||
     cat.items.some((i) => i.status === "not-uploaded");
-
   return (
     <div className="bg-card rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all overflow-hidden">
       <div className="p-5 border-b border-border flex items-center gap-4">
@@ -366,7 +370,6 @@ function CategoryCard({
 /* ─────────────────────────────────────────────────────────────── */
 export function DocumentPreviewContent({ docName }: { docName: string }) {
   const nameLower = docName.toLowerCase();
-
   if (nameLower.includes("aadhar")) {
     return (
       <div className="w-full aspect-[3/2] bg-gradient-to-br from-white to-slate-50 text-slate-800 rounded-2xl border-2 border-emerald-500/20 shadow-lg p-5 flex flex-col justify-between relative overflow-hidden text-left font-sans select-none">
@@ -435,7 +438,6 @@ export function DocumentPreviewContent({ docName }: { docName: string }) {
       </div>
     );
   }
-
   if (nameLower.includes("pan card")) {
     return (
       <div className="w-full aspect-[3/2] bg-gradient-to-br from-teal-950 via-teal-900 to-emerald-950 text-white rounded-2xl border border-teal-500/20 shadow-lg p-5 flex flex-col justify-between relative overflow-hidden text-left font-sans select-none">
@@ -491,7 +493,6 @@ export function DocumentPreviewContent({ docName }: { docName: string }) {
       </div>
     );
   }
-
   if (nameLower.includes("passport")) {
     return (
       <div className="w-full aspect-[3/2] bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white rounded-2xl border border-indigo-500/20 shadow-lg p-5 flex flex-col justify-between relative overflow-hidden text-left font-sans select-none">
@@ -720,7 +721,6 @@ export function EmployeeDocuments() {
     expiryDate: "",
     notes: "",
   });
-
   const openUploadModal = (docName?: string) => {
     const type = typeof docName === "string" ? docName : "";
     setNewDoc({
@@ -731,7 +731,6 @@ export function EmployeeDocuments() {
     });
     setShowUploadModal(true);
   };
-
   const handleUploadSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     showToast(
@@ -741,7 +740,6 @@ export function EmployeeDocuments() {
     );
     setShowUploadModal(false);
   };
-
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
       {/* ─── Page Header ─────────────────────────────────────────── */}
@@ -797,17 +795,35 @@ export function EmployeeDocuments() {
       <AnimatePresence>
         {showUploadModal && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowUploadModal(false)}
               className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col"
             >
               <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
@@ -842,7 +858,10 @@ export function EmployeeDocuments() {
                       required
                       value={newDoc.type}
                       onChange={(e) =>
-                        setNewDoc({ ...newDoc, type: e.target.value })
+                        setNewDoc({
+                          ...newDoc,
+                          type: e.target.value,
+                        })
                       }
                       className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all appearance-none"
                     >
@@ -865,7 +884,10 @@ export function EmployeeDocuments() {
                       placeholder="e.g. Passport Copy, Degree Certificate"
                       value={newDoc.name}
                       onChange={(e) =>
-                        setNewDoc({ ...newDoc, name: e.target.value })
+                        setNewDoc({
+                          ...newDoc,
+                          name: e.target.value,
+                        })
                       }
                       className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
                     />
@@ -898,7 +920,10 @@ export function EmployeeDocuments() {
                           type="date"
                           value={newDoc.expiryDate}
                           onChange={(e) =>
-                            setNewDoc({ ...newDoc, expiryDate: e.target.value })
+                            setNewDoc({
+                              ...newDoc,
+                              expiryDate: e.target.value,
+                            })
                           }
                           className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
                         />
@@ -913,7 +938,10 @@ export function EmployeeDocuments() {
                         placeholder="Additional info..."
                         value={newDoc.notes}
                         onChange={(e) =>
-                          setNewDoc({ ...newDoc, notes: e.target.value })
+                          setNewDoc({
+                            ...newDoc,
+                            notes: e.target.value,
+                          })
                         }
                         className="w-full px-4 h-[44px] bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-primary transition-all"
                       />
@@ -937,7 +965,7 @@ export function EmployeeDocuments() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

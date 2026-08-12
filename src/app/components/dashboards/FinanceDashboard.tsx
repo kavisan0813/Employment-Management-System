@@ -1,4 +1,4 @@
-import { lazy, useState, useEffect, useCallback, useReducer } from "react";
+import { lazy, useEffect, useCallback, useReducer } from "react";
 import { useNavigate } from "react-router";
 import {
   IndianRupee,
@@ -20,45 +20,139 @@ import {
   FileText,
   ArrowRight,
 } from "lucide-react";
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
-const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
-const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
-
-import { motion, AnimatePresence } from "motion/react";
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.XAxis,
+  })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.YAxis,
+  })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.CartesianGrid,
+  })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Tooltip,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PieChart,
+  })),
+);
+const Pie = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Pie,
+  })),
+);
+const Cell = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Cell,
+  })),
+);
+const BarChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.BarChart,
+  })),
+);
+const Bar = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Bar,
+  })),
+);
+import { AnimatePresence } from "motion/react";
 
 /* ═══════════════════════════════════════════════════════
    DATA
 ═══════════════════════════════════════════════════════ */
+import * as m from "motion/react-m";
 const PAYROLL_TREND_12M = [
-  { month: "Apr 25", cost: 24.2 },
-  { month: "May 25", cost: 24.5 },
-  { month: "Jun 25", cost: 25.1 },
-  { month: "Jul 25", cost: 25.8 },
-  { month: "Aug 25", cost: 26.2 },
-  { month: "Sep 25", cost: 26.8 },
-  { month: "Oct 25", cost: 27.1 },
-  { month: "Nov 25", cost: 27.5 },
-  { month: "Dec 25", cost: 27.8 },
-  { month: "Jan 26", cost: 28.1 },
-  { month: "Feb 26", cost: 28.2 },
-  { month: "Mar 26", cost: 28.4 },
+  {
+    month: "Apr 25",
+    cost: 24.2,
+  },
+  {
+    month: "May 25",
+    cost: 24.5,
+  },
+  {
+    month: "Jun 25",
+    cost: 25.1,
+  },
+  {
+    month: "Jul 25",
+    cost: 25.8,
+  },
+  {
+    month: "Aug 25",
+    cost: 26.2,
+  },
+  {
+    month: "Sep 25",
+    cost: 26.8,
+  },
+  {
+    month: "Oct 25",
+    cost: 27.1,
+  },
+  {
+    month: "Nov 25",
+    cost: 27.5,
+  },
+  {
+    month: "Dec 25",
+    cost: 27.8,
+  },
+  {
+    month: "Jan 26",
+    cost: 28.1,
+  },
+  {
+    month: "Feb 26",
+    cost: 28.2,
+  },
+  {
+    month: "Mar 26",
+    cost: 28.4,
+  },
 ];
-
 const COMPONENT_BREAKDOWN = [
-  { name: "Basic", value: 50, color: "#8B5CF6" },
-  { name: "HRA", value: 20, color: "#00B87C" },
-  { name: "Allowances", value: 15, color: "#F59E0B" },
-  { name: "Bonus", value: 10, color: "#3B82F6" },
-  { name: "Others", value: 5, color: "#64748B" },
+  {
+    name: "Basic",
+    value: 50,
+    color: "#8B5CF6",
+  },
+  {
+    name: "HRA",
+    value: 20,
+    color: "#00B87C",
+  },
+  {
+    name: "Allowances",
+    value: 15,
+    color: "#F59E0B",
+  },
+  {
+    name: "Bonus",
+    value: 10,
+    color: "#3B82F6",
+  },
+  {
+    name: "Others",
+    value: 5,
+    color: "#64748B",
+  },
 ];
-
 const INITIAL_EXPENSES = [
   {
     id: "EXP-1284",
@@ -116,7 +210,6 @@ const INITIAL_EXPENSES = [
     avatar: "AJ",
   },
 ];
-
 const DEADLINES = [
   {
     title: "PF Payment Done",
@@ -143,14 +236,32 @@ const DEADLINES = [
     desc: "Upcoming requirement",
   },
 ];
-
 const SALARY_DIST = [
-  { label: "<₹30K", value: 450, total: 450, color: "#8B5CF6" },
-  { label: "₹30-50K", value: 380, total: 450, color: "#00B87C" },
-  { label: "₹50-80K", value: 240, total: 450, color: "#F59E0B" },
-  { label: "₹80K+", value: 178, total: 450, color: "#3B82F6" },
+  {
+    label: "<₹30K",
+    value: 450,
+    total: 450,
+    color: "#8B5CF6",
+  },
+  {
+    label: "₹30-50K",
+    value: 380,
+    total: 450,
+    color: "#00B87C",
+  },
+  {
+    label: "₹50-80K",
+    value: 240,
+    total: 450,
+    color: "#F59E0B",
+  },
+  {
+    label: "₹80K+",
+    value: 178,
+    total: 450,
+    color: "#3B82F6",
+  },
 ];
-
 const PAYROLL_DEPT_SUMMARY = [
   {
     dept: "Engineering",
@@ -188,20 +299,79 @@ const PAYROLL_DEPT_SUMMARY = [
     net: "₹9.2L",
   },
 ];
-
 const YTD_MONTHLY = [
-  { month: "Apr 2025", amount: "₹24.2L", employees: 1240, status: "Disbursed" },
-  { month: "May 2025", amount: "₹24.5L", employees: 1242, status: "Disbursed" },
-  { month: "Jun 2025", amount: "₹25.1L", employees: 1248, status: "Disbursed" },
-  { month: "Jul 2025", amount: "₹25.8L", employees: 1252, status: "Disbursed" },
-  { month: "Aug 2025", amount: "₹26.2L", employees: 1255, status: "Disbursed" },
-  { month: "Sep 2025", amount: "₹26.8L", employees: 1258, status: "Disbursed" },
-  { month: "Oct 2025", amount: "₹27.1L", employees: 1260, status: "Disbursed" },
-  { month: "Nov 2025", amount: "₹27.5L", employees: 1262, status: "Disbursed" },
-  { month: "Dec 2025", amount: "₹27.8L", employees: 1265, status: "Disbursed" },
-  { month: "Jan 2026", amount: "₹28.1L", employees: 1270, status: "Disbursed" },
-  { month: "Feb 2026", amount: "₹28.2L", employees: 1275, status: "Disbursed" },
-  { month: "Mar 2026", amount: "₹28.4L", employees: 1284, status: "Disbursed" },
+  {
+    month: "Apr 2025",
+    amount: "₹24.2L",
+    employees: 1240,
+    status: "Disbursed",
+  },
+  {
+    month: "May 2025",
+    amount: "₹24.5L",
+    employees: 1242,
+    status: "Disbursed",
+  },
+  {
+    month: "Jun 2025",
+    amount: "₹25.1L",
+    employees: 1248,
+    status: "Disbursed",
+  },
+  {
+    month: "Jul 2025",
+    amount: "₹25.8L",
+    employees: 1252,
+    status: "Disbursed",
+  },
+  {
+    month: "Aug 2025",
+    amount: "₹26.2L",
+    employees: 1255,
+    status: "Disbursed",
+  },
+  {
+    month: "Sep 2025",
+    amount: "₹26.8L",
+    employees: 1258,
+    status: "Disbursed",
+  },
+  {
+    month: "Oct 2025",
+    amount: "₹27.1L",
+    employees: 1260,
+    status: "Disbursed",
+  },
+  {
+    month: "Nov 2025",
+    amount: "₹27.5L",
+    employees: 1262,
+    status: "Disbursed",
+  },
+  {
+    month: "Dec 2025",
+    amount: "₹27.8L",
+    employees: 1265,
+    status: "Disbursed",
+  },
+  {
+    month: "Jan 2026",
+    amount: "₹28.1L",
+    employees: 1270,
+    status: "Disbursed",
+  },
+  {
+    month: "Feb 2026",
+    amount: "₹28.2L",
+    employees: 1275,
+    status: "Disbursed",
+  },
+  {
+    month: "Mar 2026",
+    amount: "₹28.4L",
+    employees: 1284,
+    status: "Disbursed",
+  },
 ];
 
 /* ═══════════════════════════════════════════════════════
@@ -212,7 +382,6 @@ interface Toast {
   type: "success" | "error" | "warning";
   message: string;
 }
-
 function ToastContainer({
   toasts,
   onRemove,
@@ -224,12 +393,25 @@ function ToastContainer({
     <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-2 pointer-events-none">
       <AnimatePresence>
         {toasts.map((toast) => (
-          <motion.div
+          <m.div
             key={toast.id}
-            initial={{ x: 80, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 80, opacity: 0 }}
-            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            initial={{
+              x: 80,
+              opacity: 0,
+            }}
+            animate={{
+              x: 0,
+              opacity: 1,
+            }}
+            exit={{
+              x: 80,
+              opacity: 0,
+            }}
+            transition={{
+              type: "spring",
+              damping: 20,
+              stiffness: 300,
+            }}
             className="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border min-w-[300px]"
             style={{
               backgroundColor: "var(--card)",
@@ -254,7 +436,9 @@ function ToastContainer({
             )}
             <span
               className="text-[13px] font-semibold flex-1"
-              style={{ color: "var(--foreground)" }}
+              style={{
+                color: "var(--foreground)",
+              }}
             >
               {toast.message}
             </span>
@@ -264,7 +448,7 @@ function ToastContainer({
             >
               <X size={14} />
             </button>
-          </motion.div>
+          </m.div>
         ))}
       </AnimatePresence>
     </div>
@@ -294,23 +478,40 @@ function Modal({
       return () => document.removeEventListener("keydown", handler);
     }
   }, [open, onClose]);
-
   return (
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <m.div
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={onClose}
           />
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+          <m.div
+            initial={{
+              scale: 0.95,
+              opacity: 0,
+            }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+            }}
+            exit={{
+              scale: 0.95,
+              opacity: 0,
+            }}
+            transition={{
+              duration: 0.2,
+              ease: "easeOut",
+            }}
             className="relative rounded-[16px] shadow-2xl overflow-hidden w-full"
             style={{
               maxWidth,
@@ -319,7 +520,7 @@ function Modal({
             }}
           >
             {children}
-          </motion.div>
+          </m.div>
         </div>
       )}
     </AnimatePresence>
@@ -331,68 +532,205 @@ function Modal({
 ═══════════════════════════════════════════════════════ */
 export function FinanceDashboard() {
   const navigate = useNavigate();
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    toasts: [] as Toast[],
+    expenses: INITIAL_EXPENSES,
+    pendingCount: 36,
+    chartFilter: "1Y" as "6M" | "1Y",
+    activeSegment: null as number | null,
+    modals: {
+      runPayroll: false,
+      approveExpense: false,
+      rejectExpense: false,
+      stepModal: false,
+      tdsInfo: false,
+      pfInfo: false,
+      payrollLock: false,
+      ytdReport: false,
+      tdsReport: false,
+      pfReport: false,
+      salaryRegister: false,
+      form16: false,
+      deadlinePF: false,
+      deadlineTDS: false,
+      deadlinePayrollLock: false,
+      deadlinePayrollRun: false,
+    },
+    selectedExpense: null as (typeof INITIAL_EXPENSES)[0] | null,
+    rejectReason: "",
+    rejectNotes: "",
+    fadingRows: [] as string[],
+    payrollStep: 1,
+    payrollRunning: false,
+    payrollDone: false,
+    stepInfo: {
+      title: "",
+      content: "",
+    },
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    toasts,
+    expenses,
+    pendingCount,
+    chartFilter,
+    activeSegment,
+    modals,
+    selectedExpense,
+    rejectReason,
+    rejectNotes,
+    fadingRows,
+    payrollStep,
+    payrollRunning,
+    payrollDone,
+    stepInfo,
+  } = __state;
+  const setToasts = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        toasts: typeof val === "function" ? val(prev.toasts) : val,
+      })),
+    [],
+  );
+  const setExpenses = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        expenses: typeof val === "function" ? val(prev.expenses) : val,
+      })),
+    [],
+  );
+  const setPendingCount = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        pendingCount: typeof val === "function" ? val(prev.pendingCount) : val,
+      })),
+    [],
+  );
+  const setChartFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        chartFilter: typeof val === "function" ? val(prev.chartFilter) : val,
+      })),
+    [],
+  );
+  const setActiveSegment = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeSegment:
+          typeof val === "function" ? val(prev.activeSegment) : val,
+      })),
+    [],
+  );
+  const setModals = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        modals: typeof val === "function" ? val(prev.modals) : val,
+      })),
+    [],
+  );
+  const setSelectedExpense = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedExpense:
+          typeof val === "function" ? val(prev.selectedExpense) : val,
+      })),
+    [],
+  );
+  const setRejectReason = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        rejectReason: typeof val === "function" ? val(prev.rejectReason) : val,
+      })),
+    [],
+  );
+  const setRejectNotes = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        rejectNotes: typeof val === "function" ? val(prev.rejectNotes) : val,
+      })),
+    [],
+  );
+  const setFadingRows = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        fadingRows: typeof val === "function" ? val(prev.fadingRows) : val,
+      })),
+    [],
+  );
+  const setPayrollStep = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        payrollStep: typeof val === "function" ? val(prev.payrollStep) : val,
+      })),
+    [],
+  );
+  const setPayrollRunning = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        payrollRunning:
+          typeof val === "function" ? val(prev.payrollRunning) : val,
+      })),
+    [],
+  );
+  const setPayrollDone = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        payrollDone: typeof val === "function" ? val(prev.payrollDone) : val,
+      })),
+    [],
+  );
+  const setStepInfo = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        stepInfo: typeof val === "function" ? val(prev.stepInfo) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // Toast state
-  const [toasts, setToasts] = useState<Toast[]>([]);
-
   const addToast = useCallback((type: Toast["type"], message: string) => {
     const id = Date.now();
-    setToasts((prev) => [...prev, { id, type, message }]);
+    setToasts((prev) => [
+      ...prev,
+      {
+        id,
+        type,
+        message,
+      },
+    ]);
     setTimeout(
       () => setToasts((prev) => prev.filter((t) => t.id !== id)),
       3000,
     );
   }, []);
-
   const removeToast = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
   // Expense state
-  const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
-  const [pendingCount, setPendingCount] = useState(36);
-
   // Chart state
-  const [chartFilter, setChartFilter] = useState<"6M" | "1Y">("1Y");
-  const [activeSegment, setActiveSegment] = useState<number | null>(null);
-
   // Modal states
-  const [modals, setModals] = useState({
-    runPayroll: false,
-    approveExpense: false,
-    rejectExpense: false,
-    stepModal: false,
-    tdsInfo: false,
-    pfInfo: false,
-    payrollLock: false,
-    ytdReport: false,
-    tdsReport: false,
-    pfReport: false,
-    salaryRegister: false,
-    form16: false,
-    deadlinePF: false,
-    deadlineTDS: false,
-    deadlinePayrollLock: false,
-    deadlinePayrollRun: false,
-  });
   const openModal = (key: keyof typeof modals) =>
-    setModals((p) => ({ ...p, [key]: true }));
+    setModals((p) => ({
+      ...p,
+      [key]: true,
+    }));
   const closeModal = (key: keyof typeof modals) =>
-    setModals((p) => ({ ...p, [key]: false }));
+    setModals((p) => ({
+      ...p,
+      [key]: false,
+    }));
 
   // Selected expense for modal
-  const [selectedExpense, setSelectedExpense] = useState<
-    (typeof INITIAL_EXPENSES)[0] | null
-  >(null);
-  const [rejectReason, setRejectReason] = useState("");
-  const [rejectNotes, setRejectNotes] = useState("");
-  const [fadingRows, setFadingRows] = useState<string[]>([]);
-
   // Payroll wizard
-  const [payrollStep, setPayrollStep] = useState(1);
-  const [payrollRunning, setPayrollRunning] = useState(false);
-  const [payrollDone, setPayrollDone] = useState(false);
-
   // Form 16 wizard
   type Form16State = {
     step: number;
@@ -403,23 +741,49 @@ export function FinanceDashboard() {
     done: boolean;
   };
   type Form16Action =
-    | { type: "setStep"; payload: number }
-    | { type: "setFY"; payload: string }
-    | { type: "setScope"; payload: string }
-    | { type: "setProgress"; payload: number | ((p: number) => number) }
-    | { type: "startGenerating" }
-    | { type: "finishGenerating" }
-    | { type: "reset" };
-
+    | {
+        type: "setStep";
+        payload: number;
+      }
+    | {
+        type: "setFY";
+        payload: string;
+      }
+    | {
+        type: "setScope";
+        payload: string;
+      }
+    | {
+        type: "setProgress";
+        payload: number | ((p: number) => number);
+      }
+    | {
+        type: "startGenerating";
+      }
+    | {
+        type: "finishGenerating";
+      }
+    | {
+        type: "reset";
+      };
   const [form16, dispatchForm16] = useReducer(
     (state: Form16State, action: Form16Action): Form16State => {
       switch (action.type) {
         case "setStep":
-          return { ...state, step: action.payload };
+          return {
+            ...state,
+            step: action.payload,
+          };
         case "setFY":
-          return { ...state, fy: action.payload };
+          return {
+            ...state,
+            fy: action.payload,
+          };
         case "setScope":
-          return { ...state, scope: action.payload };
+          return {
+            ...state,
+            scope: action.payload,
+          };
         case "setProgress":
           return {
             ...state,
@@ -429,11 +793,24 @@ export function FinanceDashboard() {
                 : action.payload,
           };
         case "startGenerating":
-          return { ...state, generating: true, progress: 0 };
+          return {
+            ...state,
+            generating: true,
+            progress: 0,
+          };
         case "finishGenerating":
-          return { ...state, generating: false, done: true };
+          return {
+            ...state,
+            generating: false,
+            done: true,
+          };
         case "reset":
-          return { ...state, step: 1, done: false, progress: 0 };
+          return {
+            ...state,
+            step: 1,
+            done: false,
+            progress: 0,
+          };
         default:
           return state;
       }
@@ -449,8 +826,6 @@ export function FinanceDashboard() {
   );
 
   // Step modal content
-  const [stepInfo, setStepInfo] = useState({ title: "", content: "" });
-
   const chartData =
     chartFilter === "6M" ? PAYROLL_TREND_12M.slice(6) : PAYROLL_TREND_12M;
 
@@ -459,7 +834,12 @@ export function FinanceDashboard() {
     if (!selectedExpense) return;
     setExpenses((prev) =>
       prev.map((e) =>
-        e.id === selectedExpense.id ? { ...e, status: "Approved" } : e,
+        e.id === selectedExpense.id
+          ? {
+              ...e,
+              status: "Approved",
+            }
+          : e,
       ),
     );
     setPendingCount((p) => Math.max(0, p - 1));
@@ -473,7 +853,12 @@ export function FinanceDashboard() {
     if (!selectedExpense) return;
     setExpenses((prev) =>
       prev.map((e) =>
-        e.id === selectedExpense.id ? { ...e, status: "Rejected" } : e,
+        e.id === selectedExpense.id
+          ? {
+              ...e,
+              status: "Rejected",
+            }
+          : e,
       ),
     );
     setPendingCount((p) => Math.max(0, p - 1));
@@ -506,7 +891,6 @@ export function FinanceDashboard() {
       }, 1200);
     }, 2000);
   };
-
   useEffect(() => {
     if (!form16.generating) return;
     const interval = setInterval(() => {
@@ -520,20 +904,28 @@ export function FinanceDashboard() {
     }, 200);
     return () => clearInterval(interval);
   }, [form16.generating]);
-
   useEffect(() => {
     if (form16.progress >= 100 && form16.generating) {
-      dispatchForm16({ type: "finishGenerating" });
+      dispatchForm16({
+        type: "finishGenerating",
+      });
     }
   }, [form16.progress, form16.generating]);
 
   // Form 16 generate
   const handleForm16Generate = () => {
-    dispatchForm16({ type: "startGenerating" });
+    dispatchForm16({
+      type: "startGenerating",
+    });
   };
-
   const openStepModal = (label: string, status: string) => {
-    const info: Record<string, { title: string; content: string }> = {
+    const info: Record<
+      string,
+      {
+        title: string;
+        content: string;
+      }
+    > = {
       "Data Collection": {
         title: "Data Collection",
         content:
@@ -564,10 +956,14 @@ export function FinanceDashboard() {
           "📅 Disbursement scheduled for Apr 28, 2026.\n\nPayment will be processed after approval sign-off. Bank transfers will be initiated to all 1,248 eligible employee accounts.",
       },
     };
-    setStepInfo(info[label] || { title: label, content: "" });
+    setStepInfo(
+      info[label] || {
+        title: label,
+        content: "",
+      },
+    );
     openModal("stepModal");
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6">
       {/* ═══ ALERT BAR ═══ */}
@@ -606,7 +1002,9 @@ export function FinanceDashboard() {
             >
               <div
                 className="w-2 h-2 rounded-full animate-pulse"
-                style={{ backgroundColor: item.color }}
+                style={{
+                  backgroundColor: item.color,
+                }}
               />
               <span
                 className="text-[12px] font-bold"
@@ -616,7 +1014,12 @@ export function FinanceDashboard() {
               >
                 {item.text}
               </span>
-              <ArrowRight size={10} style={{ color: item.color }} />
+              <ArrowRight
+                size={10}
+                style={{
+                  color: item.color,
+                }}
+              />
             </button>
           ))}
         </div>
@@ -715,19 +1118,34 @@ export function FinanceDashboard() {
             onClick: () => openModal("ytdReport"),
           },
         ].map((kpi, i) => (
-          <motion.div
+          <m.div
             key={kpi.label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: i * 0.05,
+            }}
             onClick={kpi.onClick}
             className="bg-card p-5 rounded-[20px] border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(34,197,94,0.2)] transition-all group cursor-pointer"
           >
             <div
               className="w-9 h-9 rounded-[10px] mb-4 flex items-center justify-center shrink-0"
-              style={{ backgroundColor: kpi.bg }}
+              style={{
+                backgroundColor: kpi.bg,
+              }}
             >
-              <kpi.icon size={20} style={{ color: kpi.color }} />
+              <kpi.icon
+                size={20}
+                style={{
+                  color: kpi.color,
+                }}
+              />
             </div>
             <p className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-1">
               {kpi.label}
@@ -746,7 +1164,7 @@ export function FinanceDashboard() {
                 ? `${pendingCount} claims`
                 : kpi.sub}
             </p>
-          </motion.div>
+          </m.div>
         ))}
       </div>
 
@@ -787,17 +1205,25 @@ export function FinanceDashboard() {
                   dataKey="month"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fontWeight: 700 }}
+                  tick={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                  }}
                   dy={10}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fontWeight: 700 }}
+                  tick={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                  }}
                   unit="L"
                 />
                 <Tooltip
-                  cursor={{ fill: "rgba(124,58,237,0.05)" }}
+                  cursor={{
+                    fill: "rgba(124,58,237,0.05)",
+                  }}
                   contentStyle={{
                     borderRadius: "12px",
                     border: "none",
@@ -843,7 +1269,10 @@ export function FinanceDashboard() {
                           ? 1
                           : 0.4
                       }
-                      style={{ cursor: "pointer", transition: "opacity 0.2s" }}
+                      style={{
+                        cursor: "pointer",
+                        transition: "opacity 0.2s",
+                      }}
                     />
                   ))}
                 </Pie>
@@ -874,7 +1303,9 @@ export function FinanceDashboard() {
                 <div className="flex items-center gap-3">
                   <div
                     className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: item.color }}
+                    style={{
+                      backgroundColor: item.color,
+                    }}
                   />
                   <span className="text-[13px] font-bold text-foreground">
                     {item.name}
@@ -906,11 +1337,26 @@ export function FinanceDashboard() {
             <div className="flex items-center justify-between relative px-2 mb-10">
               <div className="absolute top-[14px] left-0 right-0 h-[2px] bg-border z-0 mx-8" />
               {[
-                { label: "Data Collection", status: "Done" },
-                { label: "Attendance Lock", status: "Done" },
-                { label: "Calculation", status: "Active" },
-                { label: "Approval", status: "Pending" },
-                { label: "Disbursement", status: "Pending" },
+                {
+                  label: "Data Collection",
+                  status: "Done",
+                },
+                {
+                  label: "Attendance Lock",
+                  status: "Done",
+                },
+                {
+                  label: "Calculation",
+                  status: "Active",
+                },
+                {
+                  label: "Approval",
+                  status: "Pending",
+                },
+                {
+                  label: "Disbursement",
+                  status: "Pending",
+                },
               ].map((step) => (
                 <button
                   key={step.label}
@@ -918,13 +1364,7 @@ export function FinanceDashboard() {
                   className="flex flex-col items-center gap-3 relative z-10 group"
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
-                      step.status === "Done"
-                        ? "bg-[#00B87C] border-[#00B87C] text-white"
-                        : step.status === "Active"
-                          ? "bg-card border-[#3B82F6] text-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse"
-                          : "bg-card border-border text-muted-foreground"
-                    } group-hover:scale-110`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${step.status === "Done" ? "bg-[#00B87C] border-[#00B87C] text-white" : step.status === "Active" ? "bg-card border-[#3B82F6] text-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse" : "bg-card border-border text-muted-foreground"} group-hover:scale-110`}
                   >
                     {step.status === "Done" ? (
                       <Check size={16} strokeWidth={3} />
@@ -935,13 +1375,7 @@ export function FinanceDashboard() {
                     )}
                   </div>
                   <span
-                    className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[70px] ${
-                      step.status === "Done"
-                        ? "text-[#00B87C]"
-                        : step.status === "Active"
-                          ? "text-[#3B82F6]"
-                          : "text-muted-foreground"
-                    }`}
+                    className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[70px] ${step.status === "Done" ? "text-[#00B87C]" : step.status === "Active" ? "text-[#3B82F6]" : "text-muted-foreground"}`}
                   >
                     {step.label}
                   </span>
@@ -993,113 +1427,113 @@ export function FinanceDashboard() {
                 <tbody className="divide-y divide-border">
                   <AnimatePresence>
                     {(() => {
-                    const fadingRowsSet = new Set(fadingRows);
-                    return expenses.map((exp) => (
-                      <motion.tr
-                        key={exp.id}
-                        layout
-                        animate={{
-                          opacity: fadingRowsSet.has(exp.id) ? 0 : 1,
-                          y: fadingRows.includes(exp.id) ? -10 : 0,
-                          backgroundColor:
-                            exp.status === "Approved"
-                              ? "rgba(34,197,94,0.05)"
-                              : exp.status === "Rejected"
-                                ? "rgba(239,68,68,0.05)"
-                                : "transparent",
-                        }}
-                        transition={{
-                          duration: fadingRows.includes(exp.id) ? 1.5 : 0.3,
-                        }}
-                        className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.05] group"
-                      >
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-[#EFF6FF] flex items-center justify-center text-[#1D4ED8] font-black text-[11px]">
-                              {exp.avatar}
+                      const fadingRowsSet = new Set(fadingRows);
+                      return expenses.map((exp) => (
+                        <m.tr
+                          key={exp.id}
+                          layout
+                          animate={{
+                            opacity: fadingRowsSet.has(exp.id) ? 0 : 1,
+                            y: fadingRowsSet.has(exp.id) ? -10 : 0,
+                            backgroundColor:
+                              exp.status === "Approved"
+                                ? "rgba(34,197,94,0.05)"
+                                : exp.status === "Rejected"
+                                  ? "rgba(239,68,68,0.05)"
+                                  : "transparent",
+                          }}
+                          transition={{
+                            duration: fadingRowsSet.has(exp.id) ? 1.5 : 0.3,
+                          }}
+                          className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.05] group"
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-[#EFF6FF] flex items-center justify-center text-[#1D4ED8] font-black text-[11px]">
+                                {exp.avatar}
+                              </div>
+                              <div>
+                                <p className="text-[13px] font-bold text-foreground leading-none">
+                                  {exp.employee}
+                                </p>
+                                <p className="text-[11px] text-muted-foreground mt-1">
+                                  {exp.empId}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-[13px] font-bold text-foreground leading-none">
-                                {exp.employee}
-                              </p>
-                              <p className="text-[11px] text-muted-foreground mt-1">
-                                {exp.empId}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="px-2 py-0.5 rounded-lg bg-secondary text-foreground text-[11px] font-black uppercase tracking-wider">
-                            {exp.category}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 font-black text-foreground text-[13px]">
-                          {exp.amount}
-                        </td>
-                        <td className="px-6 py-4 text-[11px] font-semibold text-muted-foreground">
-                          {exp.submitted}
-                        </td>
-                        <td className="px-6 py-4">
-                          {exp.status === "Pending" && (
-                            <div className="flex items-center gap-1.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                              <span className="text-[11px] font-bold text-amber-600 uppercase tracking-widest">
-                                Pending
-                              </span>
-                            </div>
-                          )}
-                          {exp.status === "Approved" && (
-                            <div className="flex items-center gap-1.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
-                              <span className="text-[11px] font-bold text-[#047857] uppercase tracking-widest">
-                                Approved
-                              </span>
-                            </div>
-                          )}
-                          {exp.status === "Rejected" && (
-                            <div className="flex items-center gap-1.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                              <span className="text-[11px] font-bold text-red-600 uppercase tracking-widest">
-                                Rejected
-                              </span>
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          {exp.status === "Pending" ? (
-                            <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => {
-                                  setSelectedExpense(exp);
-                                  openModal("approveExpense");
-                                }}
-                                className="px-3 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-bold hover:bg-[#009F6B] transition-colors"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setSelectedExpense(exp);
-                                  setRejectReason("");
-                                  setRejectNotes("");
-                                  openModal("rejectExpense");
-                                }}
-                                className="px-3 py-1.5 rounded-lg bg-secondary text-foreground border border-border text-[11px] font-bold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all"
-                              >
-                                Reject
-                              </button>
-                            </div>
-                          ) : (
-                            <span
-                              className={`text-[11px] font-bold uppercase tracking-widest ${exp.status === "Approved" ? "text-[#00B87C]" : "text-red-500"}`}
-                            >
-                              {exp.status}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="px-2 py-0.5 rounded-lg bg-secondary text-foreground text-[11px] font-black uppercase tracking-wider">
+                              {exp.category}
                             </span>
-                          )}
-                        </td>
-                      </motion.tr>
-                    ));
-                  })()}
+                          </td>
+                          <td className="px-6 py-4 font-black text-foreground text-[13px]">
+                            {exp.amount}
+                          </td>
+                          <td className="px-6 py-4 text-[11px] font-semibold text-muted-foreground">
+                            {exp.submitted}
+                          </td>
+                          <td className="px-6 py-4">
+                            {exp.status === "Pending" && (
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                <span className="text-[11px] font-bold text-amber-600 uppercase tracking-widest">
+                                  Pending
+                                </span>
+                              </div>
+                            )}
+                            {exp.status === "Approved" && (
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
+                                <span className="text-[11px] font-bold text-[#047857] uppercase tracking-widest">
+                                  Approved
+                                </span>
+                              </div>
+                            )}
+                            {exp.status === "Rejected" && (
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                                <span className="text-[11px] font-bold text-red-600 uppercase tracking-widest">
+                                  Rejected
+                                </span>
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            {exp.status === "Pending" ? (
+                              <div className="flex justify-end gap-2">
+                                <button
+                                  onClick={() => {
+                                    setSelectedExpense(exp);
+                                    openModal("approveExpense");
+                                  }}
+                                  className="px-3 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-bold hover:bg-[#009F6B] transition-colors"
+                                >
+                                  Approve
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setSelectedExpense(exp);
+                                    setRejectReason("");
+                                    setRejectNotes("");
+                                    openModal("rejectExpense");
+                                  }}
+                                  className="px-3 py-1.5 rounded-lg bg-secondary text-foreground border border-border text-[11px] font-bold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all"
+                                >
+                                  Reject
+                                </button>
+                              </div>
+                            ) : (
+                              <span
+                                className={`text-[11px] font-bold uppercase tracking-widest ${exp.status === "Approved" ? "text-[#00B87C]" : "text-red-500"}`}
+                              >
+                                {exp.status}
+                              </span>
+                            )}
+                          </td>
+                        </m.tr>
+                      ));
+                    })()}
                   </AnimatePresence>
                 </tbody>
               </table>
@@ -1134,13 +1568,7 @@ export function FinanceDashboard() {
                     <div className="absolute left-[21px] top-10 w-[2px] h-8 bg-border group-hover:bg-primary/20 transition-colors" />
                   )}
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center z-10 shrink-0 border-4 border-card ${
-                      item.status === "Done"
-                        ? "bg-[#00B87C]"
-                        : item.status === "Active"
-                          ? "bg-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.3)]"
-                          : "bg-secondary border-border"
-                    }`}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center z-10 shrink-0 border-4 border-card ${item.status === "Done" ? "bg-[#00B87C]" : item.status === "Active" ? "bg-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.3)]" : "bg-secondary border-border"}`}
                   >
                     {item.status === "Done" && (
                       <Check size={12} className="text-white" />
@@ -1185,14 +1613,21 @@ export function FinanceDashboard() {
                     </span>
                   </div>
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ x: "-100%" }}
+                    <m.div
+                      initial={{
+                        x: "-100%",
+                      }}
                       animate={{
                         x: `-${100 - (item.value / item.total) * 100}%`,
                       }}
-                      transition={{ duration: 1, delay: i * 0.1 }}
+                      transition={{
+                        duration: 1,
+                        delay: i * 0.1,
+                      }}
                       className="h-full rounded-full w-full"
-                      style={{ backgroundColor: item.color }}
+                      style={{
+                        backgroundColor: item.color,
+                      }}
                     />
                   </div>
                 </button>
@@ -1251,7 +1686,9 @@ export function FinanceDashboard() {
                   color: "#EF4444",
                   bg: "#FEE2E2",
                   action: () => {
-                    dispatchForm16({ type: "reset" });
+                    dispatchForm16({
+                      type: "reset",
+                    });
                     openModal("form16");
                   },
                 },
@@ -1263,9 +1700,16 @@ export function FinanceDashboard() {
                 >
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
-                    style={{ backgroundColor: action.bg }}
+                    style={{
+                      backgroundColor: action.bg,
+                    }}
                   >
-                    <action.icon size={18} style={{ color: action.color }} />
+                    <action.icon
+                      size={18}
+                      style={{
+                        color: action.color,
+                      }}
+                    />
                   </div>
                   <span className="text-[11px] font-bold text-foreground text-center leading-tight">
                     {action.label}
@@ -1279,7 +1723,7 @@ export function FinanceDashboard() {
 
       {/* ════════════════════════════════════════
           MODALS
-      ════════════════════════════════════════ */}
+       ════════════════════════════════════════ */}
 
       {/* Approve Expense Modal */}
       <Modal
@@ -1470,13 +1914,7 @@ export function FinanceDashboard() {
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center gap-2">
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black transition-all ${
-                    payrollStep > s
-                      ? "bg-[#00B87C] text-white"
-                      : payrollStep === s
-                        ? "bg-[#00B87C] text-white"
-                        : "bg-secondary text-muted-foreground"
-                  }`}
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black transition-all ${payrollStep > s ? "bg-[#00B87C] text-white" : payrollStep === s ? "bg-[#00B87C] text-white" : "bg-secondary text-muted-foreground"}`}
                 >
                   {payrollStep > s ? <Check size={12} /> : s}
                 </div>
@@ -1525,13 +1963,19 @@ export function FinanceDashboard() {
                   Checklist
                 </p>
                 {[
-                  { label: "Attendance data locked", ok: true },
+                  {
+                    label: "Attendance data locked",
+                    ok: true,
+                  },
                   {
                     label: `Expense approvals: ${pendingCount} pending`,
                     ok: pendingCount === 0,
                     warn: pendingCount > 0,
                   },
-                  { label: "Increment data updated", ok: true },
+                  {
+                    label: "Increment data updated",
+                    ok: true,
+                  },
                 ].map((c) => (
                   <div
                     key={c.label}
@@ -2328,7 +2772,9 @@ export function FinanceDashboard() {
         open={modals.form16}
         onClose={() => {
           closeModal("form16");
-          dispatchForm16({ type: "reset" });
+          dispatchForm16({
+            type: "reset",
+          });
         }}
         maxWidth="500px"
       >
@@ -2340,7 +2786,9 @@ export function FinanceDashboard() {
             <button
               onClick={() => {
                 closeModal("form16");
-                dispatchForm16({ type: "reset" });
+                dispatchForm16({
+                  type: "reset",
+                });
               }}
               className="p-2 rounded-xl hover:bg-muted transition-colors text-muted-foreground"
             >
@@ -2373,14 +2821,24 @@ export function FinanceDashboard() {
               {["FY 2024-25", "FY 2025-26"].map((fy) => (
                 <button
                   key={fy}
-                  onClick={() => dispatchForm16({ type: "setFY", payload: fy })}
+                  onClick={() =>
+                    dispatchForm16({
+                      type: "setFY",
+                      payload: fy,
+                    })
+                  }
                   className={`w-full py-3 rounded-xl border font-bold text-[14px] transition-all ${form16.fy === fy ? "border-[#EF4444] bg-red-50 dark:bg-red-500/10 text-[#EF4444]" : "border-border text-foreground hover:bg-muted"}`}
                 >
                   {fy}
                 </button>
               ))}
               <button
-                onClick={() => dispatchForm16({ type: "setStep", payload: 2 })}
+                onClick={() =>
+                  dispatchForm16({
+                    type: "setStep",
+                    payload: 2,
+                  })
+                }
                 className="w-full py-3 rounded-xl bg-[#EF4444] text-white font-bold text-[13px] hover:bg-red-600 transition-colors"
               >
                 Next →
@@ -2397,7 +2855,10 @@ export function FinanceDashboard() {
                 <button
                   key={opt}
                   onClick={() =>
-                    dispatchForm16({ type: "setScope", payload: opt })
+                    dispatchForm16({
+                      type: "setScope",
+                      payload: opt,
+                    })
                   }
                   className={`w-full py-3 rounded-xl border font-bold text-[14px] transition-all ${form16.scope === opt ? "border-[#EF4444] bg-red-50 dark:bg-red-500/10 text-[#EF4444]" : "border-border text-foreground hover:bg-muted"}`}
                 >
@@ -2407,7 +2868,10 @@ export function FinanceDashboard() {
               <div className="flex gap-3">
                 <button
                   onClick={() =>
-                    dispatchForm16({ type: "setStep", payload: 1 })
+                    dispatchForm16({
+                      type: "setStep",
+                      payload: 1,
+                    })
                   }
                   className="flex-1 py-3 rounded-xl border border-border text-foreground font-bold text-[13px] hover:bg-muted transition-colors"
                 >
@@ -2415,7 +2879,10 @@ export function FinanceDashboard() {
                 </button>
                 <button
                   onClick={() =>
-                    dispatchForm16({ type: "setStep", payload: 3 })
+                    dispatchForm16({
+                      type: "setStep",
+                      payload: 3,
+                    })
                   }
                   className="flex-1 py-3 rounded-xl bg-[#EF4444] text-white font-bold text-[13px] hover:bg-red-600 transition-colors"
                 >
@@ -2458,7 +2925,10 @@ export function FinanceDashboard() {
               <div className="flex gap-3">
                 <button
                   onClick={() =>
-                    dispatchForm16({ type: "setStep", payload: 2 })
+                    dispatchForm16({
+                      type: "setStep",
+                      payload: 2,
+                    })
                   }
                   className="flex-1 py-3 rounded-xl border border-border text-foreground font-bold text-[13px] hover:bg-muted transition-colors"
                 >
@@ -2466,7 +2936,10 @@ export function FinanceDashboard() {
                 </button>
                 <button
                   onClick={() =>
-                    dispatchForm16({ type: "setStep", payload: 4 })
+                    dispatchForm16({
+                      type: "setStep",
+                      payload: 4,
+                    })
                   }
                   className="flex-1 py-3 rounded-xl bg-[#EF4444] text-white font-bold text-[13px] hover:bg-red-600 transition-colors"
                 >
@@ -2486,10 +2959,14 @@ export function FinanceDashboard() {
                   {form16.generating ? (
                     <div className="space-y-3">
                       <div className="h-3 w-full bg-secondary rounded-full overflow-hidden">
-                        <motion.div
+                        <m.div
                           className="h-full bg-[#EF4444] rounded-full w-full"
-                          animate={{ x: `-${100 - form16.progress}%` }}
-                          transition={{ duration: 0.2 }}
+                          animate={{
+                            x: `-${100 - form16.progress}%`,
+                          }}
+                          transition={{
+                            duration: 0.2,
+                          }}
                         />
                       </div>
                       <p className="text-[12px] text-muted-foreground text-center">
@@ -2517,7 +2994,10 @@ export function FinanceDashboard() {
                     {!form16.generating && (
                       <button
                         onClick={() =>
-                          dispatchForm16({ type: "setStep", payload: 3 })
+                          dispatchForm16({
+                            type: "setStep",
+                            payload: 3,
+                          })
                         }
                         className="flex-1 py-3 rounded-xl border border-border text-foreground font-bold text-[13px] hover:bg-muted transition-colors"
                       >
@@ -2552,7 +3032,9 @@ export function FinanceDashboard() {
                         "Form 16 ZIP downloaded successfully.",
                       );
                       closeModal("form16");
-                      dispatchForm16({ type: "reset" });
+                      dispatchForm16({
+                        type: "reset",
+                      });
                     }}
                     className="w-full py-3 rounded-xl bg-[#EF4444] text-white font-bold text-[13px] hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
                   >

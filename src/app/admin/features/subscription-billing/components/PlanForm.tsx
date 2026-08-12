@@ -128,7 +128,13 @@ export function PlanForm({ plan, isEditing, onSave, onClose }: PlanFormProps) {
                 type="number"
                 min={0}
                 value={monthlyPrice}
-                onChange={(e) => setMonthlyPrice((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
+                onChange={(e) =>
+                  setMonthlyPrice(
+                    e.target.value === "" || isNaN(Number(e.target.value))
+                      ? undefined
+                      : Number(e.target.value),
+                  )
+                }
                 className={inputClass}
                 required
               />
@@ -141,7 +147,13 @@ export function PlanForm({ plan, isEditing, onSave, onClose }: PlanFormProps) {
                 type="number"
                 min={0}
                 value={annualPrice}
-                onChange={(e) => setAnnualPrice((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
+                onChange={(e) =>
+                  setAnnualPrice(
+                    e.target.value === "" || isNaN(Number(e.target.value))
+                      ? undefined
+                      : Number(e.target.value),
+                  )
+                }
                 placeholder="Auto: monthly × 10"
                 className={inputClass}
               />
@@ -157,7 +169,13 @@ export function PlanForm({ plan, isEditing, onSave, onClose }: PlanFormProps) {
                 type="number"
                 min={1}
                 value={maxUsers}
-                onChange={(e) => setMaxUsers((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
+                onChange={(e) =>
+                  setMaxUsers(
+                    e.target.value === "" || isNaN(Number(e.target.value))
+                      ? undefined
+                      : Number(e.target.value),
+                  )
+                }
                 className={inputClass}
               />
             </div>

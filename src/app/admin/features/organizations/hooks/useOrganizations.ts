@@ -29,17 +29,22 @@ export function useOrganizations() {
       const matchSearch =
         o.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         o.domain.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (o.ownerEmail && o.ownerEmail.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (o.ownerEmail &&
+          o.ownerEmail.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (o.code && o.code.toLowerCase().includes(searchQuery.toLowerCase()));
       const matchStatus = statusFilter === "ALL" || o.status === statusFilter;
       const matchPlan = planFilter === "ALL" || o.plan === planFilter;
-      const matchIndustry = industryFilter === "ALL" || o.industry === industryFilter;
+      const matchIndustry =
+        industryFilter === "ALL" || o.industry === industryFilter;
 
       return matchSearch && matchStatus && matchPlan && matchIndustry;
     });
   }, [orgs, searchQuery, statusFilter, planFilter, industryFilter]);
 
-  const activeOrg = useMemo(() => orgs.find((o) => o.id === activeOrgId) || null, [orgs, activeOrgId]);
+  const activeOrg = useMemo(
+    () => orgs.find((o) => o.id === activeOrgId) || null,
+    [orgs, activeOrgId],
+  );
 
   return {
     orgs,
@@ -75,7 +80,7 @@ export function useOrganizations() {
       extendSub: (id: string, months: number) => {
         OrganizationService.extendSubscription(id, months);
         loadData();
-      }
+      },
     },
   };
 }

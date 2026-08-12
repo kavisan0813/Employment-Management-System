@@ -11,57 +11,163 @@ import {
   Search,
   X,
 } from "lucide-react";
-const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
-const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
-const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-
-import { motion, AnimatePresence } from "motion/react";
-
+const AreaChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.AreaChart,
+  })),
+);
+const Area = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Area,
+  })),
+);
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.XAxis,
+  })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.YAxis,
+  })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.CartesianGrid,
+  })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Tooltip,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PieChart,
+  })),
+);
+const Pie = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Pie,
+  })),
+);
+const Cell = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Cell,
+  })),
+);
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 interface Toast {
   id: string;
   message: string;
   type: "success" | "error" | "info";
 }
-
 const HEADCOUNT_TREND_DATA = {
   "Last 6 Months": [
-    { month: "Oct", count: 1240 },
-    { month: "Nov", count: 1252 },
-    { month: "Dec", count: 1260 },
-    { month: "Jan", count: 1272 },
-    { month: "Feb", count: 1278 },
-    { month: "Mar", count: 1284 },
+    {
+      month: "Oct",
+      count: 1240,
+    },
+    {
+      month: "Nov",
+      count: 1252,
+    },
+    {
+      month: "Dec",
+      count: 1260,
+    },
+    {
+      month: "Jan",
+      count: 1272,
+    },
+    {
+      month: "Feb",
+      count: 1278,
+    },
+    {
+      month: "Mar",
+      count: 1284,
+    },
   ],
   "Last Year": [
-    { month: "Apr", count: 1150 },
-    { month: "May", count: 1170 },
-    { month: "Jun", count: 1190 },
-    { month: "Jul", count: 1205 },
-    { month: "Aug", count: 1220 },
-    { month: "Sep", count: 1235 },
-    { month: "Oct", count: 1240 },
-    { month: "Nov", count: 1252 },
-    { month: "Dec", count: 1260 },
-    { month: "Jan", count: 1272 },
-    { month: "Feb", count: 1278 },
-    { month: "Mar", count: 1284 },
+    {
+      month: "Apr",
+      count: 1150,
+    },
+    {
+      month: "May",
+      count: 1170,
+    },
+    {
+      month: "Jun",
+      count: 1190,
+    },
+    {
+      month: "Jul",
+      count: 1205,
+    },
+    {
+      month: "Aug",
+      count: 1220,
+    },
+    {
+      month: "Sep",
+      count: 1235,
+    },
+    {
+      month: "Oct",
+      count: 1240,
+    },
+    {
+      month: "Nov",
+      count: 1252,
+    },
+    {
+      month: "Dec",
+      count: 1260,
+    },
+    {
+      month: "Jan",
+      count: 1272,
+    },
+    {
+      month: "Feb",
+      count: 1278,
+    },
+    {
+      month: "Mar",
+      count: 1284,
+    },
   ],
 };
-
 const DEPT_DIST = [
-  { name: "Engineering", value: 450, color: "#10B981" },
-  { name: "Sales", value: 320, color: "#8B5CF6" },
-  { name: "Marketing", value: 180, color: "#F59E0B" },
-  { name: "Others", value: 334, color: "#0EA5E9" },
+  {
+    name: "Engineering",
+    value: 450,
+    color: "#10B981",
+  },
+  {
+    name: "Sales",
+    value: 320,
+    color: "#8B5CF6",
+  },
+  {
+    name: "Marketing",
+    value: 180,
+    color: "#F59E0B",
+  },
+  {
+    name: "Others",
+    value: 334,
+    color: "#0EA5E9",
+  },
 ];
-
 const LEAVE_REQUESTS = [
   {
     name: "Sarah Connor",
@@ -92,7 +198,6 @@ const LEAVE_REQUESTS = [
     avatar: "TS",
   },
 ];
-
 const RECENT_HIRES = [
   {
     name: "Michael Chen",
@@ -116,54 +221,68 @@ const RECENT_HIRES = [
     avatar: "DM",
   },
 ];
-
 const DEPT_ATTENDANCE = [
-  { name: "Eng", value: 94 },
-  { name: "Sales", value: 88 },
-  { name: "Mark", value: 91 },
-  { name: "Ops", value: 95 },
-  { name: "HR", value: 98 },
+  {
+    name: "Eng",
+    value: 94,
+  },
+  {
+    name: "Sales",
+    value: 88,
+  },
+  {
+    name: "Mark",
+    value: 91,
+  },
+  {
+    name: "Ops",
+    value: 95,
+  },
+  {
+    name: "HR",
+    value: 98,
+  },
 ];
-
 export function HRDashboard() {
   const navigate = useNavigate();
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [timeRange, setTimeRange] = useState("Last 6 Months");
   const [searchQuery, setSearchQuery] = useState("");
   const [leaveRequests, setLeaveRequests] = useState(LEAVE_REQUESTS);
-
   const showToast = (
     message: string,
     type: "success" | "error" | "info" = "success",
   ) => {
     const id = Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, { id, message, type }]);
+    setToasts((prev) => [
+      ...prev,
+      {
+        id,
+        message,
+        type,
+      },
+    ]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 3500);
   };
-
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
-
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
     if (e.key === "Enter" && searchQuery.trim()) {
       navigate(`/employees?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
-
   const handleApproveLeave = (name: string) => {
     setLeaveRequests((prev) => prev.filter((req) => req.name !== name));
     showToast(`Approved leave request for ${name}`, "success");
   };
-
   const handleRejectLeave = (name: string) => {
     setLeaveRequests((prev) => prev.filter((req) => req.name !== name));
     showToast(`Rejected leave request for ${name}`, "error");
   };
-
   const handleProcessAllLeaves = () => {
     if (leaveRequests.length === 0) {
       showToast("No pending leave requests to process", "info");
@@ -172,7 +291,6 @@ export function HRDashboard() {
     setLeaveRequests([]);
     showToast("Approved all pending leave requests", "success");
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 relative">
       {/* ═══ PAGE HEADER ═══ */}
@@ -289,11 +407,19 @@ export function HRDashboard() {
             path: "/recruitment",
           },
         ].map((kpi, i) => (
-          <motion.div
+          <m.div
             key={kpi.label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: i * 0.05,
+            }}
             onClick={() => navigate(kpi.path)}
             className="bg-card p-5 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all cursor-pointer"
           >
@@ -309,7 +435,7 @@ export function HRDashboard() {
               {kpi.value}
             </p>
             <p className="text-[12px] text-muted-foreground">{kpi.sub}</p>
-          </motion.div>
+          </m.div>
         ))}
       </div>
 
@@ -432,7 +558,9 @@ export function HRDashboard() {
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: dept.color }}
+                    style={{
+                      backgroundColor: dept.color,
+                    }}
                   />
                   <span className="text-[12px] font-bold text-foreground">
                     {dept.name}
@@ -585,10 +713,17 @@ export function HRDashboard() {
                     <span>{dept.value}%</span>
                   </div>
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ x: "-100%" }}
-                      animate={{ x: `-${100 - dept.value}%` }}
-                      transition={{ duration: 1, delay: i * 0.1 }}
+                    <m.div
+                      initial={{
+                        x: "-100%",
+                      }}
+                      animate={{
+                        x: `-${100 - dept.value}%`,
+                      }}
+                      transition={{
+                        duration: 1,
+                        delay: i * 0.1,
+                      }}
                       className="h-full rounded-full bg-emerald-500 w-full"
                     />
                   </div>
@@ -617,18 +752,24 @@ export function HRDashboard() {
       <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-2 pointer-events-none">
         <AnimatePresence>
           {toasts.map((toast) => (
-            <motion.div
+            <m.div
               key={toast.id}
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.9 }}
-              className={`pointer-events-auto flex items-center justify-between gap-3 px-4 py-3 rounded-xl shadow-xl min-w-[280px] max-w-[350px] border text-[13px] font-bold ${
-                toast.type === "success"
-                  ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
-                  : toast.type === "error"
-                    ? "bg-rose-500/10 border-rose-500/20 text-rose-500"
-                    : "bg-sky-500/10 border-sky-500/20 text-sky-500"
-              }`}
+              initial={{
+                opacity: 0,
+                y: 50,
+                scale: 0.9,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                y: -20,
+                scale: 0.9,
+              }}
+              className={`pointer-events-auto flex items-center justify-between gap-3 px-4 py-3 rounded-xl shadow-xl min-w-[280px] max-w-[350px] border text-[13px] font-bold ${toast.type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" : toast.type === "error" ? "bg-rose-500/10 border-rose-500/20 text-rose-500" : "bg-sky-500/10 border-sky-500/20 text-sky-500"}`}
             >
               <span className="text-foreground">{toast.message}</span>
               <button
@@ -637,7 +778,7 @@ export function HRDashboard() {
               >
                 <X size={14} />
               </button>
-            </motion.div>
+            </m.div>
           ))}
         </AnimatePresence>
       </div>

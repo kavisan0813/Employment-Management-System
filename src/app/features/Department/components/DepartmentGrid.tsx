@@ -1,9 +1,4 @@
-import {
-  Building2,
-  Plus,
-  TrendingUp,
-  User,
-} from "lucide-react";
+import { Building2, Plus, TrendingUp, User } from "lucide-react";
 import { Department } from "../types/department.types";
 
 interface DepartmentGridProps {

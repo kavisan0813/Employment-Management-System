@@ -1,4 +1,4 @@
-import React, { lazy, useState, useMemo } from "react";
+import React, { lazy, useMemo, useReducer, useCallback } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import {
   TrendingUp,
@@ -24,18 +24,34 @@ import {
   X,
   AlertTriangle,
 } from "lucide-react";
-const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
-const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
-const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
-const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+const BarChart = lazy(() =>
+  import("recharts").then((m) => ({ default: m.BarChart })),
+);
+const Bar = lazy(() => import("recharts").then((m) => ({ default: m.Bar })));
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({ default: m.XAxis })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({ default: m.YAxis })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({ default: m.CartesianGrid })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({ default: m.Tooltip })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({ default: m.ResponsiveContainer })),
+);
+const Cell = lazy(() => import("recharts").then((m) => ({ default: m.Cell })));
+const AreaChart = lazy(() =>
+  import("recharts").then((m) => ({ default: m.AreaChart })),
+);
+const Area = lazy(() => import("recharts").then((m) => ({ default: m.Area })));
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({ default: m.PieChart })),
+);
+const Pie = lazy(() => import("recharts").then((m) => ({ default: m.Pie })));
 
 import { employees, departments } from "../../../data/mockData";
 import { toast, Toaster } from "sonner";
@@ -205,38 +221,218 @@ function MetricItem({
 /* ─── Main Page ──────────────────────────────────────────── */
 export function Performance() {
   const { user } = useAuth();
-  const [selectedDept, setSelectedDept] = useState("All Departments");
-  const [selectedEmpId, setSelectedEmpId] = useState("All Employees");
-  const [year, setYear] = useState("2026");
-  const [period, setPeriod] = useState("Quarterly");
-  const [status, setStatus] = useState("All");
-  const [search, setSearch] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [history, setHistory] = useState<ReviewHistory[]>(
-    loadPerformanceReviews,
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    selectedDept: "All Departments",
+    selectedEmpId: "All Employees",
+    year: "2026",
+    period: "Quarterly",
+    status: "All",
+    search: "",
+    isModalOpen: false,
+    isDeleteOpen: false,
+    history: loadPerformanceReviews() as ReviewHistory[],
+    activeReview: null as ReviewHistory | null,
+    modalMode: "create" as "create" | "view" | "edit",
+    deleteTarget: null as {
+      id: string;
+      name: string;
+    } | null,
+    formPeriod: "Q1 2026",
+    formAttendanceScore: 95,
+    formPerformanceScore: 90,
+    formRating: 4.5,
+    formRecommendation: "No Change" as Recommendation,
+    formStatus: "Pending" as ReviewStatus,
+    formStrengths: "",
+    formImprovement: "",
+    formErrors: {} as Record<string, string>,
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
   );
-  const [activeReview, setActiveReview] = useState<ReviewHistory | null>(null);
-  const [modalMode, setModalMode] = useState<"create" | "view" | "edit">(
-    "create",
+  const {
+    selectedDept,
+    selectedEmpId,
+    year,
+    period,
+    status,
+    search,
+    isModalOpen,
+    isDeleteOpen,
+    history,
+    activeReview,
+    modalMode,
+    deleteTarget,
+    formPeriod,
+    formAttendanceScore,
+    formPerformanceScore,
+    formRating,
+    formRecommendation,
+    formStatus,
+    formStrengths,
+    formImprovement,
+    formErrors,
+  } = __state;
+  const setSelectedDept = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedDept: typeof val === "function" ? val(prev.selectedDept) : val,
+      })),
+    [],
   );
-  const [deleteTarget, setDeleteTarget] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
-
+  const setSelectedEmpId = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedEmpId:
+          typeof val === "function" ? val(prev.selectedEmpId) : val,
+      })),
+    [],
+  );
+  const setYear = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        year: typeof val === "function" ? val(prev.year) : val,
+      })),
+    [],
+  );
+  const setPeriod = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        period: typeof val === "function" ? val(prev.period) : val,
+      })),
+    [],
+  );
+  const setStatus = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        status: typeof val === "function" ? val(prev.status) : val,
+      })),
+    [],
+  );
+  const setSearch = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        search: typeof val === "function" ? val(prev.search) : val,
+      })),
+    [],
+  );
+  const setIsModalOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isModalOpen: typeof val === "function" ? val(prev.isModalOpen) : val,
+      })),
+    [],
+  );
+  const setIsDeleteOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isDeleteOpen: typeof val === "function" ? val(prev.isDeleteOpen) : val,
+      })),
+    [],
+  );
+  const setHistory = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        history: typeof val === "function" ? val(prev.history) : val,
+      })),
+    [],
+  );
+  const setActiveReview = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeReview: typeof val === "function" ? val(prev.activeReview) : val,
+      })),
+    [],
+  );
+  const setModalMode = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        modalMode: typeof val === "function" ? val(prev.modalMode) : val,
+      })),
+    [],
+  );
+  const setDeleteTarget = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        deleteTarget: typeof val === "function" ? val(prev.deleteTarget) : val,
+      })),
+    [],
+  );
+  const setFormPeriod = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formPeriod: typeof val === "function" ? val(prev.formPeriod) : val,
+      })),
+    [],
+  );
+  const setFormAttendanceScore = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formAttendanceScore:
+          typeof val === "function" ? val(prev.formAttendanceScore) : val,
+      })),
+    [],
+  );
+  const setFormPerformanceScore = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formPerformanceScore:
+          typeof val === "function" ? val(prev.formPerformanceScore) : val,
+      })),
+    [],
+  );
+  const setFormRating = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formRating: typeof val === "function" ? val(prev.formRating) : val,
+      })),
+    [],
+  );
+  const setFormRecommendation = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formRecommendation:
+          typeof val === "function" ? val(prev.formRecommendation) : val,
+      })),
+    [],
+  );
+  const setFormStatus = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formStatus: typeof val === "function" ? val(prev.formStatus) : val,
+      })),
+    [],
+  );
+  const setFormStrengths = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formStrengths:
+          typeof val === "function" ? val(prev.formStrengths) : val,
+      })),
+    [],
+  );
+  const setFormImprovement = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formImprovement:
+          typeof val === "function" ? val(prev.formImprovement) : val,
+      })),
+    [],
+  );
+  const setFormErrors = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formErrors: typeof val === "function" ? val(prev.formErrors) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Form State
-  const [formPeriod, setFormPeriod] = useState("Q1 2026");
-  const [formAttendanceScore, setFormAttendanceScore] = useState(95);
-  const [formPerformanceScore, setFormPerformanceScore] = useState(90);
-  const [formRating, setFormRating] = useState(4.5);
-  const [formRecommendation, setFormRecommendation] =
-    useState<Recommendation>("No Change");
-  const [formStatus, setFormStatus] = useState<ReviewStatus>("Pending");
-  const [formStrengths, setFormStrengths] = useState("");
-  const [formImprovement, setFormImprovement] = useState("");
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-
   // Close modals on Escape key press
   React.useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -1564,7 +1760,10 @@ export function Performance() {
                               value={formAttendanceScore}
                               onChange={(e) =>
                                 setFormAttendanceScore(
-                                  (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
+                                  (e.target.value === "" ||
+                                  isNaN(parseInt(e.target.value))
+                                    ? undefined
+                                    : parseInt(e.target.value)) || 0,
                                 )
                               }
                               className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"
@@ -1591,7 +1790,10 @@ export function Performance() {
                               value={formPerformanceScore}
                               onChange={(e) =>
                                 setFormPerformanceScore(
-                                  (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
+                                  (e.target.value === "" ||
+                                  isNaN(parseInt(e.target.value))
+                                    ? undefined
+                                    : parseInt(e.target.value)) || 0,
                                 )
                               }
                               className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"

@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import { motion } from "motion/react";
 import { X, MessageSquare, Check, CheckCircle2 } from "lucide-react";
-
+import * as m from "motion/react-m";
 interface ExitInterviewModalProps {
   employeeName: string;
   interviewDone: boolean;
   onClose: () => void;
   onComplete: () => void;
 }
-
 export const ExitInterviewModal: React.FC<ExitInterviewModalProps> = ({
   employeeName,
   interviewDone,
@@ -17,16 +15,21 @@ export const ExitInterviewModal: React.FC<ExitInterviewModalProps> = ({
 }) => {
   const [ratings, setRatings] = useState<Record<string, number>>({});
   const [recommendVal, setRecommendVal] = useState<string>("");
-
   if (interviewDone) {
     return (
       <div
         className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+        <m.div
+          initial={{
+            opacity: 0,
+            scale: 0.95,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
           className="w-full max-w-md bg-card rounded-[32px] p-8 text-center shadow-2xl border border-border"
           onClick={(e) => e.stopPropagation()}
         >
@@ -43,31 +46,47 @@ export const ExitInterviewModal: React.FC<ExitInterviewModalProps> = ({
           >
             Done
           </button>
-        </motion.div>
+        </m.div>
       </div>
     );
   }
-
   const questions = [
-    { id: "overall", label: "Overall experience at viyanHR?", type: "rating" },
+    {
+      id: "overall",
+      label: "Overall experience at viyanHR?",
+      type: "rating",
+    },
     {
       id: "recommend",
       label: "Would you recommend viyanHR to others?",
       type: "choice",
       options: ["Yes", "Maybe", "No"],
     },
-    { id: "manager", label: "Manager support quality?", type: "rating" },
-    { id: "wlb", label: "Work-life balance satisfaction?", type: "rating" },
+    {
+      id: "manager",
+      label: "Manager support quality?",
+      type: "rating",
+    },
+    {
+      id: "wlb",
+      label: "Work-life balance satisfaction?",
+      type: "rating",
+    },
   ];
-
   return (
     <div
       className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
         className="w-full max-w-[500px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -95,13 +114,12 @@ export const ExitInterviewModal: React.FC<ExitInterviewModalProps> = ({
                     <button
                       key={r}
                       onClick={() =>
-                        setRatings((prev) => ({ ...prev, [q.id]: r }))
+                        setRatings((prev) => ({
+                          ...prev,
+                          [q.id]: r,
+                        }))
                       }
-                      className={`w-9 h-9 rounded-xl text-[12px] font-black border transition-all ${
-                        ratings[q.id] === r
-                          ? "bg-[#00B87C] text-white border-[#00B87C]"
-                          : "border-border text-muted-foreground hover:border-[#00B87C]/30"
-                      }`}
+                      className={`w-9 h-9 rounded-xl text-[12px] font-black border transition-all ${ratings[q.id] === r ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/30"}`}
                     >
                       {r}
                     </button>
@@ -113,11 +131,7 @@ export const ExitInterviewModal: React.FC<ExitInterviewModalProps> = ({
                     <button
                       key={o}
                       onClick={() => setRecommendVal(o)}
-                      className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all ${
-                        recommendVal === o
-                          ? "bg-[#00B87C] text-white border-[#00B87C]"
-                          : "border-border text-muted-foreground hover:border-[#00B87C]/30"
-                      }`}
+                      className={`px-4 py-2 rounded-xl text-[11px] font-black border transition-all ${recommendVal === o ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-muted-foreground hover:border-[#00B87C]/30"}`}
                     >
                       {o}
                     </button>
@@ -195,7 +209,7 @@ export const ExitInterviewModal: React.FC<ExitInterviewModalProps> = ({
             <Check size={14} /> Mark as Completed
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 };

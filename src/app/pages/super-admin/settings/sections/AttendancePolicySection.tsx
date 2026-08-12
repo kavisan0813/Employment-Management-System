@@ -1,23 +1,16 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function AttendancePolicySection() {
-  const {
-    showToast,
-  } = useSettingsContext();
+  const { showToast } = useSettingsContext();
 
   return (
     <div>
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Attendance Policy</span>
       </div>
 
@@ -45,9 +38,7 @@ export function AttendancePolicySection() {
           </p>
         </div>
         <button
-          onClick={() =>
-            showToast("Attendance protocols updated successfully")
-          }
+          onClick={() => showToast("Attendance protocols updated successfully")}
           style={{
             backgroundColor: "#00B87C",
             color: "white",

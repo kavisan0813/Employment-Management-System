@@ -32,7 +32,10 @@ export function ManageAccountBulkImport() {
       "salary",
       "joindate",
     ];
-    const hasRequired = (() => { const headerSet = new Set(header); return expectedHeaders.every((h) => headerSet.has(h)); })();
+    const hasRequired = (() => {
+      const headerSet = new Set(header);
+      return expectedHeaders.every((h) => headerSet.has(h));
+    })();
     if (!hasRequired) {
       setError(
         "CSV headers must include: name, email, department, designation, salary, joindate",
@@ -69,7 +72,8 @@ export function ManageAccountBulkImport() {
     bulkImportEmployees(parsedEmployees as EmployeeInput[]);
 
     try {
-      const savedUsers = localStorage.getItem("viyan_registered_users:v1") || "[]";
+      const savedUsers =
+        localStorage.getItem("viyan_registered_users:v1") || "[]";
       const usersList = JSON.parse(savedUsers);
 
       const newPlatformUsers = parsedEmployees.map((emp) => {

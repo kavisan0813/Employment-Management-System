@@ -12,7 +12,6 @@ import type {
 import { Progress } from "./Progress";
 import { PersonalInformation } from "./PersonalInformation";
 import { showToast } from "../../../../components/workflow/ToastNotification";
-
 type TabKey = "personal" | "documents" | "forms" | "status";
 type AssignedTabKey =
   | "candidate-process"
@@ -20,7 +19,6 @@ type AssignedTabKey =
   | "company-documents"
   | "training"
   | "assigned-tasks";
-
 export function EmployeePortal() {
   const { user } = useAuth();
   const userName = user?.name || "Employee";
@@ -37,7 +35,6 @@ export function EmployeePortal() {
       return [];
     }
   });
-
   const hire = queue.find(
     (item: { email?: string }) => item.email === user?.email,
   );
@@ -71,7 +68,6 @@ export function EmployeePortal() {
       return empty;
     }
   });
-
   const [activeSubTab, setActiveSubTab] = useState<TabKey>("personal");
   const [activeAssignedSubTab, setActiveAssignedSubTab] =
     useState<AssignedTabKey>("candidate-process");
@@ -80,7 +76,6 @@ export function EmployeePortal() {
   const [phases, setPhases] = useState<OnboardingPhase[]>([]);
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
-
   useEffect(() => {
     const syncData = () => {
       try {
@@ -88,7 +83,6 @@ export function EmployeePortal() {
           localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
         );
         setQueue(nextQueue);
-
         const currentHire = nextQueue.find(
           (item: { email?: string }) => item.email === user?.email,
         );
@@ -97,7 +91,6 @@ export function EmployeePortal() {
             localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
           );
           setPhases(allPhases[currentHire.id] || []);
-
           const allDocs = JSON.parse(
             localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
           );
@@ -106,7 +99,6 @@ export function EmployeePortal() {
               d.id.startsWith(`doc-${currentHire.id}-`),
             ),
           );
-
           setTemplates(
             JSON.parse(
               localStorage.getItem("viyan_onboarding_templates:v1") || "[]",
@@ -117,7 +109,6 @@ export function EmployeePortal() {
         console.error(e);
       }
     };
-
     syncData();
     window.addEventListener("viyan:onboarding-updated", syncData);
     window.addEventListener("storage", syncData);
@@ -126,7 +117,6 @@ export function EmployeePortal() {
       window.removeEventListener("storage", syncData);
     };
   }, [user?.email]);
-
   const matchedTemplate = templates.find(
     (t) => t.id === hire?.assignedTemplateId,
   );
@@ -168,12 +158,21 @@ export function EmployeePortal() {
     // 3. Uploaded documents & Company documents acknowledgment
     const reqDocs = nextDocs.filter((d) => !d.issuedByOrg);
     const compDocs = nextDocs.filter((d) => d.issuedByOrg);
-
     const reqCompleted = reqDocs.filter((d) => d.status === "uploaded").length;
     const compCompleted = compDocs.filter((d) =>
+
+
+
+
+
+
+
+
+
+
+
       finalAcknowledged.includes(d.id),
     ).length;
-
     const docCompleted = reqCompleted + compCompleted;
     const docTotal = nextDocs.length;
 
@@ -191,7 +190,6 @@ export function EmployeePortal() {
     const formsList = matchedTemplate?.forms || [];
     const formsCompleted = finalForms.length;
     const formsTotal = formsList.length;
-
     const totalItems =
       profileTotal +
       empTotal +
@@ -233,9 +231,11 @@ export function EmployeePortal() {
     );
     window.dispatchEvent(new Event("viyan:onboarding-updated"));
   };
-
   const handleToggleTask = (id: string, completed: boolean) => {
-    const nextState = { ...taskState, [id]: completed };
+    const nextState = {
+      ...taskState,
+      [id]: completed,
+    };
     setTaskState(nextState);
     if (user?.email) {
       localStorage.setItem(
@@ -246,12 +246,10 @@ export function EmployeePortal() {
         }),
       );
     }
-
     if (isTemplateAssigned) {
       updateProgress(phases, documents, nextState);
     }
   };
-
   const handleToggleAssignedTask = (taskId: string) => {
     const nextPhases = phases.map((phase) => ({
       ...phase,
@@ -267,7 +265,6 @@ export function EmployeePortal() {
       ),
     }));
     setPhases(nextPhases);
-
     const allPhases = JSON.parse(
       localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
     );
@@ -276,10 +273,8 @@ export function EmployeePortal() {
       "viyan_onboarding_phases:v1",
       JSON.stringify(allPhases),
     );
-
     updateProgress(nextPhases, documents);
   };
-
   const handleAssignedDocUpload = (docId: string) => {
     const nextDocs = documents.map((doc) =>
       doc.id === docId
@@ -291,7 +286,6 @@ export function EmployeePortal() {
         : doc,
     );
     setDocuments(nextDocs);
-
     const allDocs = JSON.parse(
       localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
     );
@@ -303,7 +297,6 @@ export function EmployeePortal() {
       "viyan_onboarding_documents:v1",
       JSON.stringify(updatedAllDocs),
     );
-
     updateProgress(phases, nextDocs);
     showToast(
       "Document Uploaded",
@@ -311,11 +304,9 @@ export function EmployeePortal() {
       "Your file is uploaded and is waiting for HR verification.",
     );
   };
-
   const handleTrainingComplete = (courseId: string) => {
     const completed = hire.completedTraining || [];
     if (completed.includes(courseId)) return;
-
     const nextCompleted = [...completed, courseId];
     updateProgress(
       phases,
@@ -331,11 +322,9 @@ export function EmployeePortal() {
       "Orientation course completed successfully!",
     );
   };
-
   const handleDocAcknowledge = (docId: string) => {
     const completed = hire.acknowledgedDocs || [];
     if (completed.includes(docId)) return;
-
     const nextCompleted = [...completed, docId];
     updateProgress(
       phases,
@@ -352,7 +341,6 @@ export function EmployeePortal() {
       "Thank you for reviewing and digitally signing the company document.",
     );
   };
-
   const submitCandidateProcess = () => {
     if (!user?.email) return;
     const accounts = JSON.parse(
@@ -361,18 +349,19 @@ export function EmployeePortal() {
     const account = accounts.find(
       (item: { email: string }) => item.email === user.email,
     );
-
     localStorage.setItem(
       "viyan_registered_users:v1",
       JSON.stringify(
         accounts.map((item: { email: string }) =>
           item.email === user.email
-            ? { ...item, candidateStatus: "Completed" }
+            ? {
+                ...item,
+                candidateStatus: "Completed",
+              }
             : item,
         ),
       ),
     );
-
     const nextQueue = JSON.parse(
       localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
     );
@@ -412,7 +401,10 @@ export function EmployeePortal() {
         JSON.stringify(
           nextQueue.map((item: { email?: string }) =>
             item.email === user.email
-              ? { ...item, candidateProcessSubmitted: true }
+              ? {
+                  ...item,
+                  candidateProcessSubmitted: true,
+                }
               : item,
           ),
         ),
@@ -450,7 +442,6 @@ export function EmployeePortal() {
       taskState.nominee,
     ].filter(Boolean).length;
     const percent = Math.round((completedChecksCount / totalChecks) * 100);
-
     return (
       <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500 max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-border">
@@ -494,18 +485,20 @@ export function EmployeePortal() {
         <div className="flex border-b border-border bg-muted/10 px-4 rounded-xl overflow-x-auto scrollbar-hide shrink-0 gap-2">
           {(
             [
-              { key: "personal", label: "Personal Information" },
-              { key: "status", label: "Verification Status" },
+              {
+                key: "personal",
+                label: "Personal Information",
+              },
+              {
+                key: "status",
+                label: "Verification Status",
+              },
             ] as const
           ).map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveSubTab(tab.key)}
-              className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${
-                activeSubTab === tab.key
-                  ? "border-[#00B87C] text-[#00B87C]"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
+              className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${activeSubTab === tab.key ? "border-[#00B87C] text-[#00B87C]" : "border-transparent text-muted-foreground hover:text-foreground"}`}
             >
               {tab.label}
             </button>
@@ -556,7 +549,6 @@ export function EmployeePortal() {
     taskState.bank,
     taskState.nominee,
   ].filter(Boolean).length;
-
   const totalOnbItems =
     4 +
     employeeOwnedTasks.length +
@@ -573,7 +565,6 @@ export function EmployeePortal() {
     totalOnbItems > 0
       ? Math.round((completedOnbItems / totalOnbItems) * 100)
       : 0;
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500 max-w-5xl mx-auto">
       {/* HEADER BANNER */}
@@ -618,7 +609,9 @@ export function EmployeePortal() {
         <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden">
           <div
             className="h-full bg-[#00B87C] rounded-full transition-all duration-500"
-            style={{ width: `${currentProgressPercent}%` }}
+            style={{
+              width: `${currentProgressPercent}%`,
+            }}
           />
         </div>
       </div>
@@ -627,7 +620,10 @@ export function EmployeePortal() {
       <div className="flex border-b border-border bg-muted/10 px-4 rounded-xl overflow-x-auto scrollbar-hide shrink-0 gap-2">
         {(
           [
-            { key: "candidate-process", label: "Candidate Setup" },
+            {
+              key: "candidate-process",
+              label: "Candidate Setup",
+            },
             {
               key: "documents",
               label: `Required Files (${documents.filter((d) => !d.issuedByOrg && d.status !== "uploaded").length})`,
@@ -636,7 +632,6 @@ export function EmployeePortal() {
               key: "company-documents",
               label: `Company Documents (${documents.filter((d) => d.issuedByOrg && !(hire.acknowledgedDocs || []).includes(d.id)).length})`,
             },
-
             {
               key: "training",
               label: `Training (${(matchedTemplate?.training || []).length - (hire.completedTraining || []).length})`,
@@ -650,11 +645,7 @@ export function EmployeePortal() {
           <button
             key={tab.key}
             onClick={() => setActiveAssignedSubTab(tab.key)}
-            className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${
-              activeAssignedSubTab === tab.key
-                ? "border-[#00B87C] text-[#00B87C]"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
+            className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${activeAssignedSubTab === tab.key ? "border-[#00B87C] text-[#00B87C]" : "border-transparent text-muted-foreground hover:text-foreground"}`}
           >
             {tab.label}
           </button>
@@ -716,11 +707,7 @@ export function EmployeePortal() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span
-                        className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                          doc.status === "uploaded"
-                            ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
-                            : "bg-muted text-muted-foreground"
-                        }`}
+                        className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${doc.status === "uploaded" ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15" : "bg-muted text-muted-foreground"}`}
                       >
                         {doc.status === "uploaded"
                           ? `${doc.verificationStatus || "uploaded"}`
@@ -805,11 +792,7 @@ export function EmployeePortal() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span
-                          className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                            acknowledged
-                              ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
-                              : "bg-muted text-muted-foreground"
-                          }`}
+                          className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${acknowledged ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15" : "bg-muted text-muted-foreground"}`}
                         >
                           {acknowledged ? "complete" : "pending"}
                         </span>

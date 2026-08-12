@@ -34,33 +34,93 @@ import {
   Printer,
   Ban,
 } from "lucide-react";
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
-const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
-const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
-const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.XAxis,
+  })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.YAxis,
+  })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.CartesianGrid,
+  })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Tooltip,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const AreaChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.AreaChart,
+  })),
+);
+const Area = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Area,
+  })),
+);
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PieChart,
+  })),
+);
+const Pie = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Pie,
+  })),
+);
+const Cell = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Cell,
+  })),
+);
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { useAuth } from "../../../context/AuthContext";
 import { EmployeeExpenses } from "../../employee/EmployeeExpenses";
 
 /* ─── Mock Data ─────────────────────────── */
+import * as m from "motion/react-m";
 const trendData = [
-  { name: "Oct", value: 45000 },
-  { name: "Nov", value: 52000 },
-  { name: "Dec", value: 48000 },
-  { name: "Jan", value: 61000 },
-  { name: "Feb", value: 55000 },
-  { name: "Mar", value: 67000 },
-  { name: "Apr", value: 72000 },
+  {
+    name: "Oct",
+    value: 45000,
+  },
+  {
+    name: "Nov",
+    value: 52000,
+  },
+  {
+    name: "Dec",
+    value: 48000,
+  },
+  {
+    name: "Jan",
+    value: 61000,
+  },
+  {
+    name: "Feb",
+    value: 55000,
+  },
+  {
+    name: "Mar",
+    value: 67000,
+  },
+  {
+    name: "Apr",
+    value: 72000,
+  },
 ];
-
 const initialClaims = [
   {
     id: "EXP-2026-001",
@@ -148,7 +208,6 @@ const initialClaims = [
     paymentMode: "Personal Card",
   },
 ];
-
 const months = [
   "Current Month",
   "Last Month",
@@ -166,14 +225,12 @@ const months = [
   "December",
 ];
 const years = ["Current Year", "Last Year", "2024", "2025", "2026"];
-
 interface Employee {
   name: string;
   dept: string;
   avatar: string;
   email: string;
 }
-
 interface ExpenseClaim {
   id: string;
   employee: Employee;
@@ -186,11 +243,9 @@ interface ExpenseClaim {
   reimbursementStatus: string;
   paymentMode: string;
 }
-
 export function Expenses() {
   const { user } = useAuth();
   const navigate = useNavigate();
-
   const [claims] = useState<ExpenseClaim[]>(initialClaims);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
@@ -226,7 +281,6 @@ export function Expenses() {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showPaidModal, setShowPaidModal] = useState(false);
   const [selectedClaim, setSelectedClaim] = useState<ExpenseClaim | null>(null);
-
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [showColumnModal, setShowColumnModal] = useState(false);
@@ -245,12 +299,10 @@ export function Expenses() {
   const [showManagerQueue, setShowManagerQueue] = useState(false);
   const [showDuePayments, setShowDuePayments] = useState(false);
   const [showRejectedResubmit, setShowRejectedResubmit] = useState(false);
-
   const exportMenuRef = useRef<HTMLDivElement>(null);
   const actionMenuRef = useRef<HTMLDivElement>(null);
   const settingsMenuRef = useRef<HTMLDivElement>(null);
   const shareMenuRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -281,7 +333,6 @@ export function Expenses() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -289,7 +340,6 @@ export function Expenses() {
       maximumFractionDigits: 0,
     }).format(val);
   };
-
   const filteredClaims = useMemo(() => {
     const today = new Date();
     const currentMonthIdx = today.getMonth(); // 0 to 11
@@ -309,30 +359,25 @@ export function Expenses() {
       "November",
       "December",
     ];
-
     let targetMonthName = selectedMonth;
     if (selectedMonth === "Current Month") {
       targetMonthName = monthsList[currentMonthIdx];
     } else if (selectedMonth === "Last Month") {
       targetMonthName = monthsList[(currentMonthIdx - 1 + 12) % 12];
     }
-
     let targetYearStr = selectedYear;
     if (selectedYear === "Current Year") {
       targetYearStr = currentYearVal.toString();
     } else if (selectedYear === "Last Year") {
       targetYearStr = (currentYearVal - 1).toString();
     }
-
     return claims.filter((c) => {
       const dateParts = c.date.split("-");
       const claimYearStr = dateParts[0];
       const claimMonthIdx = parseInt(dateParts[1], 10) - 1;
       const claimMonthName = monthsList[claimMonthIdx];
-
       const matchesMonth = claimMonthName === targetMonthName;
       const matchesYear = claimYearStr === targetYearStr;
-
       const matchesSearch =
         c.employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.id.toLowerCase().includes(searchQuery.toLowerCase());
@@ -341,21 +386,18 @@ export function Expenses() {
         selectedDept === "All" || c.employee.dept === selectedDept;
       const matchesCategory =
         selectedCategory === "All" || c.category === selectedCategory;
-
       let matchesDateRange = true;
       if (selectedDateRange !== "All") {
         const claimDate = new Date(c.date);
         const diffDays = Math.floor(
           (today.getTime() - claimDate.getTime()) / (1000 * 3600 * 24),
         );
-
         if (selectedDateRange === "Today") matchesDateRange = diffDays === 0;
         else if (selectedDateRange === "Last 7 Days")
           matchesDateRange = diffDays <= 7;
         else if (selectedDateRange === "Last 30 Days")
           matchesDateRange = diffDays <= 30;
       }
-
       return (
         matchesMonth &&
         matchesYear &&
@@ -376,7 +418,6 @@ export function Expenses() {
     selectedMonth,
     selectedYear,
   ]);
-
   const kpis = useMemo(() => {
     const totalCount = filteredClaims.length;
     const pendingCount = filteredClaims.filter(
@@ -388,7 +429,6 @@ export function Expenses() {
     const reimbursedSum = filteredClaims
       .filter((c) => c.reimbursementStatus === "Paid")
       .reduce((sum, c) => sum + c.amount, 0);
-
     return [
       {
         label: "Total Claims",
@@ -428,7 +468,6 @@ export function Expenses() {
       },
     ];
   }, [filteredClaims]);
-
   const categories = [
     "Travel",
     "Food",
@@ -439,31 +478,31 @@ export function Expenses() {
     "Medical",
     "Other",
   ];
-
   const pendingApprovalsSum = useMemo(() => {
     return filteredClaims
       .filter((c) => c.approvalStatus === "Pending")
       .reduce((sum, c) => sum + c.amount, 0);
   }, [filteredClaims]);
-
   const managerActionCount = useMemo(() => {
     return filteredClaims.filter((c) => c.approvalStatus === "Pending").length;
   }, [filteredClaims]);
-
   const dueTodayCount = useMemo(() => {
     return filteredClaims.filter((c) => c.reimbursementStatus === "Processing")
       .length;
   }, [filteredClaims]);
-
   const rejectedCount = useMemo(() => {
     return filteredClaims.filter((c) => c.approvalStatus === "Rejected").length;
   }, [filteredClaims]);
-
   const categoryData = useMemo(() => {
     if (filteredClaims.length === 0) {
-      return [{ name: "No Expenses", value: 1, color: "#E2E8F0" }];
+      return [
+        {
+          name: "No Expenses",
+          value: 1,
+          color: "#E2E8F0",
+        },
+      ];
     }
-
     const catMap: Record<string, number> = {
       Travel: 0,
       Food: 0,
@@ -481,7 +520,6 @@ export function Expenses() {
         catMap.Other += c.amount;
       }
     });
-
     const colors: Record<string, string> = {
       Travel: "#10B981",
       Food: "#3B82F6",
@@ -492,7 +530,6 @@ export function Expenses() {
       Medical: "#EF4444",
       Other: "#64748B",
     };
-
     return Object.entries(catMap)
       .map(([name, value]) => ({
         name,
@@ -501,7 +538,6 @@ export function Expenses() {
       }))
       .filter((item) => item.value > 0);
   }, [filteredClaims]);
-
   const totalSpend = useMemo(() => {
     return filteredClaims.reduce((sum, c) => sum + c.amount, 0);
   }, [filteredClaims]);
@@ -510,7 +546,6 @@ export function Expenses() {
   if (user?.role === "Employee") {
     return <EmployeeExpenses />;
   }
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 font-inter">
       {/* ── Page Header ── */}
@@ -541,10 +576,19 @@ export function Expenses() {
             </button>
             <AnimatePresence>
               {showMonthDropdown && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
+                <m.div
+                  initial={{
+                    opacity: 0,
+                    y: 10,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: 10,
+                  }}
                   className="absolute top-full left-0 mt-2 w-48 bg-card border border-border rounded-xl shadow-2xl z-50 py-2"
                 >
                   {months.map((m) => (
@@ -559,7 +603,7 @@ export function Expenses() {
                       {m}
                     </button>
                   ))}
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>
@@ -577,10 +621,19 @@ export function Expenses() {
             </button>
             <AnimatePresence>
               {showYearDropdown && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
+                <m.div
+                  initial={{
+                    opacity: 0,
+                    y: 10,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: 10,
+                  }}
                   className="absolute top-full left-0 mt-2 w-32 bg-card border border-border rounded-2xl shadow-2xl z-50 py-2"
                 >
                   {years.map((y) => (
@@ -595,7 +648,7 @@ export function Expenses() {
                       {y}
                     </button>
                   ))}
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>
@@ -610,10 +663,22 @@ export function Expenses() {
             </button>
             <AnimatePresence>
               {showExportMenu && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                <m.div
+                  initial={{
+                    opacity: 0,
+                    scale: 0.95,
+                    y: 10,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.95,
+                    y: 10,
+                  }}
                   className="absolute top-full right-0 mt-2 w-48 bg-card border border-border rounded-2xl shadow-2xl z-50 py-2 overflow-hidden"
                 >
                   <ExportItem
@@ -646,7 +711,7 @@ export function Expenses() {
                     label="Print Summary"
                     onClick={() => window.print()}
                   />
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>
@@ -690,9 +755,11 @@ export function Expenses() {
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {kpis.map((stat, i) => (
-          <motion.div
+          <m.div
             key={stat.label}
-            whileHover={{ y: -5 }}
+            whileHover={{
+              y: -5,
+            }}
             className="relative group bg-card border border-border rounded-3xl p-6 overflow-hidden hover:shadow-xl hover:shadow-[#00B87C]/5 transition-all duration-300 cursor-pointer"
           >
             <div
@@ -736,7 +803,7 @@ export function Expenses() {
                 ></div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         ))}
       </div>
 
@@ -770,10 +837,19 @@ export function Expenses() {
         {/* Advanced Filter Row (The Rounded White Bar) */}
         <AnimatePresence>
           {showFilterPanel && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                y: -10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-sm p-4 flex flex-wrap items-center gap-8"
             >
               <FilterPill
@@ -834,7 +910,7 @@ export function Expenses() {
                   <Download size={18} />
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
@@ -860,10 +936,22 @@ export function Expenses() {
               </button>
               <AnimatePresence>
                 {showSettingsMenu && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  <m.div
+                    initial={{
+                      opacity: 0,
+                      scale: 0.95,
+                      y: 10,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      y: 0,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      scale: 0.95,
+                      y: 10,
+                    }}
                     className="absolute top-full right-0 mt-2 w-56 bg-card border border-border rounded-2xl shadow-2xl z-50 py-2 overflow-hidden"
                   >
                     <div className="px-4 py-2 border-b border-border mb-1">
@@ -909,7 +997,7 @@ export function Expenses() {
                         setShowSettingsMenu(false);
                       }}
                     />
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
             </div>
@@ -923,10 +1011,22 @@ export function Expenses() {
               </button>
               <AnimatePresence>
                 {showShareMenu && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                  <m.div
+                    initial={{
+                      opacity: 0,
+                      scale: 0.95,
+                      y: 10,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      y: 0,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      scale: 0.95,
+                      y: 10,
+                    }}
                     className="absolute top-full right-0 mt-2 w-56 bg-card border border-border rounded-2xl shadow-2xl z-50 py-2 overflow-hidden"
                   >
                     <div className="px-4 py-2 border-b border-border mb-1">
@@ -960,7 +1060,7 @@ export function Expenses() {
                         setShowShareMenu(false);
                       }}
                     />
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
             </div>
@@ -1053,13 +1153,7 @@ export function Expenses() {
                   {visibleColumns.approval && (
                     <td className="px-4 py-5">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
-                          claim.approvalStatus === "Pending"
-                            ? "bg-amber-500/5 text-amber-600 border-amber-500/10"
-                            : claim.approvalStatus === "Approved"
-                              ? "bg-emerald-500/5 text-emerald-600 border-emerald-500/10"
-                              : "bg-rose-500/5 text-rose-600 border-rose-500/10"
-                        }`}
+                        className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${claim.approvalStatus === "Pending" ? "bg-amber-500/5 text-amber-600 border-amber-500/10" : claim.approvalStatus === "Approved" ? "bg-emerald-500/5 text-emerald-600 border-emerald-500/10" : "bg-rose-500/5 text-rose-600 border-rose-500/10"}`}
                       >
                         {claim.approvalStatus}
                       </span>
@@ -1102,14 +1196,18 @@ export function Expenses() {
                         </button>
                         <AnimatePresence>
                           {activeActionId === claim.id && (
-                            <motion.div
+                            <m.div
                               initial={{
                                 opacity: 0,
                                 scale: 0.95,
                                 y:
                                   index >= filteredClaims.length - 2 ? 10 : -10,
                               }}
-                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              animate={{
+                                opacity: 1,
+                                scale: 1,
+                                y: 0,
+                              }}
                               exit={{
                                 opacity: 0,
                                 scale: 0.95,
@@ -1167,7 +1265,7 @@ export function Expenses() {
                                   setActiveActionId(null);
                                 }}
                               />
-                            </motion.div>
+                            </m.div>
                           )}
                         </AnimatePresence>
                       </div>
@@ -1184,17 +1282,32 @@ export function Expenses() {
       <AnimatePresence>
         {showWorkflowModal && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowWorkflowModal(false)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.9,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.9,
+              }}
               className="relative w-full max-w-xl bg-card border border-border rounded-[32px] shadow-2xl overflow-hidden p-8"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1251,7 +1364,7 @@ export function Expenses() {
               >
                 Close Pipeline View
               </button>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1260,10 +1373,16 @@ export function Expenses() {
       <AnimatePresence>
         {showAddModal && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => {
                 setShowAddModal(false);
                 setIsEditing(false);
@@ -1271,10 +1390,22 @@ export function Expenses() {
               }}
               className="absolute inset-0 bg-black/40 "
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="relative w-full max-w-2xl bg-card border border-border rounded-[32px] shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1406,7 +1537,7 @@ export function Expenses() {
                   {isEditing ? "Update Claim" : "Submit Claim"}
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1415,18 +1546,34 @@ export function Expenses() {
       <AnimatePresence>
         {viewClaim && (
           <div className="fixed inset-0 z-[4000] flex justify-end">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setViewClaim(null)}
               className="absolute inset-0 bg-black/40"
             />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="relative w-full max-w-[500px] h-full bg-card border-l border-border shadow-2xl flex flex-col"
             >
               <div className="p-8 border-b border-border flex items-center justify-between bg-emerald-500/[0.02]">
@@ -1539,7 +1686,7 @@ export function Expenses() {
                   Reject
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1548,17 +1695,32 @@ export function Expenses() {
       <AnimatePresence>
         {showManagerShare && (
           <div className="fixed inset-0 z-[7000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowManagerShare(false)}
               className="absolute inset-0 bg-black/40"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative w-full max-w-md bg-card border border-border rounded-[32px] shadow-2xl p-8"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1648,7 +1810,7 @@ export function Expenses() {
                   Send for Approval
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1657,17 +1819,32 @@ export function Expenses() {
       <AnimatePresence>
         {showFinanceShare && (
           <div className="fixed inset-0 z-[7000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowFinanceShare(false)}
               className="absolute inset-0 bg-black/40"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative w-full max-w-md bg-card border border-border rounded-[32px] shadow-2xl p-8"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1754,7 +1931,7 @@ export function Expenses() {
                   Send to Finance
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1763,17 +1940,32 @@ export function Expenses() {
       <AnimatePresence>
         {showApproveModal && (
           <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowApproveModal(false)}
               className="absolute inset-0 bg-black/40"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative w-full max-w-sm bg-card border border-border rounded-[32px] shadow-2xl p-8 text-center"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1813,7 +2005,7 @@ export function Expenses() {
                   Confirm Approve
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1822,17 +2014,32 @@ export function Expenses() {
       <AnimatePresence>
         {showRejectModal && (
           <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowRejectModal(false)}
               className="absolute inset-0 bg-black/40"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative w-full max-w-md bg-card border border-border rounded-[32px] shadow-2xl p-8"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1879,7 +2086,7 @@ export function Expenses() {
                   Reject Claim
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1888,17 +2095,32 @@ export function Expenses() {
       <AnimatePresence>
         {showPaidModal && (
           <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowPaidModal(false)}
               className="absolute inset-0 bg-black/40"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative w-full max-w-md bg-card border border-border rounded-[32px] shadow-2xl p-8"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1974,7 +2196,7 @@ export function Expenses() {
                   Confirm Payment
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1983,18 +2205,34 @@ export function Expenses() {
       <AnimatePresence>
         {viewClaim && (
           <div className="fixed inset-0 z-[4000] flex justify-end">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setViewClaim(null)}
               className="absolute inset-0 bg-black/40"
             />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="relative w-full max-w-[500px] h-full bg-card border-l border-border shadow-2xl flex flex-col"
             >
               <div className="p-8 border-b border-border flex items-center justify-between bg-emerald-500/[0.02]">
@@ -2155,7 +2393,7 @@ export function Expenses() {
                   Reject
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -2164,17 +2402,32 @@ export function Expenses() {
       <AnimatePresence>
         {showColumnModal && (
           <div className="fixed inset-0 z-[7000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowColumnModal(false)}
               className="absolute inset-0 bg-black/40"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative w-full max-w-md bg-card border border-border rounded-[32px] shadow-2xl p-8"
               onClick={(e) => e.stopPropagation()}
             >
@@ -2236,7 +2489,7 @@ export function Expenses() {
               >
                 Save Preferences
               </button>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -2245,17 +2498,35 @@ export function Expenses() {
       <AnimatePresence>
         {receiptToView && (
           <div className="fixed inset-0 z-[6000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setReceiptToView(null)}
               className="absolute inset-0 bg-black/80"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.9,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.9,
+                y: 20,
+              }}
               className="relative w-full max-w-4xl h-[85vh] bg-card border border-border rounded-[40px] shadow-2xl overflow-hidden flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
@@ -2322,7 +2593,7 @@ export function Expenses() {
                   securely.
                 </p>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -2465,7 +2736,12 @@ export function Expenses() {
       >
         <div className="space-y-4">
           {[
-            { id: "JW", name: "James Wilson", method: "Cash", amount: 5280 },
+            {
+              id: "JW",
+              name: "James Wilson",
+              method: "Cash",
+              amount: 5280,
+            },
             {
               id: "EB",
               name: "Emily Blunt",
@@ -2602,7 +2878,11 @@ export function Expenses() {
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fontWeight: 700, fill: "#94A3B8" }}
+                  tick={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    fill: "#94A3B8",
+                  }}
                 />
                 <YAxis hide />
                 <Tooltip
@@ -2667,7 +2947,9 @@ export function Expenses() {
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: cat.color }}
+                    style={{
+                      backgroundColor: cat.color,
+                    }}
                   />
                   <span className="text-muted-foreground">{cat.name}</span>
                 </div>
@@ -2682,7 +2964,6 @@ export function Expenses() {
     </div>
   );
 }
-
 function ExportItem({
   icon,
   label,
@@ -2701,7 +2982,6 @@ function ExportItem({
     </button>
   );
 }
-
 function ActionItem({
   icon,
   label,
@@ -2722,7 +3002,6 @@ function ActionItem({
     </button>
   );
 }
-
 function WorkflowBlock({
   title,
   status,
@@ -2764,7 +3043,6 @@ function WorkflowBlock({
     </div>
   );
 }
-
 function WorkflowModal({
   isOpen,
   onClose,
@@ -2780,17 +3058,35 @@ function WorkflowModal({
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[9000] flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <m.div
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
             onClick={onClose}
             className="absolute inset-0 bg-black/40"
           />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              scale: 0.95,
+              y: 20,
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              scale: 0.95,
+              y: 20,
+            }}
             className="relative w-full max-w-xl bg-card border border-border rounded-[40px] shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
@@ -2814,13 +3110,12 @@ function WorkflowModal({
                 Close Window
               </button>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       )}
     </AnimatePresence>
   );
 }
-
 function StatusChip({
   dotColor,
   label,
@@ -2844,7 +3139,6 @@ function StatusChip({
     </button>
   );
 }
-
 function DetailItem({
   label,
   val,
@@ -2872,7 +3166,6 @@ function DetailItem({
     </div>
   );
 }
-
 function FilterPill({
   icon,
   label,
@@ -2888,7 +3181,6 @@ function FilterPill({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const close = (e: MouseEvent) => {
       if (
@@ -2900,7 +3192,6 @@ function FilterPill({
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, []);
-
   return (
     <div className="flex items-center gap-2 relative" ref={dropdownRef}>
       <div className="flex items-center gap-2 text-slate-400">
@@ -2909,11 +3200,7 @@ function FilterPill({
       </div>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-5 py-2 rounded-full border transition-all text-[13px] font-bold ${
-          value !== "All"
-            ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-600"
-            : "bg-slate-50 dark:bg-zinc-800 border-slate-100 dark:border-zinc-700 text-slate-700 dark:text-slate-200"
-        }`}
+        className={`flex items-center gap-2 px-5 py-2 rounded-full border transition-all text-[13px] font-bold ${value !== "All" ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-600" : "bg-slate-50 dark:bg-zinc-800 border-slate-100 dark:border-zinc-700 text-slate-700 dark:text-slate-200"}`}
       >
         {value}
         <ChevronDown
@@ -2924,10 +3211,19 @@ function FilterPill({
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: 10,
+            }}
             className="absolute top-full left-0 mt-2 w-48 bg-card border border-border rounded-2xl shadow-2xl z-[100] py-2 overflow-hidden"
           >
             {["All", ...options].map((opt) => (
@@ -2942,7 +3238,7 @@ function FilterPill({
                 {opt}
               </button>
             ))}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

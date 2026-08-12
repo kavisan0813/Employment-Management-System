@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from "react";
 import type { RoleAssignment } from "../shared/permission-engine/roles";
 import { UserRole } from "./auth.config";
 export type { UserRole };
@@ -40,17 +47,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : null;
   });
 
-  const login = (newUser: User) => {
+  const login = useCallback((newUser: User) => {
     setUser(newUser);
     sessionStorage.setItem("user", JSON.stringify(newUser));
     sessionStorage.setItem("isLoggedIn", "true");
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("isLoggedIn");
-  };
+  }, []);
 
   /**
    * @deprecated — Route access is now controlled by the permission engine.
@@ -58,13 +65,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    * the actual permission check. Kept for backward compatibility with
    * any code that still calls hasAccess().
    */
-  const hasAccess = () => {
+  const hasAccess = useCallback(() => {
     if (!user) return false;
     // Permission checks are now handled by the permission engine.
     // This function always returns true for authenticated users,
     // because route-level permission gating is done by PermissionGuard.
     return true;
-  };
+  }, [user]);
 
   const value = useMemo(
     () => ({ user, isLoggedIn: !!user, login, logout, hasAccess }),

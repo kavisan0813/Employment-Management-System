@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export function useCommunication() {
-  const [activeTab, setActiveTab] = useState<'broadcast' | 'templates' | 'settings'>('broadcast');
-  const [toastMessage, setToastMessage] = useState<{ text: string, type: 'success' | 'error' | 'info' | 'warning' } | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "broadcast" | "templates" | "settings"
+  >("broadcast");
+  const [toastMessage, setToastMessage] = useState<{
+    text: string;
+    type: "success" | "error" | "info" | "warning";
+  } | null>(null);
 
-  const showToast = (text: string, type: 'success' | 'error' | 'info' | 'warning') => {
+  const showToast = (
+    text: string,
+    type: "success" | "error" | "info" | "warning",
+  ) => {
     setToastMessage({ text, type });
     setTimeout(() => setToastMessage(null), 3500);
   };
@@ -13,6 +21,6 @@ export function useCommunication() {
     activeTab,
     setActiveTab,
     toastMessage,
-    showToast
+    showToast,
   };
 }

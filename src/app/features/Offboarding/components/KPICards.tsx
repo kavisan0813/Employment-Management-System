@@ -1,7 +1,6 @@
 import React from "react";
-import { motion } from "motion/react";
 import { User, Check, Clock, Laptop, FileText, Star } from "lucide-react";
-
+import * as m from "motion/react-m";
 interface KPICardsProps {
   stats: {
     activeExits: number;
@@ -12,7 +11,6 @@ interface KPICardsProps {
     interviewsDone: string;
   };
 }
-
 export const KPICards: React.FC<KPICardsProps> = ({ stats }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -73,7 +71,6 @@ export const KPICards: React.FC<KPICardsProps> = ({ stats }) => {
     </div>
   );
 };
-
 interface KpiCardProps {
   icon: React.ElementType;
   bgColor: string;
@@ -83,7 +80,6 @@ interface KpiCardProps {
   valueColor: string;
   sub: string;
 }
-
 function KpiCard({
   icon: Icon,
   bgColor,
@@ -94,9 +90,15 @@ function KpiCard({
   sub,
 }: KpiCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <m.div
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
       className="p-4 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
     >
       <div className="flex items-center justify-between mb-3">
@@ -105,15 +107,22 @@ function KpiCard({
         </p>
         <div
           className="w-9 h-9 rounded-[10px] flex items-center justify-center"
-          style={{ backgroundColor: bgColor }}
+          style={{
+            backgroundColor: bgColor,
+          }}
         >
-          <Icon size={16} style={{ color: iconColor }} />
+          <Icon
+            size={16}
+            style={{
+              color: iconColor,
+            }}
+          />
         </div>
       </div>
       <h3 className={`text-[28px] font-black tracking-tighter ${valueColor}`}>
         {value}
       </h3>
       <p className="text-[12px] font-bold text-[#6B7280] mt-1">{sub}</p>
-    </motion.div>
+    </m.div>
   );
 }

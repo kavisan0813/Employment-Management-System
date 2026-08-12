@@ -23,24 +23,22 @@ import {
   MoreHorizontal,
   CheckCircle2,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { useAuth } from "../../../context/AuthContext";
 import { PlatformUser } from "../../../admin/types";
-
+import * as m from "motion/react-m";
 type ProfileTab =
   | "Personal Info"
   | "Employment"
   | "Documents"
   | "Emergency Contact"
   | "Preferences";
-
 interface SkillItem {
   id: string;
   name: string;
   isCustom?: boolean;
 }
-
 interface EmergencyContact {
   name: string;
   relationship: string;
@@ -48,7 +46,6 @@ interface EmergencyContact {
   email: string;
   address: string;
 }
-
 export function ManagerProfile() {
   const { user, login } = useAuth();
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Info");
@@ -77,7 +74,6 @@ export function ManagerProfile() {
   const [currentAddress, setCurrentAddress] = useState(
     "42, Nungambakkam High Road, Chennai 600034, Tamil Nadu",
   );
-
   useEffect(() => {
     if (user?.email) {
       const saved = localStorage.getItem(`viyan_avatar_${user.email}`);
@@ -86,14 +82,12 @@ export function ManagerProfile() {
       }
     }
   }, [user]);
-
   useEffect(() => {
     if (user) {
       setFullName(user.name);
       setPersonalEmail(user.email);
     }
   }, [user]);
-
   const avatarInitials =
     fullName
       .split(" ")
@@ -104,14 +98,38 @@ export function ManagerProfile() {
 
   // --- Skills State ---
   const [skills, setSkills] = useState<SkillItem[]>([
-    { id: "1", name: "System Architecture" },
-    { id: "2", name: "Team Leadership" },
-    { id: "3", name: "React.js" },
-    { id: "4", name: "Node.js" },
-    { id: "5", name: "AWS" },
-    { id: "6", name: "Agile/Scrum" },
-    { id: "7", name: "Technical Recruiting" },
-    { id: "8", name: "Code Review" },
+    {
+      id: "1",
+      name: "System Architecture",
+    },
+    {
+      id: "2",
+      name: "Team Leadership",
+    },
+    {
+      id: "3",
+      name: "React.js",
+    },
+    {
+      id: "4",
+      name: "Node.js",
+    },
+    {
+      id: "5",
+      name: "AWS",
+    },
+    {
+      id: "6",
+      name: "Agile/Scrum",
+    },
+    {
+      id: "7",
+      name: "Technical Recruiting",
+    },
+    {
+      id: "8",
+      name: "Code Review",
+    },
   ]);
   const [newSkillText, setNewSkillText] = useState("");
   const [showAddSkillInput, setShowAddSkillInput] = useState(false);
@@ -151,7 +169,6 @@ export function ManagerProfile() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
@@ -172,7 +189,6 @@ export function ManagerProfile() {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-
   const handleAddSkill = () => {
     if (newSkillText.trim()) {
       setSkills((prev) => [
@@ -192,7 +208,6 @@ export function ManagerProfile() {
       );
     }
   };
-
   const handleAddContact = () => {
     setContacts((prev) => [
       ...prev,
@@ -210,7 +225,6 @@ export function ManagerProfile() {
       "Please fill in the emergency contact details.",
     );
   };
-
   const handleContactChange = (
     index: number,
     field: keyof EmergencyContact,
@@ -218,11 +232,13 @@ export function ManagerProfile() {
   ) => {
     setContacts((prev) => {
       const updated = [...prev];
-      updated[index] = { ...updated[index], [field]: value };
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+      };
       return updated;
     });
   };
-
   const handleSaveAllChanges = () => {
     if (user) {
       const updatedUser = {
@@ -238,7 +254,6 @@ export function ManagerProfile() {
             .slice(0, 2) || "SI",
       };
       login(updatedUser);
-
       try {
         const registeredRaw = localStorage.getItem("viyan_registered_users:v1");
         if (registeredRaw) {
@@ -263,7 +278,6 @@ export function ManagerProfile() {
         console.log(err);
       }
     }
-
     setIsEditing(false);
     showToast(
       "Profile Saved",
@@ -271,13 +285,11 @@ export function ManagerProfile() {
       "Your profile details have been securely updated.",
     );
   };
-
   const handleCancelChanges = () => {
     setIsEditing(false);
     // In a real application, you would revert state to last fetched database values here
     showToast("Changes Discarded", "info", "Edits have been reverted.");
   };
-
   const handlePasswordUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -306,7 +318,6 @@ export function ManagerProfile() {
       "Your account security credentials have been updated.",
     );
   };
-
   const handleDeactivateConfirm = () => {
     setShowDeactivateModal(false);
     showToast(
@@ -315,19 +326,16 @@ export function ManagerProfile() {
       "Deactivation request has been sent to HR for verification.",
     );
   };
-
   const handleThemeChange = (selectedTheme: "light" | "dark" | "system") => {
     setTheme(selectedTheme);
     const root = window.document.documentElement;
     localStorage.setItem("theme", selectedTheme);
-
     let isDarkTheme: boolean;
     if (selectedTheme === "system") {
       isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
     } else {
       isDarkTheme = selectedTheme === "dark";
     }
-
     if (isDarkTheme) {
       root.classList.add("dark");
     } else {
@@ -339,7 +347,6 @@ export function ManagerProfile() {
       `Switched display theme to ${selectedTheme}.`,
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-24 space-y-6 animate-in fade-in duration-500">
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
@@ -568,11 +575,7 @@ export function ManagerProfile() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 rounded-xl text-[13px] font-bold tracking-widest uppercase transition-all whitespace-nowrap flex items-center gap-2 ${
-                active
-                  ? "bg-[#00B87C] text-white font-bold shadow-md shadow-emerald-500/15"
-                  : "text-[#6B7280] hover:text-[#374151] hover:bg-muted/50"
-              }`}
+              className={`px-6 py-3 rounded-xl text-[13px] font-bold tracking-widest uppercase transition-all whitespace-nowrap flex items-center gap-2 ${active ? "bg-[#00B87C] text-white font-bold shadow-md shadow-emerald-500/15" : "text-[#6B7280] hover:text-[#374151] hover:bg-muted/50"}`}
             >
               {tab}
             </button>
@@ -583,12 +586,23 @@ export function ManagerProfile() {
       {/* ─── Tab Panel Content ────────────────────────────────────── */}
       <div className="min-h-[450px]">
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeTab}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+              y: 12,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -12,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
           >
             {activeTab === "Personal Info" && (
               <div className="flex flex-col lg:flex-row gap-6">
@@ -1153,7 +1167,10 @@ export function ManagerProfile() {
                       label="SMS Alerts — Critical Only"
                       value={preferences.sms}
                       onToggle={() =>
-                        setPreferences((prev) => ({ ...prev, sms: !prev.sms }))
+                        setPreferences((prev) => ({
+                          ...prev,
+                          sms: !prev.sms,
+                        }))
                       }
                     />
                     <ToggleRow
@@ -1215,11 +1232,7 @@ export function ManagerProfile() {
                           <button
                             key={t}
                             onClick={() => handleThemeChange(t)}
-                            className={`flex-1 py-2 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all ${
-                              theme === t
-                                ? "bg-card text-foreground shadow-sm"
-                                : "text-muted-foreground hover:text-foreground"
-                            }`}
+                            className={`flex-1 py-2 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all ${theme === t ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
                           >
                             {t}
                           </button>
@@ -1297,17 +1310,26 @@ export function ManagerProfile() {
                 </div>
               </div>
             )}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
       {/* ─── Bottom Floating Save Bar (Editing Mode) ──────────────── */}
       <AnimatePresence>
         {isEditing && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
+          <m.div
+            initial={{
+              y: 100,
+              opacity: 0,
+            }}
+            animate={{
+              y: 0,
+              opacity: 1,
+            }}
+            exit={{
+              y: 100,
+              opacity: 0,
+            }}
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-between gap-6 px-6 py-4 rounded-2xl bg-card border border-border shadow-2xl ring-1 ring-black/5 min-w-[340px] md:min-w-[480px]"
           >
             <span className="text-[13px] font-bold text-foreground uppercase tracking-wider hidden md:inline-block pl-2">
@@ -1327,7 +1349,7 @@ export function ManagerProfile() {
                 Save Changes
               </button>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -1335,10 +1357,19 @@ export function ManagerProfile() {
       <AnimatePresence>
         {showPasswordModal && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <motion.div
-              initial={{ scale: 0.95, y: 10 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 10 }}
+            <m.div
+              initial={{
+                scale: 0.95,
+                y: 10,
+              }}
+              animate={{
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.95,
+                y: 10,
+              }}
               className="bg-card border border-border rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative"
             >
               <button
@@ -1414,7 +1445,7 @@ export function ManagerProfile() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1423,10 +1454,19 @@ export function ManagerProfile() {
       <AnimatePresence>
         {showDeactivateModal && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <motion.div
-              initial={{ scale: 0.95, y: 10 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 10 }}
+            <m.div
+              initial={{
+                scale: 0.95,
+                y: 10,
+              }}
+              animate={{
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.95,
+                y: 10,
+              }}
               className="bg-card border border-border rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl relative"
             >
               <button
@@ -1463,7 +1503,7 @@ export function ManagerProfile() {
                   Confirm Request
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1483,7 +1523,6 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
 interface InputFieldProps {
   label: string;
   value: string;
@@ -1492,7 +1531,6 @@ interface InputFieldProps {
   icon?: React.ReactNode;
   disabled: boolean;
 }
-
 function InputField({
   label,
   value,
@@ -1531,7 +1569,6 @@ function InputField({
     </div>
   );
 }
-
 interface DropdownFieldProps {
   label: string;
   value: string;
@@ -1539,7 +1576,6 @@ interface DropdownFieldProps {
   options: string[];
   disabled: boolean;
 }
-
 function DropdownField({
   label,
   value,
@@ -1580,7 +1616,6 @@ function DropdownField({
     </div>
   );
 }
-
 function ReadOnlyField({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
@@ -1593,7 +1628,6 @@ function ReadOnlyField({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
 function DocCard({
   name,
   category,
@@ -1624,7 +1658,6 @@ function DocCard({
     </div>
   );
 }
-
 function ToggleRow({
   label,
   value,
@@ -1643,14 +1676,10 @@ function ToggleRow({
       </div>
       <button
         onClick={onToggle}
-        className={`w-11 h-6 rounded-full relative transition-all duration-300 ${
-          value ? "bg-[#00B87C]" : "bg-muted-foreground/20"
-        }`}
+        className={`w-11 h-6 rounded-full relative transition-all duration-300 ${value ? "bg-[#00B87C]" : "bg-muted-foreground/20"}`}
       >
         <div
-          className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${
-            value ? "left-6" : "left-1"
-          }`}
+          className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${value ? "left-6" : "left-1"}`}
         />
       </button>
     </div>

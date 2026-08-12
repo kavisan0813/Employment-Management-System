@@ -6,7 +6,11 @@ interface ProgressRingProps {
   stroke?: number;
 }
 
-export function ProgressRing({ percent, size = 36, stroke = 3 }: ProgressRingProps) {
+export function ProgressRing({
+  percent,
+  size = 36,
+  stroke = 3,
+}: ProgressRingProps) {
   const r = (size - stroke) / 2;
   const circ = 2 * Math.PI * r;
   const offset = circ - (percent / 100) * circ;

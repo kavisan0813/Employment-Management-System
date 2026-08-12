@@ -1088,7 +1088,13 @@ function AppearanceSettings() {
           max="18"
           step="2"
           value={fontSize}
-          onChange={(e) => setFontSize((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
+          onChange={(e) =>
+            setFontSize(
+              e.target.value === "" || isNaN(Number(e.target.value))
+                ? undefined
+                : Number(e.target.value),
+            )
+          }
           className="w-full h-2 rounded-full appearance-none cursor-pointer accent-primary"
           style={{ backgroundColor: "var(--border)" }}
         />
@@ -1879,7 +1885,10 @@ function HelpFAQ({ navigate }: { navigate: (p: string) => void }) {
         {filtered.map((faq, i) => {
           const expanded = expandedFaq === i;
           return (
-            <div key={faq.q} className="border-b border-border/50 last:border-b-0">
+            <div
+              key={faq.q}
+              className="border-b border-border/50 last:border-b-0"
+            >
               <button
                 onClick={() => setExpandedFaq(expanded ? null : i)}
                 className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-secondary/50 transition-colors"

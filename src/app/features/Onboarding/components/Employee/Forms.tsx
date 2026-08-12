@@ -28,7 +28,9 @@ export function Forms({ onToggle }: FormsProps) {
         showToast(
           nextState ? "Form Signed" : "Form Reopened",
           "success",
-          nextState ? `${item.label} signed successfully.` : `${item.label} marked unsigned.`
+          nextState
+            ? `${item.label} signed successfully.`
+            : `${item.label} marked unsigned.`,
         );
         return { ...item, completed: nextState };
       }
@@ -40,7 +42,9 @@ export function Forms({ onToggle }: FormsProps) {
   return (
     <div className="p-6 bg-card border border-border rounded-3xl shadow-sm space-y-4">
       <div className="flex items-center justify-between pb-2 border-b border-border">
-        <h4 className="text-[11px] font-black text-foreground uppercase tracking-[0.2em]">Required Forms & Signature</h4>
+        <h4 className="text-[11px] font-black text-foreground uppercase tracking-[0.2em]">
+          Required Forms & Signature
+        </h4>
         <span className="text-[11px] font-bold text-muted-foreground">
           {items.filter((i) => i.completed).length} / {items.length} Completed
         </span>
@@ -52,7 +56,9 @@ export function Forms({ onToggle }: FormsProps) {
             onClick={() => handleToggle(item.id)}
             className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-all text-left ${item.completed ? "bg-muted/40 border-[#00B87C]/20 hover:border-[#00B87C]/40" : "bg-card border-border hover:bg-muted/30"}`}
           >
-            <span className={`text-[13px] font-bold ${item.completed ? "text-muted-foreground line-through" : "text-foreground"}`}>
+            <span
+              className={`text-[13px] font-bold ${item.completed ? "text-muted-foreground line-through" : "text-foreground"}`}
+            >
               {item.label}
             </span>
             <span className="shrink-0">

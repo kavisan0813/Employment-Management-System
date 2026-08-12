@@ -8,19 +8,45 @@ import {
   Plus,
   X,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-const Radar = lazy(() => import("recharts").then(m => ({ default: m.Radar })));
-const RadarChart = lazy(() => import("recharts").then(m => ({ default: m.RadarChart })));
-const PolarGrid = lazy(() => import("recharts").then(m => ({ default: m.PolarGrid })));
-const PolarAngleAxis = lazy(() => import("recharts").then(m => ({ default: m.PolarAngleAxis })));
-const PolarRadiusAxis = lazy(() => import("recharts").then(m => ({ default: m.PolarRadiusAxis })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const Legend = lazy(() => import("recharts").then(m => ({ default: m.Legend })));
-
+import { AnimatePresence } from "motion/react";
+const Radar = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Radar,
+  })),
+);
+const RadarChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.RadarChart,
+  })),
+);
+const PolarGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PolarGrid,
+  })),
+);
+const PolarAngleAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PolarAngleAxis,
+  })),
+);
+const PolarRadiusAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PolarRadiusAxis,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const Legend = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Legend,
+  })),
+);
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 type PerformanceTab = "My Goals" | "Self Review" | "Feedback" | "History";
-
 interface PerformanceGoal {
   id: string;
   title: string;
@@ -33,7 +59,6 @@ interface PerformanceGoal {
   manager: string;
   isComplete?: boolean;
 }
-
 const radarData = [
   {
     subject: "Finance Knowledge",
@@ -42,13 +67,42 @@ const radarData = [
     peers: 80,
     fullMark: 150,
   },
-  { subject: "Accuracy", self: 95, manager: 98, peers: 92, fullMark: 150 },
-  { subject: "Communication", self: 75, manager: 80, peers: 85, fullMark: 150 },
-  { subject: "Teamwork", self: 85, manager: 90, peers: 88, fullMark: 150 },
-  { subject: "Leadership", self: 70, manager: 75, peers: 65, fullMark: 150 },
-  { subject: "Initiative", self: 80, manager: 85, peers: 80, fullMark: 150 },
+  {
+    subject: "Accuracy",
+    self: 95,
+    manager: 98,
+    peers: 92,
+    fullMark: 150,
+  },
+  {
+    subject: "Communication",
+    self: 75,
+    manager: 80,
+    peers: 85,
+    fullMark: 150,
+  },
+  {
+    subject: "Teamwork",
+    self: 85,
+    manager: 90,
+    peers: 88,
+    fullMark: 150,
+  },
+  {
+    subject: "Leadership",
+    self: 70,
+    manager: 75,
+    peers: 65,
+    fullMark: 150,
+  },
+  {
+    subject: "Initiative",
+    self: 80,
+    manager: 85,
+    peers: 80,
+    fullMark: 150,
+  },
 ];
-
 export function FinancePerformance() {
   const [activeTab, setActiveTab] = useState<PerformanceTab>("My Goals");
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
@@ -114,7 +168,6 @@ export function FinancePerformance() {
       manager: "Rajan Kumar",
     },
   ]);
-
   const handleUpdateProgress = (goalId: string, newProgress: number) => {
     setGoals((prev) =>
       prev.map((g) => {
@@ -140,7 +193,6 @@ export function FinancePerformance() {
       }),
     );
   };
-
   const handleRequestAddGoal = (data: {
     title: string;
     category: string;
@@ -165,7 +217,6 @@ export function FinancePerformance() {
       `Your request for "${data.title}" has been submitted to your manager.`,
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -215,14 +266,11 @@ export function FinancePerformance() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-4 text-[12px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab
-              ? "text-[#00B87C]"
-              : "text-muted-foreground hover:text-foreground"
-              }`}
+            className={`pb-4 text-[12px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
           >
             {tab}
             {activeTab === tab && (
-              <motion.div
+              <m.div
                 layoutId="activeTabPerf"
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C]"
               />
@@ -235,11 +283,20 @@ export function FinancePerformance() {
       <div className="min-h-[400px]">
         <AnimatePresence mode="wait">
           {activeTab === "My Goals" && (
-            <motion.div
+            <m.div
               key="goals"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="space-y-6"
             >
               <div className="flex items-center justify-between">
@@ -270,15 +327,24 @@ export function FinancePerformance() {
                   />
                 ))}
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           {activeTab === "Self Review" && (
-            <motion.div
+            <m.div
               key="self-review"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="space-y-6"
             >
               <SectionTitle title="SELF ASSESSMENT — FY 2025-26" />
@@ -305,15 +371,24 @@ export function FinancePerformance() {
                   Submit Self Review
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           {activeTab === "Feedback" && (
-            <motion.div
+            <m.div
               key="feedback"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="space-y-6"
             >
               <SectionTitle title="360° FEEDBACK SUMMARY" />
@@ -397,15 +472,24 @@ export function FinancePerformance() {
                   />
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           {activeTab === "History" && (
-            <motion.div
+            <m.div
               key="history"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="bg-card border border-border rounded-[32px] overflow-hidden"
             >
               <table className="w-full text-left border-collapse">
@@ -448,7 +532,7 @@ export function FinancePerformance() {
                   />
                 </tbody>
               </table>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
         {/* MODALS */}
@@ -492,7 +576,6 @@ function KPICard({
     teal: "text-teal-600 bg-teal-500/10 border-teal-500/20",
     purple: "text-purple-600 bg-purple-500/10 border-purple-500/20",
   };
-
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm group hover:border-[#00B87C]/30 transition-all">
       <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
@@ -511,7 +594,6 @@ function KPICard({
     </div>
   );
 }
-
 function SectionTitle({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-3">
@@ -522,7 +604,6 @@ function SectionTitle({ title }: { title: string }) {
     </div>
   );
 }
-
 function GoalRow({
   title,
   category,
@@ -544,7 +625,6 @@ function GoalRow({
       : status === "Completed"
         ? "text-emerald-600 bg-emerald-500/10"
         : "text-rose-600 bg-rose-500/10";
-
   return (
     <div
       onClick={onClick}
@@ -575,10 +655,15 @@ function GoalRow({
             <span>{progress}%</span>
           </div>
           <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: `-${100 - (progress)}%` }}
-              className={`h-full w-full ${isComplete ? "bg-[#00B87C]" : "bg-[#00B87C]"}`} />
+            <m.div
+              initial={{
+                x: "-100%",
+              }}
+              animate={{
+                x: `-${100 - progress}%`,
+              }}
+              className={`h-full w-full ${isComplete ? "bg-[#00B87C]" : "bg-[#00B87C]"}`}
+            />
           </div>
         </div>
         <div className="flex items-center gap-3 min-w-[120px] justify-end">
@@ -597,7 +682,6 @@ function GoalRow({
     </div>
   );
 }
-
 function RatingSection({ label }: { label: string }) {
   const [rating, setRating] = useState(0);
   return (
@@ -608,10 +692,7 @@ function RatingSection({ label }: { label: string }) {
           <button
             key={num}
             onClick={() => setRating(num)}
-            className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg transition-all ${rating === num
-              ? "bg-[#00B87C] text-white shadow-lg shadow-[#00B87C]/20 scale-110"
-              : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }`}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg transition-all ${rating === num ? "bg-[#00B87C] text-white shadow-lg shadow-[#00B87C]/20 scale-110" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
           >
             {num}
           </button>
@@ -624,7 +705,6 @@ function RatingSection({ label }: { label: string }) {
     </div>
   );
 }
-
 function FeedbackCard({
   role,
   name,
@@ -662,7 +742,6 @@ function FeedbackCard({
     </div>
   );
 }
-
 function HistoryRow({
   period,
   rating,
@@ -718,7 +797,6 @@ function GoalDetailsModal({
   onUpdateProgress: (id: string, newProgress: number) => void;
 }) {
   const [prog, setProg] = useState(goal.progress);
-
   return (
     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
       <div
@@ -801,7 +879,13 @@ function GoalDetailsModal({
               max="100"
               step="5"
               value={prog}
-              onChange={(e) => setProg((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
+              onChange={(e) =>
+                setProg(
+                  e.target.value === "" || isNaN(Number(e.target.value))
+                    ? undefined
+                    : Number(e.target.value),
+                )
+              }
               className="w-full accent-[#00B87C] bg-muted h-2 rounded-lg cursor-pointer appearance-none"
             />
             <div className="flex gap-2 justify-end pt-2">
@@ -830,7 +914,6 @@ function GoalDetailsModal({
     </div>
   );
 }
-
 function RequestAddGoalModal({
   isOpen,
   onClose,
@@ -849,9 +932,7 @@ function RequestAddGoalModal({
   const [category, setCategory] = useState("Finance");
   const [kr, setKr] = useState("");
   const [deadline, setDeadline] = useState("Q2 Target");
-
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
       <div
@@ -875,7 +956,12 @@ function RequestAddGoalModal({
           onSubmit={(e) => {
             e.preventDefault();
             if (!title.trim() || !kr.trim()) return;
-            onSubmit({ title, category, kr, deadline });
+            onSubmit({
+              title,
+              category,
+              kr,
+              deadline,
+            });
             setTitle("");
             setKr("");
             onClose();

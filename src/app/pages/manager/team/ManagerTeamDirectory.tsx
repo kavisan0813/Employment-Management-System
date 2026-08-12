@@ -21,11 +21,12 @@ import {
   Send,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types                                                           */
 /* ─────────────────────────────────────────────────────────────── */
+import * as m from "motion/react-m";
 interface Colleague {
   id: string;
   name: string;
@@ -128,7 +129,6 @@ const COLLEAGUES_DATA: Colleague[] = [
     workSchedule: "Mon - Fri, 10:00 AM - 07:00 PM",
     isDirectReport: true,
   },
-
   // Other Colleagues / Leaders
   {
     id: "EMP-0101",
@@ -222,7 +222,6 @@ const StatusBadge = ({ status }: { status: Colleague["status"] }) => {
     </span>
   );
 };
-
 const AvailabilityBadge = ({
   availability,
 }: {
@@ -243,7 +242,6 @@ const AvailabilityBadge = ({
     </div>
   );
 };
-
 export function ManagerTeamDirectory() {
   const [view, setView] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
@@ -253,7 +251,6 @@ export function ManagerTeamDirectory() {
     status: "All Status",
     availability: "All Availability",
   });
-
   const [selectedColleague, setSelectedColleague] = useState<Colleague | null>(
     null,
   );
@@ -262,7 +259,6 @@ export function ManagerTeamDirectory() {
   );
   const [messageText, setMessageText] = useState("");
   const [showMessageModal, setShowMessageModal] = useState(false);
-
   const clearFilters = () => {
     setFilters({
       department: "All Departments",
@@ -272,7 +268,6 @@ export function ManagerTeamDirectory() {
     });
     setSearch("");
   };
-
   const applyFilters = useCallback(
     (list: Colleague[]) => {
       return list.filter((c) => {
@@ -283,7 +278,6 @@ export function ManagerTeamDirectory() {
           c.department.toLowerCase().includes(search.toLowerCase()) ||
           c.designation.toLowerCase().includes(search.toLowerCase()) ||
           c.email.toLowerCase().includes(search.toLowerCase());
-
         const matchesDept =
           filters.department === "All Departments" ||
           c.department === filters.department;
@@ -295,7 +289,6 @@ export function ManagerTeamDirectory() {
         const matchesAvail =
           filters.availability === "All Availability" ||
           c.availability === filters.availability;
-
         return (
           matchesSearch &&
           matchesDept &&
@@ -307,24 +300,20 @@ export function ManagerTeamDirectory() {
     },
     [search, filters],
   );
-
   const directReports = useMemo(
     () => applyFilters(COLLEAGUES_DATA.filter((c) => c.isDirectReport)),
     [applyFilters],
   );
-
   const otherEmployees = useMemo(
     () => applyFilters(COLLEAGUES_DATA.filter((c) => !c.isDirectReport)),
     [applyFilters],
   );
-
   const hasActiveFilters =
     search !== "" ||
     filters.department !== "All Departments" ||
     filters.location !== "All Locations" ||
     filters.status !== "All Status" ||
     filters.availability !== "All Availability";
-
   const handleExport = () => {
     const headers = [
       "ID",
@@ -366,7 +355,9 @@ export function ManagerTeamDirectory() {
       ].join(","),
     );
     const csv = [headers.join(","), ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], {
+      type: "text/csv",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -375,12 +366,10 @@ export function ManagerTeamDirectory() {
     URL.revokeObjectURL(url);
     showToast("Exported!", "success", "Directory list exported successfully.");
   };
-
   const handleOpenMail = (email: string) => {
     window.location.href = `mailto:${email}`;
     showToast("Email Client Opened", "success", `Drafting email to ${email}`);
   };
-
   const handleSendMessage = () => {
     if (!messageText.trim() || !targetColleague) return;
     const mailtoUrl = `mailto:${targetColleague.email}?subject=${encodeURIComponent("Message from Manager")}&body=${encodeURIComponent(messageText)}`;
@@ -393,7 +382,6 @@ export function ManagerTeamDirectory() {
     setMessageText("");
     setShowMessageModal(false);
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-700 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent relative">
       {/* ─── Page Header ─────────────────────────────────────────── */}
@@ -426,21 +414,13 @@ export function ManagerTeamDirectory() {
           <div className="flex items-center p-1 bg-card border border-border rounded-xl shadow-sm">
             <button
               onClick={() => setView("grid")}
-              className={`p-2 rounded-lg transition-all ${
-                view === "grid"
-                  ? "bg-emerald-500/10 text-[#00B87C]"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`p-2 rounded-lg transition-all ${view === "grid" ? "bg-emerald-500/10 text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
             >
               <LayoutGrid size={18} />
             </button>
             <button
               onClick={() => setView("list")}
-              className={`p-2 rounded-lg transition-all ${
-                view === "list"
-                  ? "bg-emerald-500/10 text-[#00B87C]"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`p-2 rounded-lg transition-all ${view === "list" ? "bg-emerald-500/10 text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
             >
               <List size={18} />
             </button>
@@ -661,17 +641,32 @@ export function ManagerTeamDirectory() {
       <AnimatePresence>
         {showMessageModal && targetColleague && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowMessageModal(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative bg-card w-full max-w-[480px] rounded-[32px] shadow-2xl p-8 border border-border flex flex-col"
             >
               <div className="flex items-center gap-3 pb-4 border-b border-border">
@@ -719,7 +714,7 @@ export function ManagerTeamDirectory() {
                   <Send size={14} /> Send Message
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -744,11 +739,7 @@ function ColleagueCard({
   return (
     <div
       onClick={onSelect}
-      className={`bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl hover:-translate-y-1.5 cursor-pointer group flex flex-col items-center text-center h-full relative overflow-hidden ${
-        colleague.isDirectReport
-          ? "border-[#00B87C]/30 shadow-emerald-500/[0.02]"
-          : "border-border"
-      }`}
+      className={`bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl hover:-translate-y-1.5 cursor-pointer group flex flex-col items-center text-center h-full relative overflow-hidden ${colleague.isDirectReport ? "border-[#00B87C]/30 shadow-emerald-500/[0.02]" : "border-border"}`}
     >
       {colleague.isDirectReport && (
         <div className="absolute top-0 left-0 bg-emerald-500 text-white text-[8px] font-bold uppercase tracking-wider px-3 py-1 rounded-br-xl border-r border-b border-emerald-500/30">
@@ -770,15 +761,7 @@ function ColleagueCard({
           )}
         </div>
         <div
-          className={`absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full border-2 border-card ${
-            colleague.availability === "Available"
-              ? "bg-emerald-500"
-              : colleague.availability === "Busy"
-                ? "bg-red-500"
-                : colleague.availability === "In Meeting"
-                  ? "bg-amber-500"
-                  : "bg-slate-400"
-          }`}
+          className={`absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full border-2 border-card ${colleague.availability === "Available" ? "bg-emerald-500" : colleague.availability === "Busy" ? "bg-red-500" : colleague.availability === "In Meeting" ? "bg-amber-500" : "bg-slate-400"}`}
         />
       </div>
 
@@ -889,15 +872,7 @@ function ColleagueTable({
                         )}
                       </div>
                       <div
-                        className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-card ${
-                          c.availability === "Available"
-                            ? "bg-emerald-500"
-                            : c.availability === "Busy"
-                              ? "bg-red-500"
-                              : c.availability === "In Meeting"
-                                ? "bg-amber-500"
-                                : "bg-slate-400"
-                        }`}
+                        className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-card ${c.availability === "Available" ? "bg-emerald-500" : c.availability === "Busy" ? "bg-red-500" : c.availability === "In Meeting" ? "bg-amber-500" : "bg-slate-400"}`}
                       />
                     </div>
                     <div>
@@ -987,20 +962,36 @@ function ColleagueSlidePanel({
   return (
     <div className="fixed inset-0 z-[4000] flex justify-end">
       {/* Backdrop */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-black/45 backdrop-blur-sm"
       />
 
       {/* Slide Container */}
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      <m.div
+        initial={{
+          x: "100%",
+        }}
+        animate={{
+          x: 0,
+        }}
+        exit={{
+          x: "100%",
+        }}
+        transition={{
+          type: "spring",
+          damping: 25,
+          stiffness: 200,
+        }}
         className="relative bg-card w-full max-w-[480px] h-full shadow-[0_0_50px_rgba(0,0,0,0.15)] border-l border-border flex flex-col overflow-y-auto custom-scrollbar z-50 p-8"
       >
         {/* Header Close button */}
@@ -1026,15 +1017,7 @@ function ColleagueSlidePanel({
               )}
             </div>
             <div
-              className={`absolute bottom-0 right-0 w-6 h-6 rounded-full border-4 border-card ${
-                colleague.availability === "Available"
-                  ? "bg-emerald-500"
-                  : colleague.availability === "Busy"
-                    ? "bg-red-500"
-                    : colleague.availability === "In Meeting"
-                      ? "bg-amber-500"
-                      : "bg-slate-400"
-              }`}
+              className={`absolute bottom-0 right-0 w-6 h-6 rounded-full border-4 border-card ${colleague.availability === "Available" ? "bg-emerald-500" : colleague.availability === "Busy" ? "bg-red-500" : colleague.availability === "In Meeting" ? "bg-amber-500" : "bg-slate-400"}`}
             />
           </div>
 
@@ -1220,7 +1203,7 @@ function ColleagueSlidePanel({
             <MessageSquare size={16} /> Send Message
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

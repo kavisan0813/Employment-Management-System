@@ -339,10 +339,7 @@ export default function FeatureManagementView() {
                     setNewFlag({
                       ...newFlag,
                       category: e.target.value as
-                        | "Core"
-                        | "Beta"
-                        | "Experimental"
-                        | "Deprecated",
+                        "Core" | "Beta" | "Experimental" | "Deprecated",
                     })
                   }
                   className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 outline-none focus:bg-white focus:border-indigo-500 transition-colors cursor-pointer font-semibold"
@@ -381,7 +378,10 @@ export default function FeatureManagementView() {
                     onChange={(e) =>
                       setNewFlag({
                         ...newFlag,
-                        rolloutPct: (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)),
+                        rolloutPct:
+                          e.target.value === "" || isNaN(Number(e.target.value))
+                            ? undefined
+                            : Number(e.target.value),
                       })
                     }
                     className="w-full border border-gray-200 rounded-lg p-2.5 text-sm bg-gray-50 outline-none focus:bg-white focus:border-indigo-500 transition-colors"

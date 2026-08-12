@@ -26,50 +26,71 @@ export function FeedbackManagement({ feedback }: { feedback: Feedback[] }) {
       </div>
 
       <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
-
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              <th className="px-5 py-3">Rating</th>
-              <th className="px-5 py-3">Comment</th>
-              <th className="px-5 py-3">Category</th>
-              <th className="px-5 py-3">User</th>
-              <th className="px-5 py-3">Organization</th>
-              <th className="px-5 py-3">NPS</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {feedback.map(fb => (
-              <tr key={fb.id} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-5 py-4">
-                  <div className="flex gap-0.5">
-                    {[1,2,3,4,5].map(s => (
-                      <Star key={s} className={`w-3.5 h-3.5 ${s <= fb.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}`} />
-                    ))}
-                  </div>
-                </td>
-                <td className="px-5 py-4">
-                  <div className="flex items-start gap-2 max-w-xs">
-                    <MessageCircle className="w-3.5 h-3.5 text-gray-300 mt-0.5 shrink-0" />
-                    <p className="text-xs text-gray-700 line-clamp-2">{fb.comment}</p>
-                  </div>
-                </td>
-                <td className="px-5 py-4"><span className={`px-2 py-0.5 rounded text-[10px] font-bold ${categoryColor(fb.category)}`}>{fb.category}</span></td>
-                <td className="px-5 py-4 text-gray-600 font-medium text-xs">{fb.user}</td>
-                <td className="px-5 py-4 text-gray-600 text-xs">{fb.organization}</td>
-                <td className="px-5 py-4">
-                  {fb.npsScore !== null ? (
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${fb.npsScore >= 9 ? 'bg-emerald-50 text-emerald-700' : fb.npsScore >= 7 ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'}`}>
-                      {fb.npsScore}/10
-                    </span>
-                  ) : <span className="text-gray-300 text-xs">—</span>}
-                </td>
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <th className="px-5 py-3">Rating</th>
+                <th className="px-5 py-3">Comment</th>
+                <th className="px-5 py-3">Category</th>
+                <th className="px-5 py-3">User</th>
+                <th className="px-5 py-3">Organization</th>
+                <th className="px-5 py-3">NPS</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {feedback.map((fb) => (
+                <tr
+                  key={fb.id}
+                  className="hover:bg-gray-50/50 transition-colors"
+                >
+                  <td className="px-5 py-4">
+                    <div className="flex gap-0.5">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star
+                          key={s}
+                          className={`w-3.5 h-3.5 ${s <= fb.rating ? "fill-amber-400 text-amber-400" : "text-gray-200"}`}
+                        />
+                      ))}
+                    </div>
+                  </td>
+                  <td className="px-5 py-4">
+                    <div className="flex items-start gap-2 max-w-xs">
+                      <MessageCircle className="w-3.5 h-3.5 text-gray-300 mt-0.5 shrink-0" />
+                      <p className="text-xs text-gray-700 line-clamp-2">
+                        {fb.comment}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4">
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold ${categoryColor(fb.category)}`}
+                    >
+                      {fb.category}
+                    </span>
+                  </td>
+                  <td className="px-5 py-4 text-gray-600 font-medium text-xs">
+                    {fb.user}
+                  </td>
+                  <td className="px-5 py-4 text-gray-600 text-xs">
+                    {fb.organization}
+                  </td>
+                  <td className="px-5 py-4">
+                    {fb.npsScore !== null ? (
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${fb.npsScore >= 9 ? "bg-emerald-50 text-emerald-700" : fb.npsScore >= 7 ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}
+                      >
+                        {fb.npsScore}/10
+                      </span>
+                    ) : (
+                      <span className="text-gray-300 text-xs">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

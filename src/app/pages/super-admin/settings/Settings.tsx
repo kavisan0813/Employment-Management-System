@@ -34,10 +34,7 @@ export function Settings() {
   }
 
   // HR Manager — has manage but not full
-  if (
-    hasPermissionKey(P.SETTINGS_SELF) &&
-    !hasPermissionKey(P.SETTINGS_FULL)
-  ) {
+  if (hasPermissionKey(P.SETTINGS_SELF) && !hasPermissionKey(P.SETTINGS_FULL)) {
     return (
       <SettingsProvider defaultTab="schedules">
         <SettingsLayout role="HR Manager" />

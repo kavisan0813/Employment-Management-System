@@ -5,12 +5,7 @@
 
 // --- Status and Standard Enums ---
 export type EntityStatus =
-  | "Active"
-  | "Inactive"
-  | "Pending"
-  | "Suspended"
-  | "Trial"
-  | "Expired";
+  "Active" | "Inactive" | "Pending" | "Suspended" | "Trial" | "Expired";
 
 // --- Module 2: Organizations ---
 export interface Organization {
@@ -21,12 +16,7 @@ export interface Organization {
   logoUrl?: string;
   status: EntityStatus;
   plan:
-    | "Trial"
-    | "Basic"
-    | "Professional"
-    | "Enterprise"
-    | "Starter"
-    | "Growth";
+    "Trial" | "Basic" | "Professional" | "Enterprise" | "Starter" | "Growth";
   userCount: number;
   seatLimit: number;
   mrr: number;
@@ -122,12 +112,7 @@ export interface Integration {
   name: string;
   provider: string; // e.g. "Okta", "Slack", "ADP"
   category:
-    | "SSO"
-    | "Communication"
-    | "Payroll"
-    | "Calendar"
-    | "Storage"
-    | "Analytics";
+    "SSO" | "Communication" | "Payroll" | "Calendar" | "Storage" | "Analytics";
   status: "Active" | "Inactive" | "Pending";
   connectedOrgCount: number;
   iconUrl?: string;

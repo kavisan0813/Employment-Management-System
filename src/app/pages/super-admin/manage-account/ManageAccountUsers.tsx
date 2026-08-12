@@ -36,34 +36,86 @@ interface MergedUser {
 
 /* ────── Top Navigation Tabs ────── */
 const TOP_NAV_TABS = [
-  { id: "all", label: "All", icon: Users },
-  { id: "login_enabled", label: "Login Enabled", icon: UserCheck },
-  { id: "login_disabled", label: "Login Disabled", icon: UserMinus },
-  { id: "invited", label: "Invited", icon: Mail },
-  { id: "deactivated", label: "Deactivated", icon: UserX },
-  { id: "profiles", label: "All Profiles", icon: Users },
+  {
+    id: "all",
+    label: "All",
+    icon: Users,
+  },
+  {
+    id: "login_enabled",
+    label: "Login Enabled",
+    icon: UserCheck,
+  },
+  {
+    id: "login_disabled",
+    label: "Login Disabled",
+    icon: UserMinus,
+  },
+  {
+    id: "invited",
+    label: "Invited",
+    icon: Mail,
+  },
+  {
+    id: "deactivated",
+    label: "Deactivated",
+    icon: UserX,
+  },
+  {
+    id: "profiles",
+    label: "All Profiles",
+    icon: Users,
+  },
 ];
 
 /* ────── Status Styles ────── */
 const STATUS_STYLES: Record<
   string,
-  { bg: string; color: string; dot: string }
+  {
+    bg: string;
+    color: string;
+    dot: string;
+  }
 > = {
-  Active: { bg: "rgba(16,185,129,0.1)", color: "#10B981", dot: "#10B981" },
+  Active: {
+    bg: "rgba(16,185,129,0.1)",
+    color: "#10B981",
+    dot: "#10B981",
+  },
   "Pending Invite": {
     bg: "rgba(245,158,11,0.1)",
     color: "#F59E0B",
     dot: "#F59E0B",
   },
-  Inactive: { bg: "rgba(107,114,128,0.1)", color: "#6B7280", dot: "#6B7280" },
-  Pending: { bg: "rgba(245,158,11,0.1)", color: "#F59E0B", dot: "#F59E0B" },
-  Suspended: { bg: "rgba(239,68,68,0.1)", color: "#EF4444", dot: "#EF4444" },
-  Probation: { bg: "rgba(99,102,241,0.1)", color: "#6366F1", dot: "#6366F1" },
+  Inactive: {
+    bg: "rgba(107,114,128,0.1)",
+    color: "#6B7280",
+    dot: "#6B7280",
+  },
+  Pending: {
+    bg: "rgba(245,158,11,0.1)",
+    color: "#F59E0B",
+    dot: "#F59E0B",
+  },
+  Suspended: {
+    bg: "rgba(239,68,68,0.1)",
+    color: "#EF4444",
+    dot: "#EF4444",
+  },
+  Probation: {
+    bg: "rgba(99,102,241,0.1)",
+    color: "#6366F1",
+    dot: "#6366F1",
+  },
 };
 
 /* ────── User Service Layer (Business Logic) ────── */
 const UserService = {
-  updateUser: (updatedUser: Partial<MergedUser> & { id: string }) => {
+  updateUser: (
+    updatedUser: Partial<MergedUser> & {
+      id: string;
+    },
+  ) => {
     try {
       const raw = localStorage.getItem("viyan_registered_users:v1");
       const users = raw ? JSON.parse(raw) : [];
@@ -71,7 +123,10 @@ const UserService = {
         (u: { id: string }) => u.id === updatedUser.id,
       );
       if (index !== -1) {
-        users[index] = { ...users[index], ...updatedUser };
+        users[index] = {
+          ...users[index],
+          ...updatedUser,
+        };
       } else {
         users.push(updatedUser);
       }
@@ -82,7 +137,6 @@ const UserService = {
       return false;
     }
   },
-
   deleteUser: (id: string) => {
     try {
       const raw = localStorage.getItem("viyan_registered_users:v1");
@@ -95,7 +149,6 @@ const UserService = {
       return false;
     }
   },
-
   deactivateUser: (id: string) => {
     return UserService.updateUser({
       id,
@@ -103,7 +156,6 @@ const UserService = {
       employeeStatus: "Inactive",
     });
   },
-
   resendInvite: (id: string, email: string) => {
     console.log(`Invite resent to ${email}`);
     toast.success(`Invite resent to ${email}`);
@@ -113,16 +165,13 @@ const UserService = {
       employeeStatus: "Pending Invite",
     });
   },
-
   viewUser: (id: string, navigate: (path: string) => void) => {
     navigate(`/admin/manage-account/users/${id}`);
   },
-
   editUser: (id: string, navigate: (path: string) => void) => {
     navigate(`/admin/manage-account/users/${id}/edit`);
   },
 };
-
 export function ManageAccountUsers() {
   const navigate = useNavigate();
   const { employeesList } = useEmployees();
@@ -165,12 +214,13 @@ export function ManageAccountUsers() {
       accountStatus:
         emp.status === "Pending Invite" ? "Pending Invite" : "Active",
     }));
-
     try {
       const raw = localStorage.getItem("viyan_registered_users:v1");
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<
-          MergedUser & { status: string }
+          MergedUser & {
+            status: string;
+          }
         >[];
         const contextEmails = new Set(
           fromContext.map((u) => u.email.toLowerCase()),
@@ -220,7 +270,6 @@ export function ManageAccountUsers() {
         .sort(),
     ];
   }, [allUsers]);
-
   const roles = useMemo(() => {
     const set = new Set(allUsers.map((u) => u.role));
     return ["All", ...Array.from(set).sort()];
@@ -229,7 +278,6 @@ export function ManageAccountUsers() {
   /* ────── Main Filter Logic ────── */
   const filtered = useMemo(() => {
     let list = [...allUsers];
-
     if (sidebarFilter === "login_enabled")
       list = list.filter((u) => u.accountStatus === "Active");
     else if (sidebarFilter === "login_disabled")
@@ -244,40 +292,36 @@ export function ManageAccountUsers() {
       );
     else if (sidebarFilter === "deactivated")
       list = list.filter((u) => u.accountStatus === "Inactive");
-
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter(
         (u) =>
+
+
+
           u.name.toLowerCase().includes(q) ||
           u.email.toLowerCase().includes(q) ||
           u.id.toLowerCase().includes(q),
       );
     }
-
     if (deptFilter !== "All")
       list = list.filter((u) => u.department === deptFilter);
     if (roleFilter !== "All") list = list.filter((u) => u.role === roleFilter);
     if (statusFilter !== "All")
       list = list.filter((u) => u.accountStatus === statusFilter);
-
     return list;
   }, [allUsers, sidebarFilter, search, deptFilter, roleFilter, statusFilter]);
-
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const paged = filtered.slice((page - 1) * perPage, page * perPage);
-
   const toggleRow = (id: string) => {
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id],
     );
   };
-
   const toggleAll = () => {
     if (selectedRows.length === paged.length) setSelectedRows([]);
     else setSelectedRows(paged.map((u) => u.id));
   };
-
   const getStatusPill = (status: string) => {
     const s = STATUS_STYLES[status] || STATUS_STYLES["Active"];
     return (
@@ -315,7 +359,13 @@ export function ManageAccountUsers() {
       }}
     >
       {/* ═══════ MAIN CONTENT ═══════ */}
-      <div style={{ flex: 1, padding: "24px 32px", overflowY: "auto" }}>
+      <div
+        style={{
+          flex: 1,
+          padding: "24px 32px",
+          overflowY: "auto",
+        }}
+      >
         {/* ─── Header ─── */}
         <div
           style={{
@@ -325,7 +375,13 @@ export function ManageAccountUsers() {
             marginBottom: "24px",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+            }}
+          >
             <h1
               style={{
                 fontSize: "24px",
@@ -349,7 +405,13 @@ export function ManageAccountUsers() {
               {allUsers.length} users
             </span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
             <button
               onClick={() => navigate("/admin/manage-account/import")}
               style={{
@@ -366,7 +428,12 @@ export function ManageAccountUsers() {
                 cursor: "pointer",
               }}
             >
-              <Download size={15} style={{ transform: "rotate(180deg)" }} />
+              <Download
+                size={15}
+                style={{
+                  transform: "rotate(180deg)",
+                }}
+              />
               Bulk Import
             </button>
             <button
@@ -405,11 +472,7 @@ export function ManageAccountUsers() {
                     setSidebarFilter(tab.id);
                     setPage(1);
                   }}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                    isActive
-                      ? "bg-emerald-600 text-white shadow-sm"
-                      : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                  }`}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${isActive ? "bg-emerald-600 text-white shadow-sm" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   {tab.label}
@@ -558,7 +621,11 @@ export function ManageAccountUsers() {
             }}
           >
             <span
-              style={{ fontSize: "12px", fontWeight: 700, color: "#9ca3af" }}
+              style={{
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "#9ca3af",
+              }}
             >
               Active filters:
             </span>
@@ -739,7 +806,10 @@ export function ManageAccountUsers() {
                       selectedRows.length === paged.length && paged.length > 0
                     }
                     onChange={toggleAll}
-                    style={{ accentColor: "var(--primary)", cursor: "pointer" }}
+                    style={{
+                      accentColor: "var(--primary)",
+                      cursor: "pointer",
+                    }}
                   />
                 </th>
                 <th
@@ -888,7 +958,12 @@ export function ManageAccountUsers() {
                     }}
                   >
                     {/* Checkbox */}
-                    <td style={{ padding: "12px 16px", textAlign: "center" }}>
+                    <td
+                      style={{
+                        padding: "12px 16px",
+                        textAlign: "center",
+                      }}
+                    >
                       <input
                         type="checkbox"
                         checked={selectedRows.includes(u.id)}
@@ -900,7 +975,11 @@ export function ManageAccountUsers() {
                       />
                     </td>
                     {/* Avatar + Name + Email */}
-                    <td style={{ padding: "12px 16px" }}>
+                    <td
+                      style={{
+                        padding: "12px 16px",
+                      }}
+                    >
                       <div
                         style={{
                           display: "flex",
@@ -994,11 +1073,19 @@ export function ManageAccountUsers() {
                       {u.location}
                     </td>
                     {/* Employee Status */}
-                    <td style={{ padding: "12px 16px" }}>
+                    <td
+                      style={{
+                        padding: "12px 16px",
+                      }}
+                    >
                       {getStatusPill(u.employeeStatus)}
                     </td>
                     {/* Account Status */}
-                    <td style={{ padding: "12px 16px" }}>
+                    <td
+                      style={{
+                        padding: "12px 16px",
+                      }}
+                    >
                       {getStatusPill(u.accountStatus)}
                     </td>
                     {/* Actions */}
@@ -1042,8 +1129,16 @@ export function ManageAccountUsers() {
                           }}
                         >
                           {[
-                            { icon: Eye, label: "View", color: "#374151" },
-                            { icon: Pencil, label: "Edit", color: "#374151" },
+                            {
+                              icon: Eye,
+                              label: "View",
+                              color: "#374151",
+                            },
+                            {
+                              icon: Pencil,
+                              label: "Edit",
+                              color: "#374151",
+                            },
                             {
                               icon: UserX,
                               label: "Deactivate",
@@ -1054,7 +1149,11 @@ export function ManageAccountUsers() {
                               label: "Resend Invite",
                               color: "var(--primary)",
                             },
-                            { icon: Trash2, label: "Delete", color: "#ef4444" },
+                            {
+                              icon: Trash2,
+                              label: "Delete",
+                              color: "#ef4444",
+                            },
                           ].map((action) => (
                             <button
                               key={action.label}
@@ -1107,11 +1206,20 @@ export function ManageAccountUsers() {
                 color: "#6b7280",
               }}
             >
-              <span style={{ fontWeight: 600 }}>
+              <span
+                style={{
+                  fontWeight: 600,
+                }}
+              >
                 Showing {(page - 1) * perPage + 1}–
                 {Math.min(page * perPage, filtered.length)} of {filtered.length}
               </span>
-              <div style={{ display: "flex", gap: "4px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "4px",
+                }}
+              >
                 <button
                   disabled={page === 1}
                   onClick={() => setPage((p) => p - 1)}

@@ -4,6 +4,7 @@ import React, {
   useState,
   useEffect,
   useMemo,
+  useCallback,
 } from "react";
 import { useAuth } from "./AuthContext";
 import { showToast } from "../components/workflow/ToastNotification";
@@ -86,13 +87,13 @@ export function AttendanceProvider({
   }, []);
 
   // Sync records helper
-  const saveRecords = (newRecords: AttendanceRecord[]) => {
+  const saveRecords = useCallback((newRecords: AttendanceRecord[]) => {
     setRecords(newRecords);
     localStorage.setItem(
       "viyan_attendance_records:v1",
       JSON.stringify(newRecords),
     );
-  };
+  }, []);
 
   // Resolve today's record for the logged-in user
   const todayRecord = useMemo(() => {
@@ -130,7 +131,7 @@ export function AttendanceProvider({
     }
   }, [isOnBreak, user]);
 
-  const handlePunchIn = () => {
+  const handlePunchIn = useCallback(() => {
     if (!user) return;
 
     const emp = findEmployeeByEmail(user.email);
@@ -187,9 +188,9 @@ export function AttendanceProvider({
       "success",
       `Shift started successfully at ${timeStr}.`,
     );
-  };
+  }, [user, todayRecord, records, saveRecords]);
 
-  const handlePunchOut = () => {
+  const handlePunchOut = useCallback(() => {
     if (!user) return;
 
     const emp = findEmployeeByEmail(user.email);
@@ -217,8 +218,8 @@ export function AttendanceProvider({
     }
 
     const now = new Date();
-    const punchOutISO = now.toISOString();
-    const timeStr = formatTime12Hour(punchOutISO);
+    const punchInISO = now.toISOString();
+    const timeStr = formatTime12Hour(punchInISO);
 
     // Calculate worked hours
     const diffMs = now.getTime() - new Date(todayRecord.punchIn).getTime();
@@ -229,7 +230,7 @@ export function AttendanceProvider({
 
     const updatedRecord: AttendanceRecord = {
       ...todayRecord,
-      punchOut: punchOutISO,
+      punchOut: punchInISO,
       checkOut: timeStr,
       hours: hoursStr,
       logs: [
@@ -256,9 +257,9 @@ export function AttendanceProvider({
       "success",
       `Shift completed at ${timeStr}. Duration: ${hoursStr}`,
     );
-  };
+  }, [user, todayRecord, records, saveRecords]);
 
-  const handleStartBreak = () => {
+  const handleStartBreak = useCallback(() => {
     if (!user) return;
 
     const emp = findEmployeeByEmail(user.email);
@@ -269,6 +270,10 @@ export function AttendanceProvider({
 
     if (!todayRecord || !todayRecord.punchIn || todayRecord.punchOut) {
       showToast("Error", "error", "Must be punched in to take a break.");
+      return;
+    }
+    if (isOnBreak) {
+      showToast("Error", "error", "Already on break.");
       return;
     }
 
@@ -301,9 +306,9 @@ export function AttendanceProvider({
       "success",
       `Enjoy your break! Started at ${timeStr}.`,
     );
-  };
+  }, [user, todayRecord, records, saveRecords, isOnBreak]);
 
-  const handleEndBreak = () => {
+  const handleEndBreak = useCallback(() => {
     if (!user) return;
 
     const emp = findEmployeeByEmail(user.email);
@@ -347,9 +352,9 @@ export function AttendanceProvider({
     setIsOnBreak(false);
 
     showToast("Break Ended", "success", `Welcome back! Resumed at ${timeStr}.`);
-  };
+  }, [user, todayRecord, records, saveRecords, isOnBreak]);
 
-  const handleResetPunch = () => {
+  const handleResetPunch = useCallback(() => {
     if (!user) return;
 
     const emp = findEmployeeByEmail(user.email);
@@ -368,41 +373,44 @@ export function AttendanceProvider({
     setIsOnBreak(false);
 
     showToast("Shift Reset", "info", "You can now punch in for a new shift.");
-  };
+  }, [user, todayRecord, records, saveRecords]);
 
   // Lookup for manager view compatibility
-  const getPunchStateForEmail = (email: string) => {
-    const emp = findEmployeeByEmail(email);
-    if (!emp) return null;
+  const getPunchStateForEmail = useCallback(
+    (email: string) => {
+      const emp = findEmployeeByEmail(email);
+      if (!emp) return null;
 
-    const todayStr = getTodayHRDateStr();
-    const record = records.find(
-      (r) => r.employeeId === emp.id && r.date === todayStr,
-    );
-    if (!record) return null;
+      const todayStr = getTodayHRDateStr();
+      const record = records.find(
+        (r) => r.employeeId === emp.id && r.date === todayStr,
+      );
+      if (!record) return null;
 
-    const isPunchedIn = !!record.punchIn && !record.punchOut;
+      const isPunchedIn = !!record.punchIn && !record.punchOut;
 
-    let workedStr: string | null = null;
-    if (record.punchIn) {
-      const end = record.punchOut ? new Date(record.punchOut) : new Date();
-      const diffMs = end.getTime() - new Date(record.punchIn).getTime();
-      const diffMins = Math.floor(diffMs / (1000 * 60));
-      const hrs = Math.floor(diffMins / 60);
-      const mins = diffMins % 60;
-      workedStr = `${hrs}h ${String(mins).padStart(2, "0")}m`;
-    }
+      let workedStr: string | null = null;
+      if (record.punchIn) {
+        const end = record.punchOut ? new Date(record.punchOut) : new Date();
+        const diffMs = end.getTime() - new Date(record.punchIn).getTime();
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        const hrs = Math.floor(diffMins / 60);
+        const mins = diffMins % 60;
+        workedStr = `${hrs}h ${String(mins).padStart(2, "0")}m`;
+      }
 
-    return {
-      isPunchedIn,
-      isOnBreak:
-        isOnBreak && email.toLowerCase() === user?.email?.toLowerCase(),
-      punchInTime: formatTime12Hour(record.punchIn),
-      punchOutTime: formatTime12Hour(record.punchOut),
-      workedHours: workedStr,
-      logs: record.logs || [],
-    };
-  };
+      return {
+        isPunchedIn,
+        isOnBreak:
+          isOnBreak && email.toLowerCase() === user?.email?.toLowerCase(),
+        punchInTime: formatTime12Hour(record.punchIn),
+        punchOutTime: formatTime12Hour(record.punchOut),
+        workedHours: workedStr,
+        logs: record.logs || [],
+      };
+    },
+    [records, isOnBreak, user],
+  );
 
   const value = useMemo(
     () => ({

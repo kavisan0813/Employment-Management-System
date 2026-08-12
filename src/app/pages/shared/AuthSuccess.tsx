@@ -10,10 +10,9 @@ import {
   Users,
   HelpCircle,
 } from "lucide-react";
-import { motion } from "motion/react";
 import { useAuth, UserRole } from "../../context/AuthContext";
 import { ROLE_HOME_ROUTE } from "../../context/auth.config";
-
+import * as m from "motion/react-m";
 export function AuthSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,7 +24,6 @@ export function AuthSuccess() {
     email = "your-email@viyanhr.com",
     role = "Employee",
   } = location.state || {};
-
   const handleGoToDashboard = () => {
     const initials =
       name
@@ -34,17 +32,14 @@ export function AuthSuccess() {
         .join("")
         .toUpperCase()
         .slice(0, 2) || "JD";
-
     login({
       name,
       email,
       role: role as UserRole,
       initials,
     });
-
     navigate(ROLE_HOME_ROUTE[role as UserRole] || "/");
   };
-
   const getRoleSpecificPortal = () => {
     switch (role) {
       case "Super Admin":
@@ -63,7 +58,6 @@ export function AuthSuccess() {
         return "Dashboard ready";
     }
   };
-
   return (
     <div
       className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-[#F0FDF4] dark:bg-[#021410]"
@@ -113,10 +107,19 @@ export function AuthSuccess() {
         />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+      <m.div
+        initial={{
+          opacity: 0,
+          y: 30,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          duration: 0.6,
+          ease: "easeOut",
+        }}
         className="relative z-10 w-full max-w-[500px] p-1 px-4"
       >
         <div
@@ -128,14 +131,22 @@ export function AuthSuccess() {
           }}
         >
           {/* Success Badge */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+          <m.div
+            initial={{
+              scale: 0,
+            }}
+            animate={{
+              scale: 1,
+            }}
+            transition={{
+              delay: 0.3,
+              type: "spring",
+              stiffness: 200,
+            }}
             className="w-20 h-20 rounded-full bg-[#00B87C] flex items-center justify-center text-white shadow-lg shadow-[#00B87C]/20 mb-8"
           >
             <Check size={40} strokeWidth={3} />
-          </motion.div>
+          </m.div>
 
           {/* Heading */}
           <h1 className="text-[26px] font-bold text-[#111827] mb-2">
@@ -197,17 +208,25 @@ export function AuthSuccess() {
             v2.0 Enterprise HRMS Platform
           </p>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
-
 function StatusRow({ text, delay }: { text: string; delay: number }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay, duration: 0.4 }}
+    <m.div
+      initial={{
+        opacity: 0,
+        x: -10,
+      }}
+      animate={{
+        opacity: 1,
+        x: 0,
+      }}
+      transition={{
+        delay,
+        duration: 0.4,
+      }}
       className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/10"
     >
       <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white">
@@ -216,10 +235,9 @@ function StatusRow({ text, delay }: { text: string; delay: number }) {
       <span className="text-xs font-bold text-foreground opacity-90">
         {text}
       </span>
-    </motion.div>
+    </m.div>
   );
 }
-
 function FloatingIcon({
   icon,
   top,
@@ -234,7 +252,7 @@ function FloatingIcon({
   delay: number;
 }) {
   return (
-    <motion.div
+    <m.div
       animate={{
         y: [0, -20, 0],
         rotate: [0, 5, -5, 0],
@@ -246,9 +264,13 @@ function FloatingIcon({
         delay,
       }}
       className="absolute text-emerald-600"
-      style={{ top, left, right }}
+      style={{
+        top,
+        left,
+        right,
+      }}
     >
       {icon}
-    </motion.div>
+    </m.div>
   );
 }

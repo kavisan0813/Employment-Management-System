@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { usePermissionKey } from "../../shared/permission-engine/usePermission";
 import { P } from "../../shared/permission-engine/permissions";
 import { useOnboarding } from "./hooks/useOnboarding";
@@ -33,29 +33,38 @@ import {
   ReminderModal,
   InlineTaskForm,
 } from "./modals/ConfirmationModals";
-
+import * as m from "motion/react-m";
 function AccessDenied() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8 animate-in fade-in duration-500">
       <div
         className="w-20 h-20 rounded-[28px] flex items-center justify-center mb-6 shadow-xl"
-        style={{ background: "linear-gradient(135deg, #EF4444, #DC2626)" }}
+        style={{
+          background: "linear-gradient(135deg, #EF4444, #DC2626)",
+        }}
       >
-        <span style={{ fontSize: "32px" }}>🔒</span>
+        <span
+          style={{
+            fontSize: "32px",
+          }}
+        >
+          🔒
+        </span>
       </div>
-      <h2 className="text-[22px] font-black text-foreground mb-2">Access Denied</h2>
+      <h2 className="text-[22px] font-black text-foreground mb-2">
+        Access Denied
+      </h2>
       <p className="text-[14px] text-muted-foreground max-w-sm leading-relaxed">
-        You do not have permission to view the onboarding module. Please contact support if you believe this is an error.
+        You do not have permission to view the onboarding module. Please contact
+        support if you believe this is an error.
       </p>
     </div>
   );
 }
-
 export function Onboarding() {
   const canManage = usePermissionKey(P.ONBOARDING_MANAGE);
   const canSelf = usePermissionKey(P.ONBOARDING_SELF);
   const hook = useOnboarding();
-
   if (canManage) {
     return (
       <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500">
@@ -72,7 +81,18 @@ export function Onboarding() {
         {/* MAIN CONTENT */}
         <AnimatePresence mode="wait">
           {hook.activeTab === "templates" ? (
-            <motion.div key="templates" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <m.div
+              key="templates"
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+            >
               <Templates
                 templates={hook.templates}
                 showTemplateMenu={hook.showTemplateMenu}
@@ -82,32 +102,51 @@ export function Onboarding() {
                 handleDuplicateTemplate={hook.handleDuplicateTemplate}
                 handleDeleteTemplate={hook.handleDeleteTemplate}
               />
-            </motion.div>
+            </m.div>
           ) : hook.selectedId && hook.selected ? (
-            <motion.div
+            <m.div
               key="details"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
+              initial={{
+                opacity: 0,
+                scale: 0.98,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.98,
+              }}
               className="w-full bg-card border border-border rounded-2xl shadow-sm overflow-hidden flex flex-col min-h-[calc(100vh-160px)]"
             >
-              <EmployeeSummary selected={hook.selected} onClose={() => hook.setSelectedId(null)} />
+              <EmployeeSummary
+                selected={hook.selected}
+                onClose={() => hook.setSelectedId(null)}
+              />
 
               {/* Sub-tab selection bar */}
               <div className="flex border-b border-border bg-muted/10 px-6 overflow-x-auto scrollbar-hide shrink-0">
-                {([
-                  { key: "company", label: "Company Process Checklist" },
-                  { key: "candidate", label: "Candidate Process" },
-                  { key: "documents", label: "Documents" }
-                ] as const).map((tab) => (
+                {(
+                  [
+                    {
+                      key: "company",
+                      label: "Company Process Checklist",
+                    },
+                    {
+                      key: "candidate",
+                      label: "Candidate Process",
+                    },
+                    {
+                      key: "documents",
+                      label: "Documents",
+                    },
+                  ] as const
+                ).map((tab) => (
                   <button
                     key={tab.key}
                     onClick={() => hook.setWorkspaceTab(tab.key)}
-                    className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap ${
-                      hook.workspaceTab === tab.key
-                        ? "border-[#00B87C] text-[#00B87C]"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap ${hook.workspaceTab === tab.key ? "border-[#00B87C] text-[#00B87C]" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                   >
                     {tab.label}
                   </button>
@@ -119,10 +158,17 @@ export function Onboarding() {
                 {!hook.selected.assignedTemplateId ? (
                   <div className="p-8 max-w-xl mx-auto my-10 bg-card border border-border rounded-3xl shadow-lg space-y-6">
                     <div className="text-center">
-                      <Layers className="mx-auto mb-3 text-[#00B87C]" size={32} />
-                      <h3 className="text-base font-black text-foreground">Select and Assign Template</h3>
+                      <Layers
+                        className="mx-auto mb-3 text-[#00B87C]"
+                        size={32}
+                      />
+                      <h3 className="text-base font-black text-foreground">
+                        Select and Assign Template
+                      </h3>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Select a configured onboarding template to initialize checklists, documents, and policies for {hook.selected.name}.
+                        Select a configured onboarding template to initialize
+                        checklists, documents, and policies for{" "}
+                        {hook.selected.name}.
                       </p>
                     </div>
 
@@ -132,10 +178,30 @@ export function Onboarding() {
                           Candidate Information
                         </label>
                         <div className="grid grid-cols-2 gap-3 p-4 bg-muted/20 border rounded-2xl text-[12px] font-semibold text-foreground">
-                          <div>Department: <span className="font-bold">{hook.selected.dept}</span></div>
-                          <div>Role: <span className="font-bold">{hook.selected.role}</span></div>
-                          <div>Joining Date: <span className="font-bold">{hook.selected.joiningDate}</span></div>
-                          <div>Status: <span className="font-bold capitalize">{hook.selected.status}</span></div>
+                          <div>
+                            Department:{" "}
+                            <span className="font-bold">
+                              {hook.selected.dept}
+                            </span>
+                          </div>
+                          <div>
+                            Role:{" "}
+                            <span className="font-bold">
+                              {hook.selected.role}
+                            </span>
+                          </div>
+                          <div>
+                            Joining Date:{" "}
+                            <span className="font-bold">
+                              {hook.selected.joiningDate}
+                            </span>
+                          </div>
+                          <div>
+                            Status:{" "}
+                            <span className="font-bold capitalize">
+                              {hook.selected.status}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -144,21 +210,37 @@ export function Onboarding() {
                           Assigned Template
                         </label>
                         {(() => {
-                          const matching = hook.templates.filter(t => t.status === "active" && t.dept === hook.selected.dept);
-                          const others = hook.templates.filter(t => t.status === "active" && t.dept !== hook.selected.dept);
-                          const activeTemplates = matching.length > 0 ? matching : hook.templates.filter(t => t.status === "active");
-                          
+                          const matching = hook.templates.filter(
+                            (t) =>
+                              t.status === "active" &&
+                              t.dept === hook.selected.dept,
+                          );
+                          const others = hook.templates.filter(
+                            (t) =>
+                              t.status === "active" &&
+                              t.dept !== hook.selected.dept,
+                          );
+                          const activeTemplates =
+                            matching.length > 0
+                              ? matching
+                              : hook.templates.filter(
+                                  (t) => t.status === "active",
+                                );
                           return (
                             <div className="space-y-3">
                               <select
                                 id="assign-template-select"
                                 className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:border-[#00B87C] transition-all"
                                 value={hook.selectedTemplate || ""}
-                                onChange={(e) => hook.setSelectedTemplate(e.target.value)}
+                                onChange={(e) =>
+                                  hook.setSelectedTemplate(e.target.value)
+                                }
                               >
                                 <option value="">Select template...</option>
                                 {matching.length > 0 && (
-                                  <optgroup label={`Templates for ${hook.selected.dept}`}>
+                                  <optgroup
+                                    label={`Templates for ${hook.selected.dept}`}
+                                  >
                                     {matching.map((t) => (
                                       <option key={t.id} value={t.id}>
                                         {t.name} (v{t.version || 1})
@@ -179,17 +261,25 @@ export function Onboarding() {
 
                               {activeTemplates.length === 0 && (
                                 <p className="text-[11px] text-amber-600 font-bold">
-                                  No active templates found. Please create and activate a template first.
+                                  No active templates found. Please create and
+                                  activate a template first.
                                 </p>
                               )}
 
                               <button
                                 onClick={() => {
                                   if (!hook.selectedTemplate) {
-                                    showToast("Select Template", "error", "Please choose a template from the list first.");
+                                    showToast(
+                                      "Select Template",
+                                      "error",
+                                      "Please choose a template from the list first.",
+                                    );
                                     return;
                                   }
-                                  hook.handleAssignTemplate(hook.selected.id, hook.selectedTemplate);
+                                  hook.handleAssignTemplate(
+                                    hook.selected.id,
+                                    hook.selectedTemplate,
+                                  );
                                 }}
                                 className="w-full py-3 rounded-xl bg-[#00B87C] text-white text-xs font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-md cursor-pointer"
                               >
@@ -221,8 +311,21 @@ export function Onboarding() {
                     )}
                     {hook.workspaceTab === "documents" && (
                       <Documents
-                        documents={hook.documents.filter((document) => document.employeeId === hook.selected.id || document.id.startsWith(`doc-${hook.selected.id}-`))}
-                        uploadedDocs={hook.documents.filter((document) => (document.employeeId === hook.selected.id || document.id.startsWith(`doc-${hook.selected.id}-`)) && document.status === "uploaded").length}
+                        documents={hook.documents.filter(
+                          (document) =>
+                            document.employeeId === hook.selected.id ||
+                            document.id.startsWith(`doc-${hook.selected.id}-`),
+                        )}
+                        uploadedDocs={
+                          hook.documents.filter(
+                            (document) =>
+                              (document.employeeId === hook.selected.id ||
+                                document.id.startsWith(
+                                  `doc-${hook.selected.id}-`,
+                                )) &&
+                              document.status === "uploaded",
+                          ).length
+                        }
                         handleViewDoc={hook.handleViewDoc}
                         handleRequestDoc={hook.handleRequestDoc}
                         handleUploadClick={hook.handleUploadClick}
@@ -240,13 +343,22 @@ export function Onboarding() {
                 handleDownloadReport={hook.handleDownloadReport}
                 handleMarkPhaseComplete={hook.handleMarkPhaseComplete}
               />
-            </motion.div>
+            </m.div>
           ) : (
-            <motion.div
+            <m.div
               key="dashboard"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="space-y-6"
             >
               {/* INFO BAR */}
@@ -284,7 +396,7 @@ export function Onboarding() {
                 filterPill={hook.filterPill}
                 setFilterPill={hook.setFilterPill}
               />
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
 
@@ -367,15 +479,16 @@ export function Onboarding() {
 
         {/* Click-away overlay for template menu */}
         {hook.showTemplateMenu && (
-          <div className="fixed inset-0 z-10" onClick={() => hook.setShowTemplateMenu(null)} />
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => hook.setShowTemplateMenu(null)}
+          />
         )}
       </div>
     );
   }
-
   if (canSelf) {
     return <EmployeePortal />;
   }
-
   return <AccessDenied />;
 }

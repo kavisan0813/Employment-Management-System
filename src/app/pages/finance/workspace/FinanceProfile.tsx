@@ -21,35 +21,31 @@ import {
   X,
   CheckCircle2,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { useAuth, User as AuthUser } from "../../../context/AuthContext";
-
+import * as m from "motion/react-m";
 type ProfileTab =
   | "Personal Info"
   | "Employment"
   | "Documents"
   | "Emergency Contact"
   | "Settings";
-
 export function FinanceProfile() {
   const { user, login } = useAuth();
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
   const [saved, setSaved] = useState(false);
-
   const [fullName, setFullName] = useState(() => user?.name || "Ananya Sharma");
   const [email, setEmail] = useState(
     () => user?.email || "ananya.sharma@viyanhr.com",
   );
-
   useEffect(() => {
     if (user) {
       setFullName(user.name);
       setEmail(user.email);
     }
   }, [user]);
-
   const avatarInitials =
     fullName
       .split(" ")
@@ -59,7 +55,6 @@ export function FinanceProfile() {
       .slice(0, 2) || "AS";
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
     if (user?.email) {
       const saved = localStorage.getItem(`viyan_avatar_${user.email}`);
@@ -68,7 +63,6 @@ export function FinanceProfile() {
       }
     }
   }, [user]);
-
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
@@ -89,7 +83,6 @@ export function FinanceProfile() {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-
   const [skills, setSkills] = useState([
     "Excel",
     "SAP",
@@ -102,7 +95,6 @@ export function FinanceProfile() {
   const [newSkill, setNewSkill] = useState("");
   const [isMessageOpen, setIsMessageOpen] = useState(false);
   const [messageText, setMessageText] = useState("");
-
   const handleSave = () => {
     if (user) {
       const updatedUser = {
@@ -118,7 +110,6 @@ export function FinanceProfile() {
             .slice(0, 2) || "AS",
       };
       login(updatedUser);
-
       try {
         const registeredRaw = localStorage.getItem("viyan_registered_users:v1");
         if (registeredRaw) {
@@ -143,7 +134,6 @@ export function FinanceProfile() {
         console.log(err);
       }
     }
-
     setSaved(true);
     setIsEditing(false);
     showToast(
@@ -153,7 +143,6 @@ export function FinanceProfile() {
     );
     setTimeout(() => setSaved(false), 3000);
   };
-
   const handleAddSkillSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newSkill.trim() && !skills.includes(newSkill.trim())) {
@@ -167,7 +156,6 @@ export function FinanceProfile() {
       setIsAddSkillOpen(false);
     }
   };
-
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (messageText.trim()) {
@@ -180,7 +168,6 @@ export function FinanceProfile() {
       setIsMessageOpen(false);
     }
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-24 space-y-6 animate-in fade-in duration-500">
       {/* PROFILE HERO CARD */}
@@ -259,16 +246,22 @@ export function FinanceProfile() {
             {/* Action Buttons */}
             <div className="flex items-center gap-3 mb-2">
               {saved && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                <m.div
+                  initial={{
+                    opacity: 0,
+                    x: 20,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                  }}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20"
                 >
                   <ShieldCheck size={14} className="text-emerald-600" />
                   <span className="text-[11px] font-black text-emerald-600 uppercase tracking-widest">
                     Changes Saved!
                   </span>
-                </motion.div>
+                </m.div>
               )}
               <button
                 onClick={() => setIsMessageOpen(true)}
@@ -279,10 +272,7 @@ export function FinanceProfile() {
               </button>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border transition-all shadow-sm font-black text-[12px] uppercase tracking-widest bg-transparent ${isEditing
-                    ? "bg-[#00B87C] border-[#00B87C] text-white hover:bg-[#009966]"
-                    : "border-border text-foreground hover:bg-muted/50"
-                  }`}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border transition-all shadow-sm font-black text-[12px] uppercase tracking-widest bg-transparent ${isEditing ? "bg-[#00B87C] border-[#00B87C] text-white hover:bg-[#009966]" : "border-border text-foreground hover:bg-muted/50"}`}
               >
                 <Edit3 size={16} />
                 {isEditing ? "Editing..." : "Edit Profile"}
@@ -398,14 +388,11 @@ export function FinanceProfile() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as ProfileTab)}
-              className={`px-8 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap bg-transparent border-0 ${isActive
-                  ? "text-[#00B87C]"
-                  : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`px-8 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap bg-transparent border-0 ${isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
             >
               {tab}
               {isActive && (
-                <motion.div
+                <m.div
                   layoutId="activeTabProfile"
                   className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#00B87C]"
                 />
@@ -418,12 +405,23 @@ export function FinanceProfile() {
       {/* TAB CONTENT */}
       <div className="min-h-[500px]">
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
           >
             {activeTab === "Personal Info" && (
               <PersonalInfoTab
@@ -442,17 +440,23 @@ export function FinanceProfile() {
               <EmergencyContactTab isEditing={isEditing} />
             )}
             {activeTab === "Settings" && <SettingsTab />}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
       {/* SAVE BAR */}
       <AnimatePresence>
         {isEditing && (
-          <motion.div
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            exit={{ y: 100 }}
+          <m.div
+            initial={{
+              y: 100,
+            }}
+            animate={{
+              y: 0,
+            }}
+            exit={{
+              y: 100,
+            }}
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-6 py-4 rounded-2xl bg-card border border-border shadow-2xl ring-1 ring-black/5"
           >
             <button
@@ -467,7 +471,7 @@ export function FinanceProfile() {
             >
               Save Changes
             </button>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -475,17 +479,32 @@ export function FinanceProfile() {
       <AnimatePresence>
         {isAddSkillOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setIsAddSkillOpen(false)}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative w-full max-w-[360px] bg-card border border-border rounded-2xl shadow-2xl p-6"
             >
               <h3 className="text-[16px] font-black text-foreground mb-4">
@@ -516,7 +535,7 @@ export function FinanceProfile() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -525,17 +544,32 @@ export function FinanceProfile() {
       <AnimatePresence>
         {isMessageOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setIsMessageOpen(false)}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative w-full max-w-[440px] bg-card border border-border rounded-2xl shadow-2xl p-6"
             >
               <div className="flex justify-between items-center mb-4">
@@ -573,7 +607,7 @@ export function FinanceProfile() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -737,7 +771,6 @@ function PersonalInfoTab({
     </div>
   );
 }
-
 function EmploymentTab() {
   return (
     <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">
@@ -774,7 +807,6 @@ function EmploymentTab() {
     </div>
   );
 }
-
 function DocumentsTab() {
   return (
     <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">
@@ -804,7 +836,6 @@ function DocumentsTab() {
     </div>
   );
 }
-
 function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
   return (
     <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">
@@ -858,7 +889,6 @@ function EmergencyContactTab({ isEditing }: { isEditing: boolean }) {
     </div>
   );
 }
-
 function SettingsTab() {
   return (
     <div className="space-y-6">
@@ -928,7 +958,6 @@ function SectionTitle({ title }: { title: string }) {
     </div>
   );
 }
-
 function EditField({
   label,
   value,
@@ -947,7 +976,6 @@ function EditField({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(e.target.value);
   };
-
   return (
     <div className="space-y-2">
       <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">
@@ -978,7 +1006,6 @@ function EditField({
     </div>
   );
 }
-
 function SelectField({
   label,
   value,
@@ -1027,7 +1054,6 @@ function SelectField({
     </div>
   );
 }
-
 function ReadOnlyField({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-2">
@@ -1040,7 +1066,6 @@ function ReadOnlyField({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
 function SkillChip({ label, color }: { label: string; color: string }) {
   const colorMap: Record<string, string> = {
     green: "bg-emerald-500/10 border-emerald-500/20 text-emerald-600",
@@ -1058,7 +1083,6 @@ function SkillChip({ label, color }: { label: string; color: string }) {
     </span>
   );
 }
-
 function LanguageRow({ label, level }: { label: string; level: string }) {
   return (
     <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/10">
@@ -1069,7 +1093,6 @@ function LanguageRow({ label, level }: { label: string; level: string }) {
     </div>
   );
 }
-
 function DocCard({
   name,
   size,
@@ -1081,7 +1104,9 @@ function DocCard({
 }) {
   const handleDownload = () => {
     const content = `Mock document download content for: ${name}\nviyanHR Secure Document Repository.`;
-    const blob = new Blob([content], { type: "text/plain" });
+    const blob = new Blob([content], {
+      type: "text/plain",
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -1090,7 +1115,6 @@ function DocCard({
     URL.revokeObjectURL(url);
     showToast("Downloaded", "success", `${name} downloaded successfully.`);
   };
-
   return (
     <div
       onClick={handleDownload}
@@ -1111,7 +1135,6 @@ function DocCard({
     </div>
   );
 }
-
 function ToggleField({
   label,
   desc,

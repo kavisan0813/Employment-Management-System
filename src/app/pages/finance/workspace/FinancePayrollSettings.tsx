@@ -18,35 +18,81 @@ import {
   IndianRupee,
   Info,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { useEmployees } from "../../../context/AppContext";
 import { payrollService } from "../payroll/payroll.service";
 import { calculatePayslip } from "../payroll/calculatePayslip";
 import type { SalaryStructure } from "../payroll/payroll.types";
 import { useForm } from "react-hook-form";
-
+import * as m from "motion/react-m";
 type NavItem = {
   id: string;
   label: string;
   section: "PAYROLL" | "STATUTORY" | "PROCESSING";
 };
-
 const NAV_ITEMS: NavItem[] = [
-  { id: "pay-cycle", label: "Pay Cycle", section: "PAYROLL" },
-  { id: "salary-components", label: "Salary Components", section: "PAYROLL" },
-  { id: "salary-structures", label: "Salary Structures", section: "PAYROLL" },
-  { id: "bands-grades", label: "Salary Bands & Grades", section: "PAYROLL" },
-  { id: "pf", label: "Provident Fund (PF)", section: "STATUTORY" },
-  { id: "tds", label: "Tax (TDS) Settings", section: "STATUTORY" },
-  { id: "prof-tax", label: "Professional Tax", section: "STATUTORY" },
-  { id: "esi", label: "ESI Settings", section: "STATUTORY" },
-  { id: "gratuity", label: "Gratuity", section: "STATUTORY" },
-  { id: "calendar", label: "Payroll Calendar", section: "PROCESSING" },
-  { id: "bank", label: "Bank Integration", section: "PROCESSING" },
-  { id: "payslip", label: "Payslip Template", section: "PROCESSING" },
+  {
+    id: "pay-cycle",
+    label: "Pay Cycle",
+    section: "PAYROLL",
+  },
+  {
+    id: "salary-components",
+    label: "Salary Components",
+    section: "PAYROLL",
+  },
+  {
+    id: "salary-structures",
+    label: "Salary Structures",
+    section: "PAYROLL",
+  },
+  {
+    id: "bands-grades",
+    label: "Salary Bands & Grades",
+    section: "PAYROLL",
+  },
+  {
+    id: "pf",
+    label: "Provident Fund (PF)",
+    section: "STATUTORY",
+  },
+  {
+    id: "tds",
+    label: "Tax (TDS) Settings",
+    section: "STATUTORY",
+  },
+  {
+    id: "prof-tax",
+    label: "Professional Tax",
+    section: "STATUTORY",
+  },
+  {
+    id: "esi",
+    label: "ESI Settings",
+    section: "STATUTORY",
+  },
+  {
+    id: "gratuity",
+    label: "Gratuity",
+    section: "STATUTORY",
+  },
+  {
+    id: "calendar",
+    label: "Payroll Calendar",
+    section: "PROCESSING",
+  },
+  {
+    id: "bank",
+    label: "Bank Integration",
+    section: "PROCESSING",
+  },
+  {
+    id: "payslip",
+    label: "Payslip Template",
+    section: "PROCESSING",
+  },
 ];
-
 export interface SalaryComponent {
   id: string;
   name: string;
@@ -57,7 +103,6 @@ export interface SalaryComponent {
   isSystem: boolean;
   status: string;
 }
-
 export interface SalaryGrade {
   id: string;
   grade: string;
@@ -66,14 +111,12 @@ export interface SalaryGrade {
   employees: number;
   desc: string;
 }
-
 export interface TaxSlab {
   id: string;
   fromAmt: number;
   toAmt: number;
   rate: number;
 }
-
 export interface ProfessionalTax {
   id: string;
   state: string;
@@ -81,7 +124,6 @@ export interface ProfessionalTax {
   maxSalary: number;
   amount: number;
 }
-
 export interface MonthSchedule {
   id: string;
   month: string;
@@ -89,7 +131,6 @@ export interface MonthSchedule {
   transferDate: string;
   status: string;
 }
-
 export interface BankItem {
   id: string;
   bankName: string;
@@ -99,7 +140,6 @@ export interface BankItem {
   status: string;
   lastSync?: string;
 }
-
 export interface PayslipTemplate {
   id: string;
   name: string;
@@ -107,7 +147,6 @@ export interface PayslipTemplate {
   status: string;
   previewUrl: string;
 }
-
 export interface EditingItem {
   id?: string;
   name?: string;
@@ -143,7 +182,6 @@ export interface EditingItem {
   emailSubject?: string;
   emailBody?: string;
 }
-
 export interface PayslipTemplateConfig {
   logoUrl: string;
   headerColor: string;
@@ -152,7 +190,6 @@ export interface PayslipTemplateConfig {
   emailSubject: string;
   emailBody: string;
 }
-
 export function FinancePayrollSettings() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("pay-cycle");
@@ -163,14 +200,25 @@ export function FinancePayrollSettings() {
 
   // Custom Toast System (for bulletproof toast delivery)
   const [localToasts, setLocalToasts] = useState<
-    { id: string; message: string; type: "success" | "error" | "info" }[]
+    {
+      id: string;
+      message: string;
+      type: "success" | "error" | "info";
+    }[]
   >([]);
   const showLocalToast = (
     message: string,
     type: "success" | "error" | "info" = "success",
   ) => {
     const id = Date.now().toString();
-    setLocalToasts((prev) => [...prev, { id, message, type }]);
+    setLocalToasts((prev) => [
+      ...prev,
+      {
+        id,
+        message,
+        type,
+      },
+    ]);
     toast[type](message); // Call sonner toast too
     setTimeout(() => {
       setLocalToasts((prev) => prev.filter((t) => t.id !== id));
@@ -188,7 +236,6 @@ export function FinancePayrollSettings() {
     payoutDate: "30",
     lockAfterProcessing: true,
   });
-
   const [salaryComponents, setSalaryComponents] = useState([
     {
       id: "1",
@@ -261,7 +308,6 @@ export function FinancePayrollSettings() {
       status: "Enabled",
     },
   ]);
-
   const [salaryBands, setSalaryBands] = useState([
     {
       id: "1",
@@ -296,33 +342,86 @@ export function FinancePayrollSettings() {
       desc: "Director / Vice President",
     },
   ]);
-
   const [pfConfig, setPfConfig] = useState({
     employerContrib: "12",
     employeeContrib: "12",
     wageCeiling: "15000",
     epsApplicable: true,
   });
-
   const [tdsSlabs, setTdsSlabs] = useState({
     oldRegime: [
-      { id: "o1", fromAmt: 0, toAmt: 250000, rate: 0 },
-      { id: "o2", fromAmt: 250001, toAmt: 500000, rate: 5 },
-      { id: "o3", fromAmt: 500001, toAmt: 1000000, rate: 20 },
-      { id: "o4", fromAmt: 1000001, toAmt: 99999999, rate: 30 },
+      {
+        id: "o1",
+        fromAmt: 0,
+        toAmt: 250000,
+        rate: 0,
+      },
+      {
+        id: "o2",
+        fromAmt: 250001,
+        toAmt: 500000,
+        rate: 5,
+      },
+      {
+        id: "o3",
+        fromAmt: 500001,
+        toAmt: 1000000,
+        rate: 20,
+      },
+      {
+        id: "o4",
+        fromAmt: 1000001,
+        toAmt: 99999999,
+        rate: 30,
+      },
     ],
     newRegime: [
-      { id: "n1", fromAmt: 0, toAmt: 300000, rate: 0 },
-      { id: "n2", fromAmt: 300001, toAmt: 600000, rate: 5 },
-      { id: "n3", fromAmt: 600001, toAmt: 900000, rate: 10 },
-      { id: "n4", fromAmt: 900001, toAmt: 1200000, rate: 15 },
-      { id: "n5", fromAmt: 1200001, toAmt: 1500000, rate: 20 },
-      { id: "n6", fromAmt: 1500001, toAmt: 99999999, rate: 30 },
+      {
+        id: "n1",
+        fromAmt: 0,
+        toAmt: 300000,
+        rate: 0,
+      },
+      {
+        id: "n2",
+        fromAmt: 300001,
+        toAmt: 600000,
+        rate: 5,
+      },
+      {
+        id: "n3",
+        fromAmt: 600001,
+        toAmt: 900000,
+        rate: 10,
+      },
+      {
+        id: "n4",
+        fromAmt: 900001,
+        toAmt: 1200000,
+        rate: 15,
+      },
+      {
+        id: "n5",
+        fromAmt: 1200001,
+        toAmt: 1500000,
+        rate: 20,
+      },
+      {
+        id: "n6",
+        fromAmt: 1500001,
+        toAmt: 99999999,
+        rate: 30,
+      },
     ],
   });
-
   const [professionalTax, setProfessionalTax] = useState([
-    { id: "1", state: "Maharashtra", minSalary: 0, maxSalary: 7500, amount: 0 },
+    {
+      id: "1",
+      state: "Maharashtra",
+      minSalary: 0,
+      maxSalary: 7500,
+      amount: 0,
+    },
     {
       id: "2",
       state: "Maharashtra",
@@ -337,7 +436,13 @@ export function FinancePayrollSettings() {
       maxSalary: 99999999,
       amount: 200,
     },
-    { id: "4", state: "Karnataka", minSalary: 0, maxSalary: 25000, amount: 0 },
+    {
+      id: "4",
+      state: "Karnataka",
+      minSalary: 0,
+      maxSalary: 25000,
+      amount: 0,
+    },
     {
       id: "5",
       state: "Karnataka",
@@ -346,20 +451,17 @@ export function FinancePayrollSettings() {
       amount: 200,
     },
   ]);
-
   const [esiConfig, setEsiConfig] = useState({
     employeeContrib: "0.75",
     employerContrib: "3.25",
     salaryLimit: "21000",
     enabled: true,
   });
-
   const [gratuityConfig, setGratuityConfig] = useState({
     eligibilityYears: "5",
     formula: "(15 * Basic * Service Years) / 26",
     enabled: true,
   });
-
   const [payrollCalendar, setPayrollCalendar] = useState([
     {
       id: "1",
@@ -411,7 +513,6 @@ export function FinancePayrollSettings() {
       status: "Pending",
     },
   ]);
-
   const [banks, setBanks] = useState([
     {
       id: "1",
@@ -450,7 +551,6 @@ export function FinancePayrollSettings() {
       lastSync: "N/A",
     },
   ]);
-
   const [payslipTemplate, setPayslipTemplate] = useState({
     logoUrl: "",
     headerColor: "#052E28",
@@ -468,7 +568,6 @@ export function FinancePayrollSettings() {
   const [sortAsc, setSortAsc] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortAsc(!sortAsc);
@@ -477,7 +576,6 @@ export function FinancePayrollSettings() {
       setSortAsc(true);
     }
   };
-
   const genericExport = (
     filename: string,
     headers: string[],
@@ -505,7 +603,6 @@ export function FinancePayrollSettings() {
   // Modals States
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-24 space-y-6 animate-in fade-in duration-500 bg-background min-h-screen text-foreground">
       {/* PAGE HEADER */}
@@ -568,12 +665,23 @@ export function FinancePayrollSettings() {
         {/* CONTENT AREA */}
         <main className="relative min-h-[500px]">
           <AnimatePresence mode="wait">
-            <motion.div
+            <m.div
               key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
+              transition={{
+                duration: 0.2,
+              }}
               className="space-y-6"
             >
               {/* TAB 1: PAY CYCLE */}
@@ -615,7 +723,10 @@ export function FinancePayrollSettings() {
                         <select
                           value={payCycle.basis}
                           onChange={(e) =>
-                            setPayCycle({ ...payCycle, basis: e.target.value })
+                            setPayCycle({
+                              ...payCycle,
+                              basis: e.target.value,
+                            })
                           }
                           className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm text-foreground focus:border-[#00C781] outline-none transition-all"
                         >
@@ -681,10 +792,7 @@ export function FinancePayrollSettings() {
                                 !payCycle.lockAfterProcessing,
                             })
                           }
-                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${payCycle.lockAfterProcessing
-                            ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
-                            : "bg-muted border border-border"
-                            }`}
+                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${payCycle.lockAfterProcessing ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]" : "bg-muted border border-border"}`}
                         >
                           <div
                             className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${payCycle.lockAfterProcessing ? "translate-x-6" : "translate-x-0"}`}
@@ -866,10 +974,7 @@ export function FinancePayrollSettings() {
                                 </td>
                                 <td className="px-6 py-4 text-xs">
                                   <span
-                                    className={`px-2 py-0.5 rounded-md font-bold uppercase tracking-wider border ${comp.type === "Earnings"
-                                      ? "bg-emerald-500/10 border-emerald-500/20 text-[#00C781]"
-                                      : "bg-purple-500/10 border-purple-500/20 text-purple-400"
-                                      }`}
+                                    className={`px-2 py-0.5 rounded-md font-bold uppercase tracking-wider border ${comp.type === "Earnings" ? "bg-emerald-500/10 border-emerald-500/20 text-[#00C781]" : "bg-purple-500/10 border-purple-500/20 text-purple-400"}`}
                                   >
                                     {comp.type}
                                   </span>
@@ -891,12 +996,12 @@ export function FinancePayrollSettings() {
                                         prev.map((c) =>
                                           c.id === comp.id
                                             ? {
-                                              ...c,
-                                              status:
-                                                c.status === "Enabled"
-                                                  ? "Disabled"
-                                                  : "Enabled",
-                                            }
+                                                ...c,
+                                                status:
+                                                  c.status === "Enabled"
+                                                    ? "Disabled"
+                                                    : "Enabled",
+                                              }
                                             : c,
                                         ),
                                       );
@@ -904,10 +1009,7 @@ export function FinancePayrollSettings() {
                                         `${comp.name} ${comp.status === "Enabled" ? "Disabled" : "Enabled"} successfully`,
                                       );
                                     }}
-                                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${comp.status === "Enabled"
-                                      ? "bg-emerald-500/10 text-[#00C781]"
-                                      : "bg-red-500/10 text-red-400"
-                                      }`}
+                                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${comp.status === "Enabled" ? "bg-emerald-500/10 text-[#00C781]" : "bg-red-500/10 text-red-400"}`}
                                   >
                                     {comp.status}
                                   </button>
@@ -1241,10 +1343,7 @@ export function FinancePayrollSettings() {
                               epsApplicable: !pfConfig.epsApplicable,
                             })
                           }
-                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${pfConfig.epsApplicable
-                            ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
-                            : "bg-muted border border-border"
-                            }`}
+                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${pfConfig.epsApplicable ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]" : "bg-muted border border-border"}`}
                         >
                           <div
                             className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${pfConfig.epsApplicable ? "translate-x-6" : "translate-x-0"}`}
@@ -1283,7 +1382,9 @@ export function FinancePayrollSettings() {
                       </div>
                       <button
                         onClick={() => {
-                          setEditingItem({ regime: "oldRegime" });
+                          setEditingItem({
+                            regime: "oldRegime",
+                          });
                           setActiveModal("add-slab");
                         }}
                         className="px-3 py-1.5 rounded-xl border border-amber-500/30 text-amber-400 text-[10px] font-bold uppercase tracking-wider hover:bg-amber-500/10 transition-all"
@@ -1376,7 +1477,9 @@ export function FinancePayrollSettings() {
                       </div>
                       <button
                         onClick={() => {
-                          setEditingItem({ regime: "newRegime" });
+                          setEditingItem({
+                            regime: "newRegime",
+                          });
                           setActiveModal("add-slab");
                         }}
                         className="px-3 py-1.5 rounded-xl border border-emerald-500/30 text-[#00C781] text-[10px] font-bold uppercase tracking-wider hover:bg-emerald-500/10 transition-all"
@@ -1511,7 +1614,7 @@ export function FinancePayrollSettings() {
                               </td>
                               <td className="px-6 py-4 text-xs text-muted-foreground">
                                 {rule.minSalary === 0 &&
-                                  rule.maxSalary === 99999999
+                                rule.maxSalary === 99999999
                                   ? "Any Gross Salary"
                                   : `₹${rule.minSalary.toLocaleString()} - ${rule.maxSalary > 90000000 ? "Above" : `₹${rule.maxSalary.toLocaleString()}`}`}
                               </td>
@@ -1643,10 +1746,7 @@ export function FinancePayrollSettings() {
                               enabled: !esiConfig.enabled,
                             })
                           }
-                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${esiConfig.enabled
-                            ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
-                            : "bg-muted border border-border"
-                            }`}
+                          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${esiConfig.enabled ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]" : "bg-muted border border-border"}`}
                         >
                           <div
                             className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${esiConfig.enabled ? "translate-x-6" : "translate-x-0"}`}
@@ -1734,10 +1834,7 @@ export function FinancePayrollSettings() {
                                 enabled: !gratuityConfig.enabled,
                               })
                             }
-                            className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${gratuityConfig.enabled
-                              ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]"
-                              : "bg-muted border border-border"
-                              }`}
+                            className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${gratuityConfig.enabled ? "bg-[#00B87C] shadow-[0_0_12px_rgba(0,184,124,0.3)]" : "bg-muted border border-border"}`}
                           >
                             <div
                               className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${gratuityConfig.enabled ? "translate-x-6" : "translate-x-0"}`}
@@ -1834,12 +1931,7 @@ export function FinancePayrollSettings() {
                               </td>
                               <td className="px-6 py-4 text-center">
                                 <span
-                                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${cal.status === "Processed"
-                                    ? "bg-emerald-500/10 border-emerald-500/20 text-[#00C781]"
-                                    : cal.status === "Scheduled"
-                                      ? "bg-blue-500/10 border-blue-500/20 text-blue-400"
-                                      : "bg-amber-500/10 border-amber-500/20 text-amber-400"
-                                    }`}
+                                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${cal.status === "Processed" ? "bg-emerald-500/10 border-emerald-500/20 text-[#00C781]" : cal.status === "Scheduled" ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-amber-500/10 border-amber-500/20 text-amber-400"}`}
                                 >
                                   {cal.status}
                                 </span>
@@ -1927,10 +2019,7 @@ export function FinancePayrollSettings() {
                               </td>
                               <td className="px-6 py-4 text-center">
                                 <span
-                                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${b.status === "Connected"
-                                    ? "bg-emerald-500/10 text-[#00C781]"
-                                    : "bg-white/5 text-muted-foreground"
-                                    }`}
+                                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${b.status === "Connected" ? "bg-emerald-500/10 text-[#00C781]" : "bg-white/5 text-muted-foreground"}`}
                                 >
                                   {b.status}
                                 </span>
@@ -1948,10 +2037,10 @@ export function FinancePayrollSettings() {
                                             prev.map((bank) =>
                                               bank.id === b.id
                                                 ? {
-                                                  ...bank,
-                                                  lastSync:
-                                                    new Date().toLocaleString(),
-                                                }
+                                                    ...bank,
+                                                    lastSync:
+                                                      new Date().toLocaleString(),
+                                                  }
                                                 : bank,
                                             ),
                                           );
@@ -1973,10 +2062,10 @@ export function FinancePayrollSettings() {
                                             prev.map((bank) =>
                                               bank.id === b.id
                                                 ? {
-                                                  ...bank,
-                                                  status: "Disconnected",
-                                                  lastSync: "N/A",
-                                                }
+                                                    ...bank,
+                                                    status: "Disconnected",
+                                                    lastSync: "N/A",
+                                                  }
                                                 : bank,
                                             ),
                                           );
@@ -1997,11 +2086,11 @@ export function FinancePayrollSettings() {
                                           prev.map((bank) =>
                                             bank.id === b.id
                                               ? {
-                                                ...bank,
-                                                status: "Connected",
-                                                lastSync:
-                                                  new Date().toLocaleString(),
-                                              }
+                                                  ...bank,
+                                                  status: "Connected",
+                                                  lastSync:
+                                                    new Date().toLocaleString(),
+                                                }
                                               : bank,
                                           ),
                                         );
@@ -2046,7 +2135,7 @@ export function FinancePayrollSettings() {
                   }}
                 />
               )}
-            </motion.div>
+            </m.div>
           </AnimatePresence>
         </main>
       </div>
@@ -2055,10 +2144,19 @@ export function FinancePayrollSettings() {
       <AnimatePresence>
         {activeModal && activeModal !== "configure-structure" && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#031B17]/80 backdrop-blur-sm p-4 text-foreground">
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+            <m.div
+              initial={{
+                scale: 0.95,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.95,
+                opacity: 0,
+              }}
               className="w-full max-w-md bg-card border border-border rounded-[20px] shadow-2xl overflow-hidden text-foreground"
             >
               <div className="px-6 py-4 bg-muted border-b border-border flex items-center justify-between">
@@ -2081,7 +2179,12 @@ export function FinancePayrollSettings() {
                     if (editingItem) {
                       setSalaryComponents((prev) =>
                         prev.map((c) =>
-                          c.id === editingItem.id ? { ...c, ...data } : c,
+                          c.id === editingItem.id
+                            ? {
+                                ...c,
+                                ...data,
+                              }
+                            : c,
                         ),
                       );
                       showLocalToast("Component updated successfully");
@@ -2116,7 +2219,10 @@ export function FinancePayrollSettings() {
                       setSalaryBands((prev) =>
                         prev.map((g) =>
                           g.id === editingItem.id
-                            ? { ...g, ...formattedData }
+                            ? {
+                                ...g,
+                                ...formattedData,
+                              }
                             : g,
                         ),
                       );
@@ -2144,23 +2250,29 @@ export function FinancePayrollSettings() {
                   onSave={(data) => {
                     if (editingItem?.id && editingItem?.regime) {
                       const regime = editingItem.regime as
-                        | "oldRegime"
-                        | "newRegime";
+                        "oldRegime" | "newRegime";
                       setTdsSlabs((prev) => ({
                         ...prev,
                         [regime]: prev[regime].map((s) =>
-                          s.id === editingItem.id ? { ...s, ...data } : s,
+                          s.id === editingItem.id
+                            ? {
+                                ...s,
+                                ...data,
+                              }
+                            : s,
                         ),
                       }));
                     } else if (editingItem?.regime) {
                       const regime = editingItem.regime as
-                        | "oldRegime"
-                        | "newRegime";
+                        "oldRegime" | "newRegime";
                       setTdsSlabs((prev) => ({
                         ...prev,
                         [regime]: [
                           ...prev[regime],
-                          { ...data, id: Date.now().toString() },
+                          {
+                            ...data,
+                            id: Date.now().toString(),
+                          },
                         ],
                       }));
                     }
@@ -2178,13 +2290,21 @@ export function FinancePayrollSettings() {
                     if (editingItem) {
                       setProfessionalTax((prev) =>
                         prev.map((r) =>
-                          r.id === editingItem.id ? { ...r, ...data } : r,
+                          r.id === editingItem.id
+                            ? {
+                                ...r,
+                                ...data,
+                              }
+                            : r,
                         ),
                       );
                     } else {
                       setProfessionalTax((prev) => [
                         ...prev,
-                        { ...data, id: Date.now().toString() },
+                        {
+                          ...data,
+                          id: Date.now().toString(),
+                        },
                       ]);
                     }
                     showLocalToast("PT state rule configured successfully");
@@ -2201,7 +2321,12 @@ export function FinancePayrollSettings() {
                     if (editingItem) {
                       setPayrollCalendar((prev) =>
                         prev.map((c) =>
-                          c.id === editingItem.id ? { ...c, ...data } : c,
+                          c.id === editingItem.id
+                            ? {
+                                ...c,
+                                ...data,
+                              }
+                            : c,
                         ),
                       );
                     } else {
@@ -2239,7 +2364,7 @@ export function FinancePayrollSettings() {
                   onCancel={() => setActiveModal(null)}
                 />
               )}
-            </motion.div>
+            </m.div>
           </div>
         )}
 
@@ -2260,17 +2385,23 @@ export function FinancePayrollSettings() {
       {/* Local Toast Portal UI */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none">
         {localToasts.map((t) => (
-          <motion.div
+          <m.div
             key={t.id}
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className={`px-5 py-3 rounded-xl shadow-lg border text-sm font-bold text-white min-w-[280px] pointer-events-auto flex items-center justify-between ${t.type === "error"
-              ? "bg-red-500/20 border-red-500/30 text-red-300"
-              : t.type === "info"
-                ? "bg-blue-500/20 border-blue-500/30 text-blue-300"
-                : "bg-emerald-500/20 border-emerald-500/30 text-emerald-300"
-              }`}
+            initial={{
+              opacity: 0,
+              y: 20,
+              scale: 0.9,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              scale: 0.9,
+            }}
+            className={`px-5 py-3 rounded-xl shadow-lg border text-sm font-bold text-white min-w-[280px] pointer-events-auto flex items-center justify-between ${t.type === "error" ? "bg-red-500/20 border-red-500/30 text-red-300" : t.type === "info" ? "bg-blue-500/20 border-blue-500/30 text-blue-300" : "bg-emerald-500/20 border-emerald-500/30 text-emerald-300"}`}
           >
             <span>{t.message}</span>
             <button
@@ -2283,7 +2414,7 @@ export function FinancePayrollSettings() {
             >
               <X size={14} />
             </button>
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </div>
@@ -2314,10 +2445,7 @@ function NavSection({
           <button
             key={item.id}
             onClick={() => onSelect(item.id)}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-[13px] font-bold transition-all relative ${isActive
-              ? "bg-emerald-500/10 text-[#00C781]"
-              : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
-              }`}
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-[13px] font-bold transition-all relative ${isActive ? "bg-emerald-500/10 text-[#00C781]" : "text-muted-foreground hover:bg-white/5 hover:text-foreground"}`}
           >
             {item.label}
             {isActive && (
@@ -2352,7 +2480,6 @@ function SalaryComponentForm({
   const [taxable, setTaxable] = useState(item?.taxable ?? true);
   const [formula, setFormula] = useState(item?.formula || "");
   const [order, setOrder] = useState(item?.order || 1);
-
   return (
     <div className="p-6 space-y-4">
       <div className="space-y-1">
@@ -2404,8 +2531,7 @@ function SalaryComponentForm({
         </div>
         <button
           onClick={() => setTaxable(!taxable)}
-          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${taxable ? "bg-[#00B87C]" : "bg-muted border border-border"
-            }`}
+          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${taxable ? "bg-[#00B87C]" : "bg-muted border border-border"}`}
         >
           <div
             className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${taxable ? "translate-x-6" : "translate-x-0"}`}
@@ -2420,7 +2546,13 @@ function SalaryComponentForm({
         <input
           type="number"
           value={order}
-          onChange={(e) => setOrder((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+          onChange={(e) =>
+            setOrder(
+              e.target.value === "" || isNaN(parseInt(e.target.value))
+                ? undefined
+                : parseInt(e.target.value),
+            )
+          }
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2433,7 +2565,15 @@ function SalaryComponentForm({
           Cancel
         </button>
         <button
-          onClick={() => onSave({ name, type, taxable, formula, order })}
+          onClick={() =>
+            onSave({
+              name,
+              type,
+              taxable,
+              formula,
+              order,
+            })
+          }
           className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white"
         >
           Save
@@ -2442,7 +2582,6 @@ function SalaryComponentForm({
     </div>
   );
 }
-
 function SalaryGradeForm({
   item,
   onSave,
@@ -2461,7 +2600,6 @@ function SalaryGradeForm({
   const [minSalary, setMinSalary] = useState(item?.minSalary || "");
   const [maxSalary, setMaxSalary] = useState(item?.maxSalary || "");
   const [desc, setDesc] = useState(item?.desc || "");
-
   return (
     <div className="p-6 space-y-4">
       <div className="space-y-1">
@@ -2484,7 +2622,13 @@ function SalaryGradeForm({
         <input
           type="number"
           value={minSalary}
-          onChange={(e) => setMinSalary((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+          onChange={(e) =>
+            setMinSalary(
+              e.target.value === "" || isNaN(parseInt(e.target.value))
+                ? undefined
+                : parseInt(e.target.value),
+            )
+          }
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2496,7 +2640,13 @@ function SalaryGradeForm({
         <input
           type="number"
           value={maxSalary}
-          onChange={(e) => setMaxSalary((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+          onChange={(e) =>
+            setMaxSalary(
+              e.target.value === "" || isNaN(parseInt(e.target.value))
+                ? undefined
+                : parseInt(e.target.value),
+            )
+          }
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2522,7 +2672,14 @@ function SalaryGradeForm({
           Cancel
         </button>
         <button
-          onClick={() => onSave({ grade, minSalary, maxSalary, desc })}
+          onClick={() =>
+            onSave({
+              grade,
+              minSalary,
+              maxSalary,
+              desc,
+            })
+          }
           className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white"
         >
           Save
@@ -2531,7 +2688,6 @@ function SalaryGradeForm({
     </div>
   );
 }
-
 function TaxSlabForm({
   item,
   onSave,
@@ -2544,7 +2700,6 @@ function TaxSlabForm({
   const [fromAmt, setFromAmt] = useState(item?.fromAmt || 0);
   const [toAmt, setToAmt] = useState(item?.toAmt || 0);
   const [rate, setRate] = useState(item?.rate || 0);
-
   return (
     <div className="p-6 space-y-4">
       <div className="space-y-1">
@@ -2554,7 +2709,13 @@ function TaxSlabForm({
         <input
           type="number"
           value={fromAmt}
-          onChange={(e) => setFromAmt((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+          onChange={(e) =>
+            setFromAmt(
+              e.target.value === "" || isNaN(parseInt(e.target.value))
+                ? undefined
+                : parseInt(e.target.value),
+            )
+          }
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2566,7 +2727,13 @@ function TaxSlabForm({
         <input
           type="number"
           value={toAmt}
-          onChange={(e) => setToAmt((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+          onChange={(e) =>
+            setToAmt(
+              e.target.value === "" || isNaN(parseInt(e.target.value))
+                ? undefined
+                : parseInt(e.target.value),
+            )
+          }
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2578,7 +2745,13 @@ function TaxSlabForm({
         <input
           type="number"
           value={rate}
-          onChange={(e) => setRate((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+          onChange={(e) =>
+            setRate(
+              e.target.value === "" || isNaN(parseInt(e.target.value))
+                ? undefined
+                : parseInt(e.target.value),
+            )
+          }
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2591,7 +2764,13 @@ function TaxSlabForm({
           Cancel
         </button>
         <button
-          onClick={() => onSave({ fromAmt, toAmt, rate })}
+          onClick={() =>
+            onSave({
+              fromAmt,
+              toAmt,
+              rate,
+            })
+          }
           className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white"
         >
           Save
@@ -2600,7 +2779,6 @@ function TaxSlabForm({
     </div>
   );
 }
-
 function ProfessionalTaxForm({
   item,
   onSave,
@@ -2619,7 +2797,6 @@ function ProfessionalTaxForm({
   const [minSalary, setMinSalary] = useState(item?.minSalary || 0);
   const [maxSalary, setMaxSalary] = useState(item?.maxSalary || 0);
   const [amount, setAmount] = useState(item?.amount || 0);
-
   return (
     <div className="p-6 space-y-4">
       <div className="space-y-1">
@@ -2642,7 +2819,13 @@ function ProfessionalTaxForm({
         <input
           type="number"
           value={minSalary}
-          onChange={(e) => setMinSalary((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+          onChange={(e) =>
+            setMinSalary(
+              e.target.value === "" || isNaN(parseInt(e.target.value))
+                ? undefined
+                : parseInt(e.target.value),
+            )
+          }
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2654,7 +2837,13 @@ function ProfessionalTaxForm({
         <input
           type="number"
           value={maxSalary}
-          onChange={(e) => setMaxSalary((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+          onChange={(e) =>
+            setMaxSalary(
+              e.target.value === "" || isNaN(parseInt(e.target.value))
+                ? undefined
+                : parseInt(e.target.value),
+            )
+          }
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2666,7 +2855,13 @@ function ProfessionalTaxForm({
         <input
           type="number"
           value={amount}
-          onChange={(e) => setAmount((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+          onChange={(e) =>
+            setAmount(
+              e.target.value === "" || isNaN(parseInt(e.target.value))
+                ? undefined
+                : parseInt(e.target.value),
+            )
+          }
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2679,7 +2874,14 @@ function ProfessionalTaxForm({
           Cancel
         </button>
         <button
-          onClick={() => onSave({ state, minSalary, maxSalary, amount })}
+          onClick={() =>
+            onSave({
+              state,
+              minSalary,
+              maxSalary,
+              amount,
+            })
+          }
           className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white"
         >
           Save
@@ -2688,7 +2890,6 @@ function ProfessionalTaxForm({
     </div>
   );
 }
-
 function MonthScheduleForm({
   item,
   onSave,
@@ -2707,7 +2908,6 @@ function MonthScheduleForm({
     item?.processingDate || "",
   );
   const [transferDate, setTransferDate] = useState(item?.transferDate || "");
-
   return (
     <div className="p-6 space-y-4">
       <div className="space-y-1">
@@ -2755,7 +2955,13 @@ function MonthScheduleForm({
           Cancel
         </button>
         <button
-          onClick={() => onSave({ month, processingDate, transferDate })}
+          onClick={() =>
+            onSave({
+              month,
+              processingDate,
+              transferDate,
+            })
+          }
           className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white"
         >
           Save
@@ -2764,7 +2970,6 @@ function MonthScheduleForm({
     </div>
   );
 }
-
 function ConnectBankForm({
   onSave,
   onCancel,
@@ -2781,7 +2986,6 @@ function ConnectBankForm({
   const [accountNo, setAccountNo] = useState("");
   const [ifsc, setIfsc] = useState("");
   const [branch, setBranch] = useState("");
-
   return (
     <div className="p-6 space-y-4">
       <div className="space-y-1">
@@ -2844,7 +3048,14 @@ function ConnectBankForm({
           Cancel
         </button>
         <button
-          onClick={() => onSave({ bank, accountNo, ifsc, branch })}
+          onClick={() =>
+            onSave({
+              bank,
+              accountNo,
+              ifsc,
+              branch,
+            })
+          }
           className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white"
         >
           Connect
@@ -2864,7 +3075,6 @@ function GratuityCalculator({
   const [basic, setBasic] = useState("35000");
   const [tenure, setTenure] = useState("6");
   const [result, setResult] = useState<number | null>(null);
-
   const calculate = () => {
     const years = parseFloat(tenure);
     const sal = parseFloat(basic);
@@ -2875,7 +3085,6 @@ function GratuityCalculator({
     const val = (15 * sal * years) / 26;
     setResult(Math.round(val));
   };
-
   return (
     <section className="bg-card border border-border rounded-[20px] overflow-hidden shadow-lg p-6 space-y-4">
       <div className="flex items-center gap-2">
@@ -2953,7 +3162,6 @@ function PayslipConfigurator({
   onToast: (msg: string) => void;
 }) {
   const [subTab, setSubTab] = useState("design");
-
   return (
     <div className="space-y-4">
       {/* Sub Header tabs */}
@@ -3028,7 +3236,10 @@ function PayslipConfigurator({
                   type="color"
                   value={template.headerColor}
                   onChange={(e) =>
-                    onChange({ ...template, headerColor: e.target.value })
+                    onChange({
+                      ...template,
+                      headerColor: e.target.value,
+                    })
                   }
                   className="w-full bg-input-background border border-border rounded-xl px-4 py-1.5 h-12 outline-none cursor-pointer"
                 />
@@ -3042,7 +3253,10 @@ function PayslipConfigurator({
                   type="text"
                   value={template.footerText}
                   onChange={(e) =>
-                    onChange({ ...template, footerText: e.target.value })
+                    onChange({
+                      ...template,
+                      footerText: e.target.value,
+                    })
                   }
                   className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm text-foreground focus:border-[#00C781] outline-none"
                 />
@@ -3082,7 +3296,9 @@ function PayslipConfigurator({
             {/* Header banner */}
             <div
               className="p-6 rounded-lg flex justify-between items-start text-white"
-              style={{ backgroundColor: template.headerColor }}
+              style={{
+                backgroundColor: template.headerColor,
+              }}
             >
               <div>
                 <h4 className="text-xl font-bold">viyanHR Solutions Pvt Ltd</h4>
@@ -3181,7 +3397,10 @@ function PayslipConfigurator({
                 type="text"
                 value={template.emailSubject}
                 onChange={(e) =>
-                  onChange({ ...template, emailSubject: e.target.value })
+                  onChange({
+                    ...template,
+                    emailSubject: e.target.value,
+                  })
                 }
                 className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
               />
@@ -3195,7 +3414,10 @@ function PayslipConfigurator({
                 value={template.emailBody}
                 rows={5}
                 onChange={(e) =>
-                  onChange({ ...template, emailBody: e.target.value })
+                  onChange({
+                    ...template,
+                    emailBody: e.target.value,
+                  })
                 }
                 className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
               />
@@ -3222,7 +3444,6 @@ function PayslipConfigurator({
 interface SalaryStructuresSectionProps {
   onConfigure: (employee: Employee) => void;
 }
-
 export function SalaryStructuresSection({
   onConfigure,
 }: SalaryStructuresSectionProps) {
@@ -3231,15 +3452,12 @@ export function SalaryStructuresSection({
     payrollService.getSalaryStructures(),
   );
   const [searchQuery, setSearchQuery] = useState("");
-
   useEffect(() => {
     setStructures(payrollService.getSalaryStructures());
   }, []);
-
   const activeEmployees = useMemo(() => {
     return employeesList.filter((emp: Employee) => emp.status === "Active");
   }, [employeesList]);
-
   const filteredEmployees = useMemo(() => {
     return activeEmployees.filter((emp: Employee) => {
       const matchQuery =
@@ -3249,7 +3467,6 @@ export function SalaryStructuresSection({
       return matchQuery;
     });
   }, [activeEmployees, searchQuery]);
-
   return (
     <section className="bg-card border border-border rounded-[20px] overflow-hidden shadow-lg space-y-4">
       <div className="px-6 py-4 bg-emerald-500/5 border-b border-border flex items-center justify-between">
@@ -3317,7 +3534,6 @@ export function SalaryStructuresSection({
                 const monthlyGross = struct
                   ? struct.basic + struct.hra + struct.allowances
                   : 0;
-
                 return (
                   <tr
                     key={emp.id}
@@ -3378,10 +3594,7 @@ export function SalaryStructuresSection({
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => onConfigure(emp)}
-                        className={`px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 ml-auto ${isConfigured
-                          ? "border border-border text-muted-foreground hover:text-foreground hover:bg-white/5"
-                          : "bg-[#00B87C] text-white hover:opacity-90 shadow-md shadow-[#00B87C]/10"
-                          }`}
+                        className={`px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 ml-auto ${isConfigured ? "border border-border text-muted-foreground hover:text-foreground hover:bg-white/5" : "bg-[#00B87C] text-white hover:opacity-90 shadow-md shadow-[#00B87C]/10"}`}
                       >
                         <Edit2 size={12} />
                         {isConfigured ? "Edit" : "Configure"}
@@ -3419,13 +3632,11 @@ interface SalaryStructureFormValues {
   pfApplicable: boolean;
   ptState: string;
 }
-
 interface SalaryStructureModalProps {
   employee: Employee;
   onClose: () => void;
   onSaveSuccess: () => void;
 }
-
 export function SalaryStructureModal({
   employee,
   onClose,
@@ -3475,7 +3686,12 @@ export function SalaryStructureModal({
 
   // Custom change handlers for controlled cascades
   const handleCtcChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(0, (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)) || 0);
+    const val = Math.max(
+      0,
+      (e.target.value === "" || isNaN(Number(e.target.value))
+        ? undefined
+        : Number(e.target.value)) || 0,
+    );
     setValue("ctc", val);
     const derivedGross = Math.round(val / 12);
     setValue("gross", derivedGross);
@@ -3484,23 +3700,30 @@ export function SalaryStructureModal({
     const derivedHra = Math.round(derivedBasic * 0.5);
     setValue("hra", derivedHra);
   };
-
   const handleGrossChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(0, (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)) || 0);
+    const val = Math.max(
+      0,
+      (e.target.value === "" || isNaN(Number(e.target.value))
+        ? undefined
+        : Number(e.target.value)) || 0,
+    );
     setValue("gross", val);
     const derivedBasic = Math.round(val * 0.4);
     setValue("basic", derivedBasic);
     const derivedHra = Math.round(derivedBasic * 0.5);
     setValue("hra", derivedHra);
   };
-
   const handleBasicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(0, (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)) || 0);
+    const val = Math.max(
+      0,
+      (e.target.value === "" || isNaN(Number(e.target.value))
+        ? undefined
+        : Number(e.target.value)) || 0,
+    );
     setValue("basic", val);
     const derivedHra = Math.round(val * 0.5);
     setValue("hra", derivedHra);
   };
-
   const allowances = Math.max(0, watchedGross - watchedBasic - watchedHra);
   const esiApplicable = watchedGross <= 21000;
 
@@ -3521,11 +3744,11 @@ export function SalaryStructureModal({
       ptState: watchedPt || "Maharashtra",
       bankAccount: "****0000",
     };
-
     return calculatePayslip(
       mockStructure,
       PREVIEW_WORKING_DAYS,
-      0, // 0 LOP
+      0,
+      // 0 LOP
       "July 2026",
     );
   }, [
@@ -3539,13 +3762,11 @@ export function SalaryStructureModal({
     esiApplicable,
     watchedPt,
   ]);
-
   const onSubmit = (data: SalaryStructureFormValues) => {
     const ctcVal = Number(data.ctc);
     const grossVal = Number(data.gross);
     const basicVal = Number(data.basic);
     const hraVal = Number(data.hra);
-
     if (ctcVal <= 0) {
       toast.error("Annual CTC must be greater than 0.");
       return;
@@ -3558,7 +3779,6 @@ export function SalaryStructureModal({
       toast.error("Basic Pay + HRA + Allowances must equal monthly Gross Pay.");
       return;
     }
-
     const structureToSave: SalaryStructure = {
       employeeId: employee.id,
       employeeName: employee.name,
@@ -3574,7 +3794,6 @@ export function SalaryStructureModal({
       ptState: data.ptState,
       bankAccount: "****1234",
     };
-
     const res = payrollService.saveSalaryStructure(structureToSave);
     if (res.success) {
       toast.success(
@@ -3586,13 +3805,21 @@ export function SalaryStructureModal({
       toast.error("error" in res ? res.error : "An error occurred");
     }
   };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#031B17]/80 backdrop-blur-sm p-4 overflow-y-auto">
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
+      <m.div
+        initial={{
+          scale: 0.95,
+          opacity: 0,
+        }}
+        animate={{
+          scale: 1,
+          opacity: 1,
+        }}
+        exit={{
+          scale: 0.95,
+          opacity: 0,
+        }}
         className="w-full max-w-4xl bg-card border border-border rounded-[32px] shadow-2xl overflow-hidden text-foreground flex flex-col md:flex-row h-auto max-h-[90vh]"
       >
         {/* LEFT COLUMN: FORM */}
@@ -3634,7 +3861,10 @@ export function SalaryStructureModal({
                   placeholder="e.g. 1200000"
                   {...register("ctc", {
                     required: "Annual CTC is required",
-                    min: { value: 1, message: "CTC must be greater than 0" },
+                    min: {
+                      value: 1,
+                      message: "CTC must be greater than 0",
+                    },
                     onChange: handleCtcChange,
                   })}
                   className="w-full bg-input-background border border-border rounded-xl pl-10 pr-4 py-3 text-sm font-bold text-foreground focus:border-[#00C781] outline-none transition-all"
@@ -3657,7 +3887,10 @@ export function SalaryStructureModal({
                 placeholder="e.g. 100000"
                 {...register("gross", {
                   required: "Gross pay is required",
-                  min: { value: 0, message: "Gross pay cannot be negative" },
+                  min: {
+                    value: 0,
+                    message: "Gross pay cannot be negative",
+                  },
                   onChange: handleGrossChange,
                 })}
                 className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm font-bold text-foreground focus:border-[#00C781] outline-none transition-all"
@@ -3674,7 +3907,10 @@ export function SalaryStructureModal({
                   type="number"
                   {...register("basic", {
                     required: "Basic is required",
-                    min: { value: 0, message: "Basic cannot be negative" },
+                    min: {
+                      value: 0,
+                      message: "Basic cannot be negative",
+                    },
                     onChange: handleBasicChange,
                   })}
                   className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm font-bold text-foreground focus:border-[#00C781] outline-none transition-all"
@@ -3689,7 +3925,10 @@ export function SalaryStructureModal({
                   type="number"
                   {...register("hra", {
                     required: "HRA is required",
-                    min: { value: 0, message: "HRA cannot be negative" },
+                    min: {
+                      value: 0,
+                      message: "HRA cannot be negative",
+                    },
                   })}
                   className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm font-bold text-foreground focus:border-[#00C781] outline-none transition-all"
                 />
@@ -3757,8 +3996,7 @@ export function SalaryStructureModal({
                     ESI Contribution:
                   </span>
                   <span
-                    className={`text-xs font-black uppercase ${esiApplicable ? "text-[#00C781]" : "text-muted-foreground"
-                      }`}
+                    className={`text-xs font-black uppercase ${esiApplicable ? "text-[#00C781]" : "text-muted-foreground"}`}
                   >
                     {esiApplicable ? "Applicable" : "Not Applicable"}
                   </span>
@@ -3917,7 +4155,7 @@ export function SalaryStructureModal({
             </div>
           )}
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

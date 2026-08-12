@@ -152,106 +152,110 @@ export function useDashboard() {
     setIsRefreshing(true);
     lastGlobalRefresh = now;
 
-    // Simulate heavy aggregation query
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      // Simulate heavy aggregation query
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    const orgs = db.organizations.get();
+      const orgs = db.organizations.get();
 
-    // Calculate metrics exactly as requested
-    const total_companies = orgs.length;
-    let active_subscriptions = 0;
-    let mrr_total = 0;
-    let new_signups_this_month = 0;
-    let new_signups_today = 0;
-    let active_companies_count = 0;
-    let at_risk_companies_count = 0;
-    let inactive_companies_count = 0;
-    let trial_companies = 0;
-    let expired_companies = 0;
-    let suspended_companies = 0;
-    let total_employees_platform_wide = 0;
+      // Calculate metrics exactly as requested
+      const total_companies = orgs.length;
+      let active_subscriptions = 0;
+      let mrr_total = 0;
+      let new_signups_this_month = 0;
+      let new_signups_today = 0;
+      let active_companies_count = 0;
+      let at_risk_companies_count = 0;
+      let inactive_companies_count = 0;
+      let trial_companies = 0;
+      let expired_companies = 0;
+      let suspended_companies = 0;
+      let total_employees_platform_wide = 0;
 
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
 
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
 
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    orgs.forEach((o) => {
-      total_employees_platform_wide += o.userCount || 0;
+      orgs.forEach((o) => {
+        total_employees_platform_wide += o.userCount || 0;
 
-      if (o.status === "Trial") trial_companies++;
-      else if (o.status === "Expired") expired_companies++;
-      else if (o.status === "Suspended") suspended_companies++;
+        if (o.status === "Trial") trial_companies++;
+        else if (o.status === "Expired") expired_companies++;
+        else if (o.status === "Suspended") suspended_companies++;
 
-      if (o.status === "Active") {
-        active_subscriptions++;
+        if (o.status === "Active") {
+          active_subscriptions++;
 
-        // Use 'monthly' assumption for MRR since 'billing_cycle' is not in standard mock data,
-        // fallback to mapping logic: MRR is direct value.
-        mrr_total += o.mrr || 0;
+          // Use 'monthly' assumption for MRR since 'billing_cycle' is not in standard mock data,
+          // fallback to mapping logic: MRR is direct value.
+          mrr_total += o.mrr || 0;
 
-        const lastLogin = o.lastActiveAt ? new Date(o.lastActiveAt) : null;
-        if (lastLogin && lastLogin >= thirtyDaysAgo) {
-          active_companies_count++;
-        } else {
-          at_risk_companies_count++;
+          const lastLogin = o.lastActiveAt ? new Date(o.lastActiveAt) : null;
+          if (lastLogin && lastLogin >= thirtyDaysAgo) {
+            active_companies_count++;
+          } else {
+            at_risk_companies_count++;
+          }
+        } else if (
+          new Set(["Expired", "Suspended", "Inactive"]).has(o.status)
+        ) {
+          inactive_companies_count++;
         }
-      } else if (new Set(["Expired", "Suspended", "Inactive"]).has(o.status)) {
-        inactive_companies_count++;
-      }
 
-      if (o.joinedAt) {
-        const joined = new Date(o.joinedAt);
-        if (joined >= startOfMonth) new_signups_this_month++;
-        if (joined >= startOfToday) new_signups_today++;
-      }
-    });
-
-    const newStats: DashboardStatsCache = {
-      stat_id: "global-stats-1",
-      total_companies,
-      active_subscriptions,
-      trial_companies,
-      expired_companies,
-      suspended_companies,
-      mrr_total,
-      arr_total: mrr_total * 12,
-      new_signups_this_month,
-      new_signups_today,
-      active_companies_count,
-      at_risk_companies_count,
-      inactive_companies_count,
-      total_employees_platform_wide,
-      calculated_at: new Date().toISOString(),
-    };
-
-    db.dashboardStats.save(newStats);
-
-    // Write Daily Snapshot (mock logic: only append if today not present)
-    const snapshots = db.dailySnapshots.get();
-    const todayStr = startOfToday.toISOString();
-    if (!snapshots.find((s) => s.snapshot_date === todayStr)) {
-      snapshots.push({
-        snapshot_date: todayStr,
-        total_companies,
-        mrr_total,
-        new_signups: new_signups_today,
-        active_companies_count,
-        total_employees: total_employees_platform_wide,
+        if (o.joinedAt) {
+          const joined = new Date(o.joinedAt);
+          if (joined >= startOfMonth) new_signups_this_month++;
+          if (joined >= startOfToday) new_signups_today++;
+        }
       });
-      // Keep only last 6 for UI if needed, or let it grow.
-      db.dailySnapshots.save(snapshots);
+
+      const newStats: DashboardStatsCache = {
+        stat_id: "global-stats-1",
+        total_companies,
+        active_subscriptions,
+        trial_companies,
+        expired_companies,
+        suspended_companies,
+        mrr_total,
+        arr_total: mrr_total * 12,
+        new_signups_this_month,
+        new_signups_today,
+        active_companies_count,
+        at_risk_companies_count,
+        inactive_companies_count,
+        total_employees_platform_wide,
+        calculated_at: new Date().toISOString(),
+      };
+
+      db.dashboardStats.save(newStats);
+
+      // Write Daily Snapshot (mock logic: only append if today not present)
+      const snapshots = db.dailySnapshots.get();
+      const todayStr = startOfToday.toISOString();
+      if (!snapshots.find((s) => s.snapshot_date === todayStr)) {
+        snapshots.push({
+          snapshot_date: todayStr,
+          total_companies,
+          mrr_total,
+          new_signups: new_signups_today,
+          active_companies_count,
+          total_employees: total_employees_platform_wide,
+        });
+        // Keep only last 6 for UI if needed, or let it grow.
+        db.dailySnapshots.save(snapshots);
+      }
+
+      // Force re-fetches
+      await mutateSummary();
+    } finally {
+      setIsRefreshing(false);
     }
-
-    // Force re-fetches
-    await mutateSummary();
-
-    setIsRefreshing(false);
   }, [mutateSummary]);
 
   // 8. exportDashboardReport

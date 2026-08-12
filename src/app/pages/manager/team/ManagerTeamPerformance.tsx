@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useReducer, useCallback } from "react";
 import {
   TrendingUp,
   Download,
@@ -252,25 +252,209 @@ const GOALS = [
 ];
 
 export function ManagerTeamPerformance() {
-  const [teamPerformance, setTeamPerformance] = useState(MOCK_TEAM_PERFORMANCE);
-  const [completedReviews, setCompletedReviews] = useState(
-    MOCK_COMPLETED_REVIEWS,
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    teamPerformance: MOCK_TEAM_PERFORMANCE,
+    completedReviews: MOCK_COMPLETED_REVIEWS,
+    reviewModalOpen: false,
+    reviewingEmp: null as (typeof MOCK_TEAM_PERFORMANCE)[0] | null,
+    viewModalOpen: false,
+    viewingEmp: null as (typeof MOCK_TEAM_PERFORMANCE)[0] | null,
+    deptFilter: "All Employees",
+    statusFilter: "Review Status",
+    ratingFilter: "Rating",
+    compRatings: {} as Record<string, number>,
+    compComments: {} as Record<string, string>,
+    expandedComments: {} as Record<string, boolean>,
+    goalStatus: {} as Record<string, string>,
+    goalComments: {} as Record<string, string>,
+    overrideRating: false,
+    finalRating: "Exceeds",
+    promoRec: false,
+    strengths: "",
+    developmentAreas: "",
+    promoJustification: "",
+  };
+  type State = typeof __initialState;
+  type Action = Partial<State> | ((prev: State) => Partial<State>);
+  const [__state, __updateState] = useReducer<React.Reducer<State, Action>>(
+    (prev, next) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState
   );
-
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [reviewingEmp, setReviewingEmp] = useState<
-    (typeof MOCK_TEAM_PERFORMANCE)[0] | null
-  >(null);
-
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [viewingEmp, setViewingEmp] = useState<
-    (typeof MOCK_TEAM_PERFORMANCE)[0] | null
-  >(null);
-
-  const [deptFilter, setDeptFilter] = useState("All Employees");
-  const [statusFilter, setStatusFilter] = useState("Review Status");
-  const [ratingFilter, setRatingFilter] = useState("Rating");
-
+  const {
+    teamPerformance,
+    completedReviews,
+    reviewModalOpen,
+    reviewingEmp,
+    viewModalOpen,
+    viewingEmp,
+    deptFilter,
+    statusFilter,
+    ratingFilter,
+    compRatings,
+    compComments,
+    expandedComments,
+    goalStatus,
+    goalComments,
+    overrideRating,
+    finalRating,
+    promoRec,
+    strengths,
+    developmentAreas,
+    promoJustification,
+  } = __state;
+  const setTeamPerformance = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        teamPerformance:
+          typeof val === "function" ? val(prev.teamPerformance) : val,
+      })),
+    [],
+  );
+  const setCompletedReviews = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        completedReviews:
+          typeof val === "function" ? val(prev.completedReviews) : val,
+      })),
+    [],
+  );
+  const setReviewModalOpen = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        reviewModalOpen:
+          typeof val === "function" ? val(prev.reviewModalOpen) : val,
+      })),
+    [],
+  );
+  const setReviewingEmp = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        reviewingEmp: typeof val === "function" ? val(prev.reviewingEmp) : val,
+      })),
+    [],
+  );
+  const setViewModalOpen = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        viewModalOpen:
+          typeof val === "function" ? val(prev.viewModalOpen) : val,
+      })),
+    [],
+  );
+  const setViewingEmp = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        viewingEmp: typeof val === "function" ? val(prev.viewingEmp) : val,
+      })),
+    [],
+  );
+  const setDeptFilter = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        deptFilter: typeof val === "function" ? val(prev.deptFilter) : val,
+      })),
+    [],
+  );
+  const setStatusFilter = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        statusFilter: typeof val === "function" ? val(prev.statusFilter) : val,
+      })),
+    [],
+  );
+  const setRatingFilter = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        ratingFilter: typeof val === "function" ? val(prev.ratingFilter) : val,
+      })),
+    [],
+  );
+  const setCompRatings = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        compRatings: typeof val === "function" ? val(prev.compRatings) : val,
+      })),
+    [],
+  );
+  const setCompComments = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        compComments: typeof val === "function" ? val(prev.compComments) : val,
+      })),
+    [],
+  );
+  const setExpandedComments = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        expandedComments:
+          typeof val === "function" ? val(prev.expandedComments) : val,
+      })),
+    [],
+  );
+  const setGoalStatus = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        goalStatus: typeof val === "function" ? val(prev.goalStatus) : val,
+      })),
+    [],
+  );
+  const setGoalComments = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        goalComments: typeof val === "function" ? val(prev.goalComments) : val,
+      })),
+    [],
+  );
+  const setOverrideRating = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        overrideRating:
+          typeof val === "function" ? val(prev.overrideRating) : val,
+      })),
+    [],
+  );
+  const setFinalRating = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        finalRating: typeof val === "function" ? val(prev.finalRating) : val,
+      })),
+    [],
+  );
+  const setPromoRec = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        promoRec: typeof val === "function" ? val(prev.promoRec) : val,
+      })),
+    [],
+  );
+  const setStrengths = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        strengths: typeof val === "function" ? val(prev.strengths) : val,
+      })),
+    [],
+  );
+  const setDevelopmentAreas = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        developmentAreas:
+          typeof val === "function" ? val(prev.developmentAreas) : val,
+      })),
+    [],
+  );
+  const setPromoJustification = useCallback(
+    (val: unknown) =>
+      __updateState((prev) => ({
+        promoJustification:
+          typeof val === "function" ? val(prev.promoJustification) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const filteredPerformance = teamPerformance.filter((row) => {
     // Dept filter
     if (deptFilter !== "All Employees" && row.dept !== deptFilter) {
@@ -372,20 +556,6 @@ export function ManagerTeamPerformance() {
   };
 
   // Review Form State
-  const [compRatings, setCompRatings] = useState<Record<string, number>>({});
-  const [compComments, setCompComments] = useState<Record<string, string>>({});
-  const [expandedComments, setExpandedComments] = useState<
-    Record<string, boolean>
-  >({});
-  const [goalStatus, setGoalStatus] = useState<Record<string, string>>({});
-  const [goalComments, setGoalComments] = useState<Record<string, string>>({});
-  const [overrideRating, setOverrideRating] = useState(false);
-  const [finalRating, setFinalRating] = useState("Exceeds");
-  const [promoRec, setPromoRec] = useState(false);
-  const [strengths, setStrengths] = useState("");
-  const [developmentAreas, setDevelopmentAreas] = useState("");
-  const [promoJustification, setPromoJustification] = useState("");
-
   const handleReviewClick = (emp: (typeof MOCK_TEAM_PERFORMANCE)[0]) => {
     setReviewingEmp(emp);
     setReviewModalOpen(true);
@@ -396,9 +566,10 @@ export function ManagerTeamPerformance() {
       const compCommentsMap: Record<string, string> = {};
       const expandedCommentsMap: Record<string, boolean> = {};
       Object.entries(draft.competencies).forEach(([id, c]) => {
-        compRatingsMap[id] = c.rating;
-        compCommentsMap[id] = c.comment;
-        if (c.comment) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        compRatingsMap[id] = (c as any).rating;
+        compCommentsMap[id] = (c as any).comment;
+        if ((c as any).comment) {
           expandedCommentsMap[id] = true;
         }
       });
@@ -409,8 +580,9 @@ export function ManagerTeamPerformance() {
       const goalStatusMap: Record<string, string> = {};
       const goalCommentsMap: Record<string, string> = {};
       Object.entries(draft.goals).forEach(([id, g]) => {
-        goalStatusMap[id] = g.status;
-        goalCommentsMap[id] = g.comment;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        goalStatusMap[id] = (g as any).status;
+        goalCommentsMap[id] = (g as any).comment;
       });
       setGoalStatus(goalStatusMap);
       setGoalComments(goalCommentsMap);
@@ -457,11 +629,11 @@ export function ManagerTeamPerformance() {
       prev.map((emp) =>
         emp.id === reviewingEmp.id
           ? {
-            ...emp,
-            status: isSubmit ? "Completed" : "In Progress",
-            managerRating: avg !== "0.0" ? `${avg} you` : emp.managerRating,
-            finalScore: isSubmit ? finalScoreStr : emp.finalScore,
-          }
+              ...emp,
+              status: isSubmit ? "Completed" : "In Progress",
+              managerRating: avg !== "0.0" ? `${avg} you` : emp.managerRating,
+              finalScore: isSubmit ? finalScoreStr : emp.finalScore,
+            }
           : emp,
       ),
     );
@@ -574,8 +746,9 @@ export function ManagerTeamPerformance() {
   const calcAvg = () => {
     const values = Object.values(compRatings);
     if (values.length === 0) return "0.0";
-    const sum = values.reduce((a, b) => a + b, 0);
-    return (sum / values.length).toFixed(1);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sum = values.reduce((a: any, b: any) => a + b, 0);
+    return ((sum as number) / values.length).toFixed(1);
   };
 
   return (
@@ -1003,10 +1176,11 @@ export function ManagerTeamPerformance() {
                                 [goal.id]: status,
                               }))
                             }
-                            className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${goalStatus[goal.id] === status
-                              ? "bg-primary text-white border-primary shadow-sm"
-                              : "bg-secondary text-muted-foreground border-border hover:bg-neutral-200 dark:hover:bg-zinc-800"
-                              }`}
+                            className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${
+                              goalStatus[goal.id] === status
+                                ? "bg-primary text-white border-primary shadow-sm"
+                                : "bg-secondary text-muted-foreground border-border hover:bg-neutral-200 dark:hover:bg-zinc-800"
+                            }`}
                           >
                             {status}
                           </button>
@@ -1359,10 +1533,11 @@ export function ManagerTeamPerformance() {
                                   {[1, 2, 3, 4, 5].map((num) => (
                                     <span
                                       key={num}
-                                      className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-bold border ${num === score
-                                        ? getRatingColor(num, true)
-                                        : "bg-secondary text-muted-foreground border-transparent"
-                                        }`}
+                                      className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-bold border ${
+                                        num === score
+                                          ? getRatingColor(num, true)
+                                          : "bg-secondary text-muted-foreground border-transparent"
+                                      }`}
                                     >
                                       {num}
                                     </span>
@@ -1409,12 +1584,13 @@ export function ManagerTeamPerformance() {
                                 {goal.text}
                               </p>
                               <span
-                                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${gInfo.status === "Met"
-                                  ? "bg-emerald-500/10 text-emerald-500 border-emerald-200"
-                                  : gInfo.status === "Partially Met"
-                                    ? "bg-amber-500/10 text-amber-500 border-amber-200"
-                                    : "bg-rose-500/10 text-rose-500 border-rose-200"
-                                  }`}
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                                  gInfo.status === "Met"
+                                    ? "bg-emerald-500/10 text-emerald-500 border-emerald-200"
+                                    : gInfo.status === "Partially Met"
+                                      ? "bg-amber-500/10 text-amber-500 border-amber-200"
+                                      : "bg-rose-500/10 text-rose-500 border-rose-200"
+                                }`}
                               >
                                 {gInfo.status}
                               </span>
@@ -1460,10 +1636,11 @@ export function ManagerTeamPerformance() {
                           Promotion Recommendation
                         </span>
                         <span
-                          className={`px-3 py-1 text-xs font-bold rounded-lg ${reviewDetails.promoRecommended
-                            ? "bg-indigo-500 text-white"
-                            : "bg-slate-200 dark:bg-zinc-700 text-foreground"
-                            }`}
+                          className={`px-3 py-1 text-xs font-bold rounded-lg ${
+                            reviewDetails.promoRecommended
+                              ? "bg-indigo-500 text-white"
+                              : "bg-slate-200 dark:bg-zinc-700 text-foreground"
+                          }`}
                         >
                           {reviewDetails.promoRecommended
                             ? "Recommended"

@@ -1,4 +1,4 @@
-import React, { lazy, useState } from "react";
+import React, { lazy, useReducer, useCallback } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import {
   Package,
@@ -23,35 +23,64 @@ import {
   Calendar,
   MoreVertical,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { toast } from "sonner";
+import * as m from "motion/react-m";
 const ResponsiveContainer = lazy(() =>
-  import("recharts").then((m) => ({ default: m.ResponsiveContainer })),
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
 );
 const BarChart = lazy(() =>
-  import("recharts").then((m) => ({ default: m.BarChart })),
+  import("recharts").then((m) => ({
+    default: m.BarChart,
+  })),
 );
-const Bar = lazy(() => import("recharts").then((m) => ({ default: m.Bar })));
+const Bar = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Bar,
+  })),
+);
 const XAxis = lazy(() =>
-  import("recharts").then((m) => ({ default: m.XAxis })),
+  import("recharts").then((m) => ({
+    default: m.XAxis,
+  })),
 );
 const YAxis = lazy(() =>
-  import("recharts").then((m) => ({ default: m.YAxis })),
+  import("recharts").then((m) => ({
+    default: m.YAxis,
+  })),
 );
 const CartesianGrid = lazy(() =>
-  import("recharts").then((m) => ({ default: m.CartesianGrid })),
+  import("recharts").then((m) => ({
+    default: m.CartesianGrid,
+  })),
 );
 const Tooltip = lazy(() =>
-  import("recharts").then((m) => ({ default: m.Tooltip })),
+  import("recharts").then((m) => ({
+    default: m.Tooltip,
+  })),
 );
 const Legend = lazy(() =>
-  import("recharts").then((m) => ({ default: m.Legend })),
+  import("recharts").then((m) => ({
+    default: m.Legend,
+  })),
 );
-const Cell = lazy(() => import("recharts").then((m) => ({ default: m.Cell })));
+const Cell = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Cell,
+  })),
+);
 const PieChart = lazy(() =>
-  import("recharts").then((m) => ({ default: m.PieChart })),
+  import("recharts").then((m) => ({
+    default: m.PieChart,
+  })),
 );
-const Pie = lazy(() => import("recharts").then((m) => ({ default: m.Pie })));
+const Pie = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Pie,
+  })),
+);
 
 // Interfaces
 interface Asset {
@@ -66,13 +95,8 @@ interface Asset {
   value: number;
   assignedDate: string | null;
   status:
-    | "Assigned"
-    | "Pending Return"
-    | "Overdue"
-    | "Available"
-    | "Maintenance";
+    "Assigned" | "Pending Return" | "Overdue" | "Available" | "Maintenance";
 }
-
 const MOCK_ASSETS: Asset[] = [
   {
     id: "1",
@@ -153,81 +177,65 @@ const MOCK_ASSETS: Asset[] = [
     status: "Maintenance",
   },
 ];
-
 export function AssetManagement() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("All Assets");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [assets, setAssets] = useState<Asset[]>(MOCK_ASSETS);
-
-  // Modal States
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
-  const [isRecoverModalOpen, setIsRecoverModalOpen] = useState(false);
-  const [isEscalationModalOpen, setIsEscalationModalOpen] = useState(false);
-
-  // Selected Asset for Modals
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-
-  // Detail Slide Panel State
-  const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false);
-  const [detailTab, setDetailTab] = useState("Details");
-
-  // Form States
-  const [recoverCondition, setRecoverCondition] = useState("Excellent");
-  const [assignCondition, setAssignCondition] = useState("New");
-
-  // Filter Dropdown States
-  const [categoryFilter, setCategoryFilter] = useState<string>("All");
-  const [deptFilter, setDeptFilter] = useState<string>("All");
-  const [statusFilter, setStatusFilter] = useState<string>("All");
-
-  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
-  const [deptDropdownOpen, setDeptDropdownOpen] = useState(false);
-  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
-
-  // Add Asset Form States
-  const [newAssetName, setNewAssetName] = useState("");
-  const [newAssetCategory, setNewAssetCategory] = useState<
-    "Laptop" | "Smartphone" | "Monitor" | "Vehicle" | "Other"
-  >("Laptop");
-  const [newAssetSerialNo, setNewAssetSerialNo] = useState("");
-  const [newAssetBrand, setNewAssetBrand] = useState("");
-  const [newAssetValue, setNewAssetValue] = useState("");
-  const [newAssetPurchaseDate, setNewAssetPurchaseDate] = useState("");
-  const [newAssetWarrantyExpiry, setNewAssetWarrantyExpiry] = useState("");
-  const [newAssetVendor, setNewAssetVendor] = useState("");
-  const [newAssetLocation, setNewAssetLocation] = useState("");
-  const [newAssetNotes, setNewAssetNotes] = useState("");
-  const [newAssetAssignEmployee, setNewAssetAssignEmployee] = useState("");
-  const [newAssetAssignDate, setNewAssetAssignDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
-
-  // Assign Asset Form States
-  const [assignEmployee, setAssignEmployee] = useState("");
-  const [assignDept, setAssignDept] = useState("Engineering");
-  const [assignDate, setAssignDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
-  const [expectedReturnDate, setExpectedReturnDate] = useState("");
-  const [assignNotes, setAssignNotes] = useState("");
-
-  // Recover Asset Form States
-  const [recoverDate, setRecoverDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
-  const [recoverNotes, setRecoverNotes] = useState("");
-  const [damageDescription, setDamageDescription] = useState("");
-  const [repairCostEstimate, setRepairCostEstimate] = useState("");
-  const [deductFromEmployee, setDeductFromEmployee] = useState(false);
-  const [policeReportNumber, setPoliceReportNumber] = useState("");
-  const [firAttached, setFirAttached] = useState(false);
-  const [replacementRequired, setReplacementRequired] = useState(true);
-
-  // Dynamic Asset Log States (assetId -> logs array)
-  const [maintenanceLogs, setMaintenanceLogs] = useState<
-    Record<
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeTab: "All Assets",
+    searchQuery: "",
+    assets: MOCK_ASSETS as Asset[],
+    isAddModalOpen: false,
+    isAssignModalOpen: false,
+    isRecoverModalOpen: false,
+    isEscalationModalOpen: false,
+    selectedAsset: null as Asset | null,
+    isDetailPanelOpen: false,
+    detailTab: "Details",
+    recoverCondition: "Excellent",
+    assignCondition: "New",
+    categoryFilter: "All" as string,
+    deptFilter: "All" as string,
+    statusFilter: "All" as string,
+    categoryDropdownOpen: false,
+    deptDropdownOpen: false,
+    statusDropdownOpen: false,
+    newAssetName: "",
+    newAssetCategory: "Laptop" as
+      "Laptop" | "Smartphone" | "Monitor" | "Vehicle" | "Other",
+    newAssetSerialNo: "",
+    newAssetBrand: "",
+    newAssetValue: "",
+    newAssetPurchaseDate: "",
+    newAssetWarrantyExpiry: "",
+    newAssetVendor: "",
+    newAssetLocation: "",
+    newAssetNotes: "",
+    newAssetAssignEmployee: "",
+    newAssetAssignDate: new Date().toISOString().split("T")[0],
+    assignEmployee: "",
+    assignDept: "Engineering",
+    assignDate: new Date().toISOString().split("T")[0],
+    expectedReturnDate: "",
+    assignNotes: "",
+    recoverDate: new Date().toISOString().split("T")[0],
+    recoverNotes: "",
+    damageDescription: "",
+    repairCostEstimate: "",
+    deductFromEmployee: false,
+    policeReportNumber: "",
+    firAttached: false,
+    replacementRequired: true,
+    maintenanceLogs: {
+      "AST-0421": [
+        {
+          title: "Battery Replacement",
+          cost: 4500,
+          desc: "Replaced swollen battery with OEM part.",
+          date: "Sep 10, 2022",
+          status: "Completed",
+        },
+      ],
+    } as Record<
       string,
       Array<{
         title: string;
@@ -236,37 +244,480 @@ export function AssetManagement() {
         date: string;
         status: string;
       }>
-    >
-  >({
-    "AST-0421": [
-      {
-        title: "Battery Replacement",
-        cost: 4500,
-        desc: "Replaced swollen battery with OEM part.",
-        date: "Sep 10, 2022",
-        status: "Completed",
-      },
-    ],
-  });
-  const [assetDocuments, setAssetDocuments] = useState<
-    Record<string, Array<{ name: string; size: string; date: string }>>
-  >({
-    "AST-0421": [
-      {
-        name: "Purchase_Invoice_2021.pdf",
-        size: "1.2 MB",
-        date: "Jan 10, 2021",
-      },
-      { name: "Warranty_Card_Dell.pdf", size: "850 KB", date: "Jan 10, 2021" },
-    ],
-  });
-
+    >,
+    assetDocuments: {
+      "AST-0421": [
+        {
+          name: "Purchase_Invoice_2021.pdf",
+          size: "1.2 MB",
+          date: "Jan 10, 2021",
+        },
+        {
+          name: "Warranty_Card_Dell.pdf",
+          size: "850 KB",
+          date: "Jan 10, 2021",
+        },
+      ],
+    } as Record<
+      string,
+      Array<{
+        name: string;
+        size: string;
+        date: string;
+      }>
+    >,
+    newMaintenanceTitle: "",
+    newMaintenanceCost: "",
+    newMaintenanceDesc: "",
+    isAddingLog: false,
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    activeTab,
+    searchQuery,
+    assets,
+    isAddModalOpen,
+    isAssignModalOpen,
+    isRecoverModalOpen,
+    isEscalationModalOpen,
+    selectedAsset,
+    isDetailPanelOpen,
+    detailTab,
+    recoverCondition,
+    assignCondition,
+    categoryFilter,
+    deptFilter,
+    statusFilter,
+    categoryDropdownOpen,
+    deptDropdownOpen,
+    statusDropdownOpen,
+    newAssetName,
+    newAssetCategory,
+    newAssetSerialNo,
+    newAssetBrand,
+    newAssetValue,
+    newAssetPurchaseDate,
+    newAssetWarrantyExpiry,
+    newAssetVendor,
+    newAssetLocation,
+    newAssetNotes,
+    newAssetAssignEmployee,
+    newAssetAssignDate,
+    assignEmployee,
+    assignDept,
+    assignDate,
+    expectedReturnDate,
+    assignNotes,
+    recoverDate,
+    recoverNotes,
+    damageDescription,
+    repairCostEstimate,
+    deductFromEmployee,
+    policeReportNumber,
+    firAttached,
+    replacementRequired,
+    maintenanceLogs,
+    assetDocuments,
+    newMaintenanceTitle,
+    newMaintenanceCost,
+    newMaintenanceDesc,
+    isAddingLog,
+  } = __state;
+  const setActiveTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeTab: typeof val === "function" ? val(prev.activeTab) : val,
+      })),
+    [],
+  );
+  const setSearchQuery = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        searchQuery: typeof val === "function" ? val(prev.searchQuery) : val,
+      })),
+    [],
+  );
+  const setAssets = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        assets: typeof val === "function" ? val(prev.assets) : val,
+      })),
+    [],
+  );
+  const setIsAddModalOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isAddModalOpen:
+          typeof val === "function" ? val(prev.isAddModalOpen) : val,
+      })),
+    [],
+  );
+  const setIsAssignModalOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isAssignModalOpen:
+          typeof val === "function" ? val(prev.isAssignModalOpen) : val,
+      })),
+    [],
+  );
+  const setIsRecoverModalOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isRecoverModalOpen:
+          typeof val === "function" ? val(prev.isRecoverModalOpen) : val,
+      })),
+    [],
+  );
+  const setIsEscalationModalOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isEscalationModalOpen:
+          typeof val === "function" ? val(prev.isEscalationModalOpen) : val,
+      })),
+    [],
+  );
+  const setSelectedAsset = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedAsset:
+          typeof val === "function" ? val(prev.selectedAsset) : val,
+      })),
+    [],
+  );
+  const setIsDetailPanelOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isDetailPanelOpen:
+          typeof val === "function" ? val(prev.isDetailPanelOpen) : val,
+      })),
+    [],
+  );
+  const setDetailTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        detailTab: typeof val === "function" ? val(prev.detailTab) : val,
+      })),
+    [],
+  );
+  const setRecoverCondition = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        recoverCondition:
+          typeof val === "function" ? val(prev.recoverCondition) : val,
+      })),
+    [],
+  );
+  const setAssignCondition = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        assignCondition:
+          typeof val === "function" ? val(prev.assignCondition) : val,
+      })),
+    [],
+  );
+  const setCategoryFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        categoryFilter:
+          typeof val === "function" ? val(prev.categoryFilter) : val,
+      })),
+    [],
+  );
+  const setDeptFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        deptFilter: typeof val === "function" ? val(prev.deptFilter) : val,
+      })),
+    [],
+  );
+  const setStatusFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        statusFilter: typeof val === "function" ? val(prev.statusFilter) : val,
+      })),
+    [],
+  );
+  const setCategoryDropdownOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        categoryDropdownOpen:
+          typeof val === "function" ? val(prev.categoryDropdownOpen) : val,
+      })),
+    [],
+  );
+  const setDeptDropdownOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        deptDropdownOpen:
+          typeof val === "function" ? val(prev.deptDropdownOpen) : val,
+      })),
+    [],
+  );
+  const setStatusDropdownOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        statusDropdownOpen:
+          typeof val === "function" ? val(prev.statusDropdownOpen) : val,
+      })),
+    [],
+  );
+  const setNewAssetName = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetName: typeof val === "function" ? val(prev.newAssetName) : val,
+      })),
+    [],
+  );
+  const setNewAssetCategory = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetCategory:
+          typeof val === "function" ? val(prev.newAssetCategory) : val,
+      })),
+    [],
+  );
+  const setNewAssetSerialNo = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetSerialNo:
+          typeof val === "function" ? val(prev.newAssetSerialNo) : val,
+      })),
+    [],
+  );
+  const setNewAssetBrand = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetBrand:
+          typeof val === "function" ? val(prev.newAssetBrand) : val,
+      })),
+    [],
+  );
+  const setNewAssetValue = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetValue:
+          typeof val === "function" ? val(prev.newAssetValue) : val,
+      })),
+    [],
+  );
+  const setNewAssetPurchaseDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetPurchaseDate:
+          typeof val === "function" ? val(prev.newAssetPurchaseDate) : val,
+      })),
+    [],
+  );
+  const setNewAssetWarrantyExpiry = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetWarrantyExpiry:
+          typeof val === "function" ? val(prev.newAssetWarrantyExpiry) : val,
+      })),
+    [],
+  );
+  const setNewAssetVendor = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetVendor:
+          typeof val === "function" ? val(prev.newAssetVendor) : val,
+      })),
+    [],
+  );
+  const setNewAssetLocation = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetLocation:
+          typeof val === "function" ? val(prev.newAssetLocation) : val,
+      })),
+    [],
+  );
+  const setNewAssetNotes = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetNotes:
+          typeof val === "function" ? val(prev.newAssetNotes) : val,
+      })),
+    [],
+  );
+  const setNewAssetAssignEmployee = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetAssignEmployee:
+          typeof val === "function" ? val(prev.newAssetAssignEmployee) : val,
+      })),
+    [],
+  );
+  const setNewAssetAssignDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newAssetAssignDate:
+          typeof val === "function" ? val(prev.newAssetAssignDate) : val,
+      })),
+    [],
+  );
+  const setAssignEmployee = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        assignEmployee:
+          typeof val === "function" ? val(prev.assignEmployee) : val,
+      })),
+    [],
+  );
+  const setAssignDept = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        assignDept: typeof val === "function" ? val(prev.assignDept) : val,
+      })),
+    [],
+  );
+  const setAssignDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        assignDate: typeof val === "function" ? val(prev.assignDate) : val,
+      })),
+    [],
+  );
+  const setExpectedReturnDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        expectedReturnDate:
+          typeof val === "function" ? val(prev.expectedReturnDate) : val,
+      })),
+    [],
+  );
+  const setAssignNotes = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        assignNotes: typeof val === "function" ? val(prev.assignNotes) : val,
+      })),
+    [],
+  );
+  const setRecoverDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        recoverDate: typeof val === "function" ? val(prev.recoverDate) : val,
+      })),
+    [],
+  );
+  const setRecoverNotes = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        recoverNotes: typeof val === "function" ? val(prev.recoverNotes) : val,
+      })),
+    [],
+  );
+  const setDamageDescription = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        damageDescription:
+          typeof val === "function" ? val(prev.damageDescription) : val,
+      })),
+    [],
+  );
+  const setRepairCostEstimate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        repairCostEstimate:
+          typeof val === "function" ? val(prev.repairCostEstimate) : val,
+      })),
+    [],
+  );
+  const setDeductFromEmployee = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        deductFromEmployee:
+          typeof val === "function" ? val(prev.deductFromEmployee) : val,
+      })),
+    [],
+  );
+  const setPoliceReportNumber = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        policeReportNumber:
+          typeof val === "function" ? val(prev.policeReportNumber) : val,
+      })),
+    [],
+  );
+  const setFirAttached = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        firAttached: typeof val === "function" ? val(prev.firAttached) : val,
+      })),
+    [],
+  );
+  const setReplacementRequired = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        replacementRequired:
+          typeof val === "function" ? val(prev.replacementRequired) : val,
+      })),
+    [],
+  );
+  const setMaintenanceLogs = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        maintenanceLogs:
+          typeof val === "function" ? val(prev.maintenanceLogs) : val,
+      })),
+    [],
+  );
+  const setAssetDocuments = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        assetDocuments:
+          typeof val === "function" ? val(prev.assetDocuments) : val,
+      })),
+    [],
+  );
+  const setNewMaintenanceTitle = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newMaintenanceTitle:
+          typeof val === "function" ? val(prev.newMaintenanceTitle) : val,
+      })),
+    [],
+  );
+  const setNewMaintenanceCost = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newMaintenanceCost:
+          typeof val === "function" ? val(prev.newMaintenanceCost) : val,
+      })),
+    [],
+  );
+  const setNewMaintenanceDesc = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newMaintenanceDesc:
+          typeof val === "function" ? val(prev.newMaintenanceDesc) : val,
+      })),
+    [],
+  );
+  const setIsAddingLog = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isAddingLog: typeof val === "function" ? val(prev.isAddingLog) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+  // Modal States
+  // Selected Asset for Modals
+  // Detail Slide Panel State
+  // Form States
+  // Filter Dropdown States
+  // Add Asset Form States
+  // Assign Asset Form States
+  // Recover Asset Form States
+  // Dynamic Asset Log States (assetId -> logs array)
   // Maintenance form inputs
-  const [newMaintenanceTitle, setNewMaintenanceTitle] = useState("");
-  const [newMaintenanceCost, setNewMaintenanceCost] = useState("");
-  const [newMaintenanceDesc, setNewMaintenanceDesc] = useState("");
-  const [isAddingLog, setIsAddingLog] = useState(false);
-
   const tabs = [
     "All Assets",
     "Assigned",
@@ -275,7 +726,6 @@ export function AssetManagement() {
     "Maintenance",
     "Reports",
   ];
-
   const filteredAssets = assets.filter((asset) => {
     if (activeTab !== "All Assets" && activeTab !== "Reports") {
       if (activeTab === "Assigned" && asset.status !== "Assigned") return false;
@@ -290,14 +740,10 @@ export function AssetManagement() {
       if (activeTab === "Maintenance" && asset.status !== "Maintenance")
         return false;
     }
-
     if (categoryFilter !== "All" && asset.category !== categoryFilter)
       return false;
-
     if (deptFilter !== "All" && asset.department !== deptFilter) return false;
-
     if (statusFilter !== "All" && asset.status !== statusFilter) return false;
-
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return (
@@ -307,10 +753,8 @@ export function AssetManagement() {
         (asset.assignedTo && asset.assignedTo.toLowerCase().includes(query))
       );
     }
-
     return true;
   });
-
   const getCategoryIcon = (category: string, size = 16) => {
     switch (category) {
       case "Laptop":
@@ -325,58 +769,70 @@ export function AssetManagement() {
         return <Package size={size} />;
     }
   };
-
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "Laptop":
-        return { bg: "#CCFBF1", text: "#0F766E", border: "#99F6E4" };
+        return {
+          bg: "#CCFBF1",
+          text: "#0F766E",
+          border: "#99F6E4",
+        };
       case "Smartphone":
-        return { bg: "#FEF3C7", text: "#D97706", border: "#FDE68A" };
+        return {
+          bg: "#FEF3C7",
+          text: "#D97706",
+          border: "#FDE68A",
+        };
       case "Monitor":
-        return { bg: "#E0F2FE", text: "#0369A1", border: "#BAE6FD" };
+        return {
+          bg: "#E0F2FE",
+          text: "#0369A1",
+          border: "#BAE6FD",
+        };
       case "Vehicle":
-        return { bg: "#F3E8FF", text: "#7E22CE", border: "#E9D5FF" };
+        return {
+          bg: "#F3E8FF",
+          text: "#7E22CE",
+          border: "#E9D5FF",
+        };
       default:
-        return { bg: "#F3F4F6", text: "#4B5563", border: "#E5E7EB" };
+        return {
+          bg: "#F3F4F6",
+          text: "#4B5563",
+          border: "#E5E7EB",
+        };
     }
   };
-
   const openAssignModal = (asset: Asset) => {
     setSelectedAsset(asset);
     setAssignCondition("New");
     setIsAssignModalOpen(true);
   };
-
   const openRecoverModal = (asset: Asset) => {
     setSelectedAsset(asset);
     setRecoverCondition("Excellent");
     setIsRecoverModalOpen(true);
   };
-
   const openEscalationModal = (asset: Asset) => {
     setSelectedAsset(asset);
     setIsEscalationModalOpen(true);
   };
-
   const openDetailPanel = (asset: Asset) => {
     setSelectedAsset(asset);
     setDetailTab("Details");
     setIsDetailPanelOpen(true);
   };
-
   const handleExport = () => {
     toast.success("Exporting assets to CSV...");
     setTimeout(() => {
       toast.success("Export complete");
     }, 1500);
   };
-
   const handleAddAsset = (e: React.FormEvent) => {
     e.preventDefault();
     const nextIdVal = 421 + assets.length;
     const nextAssetId = `AST-0${nextIdVal}`;
     const newVal = parseFloat(newAssetValue) || 0;
-
     const newAsset: Asset = {
       id: String(assets.length + 1),
       name: newAssetName || "New Company Asset",
@@ -390,7 +846,6 @@ export function AssetManagement() {
       assignedDate: newAssetAssignEmployee ? newAssetAssignDate : null,
       status: newAssetAssignEmployee ? "Assigned" : "Available",
     };
-
     setAssets([...assets, newAsset]);
     setIsAddModalOpen(false);
     toast.success(`Asset ${nextAssetId} added successfully`);
@@ -408,14 +863,12 @@ export function AssetManagement() {
     setNewAssetNotes("");
     setNewAssetAssignEmployee("");
   };
-
   const handleAssignAsset = (e: React.FormEvent) => {
     e.preventDefault();
     setIsAssignModalOpen(false);
     toast.success(
       `Asset assigned successfully to employee. Notification sent.`,
     );
-
     if (selectedAsset) {
       setAssets(
         assets.map((a) =>
@@ -445,12 +898,10 @@ export function AssetManagement() {
     setExpectedReturnDate("");
     setAssignNotes("");
   };
-
   const handleRecoverAsset = (e: React.FormEvent) => {
     e.preventDefault();
     setIsRecoverModalOpen(false);
     toast.success(`Asset recovered successfully.`);
-
     if (selectedAsset) {
       const isDamaged = recoverCondition === "Damaged";
       const isLost = recoverCondition === "Lost";
@@ -459,7 +910,6 @@ export function AssetManagement() {
         : isLost
           ? "Maintenance"
           : "Available";
-
       setAssets(
         assets.map((a) =>
           a.id === selectedAsset.id
@@ -475,7 +925,6 @@ export function AssetManagement() {
         ),
       );
     }
-
     if (isDetailPanelOpen) {
       setIsDetailPanelOpen(false);
     }
@@ -501,7 +950,6 @@ export function AssetManagement() {
     4 + (assets.filter((a) => a.status === "Overdue").length - 1);
   const maintenanceCount =
     12 + (assets.filter((a) => a.status === "Maintenance").length - 1);
-
   const totalValueSum = assets.reduce((sum, a) => sum + a.value, 0);
   const orgTotalValue = (2.4 + (totalValueSum - 1330000) / 10000000).toFixed(2);
 
@@ -519,7 +967,6 @@ export function AssetManagement() {
       value,
     }),
   );
-
   const deptValues = assets.reduce(
     (acc, a) => {
       const dept = a.department || "Unassigned";
@@ -530,9 +977,8 @@ export function AssetManagement() {
   );
   const deptChartData = Object.entries(deptValues).map(([name, value]) => ({
     name,
-    value: Math.round(value),
+    value: Math.round(value as number),
   }));
-
   const statusCounts = assets.reduce(
     (acc, a) => {
       acc[a.status] = (acc[a.status] || 0) + 1;
@@ -544,7 +990,6 @@ export function AssetManagement() {
     name,
     value,
   }));
-
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Page Header */}
@@ -703,7 +1148,10 @@ export function AssetManagement() {
               <div className="flex items-start justify-between mb-3">
                 <div
                   className="w-9 h-9 rounded-[10px] flex items-center justify-center group-hover:scale-110 transition-transform"
-                  style={{ backgroundColor: kpi.bg, color: kpi.color }}
+                  style={{
+                    backgroundColor: kpi.bg,
+                    color: kpi.color,
+                  }}
                 >
                   <kpi.icon size={20} />
                 </div>
@@ -713,7 +1161,9 @@ export function AssetManagement() {
               </p>
               <p
                 className="text-[28px] font-black mb-1 group-hover:text-[#00B87C] transition-colors"
-                style={{ color: kpi.valColor }}
+                style={{
+                  color: kpi.valColor,
+                }}
               >
                 {kpi.value}
               </p>
@@ -730,18 +1180,18 @@ export function AssetManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-[14px] font-bold transition-all relative ${
-                activeTab === tab
-                  ? "text-[#00B87C]"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`pb-3 text-[14px] font-bold transition-all relative ${activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
             >
               {tab}
               {activeTab === tab && (
-                <motion.div
+                <m.div
                   layoutId="asset-tab-indicator"
                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C] rounded-t-full"
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 30,
+                  }}
                 />
               )}
             </button>
@@ -772,11 +1222,7 @@ export function AssetManagement() {
                 setDeptDropdownOpen(false);
                 setStatusDropdownOpen(false);
               }}
-              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
-                categoryFilter !== "All"
-                  ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
-                  : "bg-card border-border text-foreground hover:bg-muted"
-              }`}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${categoryFilter !== "All" ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]" : "bg-card border-border text-foreground hover:bg-muted"}`}
             >
               Category{categoryFilter !== "All" ? `: ${categoryFilter}` : ""}{" "}
               <ChevronDown
@@ -810,11 +1256,7 @@ export function AssetManagement() {
                         setCategoryFilter(cat);
                         setCategoryDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${
-                        categoryFilter === cat
-                          ? "text-[#00B87C] bg-[#00B87C]/5"
-                          : "text-foreground"
-                      }`}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${categoryFilter === cat ? "text-[#00B87C] bg-[#00B87C]/5" : "text-foreground"}`}
                     >
                       {cat}
                       {categoryFilter === cat && (
@@ -835,11 +1277,7 @@ export function AssetManagement() {
                 setCategoryDropdownOpen(false);
                 setStatusDropdownOpen(false);
               }}
-              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
-                deptFilter !== "All"
-                  ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
-                  : "bg-card border-border text-foreground hover:bg-muted"
-              }`}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${deptFilter !== "All" ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]" : "bg-card border-border text-foreground hover:bg-muted"}`}
             >
               Department{deptFilter !== "All" ? `: ${deptFilter}` : ""}{" "}
               <ChevronDown
@@ -873,11 +1311,7 @@ export function AssetManagement() {
                         setDeptFilter(dept);
                         setDeptDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${
-                        deptFilter === dept
-                          ? "text-[#00B87C] bg-[#00B87C]/5"
-                          : "text-foreground"
-                      }`}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${deptFilter === dept ? "text-[#00B87C] bg-[#00B87C]/5" : "text-foreground"}`}
                     >
                       {dept}
                       {deptFilter === dept && (
@@ -898,11 +1332,7 @@ export function AssetManagement() {
                 setCategoryDropdownOpen(false);
                 setDeptDropdownOpen(false);
               }}
-              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
-                statusFilter !== "All"
-                  ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
-                  : "bg-card border-border text-foreground hover:bg-muted"
-              }`}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${statusFilter !== "All" ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]" : "bg-card border-border text-foreground hover:bg-muted"}`}
             >
               Status{statusFilter !== "All" ? `: ${statusFilter}` : ""}{" "}
               <ChevronDown
@@ -936,11 +1366,7 @@ export function AssetManagement() {
                         setStatusFilter(stat);
                         setStatusDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${
-                        statusFilter === stat
-                          ? "text-[#00B87C] bg-[#00B87C]/5"
-                          : "text-foreground"
-                      }`}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${statusFilter === stat ? "text-[#00B87C] bg-[#00B87C]/5" : "text-foreground"}`}
                     >
                       {stat}
                       {statusFilter === stat && (
@@ -1508,17 +1934,35 @@ export function AssetManagement() {
       <AnimatePresence>
         {isAddModalOpen && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000]"
               onClick={() => setIsAddModalOpen(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[520px] bg-card rounded-2xl shadow-2xl z-[2001] max-h-[90vh] overflow-y-auto"
             >
               <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-card/90 backdrop-blur z-10">
@@ -1751,7 +2195,7 @@ export function AssetManagement() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
@@ -1760,17 +2204,35 @@ export function AssetManagement() {
       <AnimatePresence>
         {isAssignModalOpen && selectedAsset && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000]"
               onClick={() => setIsAssignModalOpen(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[460px] bg-card rounded-2xl shadow-2xl z-[2001]"
             >
               <div className="p-6 border-b border-border flex items-center justify-between">
@@ -1875,11 +2337,7 @@ export function AssetManagement() {
                         key={cond}
                         type="button"
                         onClick={() => setAssignCondition(cond)}
-                        className={`flex-1 py-1.5 text-[12px] font-bold rounded-lg transition-all ${
-                          assignCondition === cond
-                            ? "bg-[#00B87C] text-white shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                        }`}
+                        className={`flex-1 py-1.5 text-[12px] font-bold rounded-lg transition-all ${assignCondition === cond ? "bg-[#00B87C] text-white shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`}
                       >
                         {cond}
                       </button>
@@ -1934,7 +2392,7 @@ export function AssetManagement() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
@@ -1943,17 +2401,35 @@ export function AssetManagement() {
       <AnimatePresence>
         {isRecoverModalOpen && selectedAsset && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000]"
               onClick={() => setIsRecoverModalOpen(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[460px] bg-card rounded-2xl shadow-2xl z-[2001] max-h-[90vh] overflow-y-auto"
             >
               <div className="p-6 border-b border-border flex items-center justify-between sticky top-0 bg-card/90 backdrop-blur z-10">
@@ -2018,13 +2494,7 @@ export function AssetManagement() {
                         key={cond}
                         type="button"
                         onClick={() => setRecoverCondition(cond)}
-                        className={`flex-1 py-1.5 text-[12px] font-bold rounded-lg transition-all ${
-                          recoverCondition === cond
-                            ? cond === "Damaged" || cond === "Lost"
-                              ? "bg-[#EF4444] text-white"
-                              : "bg-[#00B87C] text-white shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                        }`}
+                        className={`flex-1 py-1.5 text-[12px] font-bold rounded-lg transition-all ${recoverCondition === cond ? (cond === "Damaged" || cond === "Lost" ? "bg-[#EF4444] text-white" : "bg-[#00B87C] text-white shadow-sm") : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`}
                       >
                         {cond}
                       </button>
@@ -2064,9 +2534,15 @@ export function AssetManagement() {
                 </div>
 
                 {recoverCondition === "Damaged" && (
-                  <motion.div
-                    initial={{ opacity: 0, scaleY: 0 }}
-                    animate={{ opacity: 1, scaleY: 1 }}
+                  <m.div
+                    initial={{
+                      opacity: 0,
+                      scaleY: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      scaleY: 1,
+                    }}
                     className="space-y-6 mb-6 p-4 bg-[#FEF2F2] border border-[#FECACA] rounded-xl origin-top"
                   >
                     <div>
@@ -2109,13 +2585,19 @@ export function AssetManagement() {
                         <div className="w-10 h-6 bg-[#FECACA] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#EF4444]"></div>
                       </div>
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
 
                 {recoverCondition === "Lost" && (
-                  <motion.div
-                    initial={{ opacity: 0, scaleY: 0 }}
-                    animate={{ opacity: 1, scaleY: 1 }}
+                  <m.div
+                    initial={{
+                      opacity: 0,
+                      scaleY: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      scaleY: 1,
+                    }}
                     className="space-y-6 mb-6 p-4 bg-[#FEF2F2] border border-[#FECACA] rounded-xl origin-top"
                   >
                     <div>
@@ -2160,7 +2642,7 @@ export function AssetManagement() {
                         <div className="w-10 h-6 bg-[#FECACA] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#EF4444]"></div>
                       </div>
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
 
                 <div className="flex items-center justify-between mb-8 p-3 border border-border bg-muted rounded-xl">
@@ -2195,7 +2677,7 @@ export function AssetManagement() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
@@ -2204,17 +2686,32 @@ export function AssetManagement() {
       <AnimatePresence>
         {isEscalationModalOpen && selectedAsset && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000]"
               onClick={() => setIsEscalationModalOpen(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[400px] bg-card rounded-2xl shadow-2xl z-[2001] p-6 text-center"
             >
               <div className="w-16 h-16 rounded-full bg-[#FEE2E2] flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-[0_0_0_4px_rgba(254,226,226,0.5)]">
@@ -2256,7 +2753,7 @@ export function AssetManagement() {
                   Confirm Escalate
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
@@ -2265,18 +2762,34 @@ export function AssetManagement() {
       <AnimatePresence>
         {isDetailPanelOpen && selectedAsset && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[1500]"
               onClick={() => setIsDetailPanelOpen(false)}
             />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="fixed top-0 right-0 h-full w-[420px] bg-card shadow-[-10px_0_40px_rgba(0,0,0,0.1)] z-[1501] flex flex-col"
             >
               <div className="flex items-center justify-between p-6 border-b border-border shrink-0">
@@ -2303,17 +2816,7 @@ export function AssetManagement() {
 
               {/* Status Banner */}
               <div
-                className={`px-6 py-3 shrink-0 flex items-center justify-between ${
-                  selectedAsset.status === "Assigned"
-                    ? "bg-[#ECFDF5] border-b border-[#A7F3D0]"
-                    : selectedAsset.status === "Pending Return"
-                      ? "bg-[#FEF3C7] border-b border-[#FDE68A]"
-                      : selectedAsset.status === "Overdue"
-                        ? "bg-[#FEF2F2] border-b border-[#FECACA]"
-                        : selectedAsset.status === "Available"
-                          ? "bg-muted border-b border-border"
-                          : "bg-[#F0FDFA] border-b border-[#CCFBF1]"
-                }`}
+                className={`px-6 py-3 shrink-0 flex items-center justify-between ${selectedAsset.status === "Assigned" ? "bg-[#ECFDF5] border-b border-[#A7F3D0]" : selectedAsset.status === "Pending Return" ? "bg-[#FEF3C7] border-b border-[#FDE68A]" : selectedAsset.status === "Overdue" ? "bg-[#FEF2F2] border-b border-[#FECACA]" : selectedAsset.status === "Available" ? "bg-muted border-b border-border" : "bg-[#F0FDFA] border-b border-[#CCFBF1]"}`}
               >
                 <div className="flex items-center gap-2">
                   {selectedAsset.status === "Assigned" && (
@@ -2332,30 +2835,14 @@ export function AssetManagement() {
                     <Wrench size={16} className="text-[#0F766E]" />
                   )}
                   <span
-                    className={`text-[13px] font-bold uppercase tracking-wider ${
-                      selectedAsset.status === "Assigned"
-                        ? "text-[#065F46]"
-                        : selectedAsset.status === "Pending Return"
-                          ? "text-[#92400E]"
-                          : selectedAsset.status === "Overdue"
-                            ? "text-[#991B1B]"
-                            : selectedAsset.status === "Available"
-                              ? "text-muted-foreground"
-                              : "text-[#115E59]"
-                    }`}
+                    className={`text-[13px] font-bold uppercase tracking-wider ${selectedAsset.status === "Assigned" ? "text-[#065F46]" : selectedAsset.status === "Pending Return" ? "text-[#92400E]" : selectedAsset.status === "Overdue" ? "text-[#991B1B]" : selectedAsset.status === "Available" ? "text-muted-foreground" : "text-[#115E59]"}`}
                   >
                     {selectedAsset.status}
                   </span>
                 </div>
                 {selectedAsset.assignedTo && (
                   <span
-                    className={`text-[12px] font-semibold ${
-                      selectedAsset.status === "Overdue"
-                        ? "text-[#DC2626]"
-                        : selectedAsset.status === "Pending Return"
-                          ? "text-[#D97706]"
-                          : "text-[#059669]"
-                    }`}
+                    className={`text-[12px] font-semibold ${selectedAsset.status === "Overdue" ? "text-[#DC2626]" : selectedAsset.status === "Pending Return" ? "text-[#D97706]" : "text-[#059669]"}`}
                   >
                     To {selectedAsset.assignedTo}
                   </span>
@@ -2373,11 +2860,7 @@ export function AssetManagement() {
                   <button
                     key={tab}
                     onClick={() => setDetailTab(tab)}
-                    className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider transition-colors border-b-2 ${
-                      detailTab === tab
-                        ? "border-[#00B87C] text-[#00B87C]"
-                        : "border-transparent text-muted-foreground hover:text-muted-foreground"
-                    }`}
+                    className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider transition-colors border-b-2 ${detailTab === tab ? "border-[#00B87C] text-[#00B87C]" : "border-transparent text-muted-foreground hover:text-muted-foreground"}`}
                   >
                     {tab.split(" ")[0]}
                   </button>
@@ -2427,8 +2910,14 @@ export function AssetManagement() {
                           label: "Brand",
                           value: selectedAsset.name.split(" ")[0],
                         },
-                        { label: "Category", value: selectedAsset.category },
-                        { label: "Purchase Date", value: "Jan 10, 2021" },
+                        {
+                          label: "Category",
+                          value: selectedAsset.category,
+                        },
+                        {
+                          label: "Purchase Date",
+                          value: "Jan 10, 2021",
+                        },
                         {
                           label: "Purchase Value",
                           value: `₹${selectedAsset.value.toLocaleString("en-IN")}`,
@@ -2437,8 +2926,14 @@ export function AssetManagement() {
                           label: "Warranty Expiry",
                           value: "Jan 10, 2024 (Expired)",
                         },
-                        { label: "Vendor", value: "TechCorp India Pvt Ltd" },
-                        { label: "Location", value: "Mumbai HQ" },
+                        {
+                          label: "Vendor",
+                          value: "TechCorp India Pvt Ltd",
+                        },
+                        {
+                          label: "Location",
+                          value: "Mumbai HQ",
+                        },
                       ].map((item, i) => (
                         <div
                           key={item.label}
@@ -2773,7 +3268,7 @@ export function AssetManagement() {
                   </>
                 )}
               </div>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>

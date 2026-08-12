@@ -1,14 +1,12 @@
 import React from "react";
-import { motion } from "motion/react";
 import { CheckCircle2, Check } from "lucide-react";
 import { ExitEmployee } from "../types/offboarding.types";
-
+import * as m from "motion/react-m";
 interface CompleteExitModalProps {
   exit: ExitEmployee;
   onClose: () => void;
   onConfirm: () => void;
 }
-
 export const CompleteExitModal: React.FC<CompleteExitModalProps> = ({
   exit,
   onClose,
@@ -19,9 +17,15 @@ export const CompleteExitModal: React.FC<CompleteExitModalProps> = ({
       className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
         className="w-full max-w-sm bg-card rounded-[32px] p-8 text-center shadow-2xl border border-border"
         onClick={(e) => e.stopPropagation()}
       >
@@ -53,7 +57,7 @@ export const CompleteExitModal: React.FC<CompleteExitModalProps> = ({
             <Check size={14} /> Confirm Complete
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 };

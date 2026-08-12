@@ -6,12 +6,10 @@
 import React from "react";
 import { Clock, Globe } from "lucide-react";
 import { SystemConfig } from "../types/platformSettings.types";
-
 interface Props {
   config: SystemConfig;
   setConfig: React.Dispatch<React.SetStateAction<SystemConfig>>;
 }
-
 export function TimezoneSettingsView({ config, setConfig }: Props) {
   function updateTZ<K extends keyof SystemConfig["timezone"]>(
     key: K,
@@ -19,15 +17,16 @@ export function TimezoneSettingsView({ config, setConfig }: Props) {
   ) {
     setConfig((prev) => ({
       ...prev,
-      timezone: { ...prev.timezone, [key]: value },
+      timezone: {
+        ...prev.timezone,
+        [key]: value,
+      },
     }));
   }
-
   const inputClass =
     "w-full text-sm p-2.5 border border-gray-200 rounded-lg outline-none focus:border-indigo-400 transition-colors";
   const labelClass =
     "text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block";
-
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -62,6 +61,8 @@ export function TimezoneSettingsView({ config, setConfig }: Props) {
                 >
                   <input
                     type="checkbox"
+
+
                     checked={config.timezone.supportedTimezones.includes(tz)}
                     onChange={(e) => {
                       const next = e.target.checked

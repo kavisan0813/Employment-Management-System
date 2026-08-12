@@ -1,22 +1,61 @@
 import { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Plus, Calendar, X } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { PunchCard } from "../../../components/attendance/PunchCard";
 import { useAttendance } from "../../../context/AttendanceContext";
 import { formatTime12Hour } from "../../../context/attendance.utils";
-
+import * as m from "motion/react-m";
 const ATTENDANCE_LOGS = [
-  { date: "01 Apr 2026", in: "08:52 AM", out: "06:05 PM", status: "Present" },
-  { date: "02 Apr 2026", in: "08:58 AM", out: "06:02 PM", status: "Present" },
-  { date: "03 Apr 2026", in: "09:15 AM", out: "06:10 PM", status: "Present" },
-  { date: "04 Apr 2026", in: "-", out: "-", status: "Weekend" },
-  { date: "05 Apr 2026", in: "-", out: "-", status: "Weekend" },
-  { date: "06 Apr 2026", in: "08:45 AM", out: "06:00 PM", status: "Present" },
-  { date: "07 Apr 2026", in: "-", out: "-", status: "Present" },
-  { date: "08 Apr 2026", in: "09:02 AM", out: "06:15 PM", status: "Present" },
+  {
+    date: "01 Apr 2026",
+    in: "08:52 AM",
+    out: "06:05 PM",
+    status: "Present",
+  },
+  {
+    date: "02 Apr 2026",
+    in: "08:58 AM",
+    out: "06:02 PM",
+    status: "Present",
+  },
+  {
+    date: "03 Apr 2026",
+    in: "09:15 AM",
+    out: "06:10 PM",
+    status: "Present",
+  },
+  {
+    date: "04 Apr 2026",
+    in: "-",
+    out: "-",
+    status: "Weekend",
+  },
+  {
+    date: "05 Apr 2026",
+    in: "-",
+    out: "-",
+    status: "Weekend",
+  },
+  {
+    date: "06 Apr 2026",
+    in: "08:45 AM",
+    out: "06:00 PM",
+    status: "Present",
+  },
+  {
+    date: "07 Apr 2026",
+    in: "-",
+    out: "-",
+    status: "Present",
+  },
+  {
+    date: "08 Apr 2026",
+    in: "09:02 AM",
+    out: "06:15 PM",
+    status: "Present",
+  },
 ];
-
 const MONTH_NAMES = [
   "January",
   "February",
@@ -31,9 +70,7 @@ const MONTH_NAMES = [
   "November",
   "December",
 ];
-
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 interface RegularizationReq {
   date: string;
   checkIn: string;
@@ -41,7 +78,6 @@ interface RegularizationReq {
   reason: string;
   status: "Pending" | "Approved";
 }
-
 export function FinanceAttendance() {
   const [selectedMonth, setSelectedMonth] = useState(3); // April
   const [selectedYear, setSelectedYear] = useState(2026);
@@ -50,12 +86,10 @@ export function FinanceAttendance() {
   const [selectedDay, setSelectedDay] = useState<number | null>(6); // Default to April 6 (Today)
 
   const { todayRecord } = useAttendance();
-
   const mergedLogs = useMemo(() => {
     const todayStr = "06 Apr 2026";
     const updated = [...ATTENDANCE_LOGS];
     const todayIdx = updated.findIndex((l) => l.date === todayStr);
-
     if (todayRecord?.punchIn) {
       const todayLog = {
         date: todayStr,
@@ -73,13 +107,11 @@ export function FinanceAttendance() {
     }
     return updated;
   }, [todayRecord]);
-
   const getLogForDay = useMemo(() => {
     return (day: number) => {
       const dayStr = String(day).padStart(2, "0");
       const monthStr = MONTH_NAMES[selectedMonth].substring(0, 3);
       const dateStr = `${dayStr} ${monthStr} ${selectedYear}`;
-
       const found = mergedLogs.find((l) => l.date === dateStr);
       if (found) return found;
 
@@ -88,13 +120,21 @@ export function FinanceAttendance() {
       const dayOfWeek = (firstDayOfWeek + day - 1) % 7;
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
       if (isWeekend) {
-        return { date: dateStr, in: "-", out: "-", status: "Weekend" };
+        return {
+          date: dateStr,
+          in: "-",
+          out: "-",
+          status: "Weekend",
+        };
       }
-
       if (day === 15 || day === 16) {
-        return { date: dateStr, in: "-", out: "-", status: "Leave" };
+        return {
+          date: dateStr,
+          in: "-",
+          out: "-",
+          status: "Leave",
+        };
       }
-
       if (day < 6) {
         return {
           date: dateStr,
@@ -103,11 +143,14 @@ export function FinanceAttendance() {
           status: "Present",
         };
       }
-
-      return { date: dateStr, in: "-", out: "-", status: "-" };
+      return {
+        date: dateStr,
+        in: "-",
+        out: "-",
+        status: "-",
+      };
     };
   }, [selectedMonth, selectedYear, mergedLogs]);
-
   const selectedDayLog = useMemo(() => {
     if (selectedDay === null) return null;
     return getLogForDay(selectedDay);
@@ -125,7 +168,6 @@ export function FinanceAttendance() {
   const calendarDays = [];
   for (let i = 0; i < firstDayOfMonth; i++) calendarDays.push(null);
   for (let i = 1; i <= daysInMonth; i++) calendarDays.push(i);
-
   const handleApplyReg = (e: React.FormEvent) => {
     e.preventDefault();
     if (!regReason.trim()) {
@@ -157,7 +199,6 @@ export function FinanceAttendance() {
       "Regularization request submitted successfully.",
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-700">
       {/* ─── Top Bar ─────────────────────────────────────────────── */}
@@ -260,15 +301,12 @@ export function FinanceAttendance() {
               {calendarDays.map((day) => {
                 if (day === null)
                   return <div key={`empty-${day}`} className="aspect-square" />;
-
                 const log = getLogForDay(day);
                 const isToday = day === 6;
                 const isSelected = selectedDay === day;
-
                 let cellStyle = "bg-card border-border hover:border-[#00B87C]";
                 let textStyle = "text-foreground";
                 let dotColor = "bg-[#00B87C]";
-
                 if (isToday) {
                   cellStyle =
                     "bg-[#00B87C] border-[#00B87C] shadow-lg shadow-[#00B87C]/20 text-white hover:bg-[#00B87C]/95";
@@ -290,11 +328,9 @@ export function FinanceAttendance() {
                   textStyle = "text-[#00B87C]";
                   dotColor = "bg-[#00B87C]";
                 }
-
                 const selectedRing = isSelected
                   ? "ring-2 ring-[#00B87C] ring-offset-2 dark:ring-offset-zinc-950 scale-105 z-10 shadow-md"
                   : "";
-
                 return (
                   <button
                     key={day}
@@ -355,21 +391,7 @@ export function FinanceAttendance() {
                     </div>
                   </div>
                   <span
-                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${
-                      selectedDayLog.status === "Present" ||
-                      selectedDayLog.status === "WFH" ||
-                      selectedDayLog.status === "On-site"
-                        ? "bg-[#DCFCE7] text-[#00B87C] border border-[#00B87C]/20"
-                        : selectedDayLog.status === "Late"
-                          ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                          : selectedDayLog.status === "Leave"
-                            ? "bg-[#FEF3C7] text-[#F59E0B] border border-[#F59E0B]/20"
-                            : selectedDayLog.status === "Weekend"
-                              ? "bg-secondary text-muted-foreground border border-border"
-                              : selectedDayLog.status === "Absent"
-                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                                : "bg-secondary text-muted-foreground/40 border border-border"
-                    }`}
+                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${selectedDayLog.status === "Present" || selectedDayLog.status === "WFH" || selectedDayLog.status === "On-site" ? "bg-[#DCFCE7] text-[#00B87C] border border-[#00B87C]/20" : selectedDayLog.status === "Late" ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" : selectedDayLog.status === "Leave" ? "bg-[#FEF3C7] text-[#F59E0B] border border-[#F59E0B]/20" : selectedDayLog.status === "Weekend" ? "bg-secondary text-muted-foreground border border-border" : selectedDayLog.status === "Absent" ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" : "bg-secondary text-muted-foreground/40 border border-border"}`}
                   >
                     {selectedDayLog.status === "-"
                       ? "No Record"
@@ -464,11 +486,7 @@ export function FinanceAttendance() {
                     <tr
                       key={log.date}
                       onClick={() => setSelectedDay(logDay)}
-                      className={`h-14 hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all cursor-pointer ${
-                        isSelectedRow
-                          ? "bg-[#00B87C]/5 border-l-[3px] border-l-[#00B87C]"
-                          : ""
-                      }`}
+                      className={`h-14 hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all cursor-pointer ${isSelectedRow ? "bg-[#00B87C]/5 border-l-[3px] border-l-[#00B87C]" : ""}`}
                     >
                       <td className="px-6 text-[13px] font-black text-foreground">
                         {log.date}
@@ -481,15 +499,7 @@ export function FinanceAttendance() {
                       </td>
                       <td className="px-6">
                         <span
-                          className={`text-[12px] font-black ${
-                            log.status === "Present"
-                              ? "text-[#00B87C]"
-                              : log.status === "Leave"
-                                ? "text-[#F59E0B]"
-                                : log.status === "Absent"
-                                  ? "text-[#EF4444]"
-                                  : "text-muted-foreground"
-                          }`}
+                          className={`text-[12px] font-black ${log.status === "Present" ? "text-[#00B87C]" : log.status === "Leave" ? "text-[#F59E0B]" : log.status === "Absent" ? "text-[#EF4444]" : "text-muted-foreground"}`}
                         >
                           {log.status}
                         </span>
@@ -567,17 +577,35 @@ export function FinanceAttendance() {
       <AnimatePresence>
         {isRegModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setIsRegModalOpen(false)}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 10,
+              }}
               className="relative w-full max-w-[460px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col"
             >
               <div className="p-6 border-b border-border flex items-center justify-between">
@@ -663,7 +691,7 @@ export function FinanceAttendance() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -688,7 +716,12 @@ function StatCard({
     <div
       className={`p-6 rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center text-center hover:border-[#00B87C]/30 transition-all ${bg}`}
     >
-      <p className="text-3xl font-black mb-1" style={{ color }}>
+      <p
+        className="text-3xl font-black mb-1"
+        style={{
+          color,
+        }}
+      >
         {value}
       </p>
       <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
@@ -697,13 +730,14 @@ function StatCard({
     </div>
   );
 }
-
 function LegendItem({ label, color }: { label: string; color: string }) {
   return (
     <div className="flex items-center gap-2">
       <div
         className="w-2 h-2 rounded-full"
-        style={{ backgroundColor: color }}
+        style={{
+          backgroundColor: color,
+        }}
       />
       <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
         {label}
@@ -711,7 +745,6 @@ function LegendItem({ label, color }: { label: string; color: string }) {
     </div>
   );
 }
-
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="bg-card p-5 rounded-2xl border border-border shadow-sm text-center hover:border-[#00B87C]/30 transition-all">

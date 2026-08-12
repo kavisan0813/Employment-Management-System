@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useMemo, useEffect, useRef, useReducer, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -100,6 +100,157 @@ export function Employees() {
 
     return [];
   }, [employees, scope, currentEmp, user]);
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    search: () => searchParams.get("search") || "",
+    selectedDept: () => {
+      if (scope === "organization") return "All Departments";
+      return currentEmp?.department || "Engineering";
+    },
+    selectedTeam: () => {
+      if (scope === "team" || scope === "self")
+        return currentEmp?.team || "Frontend";
+      return "All Teams";
+    },
+    selectedStatus: "All Status",
+    selectedDesignation: "All Designations",
+    selectedLocation: "All Locations",
+    selectedTypes: [] as string[],
+    showTypeDropdown: false,
+    view: "table" as "table" | "grid" | "team",
+    selectedRows: [] as string[],
+    sortCol: "name",
+    sortDesc: false,
+    page: 1,
+    hoveredRow: null as string | null,
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    search,
+    selectedDept,
+    selectedTeam,
+    selectedStatus,
+    selectedDesignation,
+    selectedLocation,
+    selectedTypes,
+    showTypeDropdown,
+    view,
+    selectedRows,
+    sortCol,
+    sortDesc,
+    page,
+    hoveredRow,
+  } = __state;
+  const setSearch = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        search: typeof val === "function" ? val(prev.search) : val,
+      })),
+    [],
+  );
+  const setSelectedDept = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedDept: typeof val === "function" ? val(prev.selectedDept) : val,
+      })),
+    [],
+  );
+  const setSelectedTeam = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedTeam: typeof val === "function" ? val(prev.selectedTeam) : val,
+      })),
+    [],
+  );
+  const setSelectedStatus = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedStatus:
+          typeof val === "function" ? val(prev.selectedStatus) : val,
+      })),
+    [],
+  );
+  const setSelectedDesignation = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedDesignation:
+          typeof val === "function" ? val(prev.selectedDesignation) : val,
+      })),
+    [],
+  );
+  const setSelectedLocation = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedLocation:
+          typeof val === "function" ? val(prev.selectedLocation) : val,
+      })),
+    [],
+  );
+  const setSelectedTypes = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedTypes:
+          typeof val === "function" ? val(prev.selectedTypes) : val,
+      })),
+    [],
+  );
+  const setShowTypeDropdown = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showTypeDropdown:
+          typeof val === "function" ? val(prev.showTypeDropdown) : val,
+      })),
+    [],
+  );
+  const setView = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        view: typeof val === "function" ? val(prev.view) : val,
+      })),
+    [],
+  );
+  const setSelectedRows = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedRows: typeof val === "function" ? val(prev.selectedRows) : val,
+      })),
+    [],
+  );
+  const setSortCol = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        sortCol: typeof val === "function" ? val(prev.sortCol) : val,
+      })),
+    [],
+  );
+  const setSortDesc = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        sortDesc: typeof val === "function" ? val(prev.sortDesc) : val,
+      })),
+    [],
+  );
+  const setPage = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        page: typeof val === "function" ? val(prev.page) : val,
+      })),
+    [],
+  );
+  const setHoveredRow = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        hoveredRow: typeof val === "function" ? val(prev.hoveredRow) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   const allowedDepartments = useMemo(() => {
     if (scope === "organization") {
@@ -110,7 +261,6 @@ export function Employees() {
   }, [scope, currentEmp]);
 
   const [searchParams] = useSearchParams();
-  const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const debouncedSearch = useDebounce(search, 300);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -134,29 +284,6 @@ export function Employees() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
-
-  const [selectedDept, setSelectedDept] = useState(() => {
-    if (scope === "organization") return "All Departments";
-    return currentEmp?.department || "Engineering";
-  });
-  const [selectedTeam, setSelectedTeam] = useState(() => {
-    if (scope === "team" || scope === "self")
-      return currentEmp?.team || "Frontend";
-    return "All Teams";
-  });
-  const [selectedStatus, setSelectedStatus] = useState("All Status");
-  const [selectedDesignation, setSelectedDesignation] =
-    useState("All Designations");
-  const [selectedLocation, setSelectedLocation] = useState("All Locations");
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
-  const [view, setView] = useState<"table" | "grid" | "team">("table");
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [sortCol, setSortCol] = useState("name");
-  const [sortDesc, setSortDesc] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hoveredRow, setHoveredRow] = useState<string | null>(null);
-
   const {
     showImportModal,
     setShowImportModal,

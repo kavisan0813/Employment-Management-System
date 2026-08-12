@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router";
 import {
   Bell,
@@ -27,24 +27,13 @@ import { useAuth } from "../../../context/AuthContext";
 interface NotificationItem {
   id: number;
   type:
-    | "Leave"
-    | "Payroll"
-    | "Alert"
-    | "Info"
-    | "Birthday"
-    | "Expense"
-    | "Success";
+    "Leave" | "Payroll" | "Alert" | "Info" | "Birthday" | "Expense" | "Success";
   title: string;
   description: string;
   time: string;
   read: boolean;
   category:
-    | "Approvals"
-    | "Payroll"
-    | "Mentions"
-    | "System"
-    | "Expenses"
-    | "Alerts";
+    "Approvals" | "Payroll" | "Mentions" | "System" | "Expenses" | "Alerts";
 }
 
 interface AnnouncementItem {
@@ -254,41 +243,190 @@ const loadAnnouncements = (): AnnouncementItem[] => {
 export function Notifications() {
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  const [activeFilter, setActiveFilter] = useState<
-    "All" | "Unread" | "Approvals" | "Mentions" | "System"
-  >("All");
-  const [activeModal, setActiveModal] = useState<
-    "create_announcement" | "edit_announcement" | null
-  >(null);
-  const [showPreferences, setShowPreferences] = useState(false);
-
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeFilter: "All" as
+      "All" | "Unread" | "Approvals" | "Mentions" | "System",
+    activeModal: null as "create_announcement" | "edit_announcement" | null,
+    showPreferences: false,
+    notifications: loadNotifications() as NotificationItem[],
+    announcements: loadAnnouncements() as AnnouncementItem[],
+    showSuccessToast: false,
+    toastMessage: "",
+    activeAnnouncementMenu: null as number | null,
+    editAnnouncement: null as AnnouncementItem | null,
+    deleteAnnouncementConfirm: null as AnnouncementItem | null,
+    formTitle: "",
+    formCategory: "INFO" as AnnouncementItem["type"],
+    formAudience: "All Employees",
+    formContent: "",
+    formPinned: false,
+    formErrors: {} as Record<string, string>,
+    preferences: {
+      leave: { email: true, push: true, sms: false },
+      payroll: { email: true, push: true, sms: true },
+      system: { email: false, push: true, sms: false },
+      mentions: { email: true, push: true, sms: false },
+      announcements: { email: true, push: false, sms: false },
+      onboarding: { email: true, push: true, sms: false },
+    },
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    activeFilter,
+    activeModal,
+    showPreferences,
+    notifications,
+    announcements,
+    showSuccessToast,
+    toastMessage,
+    activeAnnouncementMenu,
+    editAnnouncement,
+    deleteAnnouncementConfirm,
+    formTitle,
+    formCategory,
+    formAudience,
+    formContent,
+    formPinned,
+    formErrors,
+    preferences,
+  } = __state;
+  const setActiveFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeFilter: typeof val === "function" ? val(prev.activeFilter) : val,
+      })),
+    [],
+  );
+  const setActiveModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeModal: typeof val === "function" ? val(prev.activeModal) : val,
+      })),
+    [],
+  );
+  const setShowPreferences = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showPreferences:
+          typeof val === "function" ? val(prev.showPreferences) : val,
+      })),
+    [],
+  );
+  const setNotifications = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        notifications:
+          typeof val === "function" ? val(prev.notifications) : val,
+      })),
+    [],
+  );
+  const setAnnouncements = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        announcements:
+          typeof val === "function" ? val(prev.announcements) : val,
+      })),
+    [],
+  );
+  const setShowSuccessToast = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showSuccessToast:
+          typeof val === "function" ? val(prev.showSuccessToast) : val,
+      })),
+    [],
+  );
+  const setToastMessage = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        toastMessage: typeof val === "function" ? val(prev.toastMessage) : val,
+      })),
+    [],
+  );
+  const setActiveAnnouncementMenu = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeAnnouncementMenu:
+          typeof val === "function" ? val(prev.activeAnnouncementMenu) : val,
+      })),
+    [],
+  );
+  const setEditAnnouncement = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        editAnnouncement:
+          typeof val === "function" ? val(prev.editAnnouncement) : val,
+      })),
+    [],
+  );
+  const setDeleteAnnouncementConfirm = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        deleteAnnouncementConfirm:
+          typeof val === "function" ? val(prev.deleteAnnouncementConfirm) : val,
+      })),
+    [],
+  );
+  const setFormTitle = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formTitle: typeof val === "function" ? val(prev.formTitle) : val,
+      })),
+    [],
+  );
+  const setFormCategory = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formCategory: typeof val === "function" ? val(prev.formCategory) : val,
+      })),
+    [],
+  );
+  const setFormAudience = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formAudience: typeof val === "function" ? val(prev.formAudience) : val,
+      })),
+    [],
+  );
+  const setFormContent = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formContent: typeof val === "function" ? val(prev.formContent) : val,
+      })),
+    [],
+  );
+  const setFormPinned = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formPinned: typeof val === "function" ? val(prev.formPinned) : val,
+      })),
+    [],
+  );
+  const setFormErrors = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        formErrors: typeof val === "function" ? val(prev.formErrors) : val,
+      })),
+    [],
+  );
+  const setPreferences = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        preferences: typeof val === "function" ? val(prev.preferences) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Storage-backed state
-  const [notifications, setNotifications] =
-    useState<NotificationItem[]>(loadNotifications);
-  const [announcements, setAnnouncements] =
-    useState<AnnouncementItem[]>(loadAnnouncements);
-
   // Visual/a11y and CRUD states
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [activeAnnouncementMenu, setActiveAnnouncementMenu] = useState<
-    number | null
-  >(null);
-  const [editAnnouncement, setEditAnnouncement] =
-    useState<AnnouncementItem | null>(null);
-  const [deleteAnnouncementConfirm, setDeleteAnnouncementConfirm] =
-    useState<AnnouncementItem | null>(null);
-
   // Form State
-  const [formTitle, setFormTitle] = useState("");
-  const [formCategory, setFormCategory] =
-    useState<AnnouncementItem["type"]>("INFO");
-  const [formAudience, setFormAudience] = useState("All Employees");
-  const [formContent, setFormContent] = useState("");
-  const [formPinned, setFormPinned] = useState(false);
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-
   // Close menus on outside click
   useEffect(() => {
     function handleOutsideClick(e: MouseEvent) {
@@ -454,16 +592,6 @@ export function Notifications() {
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 3000);
   };
-
-  const [preferences, setPreferences] = useState({
-    leave: { email: true, push: true, sms: false },
-    payroll: { email: true, push: true, sms: true },
-    system: { email: false, push: true, sms: false },
-    mentions: { email: true, push: true, sms: false },
-    announcements: { email: true, push: false, sms: false },
-    onboarding: { email: true, push: true, sms: false },
-  });
-
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const handleMarkAllRead = () => {
@@ -1817,19 +1945,100 @@ const loadFinanceNotifications = (): FinanceNotificationItem[] => {
 
 function FinanceNotificationsView() {
   const navigate = useNavigate();
-  const [activeFilter, setActiveFilter] = useState<
-    "All" | "Unread" | "Payroll" | "Expenses" | "System" | "Alerts"
-  >("All");
-  const [showPreferences, setShowPreferences] = useState(false);
-
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeFilter: "All" as
+      "All" | "Unread" | "Payroll" | "Expenses" | "System" | "Alerts",
+    showPreferences: false,
+    financeNotifications:
+      loadFinanceNotifications() as FinanceNotificationItem[],
+    showSuccessToast: false,
+    toastMessage: "",
+    preferences: {
+      tds: true,
+      expenses: true,
+      payroll: true,
+      increments: true,
+      budget: false,
+      maintenance: false,
+      pf: true,
+    },
+    channels: {
+      email: true,
+      push: true,
+      sms: false,
+    },
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    activeFilter,
+    showPreferences,
+    financeNotifications,
+    showSuccessToast,
+    toastMessage,
+    preferences,
+    channels,
+  } = __state;
+  const setActiveFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeFilter: typeof val === "function" ? val(prev.activeFilter) : val,
+      })),
+    [],
+  );
+  const setShowPreferences = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showPreferences:
+          typeof val === "function" ? val(prev.showPreferences) : val,
+      })),
+    [],
+  );
+  const setFinanceNotifications = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        financeNotifications:
+          typeof val === "function" ? val(prev.financeNotifications) : val,
+      })),
+    [],
+  );
+  const setShowSuccessToast = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showSuccessToast:
+          typeof val === "function" ? val(prev.showSuccessToast) : val,
+      })),
+    [],
+  );
+  const setToastMessage = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        toastMessage: typeof val === "function" ? val(prev.toastMessage) : val,
+      })),
+    [],
+  );
+  const setPreferences = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        preferences: typeof val === "function" ? val(prev.preferences) : val,
+      })),
+    [],
+  );
+  const setChannels = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        channels: typeof val === "function" ? val(prev.channels) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Finance-specific Notifications state
-  const [financeNotifications, setFinanceNotifications] = useState<
-    FinanceNotificationItem[]
-  >(loadFinanceNotifications);
-
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-
   // Close modals/drawers on Escape key press
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -1842,22 +2051,6 @@ function FinanceNotificationsView() {
   }, []);
 
   // Preferences Toggles & Channels
-  const [preferences, setPreferences] = useState({
-    tds: true,
-    expenses: true,
-    payroll: true,
-    increments: true,
-    budget: false,
-    maintenance: false,
-    pf: true,
-  });
-
-  const [channels, setChannels] = useState({
-    email: true,
-    push: true,
-    sms: false,
-  });
-
   const handleMarkAllRead = () => {
     const updated = financeNotifications.map((n: FinanceNotificationItem) => ({
       ...n,

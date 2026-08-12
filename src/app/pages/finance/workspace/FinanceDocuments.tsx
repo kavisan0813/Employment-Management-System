@@ -13,9 +13,9 @@ import {
   CloudUpload,
   Download,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 interface DocumentItem {
   name: string;
   status: "Uploaded" | "Pending" | "Expiring" | "Not Uploaded";
@@ -23,7 +23,6 @@ interface DocumentItem {
   expiryDate?: string;
   canUpdate?: boolean;
 }
-
 interface Category {
   id: string;
   title: string;
@@ -33,7 +32,6 @@ interface Category {
   chipColor: string;
   files: DocumentItem[];
 }
-
 const INITIAL_CATEGORIES: Category[] = [
   {
     id: "identity",
@@ -43,8 +41,16 @@ const INITIAL_CATEGORIES: Category[] = [
     iconColor: "text-emerald-600",
     chipColor: "bg-teal-500/10 text-teal-600",
     files: [
-      { name: "Aadhar Card", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "PAN Card", status: "Uploaded", uploadDate: "Apr 1" },
+      {
+        name: "Aadhar Card",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "PAN Card",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
       {
         name: "Passport",
         status: "Expiring",
@@ -52,7 +58,10 @@ const INITIAL_CATEGORIES: Category[] = [
         canUpdate: true,
         uploadDate: "Mar 15",
       },
-      { name: "Driving License", status: "Not Uploaded" },
+      {
+        name: "Driving License",
+        status: "Not Uploaded",
+      },
     ],
   },
   {
@@ -63,11 +72,31 @@ const INITIAL_CATEGORIES: Category[] = [
     iconColor: "text-[#7C3AED]",
     chipColor: "bg-purple-500/10 text-purple-600",
     files: [
-      { name: "Offer Letter", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "Appointment Letter", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "NDA", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "Last Appraisal", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "Promotion Letter", status: "Uploaded", uploadDate: "Apr 1" },
+      {
+        name: "Offer Letter",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "Appointment Letter",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "NDA",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "Last Appraisal",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "Promotion Letter",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
     ],
   },
   {
@@ -78,10 +107,25 @@ const INITIAL_CATEGORIES: Category[] = [
     iconColor: "text-[#0EA5E9]",
     chipColor: "bg-blue-500/10 text-blue-600",
     files: [
-      { name: "10th Certificate", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "12th Certificate", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "B.Com Degree", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "CA Foundation", status: "Not Uploaded" },
+      {
+        name: "10th Certificate",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "12th Certificate",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "B.Com Degree",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "CA Foundation",
+        status: "Not Uploaded",
+      },
     ],
   },
   {
@@ -92,9 +136,20 @@ const INITIAL_CATEGORIES: Category[] = [
     iconColor: "text-[#F59E0B]",
     chipColor: "bg-amber-500/10 text-amber-600",
     files: [
-      { name: "Bank Passbook", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "Form 16 (2024-25)", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "Investment Proofs", status: "Not Uploaded" },
+      {
+        name: "Bank Passbook",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "Form 16 (2024-25)",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "Investment Proofs",
+        status: "Not Uploaded",
+      },
     ],
   },
   {
@@ -110,7 +165,11 @@ const INITIAL_CATEGORIES: Category[] = [
         status: "Uploaded",
         uploadDate: "Apr 1",
       },
-      { name: "Health Declaration", status: "Uploaded", uploadDate: "Apr 1" },
+      {
+        name: "Health Declaration",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
     ],
   },
   {
@@ -121,13 +180,24 @@ const INITIAL_CATEGORIES: Category[] = [
     iconColor: "text-emerald-600",
     chipColor: "bg-emerald-500/10 text-emerald-600",
     files: [
-      { name: "Digital ID Card", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "Access Badge", status: "Uploaded", uploadDate: "Apr 1" },
-      { name: "NDA Copy", status: "Uploaded", uploadDate: "Apr 1" },
+      {
+        name: "Digital ID Card",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "Access Badge",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
+      {
+        name: "NDA Copy",
+        status: "Uploaded",
+        uploadDate: "Apr 1",
+      },
     ],
   },
 ];
-
 export function FinanceDocuments() {
   const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -136,12 +206,13 @@ export function FinanceDocuments() {
     fileName: string;
   } | null>(null);
   const [viewingDoc, setViewingDoc] = useState<string | null>(null);
-
   const handleOpenUpload = (categoryId: string, fileName: string) => {
-    setSelectedFileForUpload({ categoryId, fileName });
+    setSelectedFileForUpload({
+      categoryId,
+      fileName,
+    });
     setIsUploadModalOpen(true);
   };
-
   const handleUploadSubmit = (
     categoryId: string,
     fileName: string,
@@ -172,7 +243,6 @@ export function FinanceDocuments() {
       `Document "${fileName}" was successfully saved to cloud storage.`,
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -344,17 +414,32 @@ export function FinanceDocuments() {
       <AnimatePresence>
         {viewingDoc && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setViewingDoc(null)}
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative w-full max-w-[640px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
             >
               <div className="p-6 border-b border-border flex items-center justify-between">
@@ -411,22 +496,23 @@ export function FinanceDocuments() {
                   <Download size={14} /> Download PDF
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
     </div>
   );
 }
-
 interface UploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  preSelected: { categoryId: string; fileName: string } | null;
+  preSelected: {
+    categoryId: string;
+    fileName: string;
+  } | null;
   categories: Category[];
   onSubmit: (categoryId: string, fileName: string, expiry?: string) => void;
 }
-
 function UploadModal({
   onClose,
   preSelected,
@@ -439,9 +525,7 @@ function UploadModal({
   const [docName, setDocName] = useState(preSelected?.fileName || "");
   const [description, setDescription] = useState("");
   const [expiry, setExpiry] = useState("");
-
   const currentCategory = categories.find((c) => c.id === catId);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!catId || !docName) {
@@ -450,20 +534,37 @@ function UploadModal({
     }
     onSubmit(catId, docName, expiry);
   };
-
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.9,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.9,
+          y: 20,
+        }}
         className="relative w-full max-w-[460px] bg-card border border-border rounded-[32px] shadow-2xl overflow-hidden"
       >
         <div className="p-8 space-y-6">
@@ -599,7 +700,7 @@ function UploadModal({
             </button>
           </form>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, useRef } from "react";
 import {
   LogOut,
   CheckCircle2,
@@ -15,7 +15,7 @@ import {
   Send,
   CheckSquare,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { useAuth } from "../../context/AuthContext";
 import {
   OFFBOARDING_EXITS_KEY,
@@ -26,13 +26,9 @@ import {
 import type { ExitEmployee } from "../../features/Offboarding/types/offboarding.types";
 
 /* ─── Types ─── */
+import * as m from "motion/react-m";
 export type WorkflowStatus =
-  | "draft"
-  | "pending_manager"
-  | "pending_hr"
-  | "approved"
-  | "rejected";
-
+  "draft" | "pending_manager" | "pending_hr" | "approved" | "rejected";
 export interface ResignationDetails {
   resignationDate: string;
   lwd: string;
@@ -41,7 +37,6 @@ export interface ResignationDetails {
   comments: string;
   manager?: string;
 }
-
 export interface TimelineEvent {
   id: string;
   action: string;
@@ -50,9 +45,7 @@ export interface TimelineEvent {
   date: string;
   comments?: string;
 }
-
 type TaskStatus = "done" | "pending" | "in_progress";
-
 interface ExitTask {
   id: string;
   label: string;
@@ -162,7 +155,6 @@ const EXIT_TASKS: ExitTask[] = [
     status: "pending",
   },
 ];
-
 const formatCurrency = (amount: number) => "₹" + amount.toLocaleString("en-IN");
 
 /* ─── Status Circle ─── */
@@ -219,7 +211,10 @@ function ResponsiblePill({ label }: { label: string }) {
 function StatusPill({ status }: { status: TaskStatus }) {
   const getStatusConfig = (
     s: TaskStatus,
-  ): { label: string; classes: string } => {
+  ): {
+    label: string;
+    classes: string;
+  } => {
     switch (s) {
       case "done":
         return {
@@ -264,7 +259,6 @@ function ResignationForm({
   const [reason, setReason] = useState("Career Growth");
   const [comments, setComments] = useState("");
   const [lwd, setLwd] = useState("2026-04-10");
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSubmit({
@@ -275,7 +269,6 @@ function ResignationForm({
       comments,
     });
   };
-
   return (
     <div className="max-w-3xl mx-auto bg-card border border-border rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="px-8 py-6 border-b border-border bg-secondary/10 flex items-center justify-between">
@@ -564,7 +557,6 @@ export function EmployeeExit() {
   const [resignationDetails, setResignationDetails] =
     useState<ResignationDetails | null>(null);
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
-
   const [tasks, setTasks] = useState<ExitTask[]>(() => {
     try {
       return JSON.parse(
@@ -580,13 +572,11 @@ export function EmployeeExit() {
   const [signatureComplete, setSignatureComplete] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [assignedExit, setAssignedExit] = useState<ExitEmployee | null>(null);
-  const [uploadTaskId, setUploadTaskId] = useState<string | null>(null);
+  const uploadTaskId = useRef<string | null>(null);
   const [, setUploadDocumentName] = useState("Clearance_Doc_1.pdf");
-
   useEffect(() => {
     localStorage.setItem("viyan_employee_exit_tasks:v1", JSON.stringify(tasks));
   }, [tasks]);
-
   useEffect(() => {
     const syncAssignedExit = () => {
       try {
@@ -628,7 +618,6 @@ export function EmployeeExit() {
       window.removeEventListener("storage", syncAssignedExit);
     };
   }, [employeeName]);
-
   useEffect(() => {
     const checkRequest = () => {
       const saved = localStorage.getItem("viyan_resignation_requests:v1");
@@ -663,19 +652,16 @@ export function EmployeeExit() {
       clearInterval(interval);
     };
   }, [employeeName]);
-
   const doneCount = tasks.filter((t) => t.status === "done").length;
   const totalCount = tasks.length;
   const progress = Math.round((doneCount / totalCount) * 100);
-
   const handleUpload = (files: string[]) => {
     setUploadedFiles((prev) => [...prev, ...files]);
     uploadExitDocuments(employeeName, files);
-    completeTask(uploadTaskId || "t3");
-    setUploadTaskId(null);
+    completeTask(uploadTaskId.current || "t3");
+    uploadTaskId.current = null;
     setShowUploadModal(false);
   };
-
   const completeTask = (taskId: string) => {
     const task = tasks.find((item) => item.id === taskId);
     if (!task || task.status === "done") return;
@@ -685,7 +671,13 @@ export function EmployeeExit() {
     });
     setTasks((previous) =>
       previous.map((item) =>
-        item.id === taskId ? { ...item, status: "done", completedDate } : item,
+        item.id === taskId
+          ? {
+              ...item,
+              status: "done",
+              completedDate,
+            }
+          : item,
       ),
     );
     publishEmployeeExitAction(employeeName, {
@@ -695,13 +687,12 @@ export function EmployeeExit() {
       completedAt: completedDate,
     });
   };
-
   const openModalFor = (task: ExitTask) => {
     if (
       task.actionType === "btn" &&
       (task.label.includes("Upload") || task.id.startsWith("document-"))
     ) {
-      setUploadTaskId(task.id);
+      uploadTaskId.current = task.id;
       setUploadDocumentName(
         task.label.replace(/^Upload\s+/, "") || "Clearance_Doc_1.pdf",
       );
@@ -714,7 +705,6 @@ export function EmployeeExit() {
       setShowScheduleModal(true);
     }
   };
-
   const handleResignationSubmit = (data: ResignationDetails) => {
     const dateStr = new Date().toLocaleString("en-US", {
       dateStyle: "medium",
@@ -729,14 +719,12 @@ export function EmployeeExit() {
         date: dateStr,
       },
     ];
-
     setResignationDetails({
       ...data,
       manager: "Sarah Chen",
     });
     setWorkflowStatus("pending_manager");
     setTimelineEvents(timeline);
-
     const saved = localStorage.getItem("viyan_resignation_requests:v1");
     let requests = [];
     if (saved) {
@@ -746,7 +734,6 @@ export function EmployeeExit() {
         console.error(e);
       }
     }
-
     const priyaIndex = requests.findIndex(
       (r: { employeeName: string }) => r.employeeName === employeeName,
     );
@@ -767,7 +754,6 @@ export function EmployeeExit() {
       comments: data.comments,
       timeline,
     };
-
     if (priyaIndex > -1) {
       requests[priyaIndex] = newRequest;
     } else {
@@ -778,7 +764,6 @@ export function EmployeeExit() {
       JSON.stringify(requests),
     );
   };
-
   if (workflowStatus === "draft") {
     return (
       <div className="w-full px-4 md:px-8 py-6 pb-20">
@@ -789,7 +774,6 @@ export function EmployeeExit() {
       </div>
     );
   }
-
   if (
     workflowStatus === "pending_manager" ||
     workflowStatus === "pending_hr" ||
@@ -805,7 +789,6 @@ export function EmployeeExit() {
       </div>
     );
   }
-
   if (!assignedExit?.assignedTemplateId) {
     return (
       <div className="w-full px-4 md:px-8 py-6 pb-20 space-y-6 animate-in fade-in duration-500">
@@ -856,7 +839,9 @@ export function EmployeeExit() {
             <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#00B87C] rounded-full"
-                style={{ width: `${progress}%` }}
+                style={{
+                  width: `${progress}%`,
+                }}
               />
             </div>
             <span className="text-[12px] font-black text-foreground">
@@ -913,7 +898,9 @@ export function EmployeeExit() {
                 <div
                   key={task.id}
                   className="flex items-center gap-4 px-6 py-3 hover:bg-[#00B87C]/[0.08]/20 transition-colors"
-                  style={{ minHeight: "52px" }}
+                  style={{
+                    minHeight: "52px",
+                  }}
                 >
                   <StatusCircle status={task.status} />
 
@@ -1064,18 +1051,40 @@ export function EmployeeExit() {
       <AnimatePresence>
         {showUploadModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-md"
               onClick={() => setShowUploadModal(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+              }}
               className="relative w-full max-w-[480px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1150,7 +1159,7 @@ export function EmployeeExit() {
                   <UploadCloud size={14} /> Upload
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1159,18 +1168,40 @@ export function EmployeeExit() {
       <AnimatePresence>
         {showSignatureModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-md"
               onClick={() => setShowSignatureModal(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+              }}
               className="relative w-full max-w-[480px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1269,7 +1300,7 @@ export function EmployeeExit() {
                   <Pen size={14} /> Sign & Submit
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1278,18 +1309,40 @@ export function EmployeeExit() {
       <AnimatePresence>
         {showScheduleModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-md"
               onClick={() => setShowScheduleModal(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+              }}
               className="relative w-full max-w-[460px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1351,7 +1404,7 @@ export function EmployeeExit() {
                   <Calendar size={14} /> Schedule
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

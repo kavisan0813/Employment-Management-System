@@ -10,9 +10,9 @@ import {
   User,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { StatusBadge } from "../../../components/workflow/StatusBadge";
-
+import * as m from "motion/react-m";
 interface RegularizationRequest {
   id: string;
   date: string;
@@ -26,18 +26,56 @@ interface RegularizationRequest {
   approvalDate?: string;
   rejectionReason?: string;
 }
-
 const ATTENDANCE_LOGS = [
-  { date: "01 Apr 2026", in: "08:55 AM", out: "06:02 PM", status: "Present" },
-  { date: "02 Apr 2026", in: "08:50 AM", out: "06:05 PM", status: "Present" },
-  { date: "03 Apr 2026", in: "09:08 AM", out: "06:12 PM", status: "Present" },
-  { date: "04 Apr 2026", in: "-", out: "-", status: "Weekend" },
-  { date: "05 Apr 2026", in: "-", out: "-", status: "Weekend" },
-  { date: "06 Apr 2026", in: "08:55 AM", out: "06:00 PM", status: "Present" },
-  { date: "07 Apr 2026", in: "08:52 AM", out: "06:08 PM", status: "Present" },
-  { date: "08 Apr 2026", in: "09:18 AM", out: "06:00 PM", status: "Late" },
+  {
+    date: "01 Apr 2026",
+    in: "08:55 AM",
+    out: "06:02 PM",
+    status: "Present",
+  },
+  {
+    date: "02 Apr 2026",
+    in: "08:50 AM",
+    out: "06:05 PM",
+    status: "Present",
+  },
+  {
+    date: "03 Apr 2026",
+    in: "09:08 AM",
+    out: "06:12 PM",
+    status: "Present",
+  },
+  {
+    date: "04 Apr 2026",
+    in: "-",
+    out: "-",
+    status: "Weekend",
+  },
+  {
+    date: "05 Apr 2026",
+    in: "-",
+    out: "-",
+    status: "Weekend",
+  },
+  {
+    date: "06 Apr 2026",
+    in: "08:55 AM",
+    out: "06:00 PM",
+    status: "Present",
+  },
+  {
+    date: "07 Apr 2026",
+    in: "08:52 AM",
+    out: "06:08 PM",
+    status: "Present",
+  },
+  {
+    date: "08 Apr 2026",
+    in: "09:18 AM",
+    out: "06:00 PM",
+    status: "Late",
+  },
 ];
-
 function RegularizationModal({
   isOpen,
   onClose,
@@ -55,9 +93,7 @@ function RegularizationModal({
     reason: "",
     manager: "Sathish Kumar",
   });
-
   if (!isOpen) return null;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.date || !formData.type || !formData.reason) {
@@ -68,7 +104,6 @@ function RegularizationModal({
       );
       return;
     }
-
     const newReq: RegularizationRequest = {
       id: `REG-${Math.floor(Math.random() * 1000)}`,
       date: formData.date,
@@ -84,7 +119,6 @@ function RegularizationModal({
         year: "numeric",
       }),
     };
-
     onSubmit(newReq);
     showToast(
       "Request Submitted",
@@ -93,20 +127,37 @@ function RegularizationModal({
     );
     onClose();
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-background/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[550px] rounded-[32px] shadow-2xl overflow-hidden flex flex-col border border-border"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
@@ -145,7 +196,10 @@ function RegularizationModal({
                 required
                 value={formData.date}
                 onChange={(e) =>
-                  setFormData({ ...formData, date: e.target.value })
+                  setFormData({
+                    ...formData,
+                    date: e.target.value,
+                  })
                 }
                 className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-[#00B87C] transition-all shadow-inner"
               />
@@ -158,7 +212,10 @@ function RegularizationModal({
                 required
                 value={formData.type}
                 onChange={(e) =>
-                  setFormData({ ...formData, type: e.target.value })
+                  setFormData({
+                    ...formData,
+                    type: e.target.value,
+                  })
                 }
                 className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-[#00B87C] transition-all shadow-inner"
               >
@@ -181,7 +238,10 @@ function RegularizationModal({
                 type="time"
                 value={formData.checkIn}
                 onChange={(e) =>
-                  setFormData({ ...formData, checkIn: e.target.value })
+                  setFormData({
+                    ...formData,
+                    checkIn: e.target.value,
+                  })
                 }
                 className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-[#00B87C] transition-all shadow-inner"
               />
@@ -194,7 +254,10 @@ function RegularizationModal({
                 type="time"
                 value={formData.checkOut}
                 onChange={(e) =>
-                  setFormData({ ...formData, checkOut: e.target.value })
+                  setFormData({
+                    ...formData,
+                    checkOut: e.target.value,
+                  })
                 }
                 className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-[#00B87C] transition-all shadow-inner"
               />
@@ -209,7 +272,10 @@ function RegularizationModal({
               required
               value={formData.manager}
               onChange={(e) =>
-                setFormData({ ...formData, manager: e.target.value })
+                setFormData({
+                  ...formData,
+                  manager: e.target.value,
+                })
               }
               className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-[#00B87C] transition-all shadow-inner"
             >
@@ -227,7 +293,10 @@ function RegularizationModal({
               placeholder="Explain why you need this regularization..."
               value={formData.reason}
               onChange={(e) =>
-                setFormData({ ...formData, reason: e.target.value })
+                setFormData({
+                  ...formData,
+                  reason: e.target.value,
+                })
               }
               className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-3xl px-6 py-4 text-[14px] font-medium text-foreground placeholder:text-slate-400 focus:outline-none focus:border-[#00B87C] transition-all shadow-inner h-28 resize-none"
             />
@@ -264,11 +333,10 @@ function RegularizationModal({
             </button>
           </div>
         </form>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
-
 const MONTH_NAMES = [
   "January",
   "February",
@@ -283,9 +351,7 @@ const MONTH_NAMES = [
   "November",
   "December",
 ];
-
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 export function ManagerPersonalAttendance() {
   const [selectedMonth, setSelectedMonth] = useState(3); // April
   const [selectedYear] = useState(2026);
@@ -305,21 +371,17 @@ export function ManagerPersonalAttendance() {
       appliedOn: "08 Apr 2026",
     },
   ]);
-
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(selectedYear, selectedMonth, 1).getDay();
   const calendarDays = [];
   for (let i = 0; i < firstDayOfMonth; i++) calendarDays.push(null);
   for (let i = 1; i <= daysInMonth; i++) calendarDays.push(i);
-
   const handleApplyRegularization = () => {
     setIsRegModalOpen(true);
   };
-
   const handleSubmitRegularization = (newReq: RegularizationRequest) => {
     setRequests([newReq, ...requests]);
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-8 animate-in fade-in duration-700 bg-[#F0FDF4]/30 dark:bg-transparent min-h-screen">
       {/* Page Header */}
@@ -386,10 +448,26 @@ export function ManagerPersonalAttendance() {
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Working Days", value: "22", color: "var(--foreground)" },
-          { label: "Present", value: "21", color: "#00B87C" },
-          { label: "Absent", value: "0", color: "var(--destructive)" },
-          { label: "Leaves Taken", value: "1", color: "#F59E0B" },
+          {
+            label: "Working Days",
+            value: "22",
+            color: "var(--foreground)",
+          },
+          {
+            label: "Present",
+            value: "21",
+            color: "#00B87C",
+          },
+          {
+            label: "Absent",
+            value: "0",
+            color: "var(--destructive)",
+          },
+          {
+            label: "Leaves Taken",
+            value: "1",
+            color: "#F59E0B",
+          },
         ].map((card) => (
           <div
             key={card.label}
@@ -397,7 +475,9 @@ export function ManagerPersonalAttendance() {
           >
             <p
               className="text-[28px] font-bold mb-1"
-              style={{ color: card.color }}
+              style={{
+                color: card.color,
+              }}
             >
               {card.value}
             </p>
@@ -419,15 +499,29 @@ export function ManagerPersonalAttendance() {
               </h3>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                 {[
-                  { label: "Present", color: "#00B87C" },
-                  { label: "Absent", color: "var(--destructive)" },
-                  { label: "Leave", color: "#F59E0B" },
-                  { label: "Weekend", color: "var(--muted-foreground)" },
+                  {
+                    label: "Present",
+                    color: "#00B87C",
+                  },
+                  {
+                    label: "Absent",
+                    color: "var(--destructive)",
+                  },
+                  {
+                    label: "Leave",
+                    color: "#F59E0B",
+                  },
+                  {
+                    label: "Weekend",
+                    color: "var(--muted-foreground)",
+                  },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2">
                     <div
                       className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: item.color }}
+                      style={{
+                        backgroundColor: item.color,
+                      }}
                     />
                     <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                       {item.label}
@@ -457,16 +551,13 @@ export function ManagerPersonalAttendance() {
                       className="aspect-square"
                     />
                   );
-
                 const isWeekend = i % 7 === 0 || i % 7 === 6;
                 const isToday = day === 6;
                 const isLeave = day === 7;
                 const isLate = day === 8;
-
                 let cellStyle = "bg-background";
                 let textStyle = "text-foreground";
                 let dotStyle = "bg-transparent";
-
                 if (isToday) {
                   cellStyle = "bg-[#00B87C] shadow-xl shadow-emerald-500/30";
                   textStyle = "text-white";
@@ -487,7 +578,6 @@ export function ManagerPersonalAttendance() {
                   textStyle = "text-[#00B87C]";
                   dotStyle = "bg-[#00B87C]";
                 }
-
                 return (
                   <div
                     key={day}
@@ -513,11 +603,15 @@ export function ManagerPersonalAttendance() {
             {selectedDay !== null && (
               <div
                 className="mt-5 rounded-xl border overflow-hidden animate-in slide-in-from-top-2"
-                style={{ borderColor: "var(--border)" }}
+                style={{
+                  borderColor: "var(--border)",
+                }}
               >
                 <div
                   className="px-5 py-3 flex items-center justify-between"
-                  style={{ background: "#00B87C" }}
+                  style={{
+                    background: "#00B87C",
+                  }}
                 >
                   <div>
                     <span className="text-[14px] font-black text-white">
@@ -538,22 +632,18 @@ export function ManagerPersonalAttendance() {
                   const dayStr = selectedDay.toString().padStart(2, "0");
                   const log = ATTENDANCE_LOGS.find((l) =>
                     l.date.startsWith(dayStr),
-                  ) || { in: "-", out: "-", status: "No Data" };
+                  ) || {
+                    in: "-",
+                    out: "-",
+                    status: "No Data",
+                  };
                   const isWknd = log.status === "Weekend";
                   return (
                     <div className="p-5 bg-card flex flex-col gap-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span
-                            className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                              log.status === "Present"
-                                ? "bg-[#00B87C]/10 text-[#00B87C]"
-                                : log.status === "Late"
-                                  ? "bg-amber-500/10 text-amber-600"
-                                  : log.status === "Weekend"
-                                    ? "bg-secondary text-muted-foreground"
-                                    : "bg-red-500/10 text-red-600"
-                            }`}
+                            className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${log.status === "Present" ? "bg-[#00B87C]/10 text-[#00B87C]" : log.status === "Late" ? "bg-amber-500/10 text-amber-600" : log.status === "Weekend" ? "bg-secondary text-muted-foreground" : "bg-red-500/10 text-red-600"}`}
                           >
                             {log.status}
                           </span>
@@ -608,7 +698,11 @@ export function ManagerPersonalAttendance() {
                 value: "06:03 PM",
                 color: "text-muted-foreground",
               },
-              { label: "Punctuality", value: "98%", color: "text-[#00B87C]" },
+              {
+                label: "Punctuality",
+                value: "98%",
+                color: "text-[#00B87C]",
+              },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -674,15 +768,7 @@ export function ManagerPersonalAttendance() {
                       </td>
                       <td className="px-6">
                         <span
-                          className={`text-[11px] font-semibold ${
-                            log.status === "Present"
-                              ? "text-[#00B87C]"
-                              : log.status === "Late"
-                                ? "text-amber-500"
-                                : log.status === "Leave"
-                                  ? "text-indigo-400"
-                                  : "text-muted-foreground/30"
-                          }`}
+                          className={`text-[11px] font-semibold ${log.status === "Present" ? "text-[#00B87C]" : log.status === "Late" ? "text-amber-500" : log.status === "Leave" ? "text-indigo-400" : "text-muted-foreground/30"}`}
                         >
                           {log.status}
                         </span>

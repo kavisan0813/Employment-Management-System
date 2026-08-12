@@ -9,23 +9,14 @@ import {
   X,
   MoreVertical,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 type GoalStatus =
-  | "All"
-  | "In Progress"
-  | "Completed"
-  | "At Risk"
-  | "Not Started";
+  "All" | "In Progress" | "Completed" | "At Risk" | "Not Started";
 type Priority = "High" | "Medium" | "Low";
 type Category =
-  | "Finance"
-  | "Compliance"
-  | "Leadership"
-  | "Personal"
-  | "Technical";
-
+  "Finance" | "Compliance" | "Leadership" | "Personal" | "Technical";
 interface Goal {
   id: string;
   title: string;
@@ -38,7 +29,6 @@ interface Goal {
   manager: string;
   status: GoalStatus;
 }
-
 const INITIAL_GOALS: Goal[] = [
   {
     id: "1",
@@ -113,13 +103,11 @@ const INITIAL_GOALS: Goal[] = [
     status: "In Progress",
   },
 ];
-
 export function FinanceGoals() {
   const [goals, setGoals] = useState<Goal[]>(INITIAL_GOALS);
   const [activeTab, setActiveTab] = useState<GoalStatus>("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
-
   const filteredGoals = goals.filter(
     (goal) => activeTab === "All" || goal.status === activeTab,
   );
@@ -131,13 +119,11 @@ export function FinanceGoals() {
     (g) => g.status === "In Progress",
   ).length;
   const atRiskCount = goals.filter((g) => g.status === "At Risk").length;
-
   const overallProgress =
     goals.length > 0
       ? Math.round(goals.reduce((acc, g) => acc + g.progress, 0) / goals.length)
       : 0;
   const goalsOnTrack = goals.filter((g) => g.status !== "At Risk").length;
-
   const handleAddGoal = (newGoalData: {
     title: string;
     category: Category;
@@ -157,7 +143,6 @@ export function FinanceGoals() {
       manager: "Rajan Kumar",
       status: "In Progress",
     };
-
     setGoals([...goals, newGoal]);
     showToast(
       "Goal Added",
@@ -165,12 +150,10 @@ export function FinanceGoals() {
       `"${newGoalData.title}" has been successfully added.`,
     );
   };
-
   const handleCheckIn = (goalId: string) => {
     setGoals((prev) =>
       prev.map((g) => {
         if (g.id !== goalId) return g;
-
         const newProgress = Math.min(g.progress + 10, 100);
         const newStatus: GoalStatus =
           newProgress === 100
@@ -178,13 +161,11 @@ export function FinanceGoals() {
             : g.status === "At Risk" && newProgress >= 50
               ? "In Progress"
               : g.status;
-
         showToast(
           "Check-in Complete",
           "success",
           `Progress for "${g.title}" updated to ${newProgress}%.`,
         );
-
         return {
           ...g,
           progress: newProgress,
@@ -194,7 +175,6 @@ export function FinanceGoals() {
       }),
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -259,9 +239,13 @@ export function FinanceGoals() {
           </span>
         </div>
         <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
-          <motion.div
-            initial={{ x: "-100%" }}
-            animate={{ x: `-${100 - (overallProgress)}%` }}
+          <m.div
+            initial={{
+              x: "-100%",
+            }}
+            animate={{
+              x: `-${100 - overallProgress}%`,
+            }}
             className="h-full bg-[#00B87C] rounded-full w-full"
           />
         </div>
@@ -283,14 +267,11 @@ export function FinanceGoals() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-4 text-[12px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab
-                  ? "text-[#00B87C]"
-                  : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`pb-4 text-[12px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
             >
               {tab}
               {activeTab === tab && (
-                <motion.div
+                <m.div
                   layoutId="activeTabGoals"
                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C]"
                 />
@@ -391,7 +372,6 @@ function KPICard({
     teal: "text-teal-600 bg-teal-500/10 border-teal-500/20",
     red: "text-rose-600 bg-rose-500/10 border-rose-500/20",
   };
-
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm group hover:border-[#00B87C]/30 transition-all">
       <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
@@ -405,7 +385,6 @@ function KPICard({
     </div>
   );
 }
-
 const GoalItem = forwardRef<
   HTMLDivElement,
   {
@@ -422,21 +401,28 @@ const GoalItem = forwardRef<
     ) : (
       <div className="w-4 h-4 rounded-full border-2 border-[#00B87C]/50 border-t-[#00B87C] animate-spin" />
     );
-
   const priorityColor =
     goal.priority === "High"
       ? "text-rose-600 bg-rose-500/10 border-rose-500/20"
       : goal.priority === "Medium"
         ? "text-amber-600 bg-amber-500/10 border-amber-500/20"
         : "text-muted-foreground bg-muted/50 border-border";
-
   return (
-    <motion.div
+    <m.div
       ref={ref}
       layout
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
+      initial={{
+        opacity: 0,
+        scale: 0.98,
+      }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+      }}
+      exit={{
+        opacity: 0,
+        scale: 0.98,
+      }}
       className="p-4 rounded-2xl border border-border bg-card hover:border-[#00B87C]/30 transition-all space-y-4 group"
     >
       {/* TOP ROW */}
@@ -463,9 +449,13 @@ const GoalItem = forwardRef<
       {/* PROGRESS ROW */}
       <div className="space-y-2">
         <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-          <motion.div
-            initial={{ x: "-100%" }}
-            animate={{ x: `-${100 - (goal.progress)}%` }}
+          <m.div
+            initial={{
+              x: "-100%",
+            }}
+            animate={{
+              x: `-${100 - goal.progress}%`,
+            }}
             className="h-full bg-[#00B87C] rounded-full w-full"
           />
         </div>
@@ -518,11 +508,10 @@ const GoalItem = forwardRef<
           />
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 });
 GoalItem.displayName = "GoalItem";
-
 interface AddGoalModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -534,7 +523,6 @@ interface AddGoalModalProps {
     kr: string;
   }) => void;
 }
-
 function AddGoalModal({ isOpen, onClose, onSubmit }: AddGoalModalProps) {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<Category>("Finance");
@@ -542,9 +530,7 @@ function AddGoalModal({ isOpen, onClose, onSubmit }: AddGoalModalProps) {
   const [targetDate, setTargetDate] = useState("");
   const [kr, setKr] = useState("");
   const [description, setDescription] = useState("");
-
   if (!isOpen) return null;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -562,7 +548,6 @@ function AddGoalModal({ isOpen, onClose, onSubmit }: AddGoalModalProps) {
       else if (month >= 6 && month <= 8) deadlineStr = "Q3 Target";
       else deadlineStr = "Q4 Target";
     }
-
     onSubmit({
       title: title.trim(),
       category,
@@ -580,20 +565,37 @@ function AddGoalModal({ isOpen, onClose, onSubmit }: AddGoalModalProps) {
     setDescription("");
     onClose();
   };
-
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.9,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.9,
+          y: 20,
+        }}
         className="relative w-full max-w-[480px] bg-card border border-border rounded-[32px] shadow-2xl overflow-hidden"
       >
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
@@ -643,10 +645,7 @@ function AddGoalModal({ isOpen, onClose, onSubmit }: AddGoalModalProps) {
                     key={cat}
                     type="button"
                     onClick={() => setCategory(cat)}
-                    className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-widest transition-all ${category === cat
-                        ? "bg-[#00B87C] text-white border-[#00B87C]"
-                        : "border-border text-foreground hover:border-[#00B87C]"
-                      }`}
+                    className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-widest transition-all ${category === cat ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border text-foreground hover:border-[#00B87C]"}`}
                   >
                     {cat}
                   </button>
@@ -664,14 +663,7 @@ function AddGoalModal({ isOpen, onClose, onSubmit }: AddGoalModalProps) {
                     key={p}
                     type="button"
                     onClick={() => setPriority(p)}
-                    className={`flex-1 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-widest transition-all ${priority === p
-                        ? p === "High"
-                          ? "bg-rose-500 text-white border-rose-500"
-                          : p === "Medium"
-                            ? "bg-amber-500 text-white border-amber-500"
-                            : "bg-blue-500 text-white border-blue-500"
-                        : `border-border hover:border-[#00B87C] ${p === "High" ? "text-rose-600" : p === "Medium" ? "text-amber-600" : "text-blue-600"}`
-                      }`}
+                    className={`flex-1 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-widest transition-all ${priority === p ? (p === "High" ? "bg-rose-500 text-white border-rose-500" : p === "Medium" ? "bg-amber-500 text-white border-amber-500" : "bg-blue-500 text-white border-blue-500") : `border-border hover:border-[#00B87C] ${p === "High" ? "text-rose-600" : p === "Medium" ? "text-amber-600" : "text-blue-600"}`}`}
                   >
                     {p}
                   </button>
@@ -733,7 +725,7 @@ function AddGoalModal({ isOpen, onClose, onSubmit }: AddGoalModalProps) {
             </button>
           </div>
         </form>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -749,7 +741,6 @@ function GoalDetailsModal({
   onUpdateProgress: (id: string, newProgress: number) => void;
 }) {
   const [prog, setProg] = useState(goal.progress);
-
   return (
     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
       <div
@@ -832,7 +823,13 @@ function GoalDetailsModal({
               max="100"
               step="5"
               value={prog}
-              onChange={(e) => setProg((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
+              onChange={(e) =>
+                setProg(
+                  e.target.value === "" || isNaN(Number(e.target.value))
+                    ? undefined
+                    : Number(e.target.value),
+                )
+              }
               className="w-full accent-[#00B87C] bg-muted h-2 rounded-lg cursor-pointer appearance-none animate-none"
             />
             <div className="flex gap-2 justify-end pt-2">

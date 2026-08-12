@@ -1,11 +1,27 @@
 import { lazy, Suspense } from "react";
 import { useAuth } from "../../context/AuthContext";
 
-const SuperAdminDashboard = lazy(() => import("./SuperAdminDashboard").then(m => ({ default: m.SuperAdminDashboard })));
-const HRDashboard = lazy(() => import("./HRDashboard").then(m => ({ default: m.HRDashboard })));
-const FinanceDashboard = lazy(() => import("./FinanceDashboard").then(m => ({ default: m.FinancePersonalDashboard })));
-const ManagerDashboard = lazy(() => import("./ManagerDashboard").then(m => ({ default: m.ManagerPersonalDashboard })));
-const EmployeeDashboard = lazy(() => import("./EmployeeDashboard").then(m => ({ default: m.Dashboard })));
+const SuperAdminDashboard = lazy(() =>
+  import("./SuperAdminDashboard").then((m) => ({
+    default: m.SuperAdminDashboard,
+  })),
+);
+const HRDashboard = lazy(() =>
+  import("./HRDashboard").then((m) => ({ default: m.HRDashboard })),
+);
+const FinanceDashboard = lazy(() =>
+  import("./FinanceDashboard").then((m) => ({
+    default: m.FinancePersonalDashboard,
+  })),
+);
+const ManagerDashboard = lazy(() =>
+  import("./ManagerDashboard").then((m) => ({
+    default: m.ManagerPersonalDashboard,
+  })),
+);
+const EmployeeDashboard = lazy(() =>
+  import("./EmployeeDashboard").then((m) => ({ default: m.Dashboard })),
+);
 
 export default function DashboardWrapper() {
   const { user } = useAuth();
@@ -19,7 +35,7 @@ export default function DashboardWrapper() {
         </div>
       }
     >
-      { role === "Super Admin" ? (
+      {role === "Super Admin" ? (
         <SuperAdminDashboard />
       ) : role === "HR Manager" ? (
         <HRDashboard />

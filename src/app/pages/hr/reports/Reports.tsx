@@ -29,46 +29,159 @@ import {
   CalendarCheck,
   Briefcase,
 } from "lucide-react";
-const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
-const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
-const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
-const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
-const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-const Line = lazy(() => import("recharts").then(m => ({ default: m.Line })));
-
+const AreaChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.AreaChart,
+  })),
+);
+const Area = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Area,
+  })),
+);
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.XAxis,
+  })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.YAxis,
+  })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.CartesianGrid,
+  })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Tooltip,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const BarChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.BarChart,
+  })),
+);
+const Bar = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Bar,
+  })),
+);
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PieChart,
+  })),
+);
+const Pie = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Pie,
+  })),
+);
+const Cell = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Cell,
+  })),
+);
+const Line = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Line,
+  })),
+);
 import React from "react";
 
 /* ─── Shared data ─── */
 
 const swapTrendData = [
-  { week: "Mar W3", submitted: 4, approved: 2, declined: 1 },
-  { week: "Mar W4", submitted: 6, approved: 4, declined: 1 },
-  { week: "Apr W1", submitted: 5, approved: 3, declined: 0 },
-  { week: "Apr W2", submitted: 9, approved: 4, declined: 1 },
+  {
+    week: "Mar W3",
+    submitted: 4,
+    approved: 2,
+    declined: 1,
+  },
+  {
+    week: "Mar W4",
+    submitted: 6,
+    approved: 4,
+    declined: 1,
+  },
+  {
+    week: "Apr W1",
+    submitted: 5,
+    approved: 3,
+    declined: 0,
+  },
+  {
+    week: "Apr W2",
+    submitted: 9,
+    approved: 4,
+    declined: 1,
+  },
 ];
-
 const swapTrendMonthData = [
-  { month: "Jan", submitted: 18, approved: 12, declined: 2 },
-  { month: "Feb", submitted: 22, approved: 15, declined: 4 },
-  { month: "Mar", submitted: 26, approved: 18, declined: 5 },
-  { month: "Apr", submitted: 14, approved: 8, declined: 2 },
+  {
+    month: "Jan",
+    submitted: 18,
+    approved: 12,
+    declined: 2,
+  },
+  {
+    month: "Feb",
+    submitted: 22,
+    approved: 15,
+    declined: 4,
+  },
+  {
+    month: "Mar",
+    submitted: 26,
+    approved: 18,
+    declined: 5,
+  },
+  {
+    month: "Apr",
+    submitted: 14,
+    approved: 8,
+    declined: 2,
+  },
 ];
-
 const swapReasonData = [
-  { name: "Personal", value: 35, count: 9, color: "#059669" },
-  { name: "Medical", value: 25, count: 6, color: "#14B8A6" },
-  { name: "Travel", value: 20, count: 5, color: "#34D39A" },
-  { name: "Family", value: 12, count: 3, color: "#F59E0B" },
-  { name: "Other", value: 8, count: 1, color: "#D1D5DB" },
+  {
+    name: "Personal",
+    value: 35,
+    count: 9,
+    color: "#059669",
+  },
+  {
+    name: "Medical",
+    value: 25,
+    count: 6,
+    color: "#14B8A6",
+  },
+  {
+    name: "Travel",
+    value: 20,
+    count: 5,
+    color: "#34D39A",
+  },
+  {
+    name: "Family",
+    value: 12,
+    count: 3,
+    color: "#F59E0B",
+  },
+  {
+    name: "Other",
+    value: 8,
+    count: 1,
+    color: "#D1D5DB",
+  },
 ];
-
 const swapRequests = [
   {
     id: "SWP-001",
@@ -196,31 +309,93 @@ const swapRequests = [
 /* 8. OVERTIME MONITORING REPORT                 */
 /* ══════════════════════════════════════════════ */
 const otTrendData = [
-  { week: "Feb W3", hours: 64 },
-  { week: "Feb W4", hours: 82 },
-  { week: "Mar W1", hours: 105 },
-  { week: "Mar W2", hours: 95 },
-  { week: "Mar W3", hours: 130 },
-  { week: "Apr W1", hours: 142 },
+  {
+    week: "Feb W3",
+    hours: 64,
+  },
+  {
+    week: "Feb W4",
+    hours: 82,
+  },
+  {
+    week: "Mar W1",
+    hours: 105,
+  },
+  {
+    week: "Mar W2",
+    hours: 95,
+  },
+  {
+    week: "Mar W3",
+    hours: 130,
+  },
+  {
+    week: "Apr W1",
+    hours: 142,
+  },
 ];
-
 const otTrendMonthData = [
-  { week: "Jan", hours: 320 },
-  { week: "Feb", hours: 450 },
-  { week: "Mar", hours: 580 },
-  { week: "Apr", hours: 142 }, // Current partial month
+  {
+    week: "Jan",
+    hours: 320,
+  },
+  {
+    week: "Feb",
+    hours: 450,
+  },
+  {
+    week: "Mar",
+    hours: 580,
+  },
+  {
+    week: "Apr",
+    hours: 142,
+  }, // Current partial month
 ];
-
 const otDeptData = [
-  { name: "Operations", hours: 42, status: "High", color: "#EF4444" },
-  { name: "Engineering", hours: 31, status: "High", color: "#EF4444" },
-  { name: "Sales", hours: 24, status: "Med", color: "#F59E0B" },
-  { name: "Finance", hours: 18, status: "Med", color: "#F59E0B" },
-  { name: "Marketing", hours: 14, status: "OK", color: "#34D39A" },
-  { name: "HR", hours: 8, status: "OK", color: "#34D39A" },
-  { name: "Design", hours: 5, status: "OK", color: "#34D39A" },
+  {
+    name: "Operations",
+    hours: 42,
+    status: "High",
+    color: "#EF4444",
+  },
+  {
+    name: "Engineering",
+    hours: 31,
+    status: "High",
+    color: "#EF4444",
+  },
+  {
+    name: "Sales",
+    hours: 24,
+    status: "Med",
+    color: "#F59E0B",
+  },
+  {
+    name: "Finance",
+    hours: 18,
+    status: "Med",
+    color: "#F59E0B",
+  },
+  {
+    name: "Marketing",
+    hours: 14,
+    status: "OK",
+    color: "#34D39A",
+  },
+  {
+    name: "HR",
+    hours: 8,
+    status: "OK",
+    color: "#34D39A",
+  },
+  {
+    name: "Design",
+    hours: 5,
+    status: "OK",
+    color: "#34D39A",
+  },
 ];
-
 const otEmployeeData = [
   {
     name: "Ravi Kumar",
@@ -311,21 +486,54 @@ const otEmployeeData = [
     status: "Normal",
   },
 ];
-
 const otShiftData = [
-  { name: "Night Shift", hours: 64, value: 45, color: "#8B5CF6" },
-  { name: "Evening Shift", hours: 44, value: 31, color: "#F59E0B" },
-  { name: "Morning Shift", hours: 20, value: 14, color: "#059669" },
-  { name: "Full Day", hours: 14, value: 10, color: "#0EA5E9" },
+  {
+    name: "Night Shift",
+    hours: 64,
+    value: 45,
+    color: "#8B5CF6",
+  },
+  {
+    name: "Evening Shift",
+    hours: 44,
+    value: 31,
+    color: "#F59E0B",
+  },
+  {
+    name: "Morning Shift",
+    hours: 20,
+    value: 14,
+    color: "#059669",
+  },
+  {
+    name: "Full Day",
+    hours: 14,
+    value: 10,
+    color: "#0EA5E9",
+  },
 ];
-
 const otCostForecast = [
-  { week: "Week 1", amount: 2100, actual: true },
-  { week: "Week 2", amount: 3420, actual: true },
-  { week: "Week 3", amount: 3840, actual: true },
-  { week: "Week 4", amount: 4260, actual: false },
+  {
+    week: "Week 1",
+    amount: 2100,
+    actual: true,
+  },
+  {
+    week: "Week 2",
+    amount: 3420,
+    actual: true,
+  },
+  {
+    week: "Week 3",
+    amount: 3840,
+    actual: true,
+  },
+  {
+    week: "Week 4",
+    amount: 4260,
+    actual: false,
+  },
 ];
-
 function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
   const navigate = useNavigate();
   const [filter, setFilter] = useState("All");
@@ -333,14 +541,15 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
   const [deptFilter, setDeptFilter] = useState("All Departments");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [trendTab, setTrendTab] = useState("6 Weeks");
-
   const departments = [
     "All Departments",
     ...Array.from(new Set(otEmployeeData.map((e) => e.dept))),
   ];
-
   const filteredEmployees = otEmployeeData.filter((e) => {
     const matchesSearch =
+
+
+
       e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.dept.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.role.toLowerCase().includes(searchQuery.toLowerCase());
@@ -350,13 +559,10 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
     if (cleanFilter === "Exceeded") matchesTab = e.status === "Exceeded";
     else if (cleanFilter === "High") matchesTab = e.status === "High";
     else if (cleanFilter === "Low") matchesTab = e.status === "Normal";
-
     const matchesDept =
       deptFilter === "All Departments" || e.dept === deptFilter;
-
     return matchesSearch && matchesTab && matchesDept;
   });
-
   const handleExportCSV = () => {
     const headers = [
       "Employee",
@@ -379,7 +585,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
       e.status,
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -387,14 +595,12 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
     a.click();
     URL.revokeObjectURL(url);
   };
-
   const handleExportPDF = () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
     const rows = filteredEmployees
       .map(
-        (e) =>
-          `<tr>
+        (e) => `<tr>
         <td style="padding:10px;border-bottom:1px solid #eee"><b>${e.name}</b><br/><small>${e.role}</small></td>
         <td style="padding:10px;border-bottom:1px solid #eee">${e.dept}</td>
         <td style="padding:10px;border-bottom:1px solid #eee">${e.ot} hrs</td>
@@ -402,7 +608,6 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
       </tr>`,
       )
       .join("");
-
     printWindow.document.write(`
       <html><head><title>Overtime Monitoring Report</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#F59E0B;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px;background:#FEF3C7;color:#92400E;font-size:11px;text-transform:uppercase;border-bottom:2px solid #F59E0B}</style></head>
       <body><h1>Overtime Monitoring Report</h1><p>${filteredEmployees.length} records · Produced ${new Date().toLocaleDateString()}</p>
@@ -411,7 +616,6 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
     printWindow.document.close();
     printWindow.print();
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6">
       <ReportHeader
@@ -436,10 +640,22 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             <AlertTriangle size={20} color="#F59E0B" />
           </div>
           <div>
-            <p style={{ color: "#92400E", fontSize: "14px", fontWeight: 700 }}>
+            <p
+              style={{
+                color: "#92400E",
+                fontSize: "14px",
+                fontWeight: 700,
+              }}
+            >
               3 employees have exceeded the 15-hour weekly overtime limit.
             </p>
-            <p style={{ color: "#92400E", fontSize: "13px", marginTop: "2px" }}>
+            <p
+              style={{
+                color: "#92400E",
+                fontSize: "13px",
+                marginTop: "2px",
+              }}
+            >
               Ravi Kumar (18 hrs), James Carter (17 hrs), Sarah Johnson (16 hrs)
               require immediate schedule review.
             </p>
@@ -447,7 +663,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
         </div>
         <button
           className="px-5 py-2 rounded-xl text-xs font-bold text-white transition-transform active:scale-95"
-          style={{ backgroundColor: "#F59E0B" }}
+          style={{
+            backgroundColor: "#F59E0B",
+          }}
           onClick={() => navigate("/schedule")}
         >
           Review Schedules
@@ -491,14 +709,19 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
               </h3>
               <span
                 className="px-2.5 py-1 rounded-full text-[11px] font-bold"
-                style={{ backgroundColor: "#ECFDF5", color: "#059669" }}
+                style={{
+                  backgroundColor: "#ECFDF5",
+                  color: "#059669",
+                }}
               >
                 Last {trendTab === "6 Weeks" ? "6 weeks" : "4 months"}
               </span>
             </div>
             <div
               className="flex bg-[var(--background)] p-1 rounded-full border"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               <button
                 onClick={() => setTrendTab("6 Weeks")}
@@ -535,12 +758,18 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   dataKey="week"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: "#9CA3AF" }}
+                  tick={{
+                    fontSize: 11,
+                    fill: "#9CA3AF",
+                  }}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: "#9CA3AF" }}
+                  tick={{
+                    fontSize: 11,
+                    fill: "#9CA3AF",
+                  }}
                 />
                 <Tooltip
                   contentStyle={{
@@ -550,7 +779,10 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                     color: "white",
                     padding: "12px",
                   }}
-                  itemStyle={{ color: "white", fontSize: "12px" }}
+                  itemStyle={{
+                    color: "white",
+                    fontSize: "12px",
+                  }}
                 />
                 <Area
                   type="monotone"
@@ -564,7 +796,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                     strokeWidth: 2,
                     r: 4,
                   }}
-                  activeDot={{ r: 6 }}
+                  activeDot={{
+                    r: 6,
+                  }}
                 />
                 {/* Threshold Line at 100 */}
                 <Line
@@ -630,7 +864,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   <div className="flex items-center gap-2 w-[80px] justify-end">
                     <span
                       className="text-[13px] font-bold"
-                      style={{ color: d.color }}
+                      style={{
+                        color: d.color,
+                      }}
                     >
                       {d.hours} hrs
                     </span>
@@ -672,7 +908,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
       >
         <div
           className="px-6 py-5 border-b flex items-center justify-between"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           <div>
             <h3
@@ -684,7 +922,12 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             >
               Employee Overtime Details
             </h3>
-            <p style={{ color: "var(--muted-foreground)", fontSize: "12px" }}>
+            <p
+              style={{
+                color: "var(--muted-foreground)",
+                fontSize: "12px",
+              }}
+            >
               Week of Apr 6–12, 2026
             </p>
           </div>
@@ -742,7 +985,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
 
         <div
           className="flex px-6 border-b"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           {["All (23)", "Exceeded Limit (3)", "High OT (8)", "Low OT (12)"].map(
             (t) => (
@@ -780,7 +1025,10 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   <th
                     key={h}
                     className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider"
-                    style={{ color: "var(--foreground)", opacity: 0.8 }}
+                    style={{
+                      color: "var(--foreground)",
+                      opacity: 0.8,
+                    }}
                   >
                     {h}
                   </th>
@@ -789,7 +1037,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             </thead>
             <tbody
               className="divide-y"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               {filteredEmployees.map((e) => (
                 <tr
@@ -843,7 +1093,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   </td>
                   <td
                     className="px-6 py-2 font-mono"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     {e.reg} hrs
                   </td>
@@ -893,13 +1145,17 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   </td>
                   <td
                     className="px-6 py-2 font-mono font-bold"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     {e.total} hrs
                   </td>
                   <td
                     className="px-6 py-2"
-                    style={{ color: "var(--muted-foreground)" }}
+                    style={{
+                      color: "var(--muted-foreground)",
+                    }}
                   >
                     {e.days} days
                   </td>
@@ -994,7 +1250,11 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             Overtime by Shift Type
           </h3>
           <p
-            style={{ color: "#6B7280", fontSize: "13px", marginBottom: "20px" }}
+            style={{
+              color: "#6B7280",
+              fontSize: "13px",
+              marginBottom: "20px",
+            }}
           >
             Which shifts generate most OT
           </p>
@@ -1026,7 +1286,12 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                 >
                   142 hrs
                 </span>
-                <span style={{ color: "#6B7280", fontSize: "10px" }}>
+                <span
+                  style={{
+                    color: "#6B7280",
+                    fontSize: "10px",
+                  }}
+                >
                   Total OT
                 </span>
               </div>
@@ -1041,7 +1306,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                   <div className="flex items-center gap-3">
                     <div
                       className="w-2.5 h-2.5 rounded-full"
-                      style={{ backgroundColor: s.color }}
+                      style={{
+                        backgroundColor: s.color,
+                      }}
                     />
                     <span className="text-[13px] text-[#0F3047] font-medium">
                       {s.name}
@@ -1053,7 +1320,10 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
                     </span>
                     <span
                       className="px-2 py-0.5 rounded-full text-[11px] font-bold"
-                      style={{ backgroundColor: "#ECFDF5", color: "#059669" }}
+                      style={{
+                        backgroundColor: "#ECFDF5",
+                        color: "#059669",
+                      }}
                     >
                       {s.value}%
                     </span>
@@ -1090,7 +1360,11 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             </button>
           </div>
           <p
-            style={{ color: "#6B7280", fontSize: "13px", marginBottom: "24px" }}
+            style={{
+              color: "#6B7280",
+              fontSize: "13px",
+              marginBottom: "24px",
+            }}
           >
             Projected vs Actual spend
           </p>
@@ -1099,10 +1373,20 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
             {otCostForecast.map((c) => (
               <div key={c.week}>
                 <div className="flex justify-between text-[12px] mb-1.5">
-                  <span style={{ color: "#6B7280", fontWeight: 600 }}>
+                  <span
+                    style={{
+                      color: "#6B7280",
+                      fontWeight: 600,
+                    }}
+                  >
                     {c.week}
                   </span>
-                  <span style={{ color: "#F59E0B", fontWeight: 700 }}>
+                  <span
+                    style={{
+                      color: "#F59E0B",
+                      fontWeight: 700,
+                    }}
+                  >
                     ₹{c.amount}
                   </span>
                 </div>
@@ -1120,7 +1404,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
 
             <div
               className="mt-6 p-4 rounded-xl space-y-3"
-              style={{ backgroundColor: "#FEF3C7" }}
+              style={{
+                backgroundColor: "#FEF3C7",
+              }}
             >
               <div className="flex items-center justify-between">
                 <p
@@ -1145,7 +1431,9 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
               <div className="h-2 w-full bg-white/50 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-[#F59E0B] rounded-full"
-                  style={{ width: "90.8%" }}
+                  style={{
+                    width: "90.8%",
+                  }}
                 />
               </div>
               <p
@@ -1167,7 +1455,6 @@ function OvertimeMonitoringReport({ onBack }: { onBack: () => void }) {
     </div>
   );
 }
-
 function ShiftSwapReport({ onBack }: { onBack: () => void }) {
   const navigate = useNavigate();
   const [filter, setFilter] = useState("All");
@@ -1176,14 +1463,15 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
   const [localRequests, setLocalRequests] = useState(swapRequests);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [chartTab, setChartTab] = useState("Week");
-
   const departments = [
     "All Departments",
     ...Array.from(new Set(swapRequests.map((r) => r.fromDept))),
   ];
-
   const filtered = localRequests.filter((req) => {
     const matchesSearch =
+
+
+
       req.from.toLowerCase().includes(searchQuery.toLowerCase()) ||
       req.to.toLowerCase().includes(searchQuery.toLowerCase()) ||
       req.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -1193,7 +1481,6 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
       deptFilter === "All Departments" || req.fromDept === deptFilter;
     return matchesSearch && matchesStatus && matchesDept;
   });
-
   const handleExportCSV = () => {
     const headers = [
       "ID",
@@ -1218,7 +1505,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
       r.status,
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -1226,14 +1515,12 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
     a.click();
     URL.revokeObjectURL(url);
   };
-
   const handleExportPDF = () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
     const rows = filtered
       .map(
-        (r) =>
-          `<tr>
+        (r) => `<tr>
         <td style="padding:8px;border-bottom:1px solid #eee">${r.id}</td>
         <td style="padding:8px;border-bottom:1px solid #eee">${r.from}<br/><small>${r.fromDept}</small></td>
         <td style="padding:8px;border-bottom:1px solid #eee">${r.to}</td>
@@ -1242,7 +1529,6 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
       </tr>`,
       )
       .join("");
-
     printWindow.document.write(`
       <html><head><title>Shift Swap Report</title><style>body{font-family:system-ui,sans-serif;padding:40px;color:#1a1a1a}h1{color:#059669;margin-bottom:4px}p{color:#6b7280;margin-bottom:24px}table{width:100%;border-collapse:collapse}th{text-align:left;padding:10px 8px;background:#f0fdf4;color:#059669;font-size:11px;text-transform:uppercase;border-bottom:2px solid #059669}</style></head>
       <body><h1>Shift Swap Report</h1><p>${filtered.length} records · Generated ${new Date().toLocaleDateString()}</p>
@@ -1251,13 +1537,18 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
     printWindow.document.close();
     printWindow.print();
   };
-
   const handleApprove = (id: string) => {
     setLocalRequests((prev) =>
-      prev.map((req) => (req.id === id ? { ...req, status: "Approved" } : req)),
+      prev.map((req) =>
+        req.id === id
+          ? {
+              ...req,
+              status: "Approved",
+            }
+          : req,
+      ),
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6">
       <ReportHeader
@@ -1348,15 +1639,23 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   dataKey={chartTab === "Week" ? "week" : "month"}
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: "#6B7280" }}
+                  tick={{
+                    fontSize: 11,
+                    fill: "#6B7280",
+                  }}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fill: "#6B7280" }}
+                  tick={{
+                    fontSize: 11,
+                    fill: "#6B7280",
+                  }}
                 />
                 <Tooltip
-                  cursor={{ fill: "rgba(5,150,105,0.05)" }}
+                  cursor={{
+                    fill: "rgba(5,150,105,0.05)",
+                  }}
                   contentStyle={{
                     backgroundColor: "#064E3B",
                     border: "none",
@@ -1437,7 +1736,10 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                 {localRequests.length}
               </span>
               <span
-                style={{ color: "var(--muted-foreground)", fontSize: "10px" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                  fontSize: "10px",
+                }}
               >
                 Total Swaps
               </span>
@@ -1456,7 +1758,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
       >
         <div
           className="px-6 py-5 border-b flex items-center justify-between"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           <h3
             style={{
@@ -1521,7 +1825,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
 
         <div
           className="flex px-6 border-b"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           {["All", "Pending", "Approved", "Declined"].map((t) => (
             <button
@@ -1556,7 +1862,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   <th
                     key={h}
                     className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider"
-                    style={{ color: "var(--muted-foreground)" }}
+                    style={{
+                      color: "var(--muted-foreground)",
+                    }}
                   >
                     {h}
                   </th>
@@ -1565,7 +1873,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
             </thead>
             <tbody
               className="divide-y"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               {filtered.map(
                 (req: {
@@ -1587,7 +1897,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   >
                     <td
                       className="px-6 py-4 font-mono text-xs"
-                      style={{ color: "var(--primary)" }}
+                      style={{
+                        color: "var(--primary)",
+                      }}
                     >
                       {req.id}
                     </td>
@@ -1660,13 +1972,18 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                     </td>
                     <td
                       className="px-6 py-4"
-                      style={{ color: "var(--foreground)", maxWidth: "150px" }}
+                      style={{
+                        color: "var(--foreground)",
+                        maxWidth: "150px",
+                      }}
                     >
                       {req.reason}
                     </td>
                     <td
                       className="px-6 py-4"
-                      style={{ color: "var(--muted-foreground)" }}
+                      style={{
+                        color: "var(--muted-foreground)",
+                      }}
                     >
                       {req.submitted}
                     </td>
@@ -1695,7 +2012,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                       <div className="flex gap-2">
                         <button
                           className="p-1.5 rounded-lg transition-colors hover:bg-[#00B87C]/[0.08]"
-                          style={{ color: "var(--muted-foreground)" }}
+                          style={{
+                            color: "var(--muted-foreground)",
+                          }}
                           onClick={() => navigate("/schedule")}
                         >
                           <Eye size={14} />
@@ -1748,25 +2067,49 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
           </h4>
           <div className="space-y-4">
             {[
-              { name: "Operations", count: 8, pct: 100 },
-              { name: "Engineering", count: 6, pct: 75 },
-              { name: "Marketing", count: 4, pct: 50 },
-              { name: "Finance", count: 3, pct: 37 },
+              {
+                name: "Operations",
+                count: 8,
+                pct: 100,
+              },
+              {
+                name: "Engineering",
+                count: 6,
+                pct: 75,
+              },
+              {
+                name: "Marketing",
+                count: 4,
+                pct: 50,
+              },
+              {
+                name: "Finance",
+                count: 3,
+                pct: 37,
+              },
             ].map((d) => (
               <div key={d.name}>
                 <div
                   className="flex justify-between text-[11px] mb-1.5 font-bold"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   <span>{d.name}</span>
-                  <span style={{ color: "var(--primary)" }}>
+                  <span
+                    style={{
+                      color: "var(--primary)",
+                    }}
+                  >
                     {d.count} requests
                   </span>
                 </div>
                 <div className="h-1.5 w-full bg-[#F1F5F9] rounded-full overflow-hidden">
                   <div
                     className="h-full bg-[#059669] rounded-full"
-                    style={{ width: `${d.pct}%` }}
+                    style={{
+                      width: `${d.pct}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -1814,7 +2157,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                   <div
                     key={r.id}
                     className="flex items-center justify-between p-2 rounded-xl"
-                    style={{ backgroundColor: "var(--background)" }}
+                    style={{
+                      backgroundColor: "var(--background)",
+                    }}
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold bg-[#E8FDF0] text-[#059669]">
@@ -1832,7 +2177,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
                     </div>
                     <span
                       className="text-[11px] font-bold"
-                      style={{ color: "var(--primary)" }}
+                      style={{
+                        color: "var(--primary)",
+                      }}
                     >
                       {4 - i} swaps
                     </span>
@@ -1845,7 +2192,6 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
     </div>
   );
 }
-
 const reports = [
   {
     title: "Headcount Report",
@@ -1956,13 +2302,19 @@ function KpiCard({
       >
         {label}
       </p>
-      <p style={{ color, fontSize: "24px", fontWeight: 800, marginTop: "2px" }}>
+      <p
+        style={{
+          color,
+          fontSize: "24px",
+          fontWeight: 800,
+          marginTop: "2px",
+        }}
+      >
         {value}
       </p>
     </div>
   );
 }
-
 function ReportHeader({
   title,
   subtitle,
@@ -2009,7 +2361,12 @@ function ReportHeader({
           >
             {title}
           </h2>
-          <p style={{ color: "var(--muted-foreground)", fontSize: "13px" }}>
+          <p
+            style={{
+              color: "var(--muted-foreground)",
+              fontSize: "13px",
+            }}
+          >
             {subtitle}
           </p>
         </div>
@@ -2040,7 +2397,9 @@ function ReportHeader({
         <button
           onClick={onExportCSV}
           className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all duration-200 shadow-sm"
-          style={{ background: "var(--primary)" }}
+          style={{
+            background: "var(--primary)",
+          }}
           onMouseEnter={(e) => {
             e.currentTarget.style.filter = "brightness(1.1)";
             e.currentTarget.style.transform = "translateY(-1px)";
@@ -2059,7 +2418,6 @@ function ReportHeader({
     </div>
   );
 }
-
 const EMERALD_SHADES = [
   "#059669",
   "#10B981",
@@ -2163,14 +2521,31 @@ const hcEmployees = [
   },
 ];
 const hcDeptBreakdown = [
-  { name: "Engineering", value: 98 },
-  { name: "Design", value: 32 },
-  { name: "Marketing", value: 28 },
-  { name: "Sales", value: 35 },
-  { name: "HR", value: 22 },
-  { name: "Finance", value: 33 },
+  {
+    name: "Engineering",
+    value: 98,
+  },
+  {
+    name: "Design",
+    value: 32,
+  },
+  {
+    name: "Marketing",
+    value: 28,
+  },
+  {
+    name: "Sales",
+    value: 35,
+  },
+  {
+    name: "HR",
+    value: 22,
+  },
+  {
+    name: "Finance",
+    value: 33,
+  },
 ];
-
 function HeadcountReport({ onBack }: { onBack: () => void }) {
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
@@ -2179,7 +2554,6 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const perPage = 8;
-
   const departments = [
     "All",
     ...Array.from(new Set(hcEmployees.map((e) => e.dept))),
@@ -2192,10 +2566,11 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
     "All",
     ...Array.from(new Set(hcEmployees.map((e) => e.location))),
   ];
-
   const filtered = hcEmployees.filter((emp) => {
     const matchSearch =
       search === "" ||
+
+
       emp.name.toLowerCase().includes(search.toLowerCase()) ||
       emp.id.toLowerCase().includes(search.toLowerCase()) ||
       emp.role.toLowerCase().includes(search.toLowerCase());
@@ -2205,13 +2580,11 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
       locationFilter === "All" || emp.location === locationFilter;
     return matchSearch && matchDept && matchStatus && matchLocation;
   });
-
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const paginated = filtered.slice(
     (currentPage - 1) * perPage,
     currentPage * perPage,
   );
-
   const handleExportCSV = () => {
     const headers = [
       "Name",
@@ -2234,7 +2607,9 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
       e.type,
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -2242,7 +2617,6 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
     a.click();
     URL.revokeObjectURL(url);
   };
-
   const handleExportPDF = () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
@@ -2260,7 +2634,6 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
     printWindow.document.close();
     printWindow.print();
   };
-
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
     if (totalPages <= 5) {
@@ -2279,11 +2652,9 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
     }
     return pages;
   };
-
   const toggleDropdown = (name: string) => {
     setOpenDropdown((prev) => (prev === name ? null : name));
   };
-
   const filterConfigs = [
     {
       name: "Department",
@@ -2304,7 +2675,6 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
       setter: setLocationFilter,
     },
   ];
-
   return (
     <div className="w-full px-4 md:px-8 py-6">
       <ReportHeader
@@ -2357,13 +2727,17 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
           {/* Search + Filter Bar */}
           <div
             className="flex items-center justify-between px-5 py-4"
-            style={{ borderBottom: "1px solid var(--border)" }}
+            style={{
+              borderBottom: "1px solid var(--border)",
+            }}
           >
             <div className="relative">
               <Search
                 size={14}
                 className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               />
               <input
                 className="rounded-xl pl-9 pr-4 py-2 text-sm outline-none"
@@ -2473,7 +2847,11 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                <tr
+                  style={{
+                    borderBottom: "1px solid var(--border)",
+                  }}
+                >
                   {[
                     "Employee",
                     "ID",
@@ -2519,7 +2897,9 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
                           setLocationFilter("All");
                         }}
                         className="mt-2 text-xs font-semibold"
-                        style={{ color: "var(--primary)" }}
+                        style={{
+                          color: "var(--primary)",
+                        }}
                       >
                         Clear all filters
                       </button>
@@ -2539,7 +2919,9 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
                         <div className="flex items-center gap-2.5">
                           <div
                             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-bold"
-                            style={{ background: EMERALD_SHADES[i % 6] }}
+                            style={{
+                              background: EMERALD_SHADES[i % 6],
+                            }}
                           >
                             {emp.initials}
                           </div>
@@ -2566,25 +2948,33 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
                       </td>
                       <td
                         className="px-4 py-3"
-                        style={{ color: "var(--foreground)" }}
+                        style={{
+                          color: "var(--foreground)",
+                        }}
                       >
                         {emp.dept}
                       </td>
                       <td
                         className="px-4 py-3"
-                        style={{ color: "var(--muted-foreground)" }}
+                        style={{
+                          color: "var(--muted-foreground)",
+                        }}
                       >
                         {emp.role}
                       </td>
                       <td
                         className="px-4 py-3"
-                        style={{ color: "var(--muted-foreground)" }}
+                        style={{
+                          color: "var(--muted-foreground)",
+                        }}
                       >
                         {emp.location}
                       </td>
                       <td
                         className="px-4 py-3"
-                        style={{ color: "var(--muted-foreground)" }}
+                        style={{
+                          color: "var(--muted-foreground)",
+                        }}
                       >
                         {emp.joinDate}
                       </td>
@@ -2628,10 +3018,15 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
           {/* Pagination */}
           <div
             className="flex items-center justify-between px-5 py-3"
-            style={{ borderTop: "1px solid var(--border)" }}
+            style={{
+              borderTop: "1px solid var(--border)",
+            }}
           >
             <span
-              style={{ color: "var(--muted-foreground)", fontSize: "12px" }}
+              style={{
+                color: "var(--muted-foreground)",
+                fontSize: "12px",
+              }}
             >
               Showing{" "}
               {filtered.length === 0 ? 0 : (currentPage - 1) * perPage + 1}-
@@ -2723,7 +3118,9 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: EMERALD_SHADES[i] }}
+                    style={{
+                      backgroundColor: EMERALD_SHADES[i],
+                    }}
                   />
                   <span
                     style={{
@@ -2760,12 +3157,36 @@ function HeadcountReport({ onBack }: { onBack: () => void }) {
 /* 2. PAYROLL SUMMARY                            */
 /* ══════════════════════════════════════════════ */
 const payrollTrend = [
-  { month: "Nov", gross: 82000, net: 68000 },
-  { month: "Dec", gross: 83500, net: 69200 },
-  { month: "Jan", gross: 84200, net: 69800 },
-  { month: "Feb", gross: 85100, net: 70500 },
-  { month: "Mar", gross: 85800, net: 71000 },
-  { month: "Apr", gross: 86584, net: 71700 },
+  {
+    month: "Nov",
+    gross: 82000,
+    net: 68000,
+  },
+  {
+    month: "Dec",
+    gross: 83500,
+    net: 69200,
+  },
+  {
+    month: "Jan",
+    gross: 84200,
+    net: 69800,
+  },
+  {
+    month: "Feb",
+    gross: 85100,
+    net: 70500,
+  },
+  {
+    month: "Mar",
+    gross: 85800,
+    net: 71000,
+  },
+  {
+    month: "Apr",
+    gross: 86584,
+    net: 71700,
+  },
 ];
 const payrollEmployees = [
   {
@@ -2824,11 +3245,19 @@ const payrollEmployees = [
   },
 ];
 const deductionBreakdown = [
-  { name: "Tax", value: 45 },
-  { name: "PF", value: 30 },
-  { name: "Insurance", value: 25 },
+  {
+    name: "Tax",
+    value: 45,
+  },
+  {
+    name: "PF",
+    value: 30,
+  },
+  {
+    name: "Insurance",
+    value: 25,
+  },
 ];
-
 function PayrollSummary({ onBack }: { onBack: () => void }) {
   const handleExportCSV = () => {
     const headers = [
@@ -2850,7 +3279,9 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
       e.status,
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -2914,12 +3345,18 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
               />
               <XAxis
                 dataKey="month"
-                tick={{ fill: "#6B7280", fontSize: 11 }}
+                tick={{
+                  fill: "#6B7280",
+                  fontSize: 11,
+                }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: "#6B7280", fontSize: 11 }}
+                tick={{
+                  fill: "#6B7280",
+                  fontSize: 11,
+                }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -2996,7 +3433,9 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: EMERALD_SHADES[i] }}
+                    style={{
+                      backgroundColor: EMERALD_SHADES[i],
+                    }}
                   />
                   <span
                     style={{
@@ -3030,7 +3469,11 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
       >
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+            <tr
+              style={{
+                borderBottom: "1px solid var(--border)",
+              }}
+            >
               {[
                 "Employee",
                 "Department",
@@ -3068,31 +3511,51 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
               >
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--foreground)", fontWeight: 600 }}
+                  style={{
+                    color: "var(--foreground)",
+                    fontWeight: 600,
+                  }}
                 >
                   {emp.name}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   {emp.dept}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   ₹{emp.basic.toLocaleString()}
                 </td>
-                <td className="px-4 py-3" style={{ color: "#22C55E" }}>
+                <td
+                  className="px-4 py-3"
+                  style={{
+                    color: "#22C55E",
+                  }}
+                >
                   +₹{emp.allowances.toLocaleString()}
                 </td>
-                <td className="px-4 py-3" style={{ color: "#EF4444" }}>
+                <td
+                  className="px-4 py-3"
+                  style={{
+                    color: "#EF4444",
+                  }}
+                >
                   -₹{emp.deductions.toLocaleString()}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--foreground)", fontWeight: 700 }}
+                  style={{
+                    color: "var(--foreground)",
+                    fontWeight: 700,
+                  }}
                 >
                   ₹{emp.net.toLocaleString()}
                 </td>
@@ -3120,7 +3583,9 @@ function PayrollSummary({ onBack }: { onBack: () => void }) {
                       w.print();
                     }}
                     className="text-xs font-semibold hover:underline"
-                    style={{ color: "var(--primary)" }}
+                    style={{
+                      color: "var(--primary)",
+                    }}
                   >
                     Download
                   </button>
@@ -3194,14 +3659,31 @@ const attendanceData = [
   },
 ];
 const deptAttendance = [
-  { dept: "Engineering", pct: 94 },
-  { dept: "Design", pct: 91 },
-  { dept: "Marketing", pct: 87 },
-  { dept: "Sales", pct: 89 },
-  { dept: "HR", pct: 96 },
-  { dept: "Finance", pct: 92 },
+  {
+    dept: "Engineering",
+    pct: 94,
+  },
+  {
+    dept: "Design",
+    pct: 91,
+  },
+  {
+    dept: "Marketing",
+    pct: 87,
+  },
+  {
+    dept: "Sales",
+    pct: 89,
+  },
+  {
+    dept: "HR",
+    pct: 96,
+  },
+  {
+    dept: "Finance",
+    pct: 92,
+  },
 ];
-
 function AttendanceReport({ onBack }: { onBack: () => void }) {
   const handleExportCSV = () => {
     const headers = [
@@ -3223,7 +3705,9 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
       `${e.pct}%`,
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -3246,10 +3730,15 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
     w.document.close();
     w.print();
   };
-  const days = Array.from({ length: 30 }, (_, i) => ({
-    day: i + 1,
-    pct: Math.floor(Math.random() * 30) + 70,
-  }));
+  const days = Array.from(
+    {
+      length: 30,
+    },
+    (_, i) => ({
+      day: i + 1,
+      pct: Math.floor(Math.random() * 30) + 70,
+    }),
+  );
   return (
     <div className="w-full px-4 md:px-8 py-6">
       <ReportHeader
@@ -3309,7 +3798,10 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
           </div>
           <div className="flex items-center gap-2 mt-3">
             <span
-              style={{ color: "var(--muted-foreground)", fontSize: "10px" }}
+              style={{
+                color: "var(--muted-foreground)",
+                fontSize: "10px",
+              }}
             >
               Low
             </span>
@@ -3318,12 +3810,17 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
                 <div
                   key={o}
                   className="w-5 h-3 rounded"
-                  style={{ backgroundColor: `rgba(5, 150, 105, ${o})` }}
+                  style={{
+                    backgroundColor: `rgba(5, 150, 105, ${o})`,
+                  }}
                 />
               ))}
             </div>
             <span
-              style={{ color: "var(--muted-foreground)", fontSize: "10px" }}
+              style={{
+                color: "var(--muted-foreground)",
+                fontSize: "10px",
+              }}
             >
               High
             </span>
@@ -3370,11 +3867,17 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
                 </div>
                 <div
                   className="rounded-full overflow-hidden"
-                  style={{ height: "6px", backgroundColor: "var(--secondary)" }}
+                  style={{
+                    height: "6px",
+                    backgroundColor: "var(--secondary)",
+                  }}
                 >
                   <div
                     className="rounded-full h-full"
-                    style={{ width: `${d.pct}%`, backgroundColor: "#059669" }}
+                    style={{
+                      width: `${d.pct}%`,
+                      backgroundColor: "#059669",
+                    }}
                   />
                 </div>
               </div>
@@ -3391,7 +3894,11 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
       >
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+            <tr
+              style={{
+                borderBottom: "1px solid var(--border)",
+              }}
+            >
               {[
                 "Employee",
                 "Total Days",
@@ -3428,35 +3935,54 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
               >
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--foreground)", fontWeight: 600 }}
+                  style={{
+                    color: "var(--foreground)",
+                    fontWeight: 600,
+                  }}
                 >
                   {emp.name}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   {emp.total}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "#059669", fontWeight: 600 }}
+                  style={{
+                    color: "#059669",
+                    fontWeight: 600,
+                  }}
                 >
                   {emp.present}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "#EF4444", fontWeight: 600 }}
+                  style={{
+                    color: "#EF4444",
+                    fontWeight: 600,
+                  }}
                 >
                   {emp.absent}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "#F59E0B", fontWeight: 600 }}
+                  style={{
+                    color: "#F59E0B",
+                    fontWeight: 600,
+                  }}
                 >
                   {emp.late}
                 </td>
-                <td className="px-4 py-3" style={{ color: "#14B8A6" }}>
+                <td
+                  className="px-4 py-3"
+                  style={{
+                    color: "#14B8A6",
+                  }}
+                >
                   {emp.leave}
                 </td>
                 <td className="px-4 py-3">
@@ -3506,11 +4032,26 @@ function AttendanceReport({ onBack }: { onBack: () => void }) {
 /* 4. PERFORMANCE REVIEW                         */
 /* ══════════════════════════════════════════════ */
 const scoreDistribution = [
-  { range: "1.0-1.9", count: 3 },
-  { range: "2.0-2.9", count: 12 },
-  { range: "3.0-3.9", count: 85 },
-  { range: "4.0-4.4", count: 108 },
-  { range: "4.5-5.0", count: 40 },
+  {
+    range: "1.0-1.9",
+    count: 3,
+  },
+  {
+    range: "2.0-2.9",
+    count: 12,
+  },
+  {
+    range: "3.0-3.9",
+    count: 85,
+  },
+  {
+    range: "4.0-4.4",
+    count: 108,
+  },
+  {
+    range: "4.5-5.0",
+    count: 40,
+  },
 ];
 const perfEmployees = [
   {
@@ -3569,21 +4110,58 @@ const perfEmployees = [
   },
 ];
 const topPerformers = [
-  { name: "Tanisha Joshi", score: 4.8, initials: "TJ" },
-  { name: "Karan Shah", score: 4.5, initials: "KS" },
-  { name: "Pooja Gupta", score: 4.3, initials: "PG" },
-  { name: "Meera Patel", score: 4.2, initials: "MP" },
-  { name: "Siddharth R.", score: 4.1, initials: "SR" },
+  {
+    name: "Tanisha Joshi",
+    score: 4.8,
+    initials: "TJ",
+  },
+  {
+    name: "Karan Shah",
+    score: 4.5,
+    initials: "KS",
+  },
+  {
+    name: "Pooja Gupta",
+    score: 4.3,
+    initials: "PG",
+  },
+  {
+    name: "Meera Patel",
+    score: 4.2,
+    initials: "MP",
+  },
+  {
+    name: "Siddharth R.",
+    score: 4.1,
+    initials: "SR",
+  },
 ];
 const deptScores = [
-  { dept: "Engineering", avg: 4.2 },
-  { dept: "Design", avg: 4.0 },
-  { dept: "HR", avg: 3.9 },
-  { dept: "Sales", avg: 3.7 },
-  { dept: "Marketing", avg: 3.5 },
-  { dept: "Finance", avg: 3.8 },
+  {
+    dept: "Engineering",
+    avg: 4.2,
+  },
+  {
+    dept: "Design",
+    avg: 4.0,
+  },
+  {
+    dept: "HR",
+    avg: 3.9,
+  },
+  {
+    dept: "Sales",
+    avg: 3.7,
+  },
+  {
+    dept: "Marketing",
+    avg: 3.5,
+  },
+  {
+    dept: "Finance",
+    avg: 3.8,
+  },
 ];
-
 function PerformanceReview({ onBack }: { onBack: () => void }) {
   const handleExportCSV = () => {
     const headers = [
@@ -3605,7 +4183,9 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
       e.date,
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -3672,12 +4252,18 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
                 />
                 <XAxis
                   dataKey="range"
-                  tick={{ fill: "#6B7280", fontSize: 11 }}
+                  tick={{
+                    fill: "#6B7280",
+                    fontSize: 11,
+                  }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fill: "#6B7280", fontSize: 11 }}
+                  tick={{
+                    fill: "#6B7280",
+                    fontSize: 11,
+                  }}
                   axisLine={false}
                   tickLine={false}
                 />
@@ -3725,7 +4311,9 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
               >
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center text-white text-[11px] font-bold shadow-sm"
-                  style={{ background: EMERALD_SHADES[i] }}
+                  style={{
+                    background: EMERALD_SHADES[i],
+                  }}
                 >
                   {p.initials}
                 </div>
@@ -3808,7 +4396,10 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
                 </div>
                 <div
                   className="rounded-full overflow-hidden"
-                  style={{ height: "6px", backgroundColor: "var(--secondary)" }}
+                  style={{
+                    height: "6px",
+                    backgroundColor: "var(--secondary)",
+                  }}
                 >
                   <div
                     className="rounded-full h-full transition-all duration-1000"
@@ -3832,7 +4423,11 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
       >
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+            <tr
+              style={{
+                borderBottom: "1px solid var(--border)",
+              }}
+            >
               {[
                 "Employee",
                 "Department",
@@ -3869,19 +4464,26 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
               >
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--foreground)", fontWeight: 600 }}
+                  style={{
+                    color: "var(--foreground)",
+                    fontWeight: 600,
+                  }}
                 >
                   {emp.name}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   {emp.dept}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   {emp.manager}
                 </td>
@@ -3953,7 +4555,10 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--muted-foreground)", fontSize: "12px" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                    fontSize: "12px",
+                  }}
                 >
                   {emp.date}
                 </td>
@@ -3970,11 +4575,31 @@ function PerformanceReview({ onBack }: { onBack: () => void }) {
 /* 5. RECRUITMENT PIPELINE REPORT                */
 /* ══════════════════════════════════════════════ */
 const funnelData = [
-  { stage: "Applied", count: 120, conv: "100%" },
-  { stage: "Screening", count: 68, conv: "57%" },
-  { stage: "Interview", count: 35, conv: "51%" },
-  { stage: "Offer", count: 14, conv: "40%" },
-  { stage: "Hired", count: 8, conv: "57%" },
+  {
+    stage: "Applied",
+    count: 120,
+    conv: "100%",
+  },
+  {
+    stage: "Screening",
+    count: 68,
+    conv: "57%",
+  },
+  {
+    stage: "Interview",
+    count: 35,
+    conv: "51%",
+  },
+  {
+    stage: "Offer",
+    count: 14,
+    conv: "40%",
+  },
+  {
+    stage: "Hired",
+    count: 8,
+    conv: "57%",
+  },
 ];
 const recruitCandidates = [
   {
@@ -4027,12 +4652,23 @@ const recruitCandidates = [
   },
 ];
 const sourceBreakdown = [
-  { name: "LinkedIn", value: 45 },
-  { name: "Referral", value: 28 },
-  { name: "Job Portal", value: 18 },
-  { name: "Other", value: 9 },
+  {
+    name: "LinkedIn",
+    value: 45,
+  },
+  {
+    name: "Referral",
+    value: 28,
+  },
+  {
+    name: "Job Portal",
+    value: 18,
+  },
+  {
+    name: "Other",
+    value: 9,
+  },
 ];
-
 function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
   const handleExportCSV = () => {
     const headers = [
@@ -4052,7 +4688,9 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
       e.updated,
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -4075,12 +4713,33 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
     w.document.close();
     w.print();
   };
-  const stageColor: Record<string, { bg: string; color: string }> = {
-    Applied: { bg: "#ECFDF5", color: "#059669" },
-    Screening: { bg: "#FFFBEB", color: "#F59E0B" },
-    Interview: { bg: "#F0FDFA", color: "#14B8A6" },
-    Offer: { bg: "#F0F9FF", color: "#0EA5E9" },
-    Hired: { bg: "#ECFDF5", color: "#22C55E" },
+  const stageColor: Record<
+    string,
+    {
+      bg: string;
+      color: string;
+    }
+  > = {
+    Applied: {
+      bg: "#ECFDF5",
+      color: "#059669",
+    },
+    Screening: {
+      bg: "#FFFBEB",
+      color: "#F59E0B",
+    },
+    Interview: {
+      bg: "#F0FDFA",
+      color: "#14B8A6",
+    },
+    Offer: {
+      bg: "#F0F9FF",
+      color: "#0EA5E9",
+    },
+    Hired: {
+      bg: "#ECFDF5",
+      color: "#22C55E",
+    },
   };
   return (
     <div className="w-full px-4 md:px-8 py-6">
@@ -4128,7 +4787,12 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
                 >
                   {f.stage}
                 </span>
-                <div className="flex-1 relative" style={{ height: "32px" }}>
+                <div
+                  className="flex-1 relative"
+                  style={{
+                    height: "32px",
+                  }}
+                >
                   <div
                     className="absolute inset-0 rounded-lg"
                     style={{
@@ -4214,7 +4878,9 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
                   <div className="flex items-center gap-2">
                     <div
                       className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: EMERALD_SHADES[i] }}
+                      style={{
+                        backgroundColor: EMERALD_SHADES[i],
+                      }}
                     />
                     <span
                       style={{
@@ -4245,7 +4911,12 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
               border: "1px solid var(--border)",
             }}
           >
-            <p style={{ color: "var(--muted-foreground)", fontSize: "11px" }}>
+            <p
+              style={{
+                color: "var(--muted-foreground)",
+                fontSize: "11px",
+              }}
+            >
               Avg. Time-to-Hire
             </p>
             <p
@@ -4255,7 +4926,15 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
                 fontWeight: 900,
               }}
             >
-              18 <span style={{ fontSize: "14px", fontWeight: 600 }}>days</span>
+              18{" "}
+              <span
+                style={{
+                  fontSize: "14px",
+                  fontWeight: 600,
+                }}
+              >
+                days
+              </span>
             </p>
           </div>
         </div>
@@ -4269,7 +4948,11 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
       >
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ borderBottom: "1px solid var(--border)" }}>
+            <tr
+              style={{
+                borderBottom: "1px solid var(--border)",
+              }}
+            >
               {[
                 "Candidate",
                 "Role Applied",
@@ -4305,19 +4988,26 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
               >
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--foreground)", fontWeight: 600 }}
+                  style={{
+                    color: "var(--foreground)",
+                    fontWeight: 600,
+                  }}
                 >
                   {c.name}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   {c.role}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   {c.source}
                 </td>
@@ -4334,13 +5024,17 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   {c.applied}
                 </td>
                 <td
                   className="px-4 py-3"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   {c.updated}
                 </td>
@@ -4357,32 +5051,98 @@ function RecruitmentPipeline({ onBack }: { onBack: () => void }) {
 /* 6. TURNOVER ANALYSIS                          */
 /* ══════════════════════════════════════════════ */
 const turnoverTrend = [
-  { month: "May", rate: 3.8 },
-  { month: "Jun", rate: 4.2 },
-  { month: "Jul", rate: 3.5 },
-  { month: "Aug", rate: 3.1 },
-  { month: "Sep", rate: 4.0 },
-  { month: "Oct", rate: 3.6 },
-  { month: "Nov", rate: 3.3 },
-  { month: "Dec", rate: 4.5 },
-  { month: "Jan", rate: 3.9 },
-  { month: "Feb", rate: 3.7 },
-  { month: "Mar", rate: 4.1 },
-  { month: "Apr", rate: 3.2 },
+  {
+    month: "May",
+    rate: 3.8,
+  },
+  {
+    month: "Jun",
+    rate: 4.2,
+  },
+  {
+    month: "Jul",
+    rate: 3.5,
+  },
+  {
+    month: "Aug",
+    rate: 3.1,
+  },
+  {
+    month: "Sep",
+    rate: 4.0,
+  },
+  {
+    month: "Oct",
+    rate: 3.6,
+  },
+  {
+    month: "Nov",
+    rate: 3.3,
+  },
+  {
+    month: "Dec",
+    rate: 4.5,
+  },
+  {
+    month: "Jan",
+    rate: 3.9,
+  },
+  {
+    month: "Feb",
+    rate: 3.7,
+  },
+  {
+    month: "Mar",
+    rate: 4.1,
+  },
+  {
+    month: "Apr",
+    rate: 3.2,
+  },
 ];
 const turnoverByDept = [
-  { dept: "Engineering", count: 5 },
-  { dept: "Design", count: 2 },
-  { dept: "Marketing", count: 4 },
-  { dept: "Sales", count: 6 },
-  { dept: "HR", count: 1 },
-  { dept: "Finance", count: 3 },
+  {
+    dept: "Engineering",
+    count: 5,
+  },
+  {
+    dept: "Design",
+    count: 2,
+  },
+  {
+    dept: "Marketing",
+    count: 4,
+  },
+  {
+    dept: "Sales",
+    count: 6,
+  },
+  {
+    dept: "HR",
+    count: 1,
+  },
+  {
+    dept: "Finance",
+    count: 3,
+  },
 ];
 const exitReasons = [
-  { name: "Better Opportunity", value: 40 },
-  { name: "Relocation", value: 22 },
-  { name: "Personal", value: 20 },
-  { name: "Performance", value: 18 },
+  {
+    name: "Better Opportunity",
+    value: 40,
+  },
+  {
+    name: "Relocation",
+    value: 22,
+  },
+  {
+    name: "Personal",
+    value: 20,
+  },
+  {
+    name: "Performance",
+    value: 18,
+  },
 ];
 const exitedEmployees = [
   {
@@ -4454,7 +5214,6 @@ const flightRisks = [
     risk: "High",
   },
 ];
-
 function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
   const handleExportCSV = () => {
     const headers = [
@@ -4476,7 +5235,9 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
       e.interview ? "Completed" : "Pending",
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -4499,7 +5260,6 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
     w.document.close();
     w.print();
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6">
       <ReportHeader
@@ -4563,12 +5323,18 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
                   />
                   <XAxis
                     dataKey="month"
-                    tick={{ fill: "#6B7280", fontSize: 11 }}
+                    tick={{
+                      fill: "#6B7280",
+                      fontSize: 11,
+                    }}
                     axisLine={false}
                     tickLine={false}
                   />
                   <YAxis
-                    tick={{ fill: "#6B7280", fontSize: 11 }}
+                    tick={{
+                      fill: "#6B7280",
+                      fontSize: 11,
+                    }}
                     axisLine={false}
                     tickLine={false}
                     domain={[2, 5]}
@@ -4619,7 +5385,10 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
                 <BarChart
                   data={turnoverByDept}
                   layout="vertical"
-                  margin={{ left: -10, right: 20 }}
+                  margin={{
+                    left: -10,
+                    right: 20,
+                  }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -4630,7 +5399,10 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
                   <YAxis
                     dataKey="dept"
                     type="category"
-                    tick={{ fill: "#6B7280", fontSize: 11 }}
+                    tick={{
+                      fill: "#6B7280",
+                      fontSize: 11,
+                    }}
                     axisLine={false}
                     tickLine={false}
                     width={85}
@@ -4705,7 +5477,9 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
                   <div className="flex items-center gap-2">
                     <div
                       className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: EMERALD_SHADES[i] }}
+                      style={{
+                        backgroundColor: EMERALD_SHADES[i],
+                      }}
                     />
                     <span>{r.name}</span>
                   </div>
@@ -4718,7 +5492,9 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
           {/* Flight Risk Alert */}
           <div
             className="rounded-2xl p-6 shadow-sm border border-border"
-            style={{ backgroundColor: "var(--card)" }}
+            style={{
+              backgroundColor: "var(--card)",
+            }}
           >
             <h4
               style={{
@@ -4777,7 +5553,9 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
       >
         <div
           className="px-6 py-4 border-b flex items-center justify-between"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           <h4
             style={{
@@ -4827,7 +5605,9 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
             </thead>
             <tbody
               className="divide-y"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               {exitedEmployees.map((emp) => (
                 <tr
@@ -4878,42 +5658,131 @@ function TurnoverAnalysis({ onBack }: { onBack: () => void }) {
 /* ══════════════════════════════════════════════ */
 /* ─── Reports & Analytics Redesign Mock Data ─── */
 const hcTrendData6M = [
-  { month: "Nov 25", count: 232 },
-  { month: "Dec 25", count: 235 },
-  { month: "Jan 26", count: 238 },
-  { month: "Feb 26", count: 241 },
-  { month: "Mar 26", count: 245 },
-  { month: "Apr 26", count: 248 },
+  {
+    month: "Nov 25",
+    count: 232,
+  },
+  {
+    month: "Dec 25",
+    count: 235,
+  },
+  {
+    month: "Jan 26",
+    count: 238,
+  },
+  {
+    month: "Feb 26",
+    count: 241,
+  },
+  {
+    month: "Mar 26",
+    count: 245,
+  },
+  {
+    month: "Apr 26",
+    count: 248,
+  },
 ];
 const hcTrendData1Y = [
-  { month: "May 25", count: 210 },
-  { month: "Jun 25", count: 215 },
-  { month: "Jul 25", count: 220 },
-  { month: "Aug 25", count: 222 },
-  { month: "Sep 25", count: 225 },
-  { month: "Oct 25", count: 228 },
-  { month: "Nov 25", count: 232 },
-  { month: "Dec 25", count: 235 },
-  { month: "Jan 26", count: 238 },
-  { month: "Feb 26", count: 241 },
-  { month: "Mar 26", count: 245 },
-  { month: "Apr 26", count: 248 },
+  {
+    month: "May 25",
+    count: 210,
+  },
+  {
+    month: "Jun 25",
+    count: 215,
+  },
+  {
+    month: "Jul 25",
+    count: 220,
+  },
+  {
+    month: "Aug 25",
+    count: 222,
+  },
+  {
+    month: "Sep 25",
+    count: 225,
+  },
+  {
+    month: "Oct 25",
+    count: 228,
+  },
+  {
+    month: "Nov 25",
+    count: 232,
+  },
+  {
+    month: "Dec 25",
+    count: 235,
+  },
+  {
+    month: "Jan 26",
+    count: 238,
+  },
+  {
+    month: "Feb 26",
+    count: 241,
+  },
+  {
+    month: "Mar 26",
+    count: 245,
+  },
+  {
+    month: "Apr 26",
+    count: 248,
+  },
 ];
 const hcTrendData2Y = [
-  { month: "May 24", count: 180 },
-  { month: "Jul 24", count: 190 },
-  { month: "Sep 24", count: 195 },
-  { month: "Nov 24", count: 202 },
-  { month: "Jan 25", count: 208 },
-  { month: "Mar 25", count: 212 },
-  { month: "May 25", count: 210 },
-  { month: "Jul 25", count: 220 },
-  { month: "Sep 25", count: 225 },
-  { month: "Nov 25", count: 232 },
-  { month: "Jan 26", count: 238 },
-  { month: "Apr 26", count: 248 },
+  {
+    month: "May 24",
+    count: 180,
+  },
+  {
+    month: "Jul 24",
+    count: 190,
+  },
+  {
+    month: "Sep 24",
+    count: 195,
+  },
+  {
+    month: "Nov 24",
+    count: 202,
+  },
+  {
+    month: "Jan 25",
+    count: 208,
+  },
+  {
+    month: "Mar 25",
+    count: 212,
+  },
+  {
+    month: "May 25",
+    count: 210,
+  },
+  {
+    month: "Jul 25",
+    count: 220,
+  },
+  {
+    month: "Sep 25",
+    count: 225,
+  },
+  {
+    month: "Nov 25",
+    count: 232,
+  },
+  {
+    month: "Jan 26",
+    count: 238,
+  },
+  {
+    month: "Apr 26",
+    count: 248,
+  },
 ];
-
 const hcTrendInsights = {
   "6M": {
     growth: "+16 Employees",
@@ -4937,24 +5806,71 @@ const hcTrendInsights = {
     desc: "Long-term headcount scaling indicating substantial organizational expansion.",
   },
 };
-
 const leaveAnalysisData = [
-  { month: "Nov", CL: 12, EL: 24, SL: 8 },
-  { month: "Dec", CL: 18, EL: 30, SL: 12 },
-  { month: "Jan", CL: 15, EL: 14, SL: 10 },
-  { month: "Feb", CL: 10, EL: 22, SL: 7 },
-  { month: "Mar", CL: 14, EL: 25, SL: 9 },
-  { month: "Apr", CL: 11, EL: 18, SL: 6 },
+  {
+    month: "Nov",
+    CL: 12,
+    EL: 24,
+    SL: 8,
+  },
+  {
+    month: "Dec",
+    CL: 18,
+    EL: 30,
+    SL: 12,
+  },
+  {
+    month: "Jan",
+    CL: 15,
+    EL: 14,
+    SL: 10,
+  },
+  {
+    month: "Feb",
+    CL: 10,
+    EL: 22,
+    SL: 7,
+  },
+  {
+    month: "Mar",
+    CL: 14,
+    EL: 25,
+    SL: 9,
+  },
+  {
+    month: "Apr",
+    CL: 11,
+    EL: 18,
+    SL: 6,
+  },
 ];
-
 const landingFunnelData = [
-  { stage: "Applied", count: 120, width: "100%" },
-  { stage: "Screened", count: 68, width: "80%" },
-  { stage: "Interviewed", count: 35, width: "60%" },
-  { stage: "Offered", count: 14, width: "40%" },
-  { stage: "Hired", count: 8, width: "20%" },
+  {
+    stage: "Applied",
+    count: 120,
+    width: "100%",
+  },
+  {
+    stage: "Screened",
+    count: 68,
+    width: "80%",
+  },
+  {
+    stage: "Interviewed",
+    count: 35,
+    width: "60%",
+  },
+  {
+    stage: "Offered",
+    count: 14,
+    width: "40%",
+  },
+  {
+    stage: "Hired",
+    count: 8,
+    width: "20%",
+  },
 ];
-
 export function Reports() {
   const { user } = useAuth();
   const isManager = user?.role === "Manager";
@@ -4971,7 +5887,6 @@ export function Reports() {
   );
   const [filterLoc, setFilterLoc] = useState("All Locations");
   const [isLoading, setIsLoading] = useState(false);
-
   const [showDateDropdown, setShowDateDropdown] = useState(false);
   const [showDeptDropdown, setShowDeptDropdown] = useState(false);
   const [showLocDropdown, setShowLocDropdown] = useState(false);
@@ -5033,51 +5948,96 @@ export function Reports() {
     dir: "asc" | "desc";
   } | null>(null);
   const [queryPage, setQueryPage] = useState(1);
-
   const pipelineSummary = isManager
-    ? { total: 42, conversion: "19.0%", thisMonth: "+3", pending: 2 }
-    : { total: 145, conversion: "18.5%", thisMonth: "+8", pending: 4 };
-
+    ? {
+        total: 42,
+        conversion: "19.0%",
+        thisMonth: "+3",
+        pending: 2,
+      }
+    : {
+        total: 145,
+        conversion: "18.5%",
+        thisMonth: "+8",
+        pending: 4,
+      };
   const pipelineStages = isManager
     ? [
-        { stage: "Applied", count: 42, pct: 100, color: "#9CA3AF" },
-        { stage: "Interviewed", count: 18, pct: 42.8, color: "#34D399" },
-        { stage: "Offered", count: 4, pct: 9.5, color: "#00B87C" },
-        { stage: "Joined", count: 3, pct: 7.1, color: "#059669" },
+        {
+          stage: "Applied",
+          count: 42,
+          pct: 100,
+          color: "#9CA3AF",
+        },
+        {
+          stage: "Interviewed",
+          count: 18,
+          pct: 42.8,
+          color: "#34D399",
+        },
+        {
+          stage: "Offered",
+          count: 4,
+          pct: 9.5,
+          color: "#00B87C",
+        },
+        {
+          stage: "Joined",
+          count: 3,
+          pct: 7.1,
+          color: "#059669",
+        },
       ]
     : [
-        { stage: "Applied", count: 145, pct: 100, color: "#9CA3AF" },
-        { stage: "Interviewed", count: 58, pct: 40, color: "#34D399" },
-        { stage: "Offered", count: 12, pct: 8.2, color: "#00B87C" },
-        { stage: "Joined", count: 8, pct: 5.5, color: "#059669" },
+        {
+          stage: "Applied",
+          count: 145,
+          pct: 100,
+          color: "#9CA3AF",
+        },
+        {
+          stage: "Interviewed",
+          count: 58,
+          pct: 40,
+          color: "#34D399",
+        },
+        {
+          stage: "Offered",
+          count: 12,
+          pct: 8.2,
+          color: "#00B87C",
+        },
+        {
+          stage: "Joined",
+          count: 8,
+          pct: 5.5,
+          color: "#059669",
+        },
       ];
-
   useEffect(() => {
     if (location.state?.activeReport) {
       setActiveReport(location.state.activeReport);
     }
   }, [location.state]);
-
   const triggerToast = (message: string) => {
-    setToast({ message, type: "success" });
+    setToast({
+      message,
+      type: "success",
+    });
     setTimeout(() => setToast(null), 3000);
   };
-
   const handleDownload = (type: string) => {
     setShowExportModal(false);
     triggerToast(`Downloading as ${type}...`);
-
     let content: string;
     let filename: string;
     let mimeType: string;
-
     if (activeTab === "custom" && queryResults && queryResults.length > 0) {
       const headers = selectedFields.join(",");
       const rows = queryResults
         .map((row) => selectedFields.map((f) => `"${row[f] || ""}"`).join(","))
         .join("\n");
       content = `${headers}\n${rows}`;
-
       if (type.includes("CSV")) {
         filename = "Custom_Report.csv";
         mimeType = "text/csv";
@@ -5107,8 +6067,9 @@ export function Reports() {
         mimeType = "application/pdf";
       }
     }
-
-    const blob = new Blob([content], { type: mimeType });
+    const blob = new Blob([content], {
+      type: mimeType,
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -5118,17 +6079,14 @@ export function Reports() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
-
   const handlePrintCustomQuery = () => {
     if (!queryResults || queryResults.length === 0) return;
-
     const headers = selectedFields
       .map(
         (f) =>
           `<th style="padding: 12px; border-bottom: 2px solid #ddd; text-align: left;">${f}</th>`,
       )
       .join("");
-
     const rows = queryResults
       .map((row) => {
         const cells = selectedFields
@@ -5140,7 +6098,6 @@ export function Reports() {
         return `<tr>${cells}</tr>`;
       })
       .join("");
-
     const printWindow = window.open("", "", "width=900,height=650");
     if (printWindow) {
       printWindow.document.write(
@@ -5184,15 +6141,12 @@ export function Reports() {
       }, 500);
     }
   };
-
   const runCustomQuery = () => {
     if (selectedFields.length === 0) {
       triggerToast("Please select at least one field");
       return;
     }
-
     setIsQueryRunning(true);
-
     const mockEmployees = [
       {
         "Employee ID": "EMP-001",
@@ -5331,7 +6285,6 @@ export function Reports() {
         Status: "Active",
       },
     ];
-
     setTimeout(() => {
       const filtered = mockEmployees.filter((emp) => {
         const matchDept =
@@ -5340,7 +6293,6 @@ export function Reports() {
           filterLoc === "All Locations" || emp.Location === filterLoc;
         return matchDept && matchLoc;
       });
-
       setQueryResults(filtered);
       setQuerySummary({
         records: filtered.length,
@@ -5355,7 +6307,6 @@ export function Reports() {
       triggerToast("Custom query executed successfully!");
     }, 1500);
   };
-
   const handleFilterChange = (type: string, value: string) => {
     setIsLoading(true);
     if (type === "date") setFilterDate(value);
@@ -5365,7 +6316,6 @@ export function Reports() {
       setIsLoading(false);
     }, 600);
   };
-
   const handleResetFilters = () => {
     setIsLoading(true);
     setFilterDate("This Month");
@@ -5375,7 +6325,6 @@ export function Reports() {
       setIsLoading(false);
     }, 600);
   };
-
   const getKpis = () => {
     const rawKpis = () => {
       let employees = 248;
@@ -5384,7 +6333,6 @@ export function Reports() {
       let attendance = 91;
       let payroll = 28.4;
       let positions = 18;
-
       if (filterDept === "Engineering") {
         employees = 98;
         hires = 5;
@@ -5414,13 +6362,11 @@ export function Reports() {
         payroll = 3.5;
         positions = 4;
       }
-
       if (filterDate === "Last Month") {
         employees -= 5;
         hires = Math.max(0, hires - 2);
         payroll = payroll * 0.95;
       }
-
       if (isManager) {
         return [
           {
@@ -5473,7 +6419,6 @@ export function Reports() {
           },
         ];
       }
-
       return [
         {
           label: "Total Employees",
@@ -5566,14 +6511,12 @@ export function Reports() {
     return <ShiftSwapReport onBack={() => setActiveReport(null)} />;
   if (activeReport === "Overtime Monitoring")
     return <OvertimeMonitoringReport onBack={() => setActiveReport(null)} />;
-
   const hcTrend =
     timeRange === "6M"
       ? hcTrendData6M
       : timeRange === "2Y"
         ? hcTrendData2Y
         : hcTrendData1Y;
-
   return (
     <div
       className="w-full px-4 md:px-8 py-6 pb-10"
@@ -5599,7 +6542,13 @@ export function Reports() {
           marginBottom: "24px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+          }}
+        >
           <div
             style={{
               width: "40px",
@@ -5624,7 +6573,13 @@ export function Reports() {
             Reports & Analytics
           </h1>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+          }}
+        >
           <button
             onClick={() => setShowExportModal(true)}
             style={{
@@ -5683,9 +6638,19 @@ export function Reports() {
           zIndex: 20,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+          }}
+        >
           {/* Date filter dropdown */}
-          <div style={{ position: "relative" }}>
+          <div
+            style={{
+              position: "relative",
+            }}
+          >
             <button
               onClick={() => setShowDateDropdown(!showDateDropdown)}
               style={{
@@ -5748,7 +6713,11 @@ export function Reports() {
           </div>
 
           {/* Dept filter dropdown */}
-          <div style={{ position: "relative" }}>
+          <div
+            style={{
+              position: "relative",
+            }}
+          >
             <button
               onClick={() =>
                 !isManager && setShowDeptDropdown(!showDeptDropdown)
@@ -5820,7 +6789,11 @@ export function Reports() {
           </div>
 
           {/* Location filter dropdown */}
-          <div style={{ position: "relative" }}>
+          <div
+            style={{
+              position: "relative",
+            }}
+          >
             <button
               onClick={() => setShowLocDropdown(!showLocDropdown)}
               style={{
@@ -5900,7 +6873,13 @@ export function Reports() {
             <RefreshCw size={14} /> Reset
           </button>
         </div>
-        <div style={{ fontSize: "13px", fontWeight: 600, color: "#6B7280" }}>
+        <div
+          style={{
+            fontSize: "13px",
+            fontWeight: 600,
+            color: "#6B7280",
+          }}
+        >
           Data as of Apr {new Date().getDate()}, 2026
         </div>
       </div>
@@ -5915,7 +6894,9 @@ export function Reports() {
         }}
       >
         {isLoading
-          ? Array.from({ length: 6 }).map((_, i) => (
+          ? Array.from({
+              length: 6,
+            }).map((_, i) => (
               <div
                 key={i}
                 style={{
@@ -6059,7 +7040,13 @@ export function Reports() {
               marginBottom: "24px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
               <h3
                 style={{
                   fontSize: "16px",
@@ -6170,7 +7157,12 @@ export function Reports() {
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
                     data={hcTrend}
-                    margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    margin={{
+                      top: 10,
+                      right: 10,
+                      left: -20,
+                      bottom: 0,
+                    }}
                   >
                     <defs>
                       <linearGradient id="hcGrad" x1="0" y1="0" x2="0" y2="1">
@@ -6195,12 +7187,20 @@ export function Reports() {
                       dataKey="month"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fontSize: 11, fill: "#9CA3AF", fontWeight: 600 }}
+                      tick={{
+                        fontSize: 11,
+                        fill: "#9CA3AF",
+                        fontWeight: 600,
+                      }}
                     />
                     <YAxis
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fontSize: 11, fill: "#9CA3AF", fontWeight: 600 }}
+                      tick={{
+                        fontSize: 11,
+                        fill: "#9CA3AF",
+                        fontWeight: 600,
+                      }}
                     />
                     <Tooltip />
                     <Area
@@ -6301,7 +7301,11 @@ export function Reports() {
                 Conversion
               </div>
               <div
-                style={{ fontSize: "16px", fontWeight: 900, color: "#00B87C" }}
+                style={{
+                  fontSize: "16px",
+                  fontWeight: 900,
+                  color: "#00B87C",
+                }}
               >
                 {pipelineSummary.conversion}
               </div>
@@ -6319,7 +7323,11 @@ export function Reports() {
                 This Month
               </div>
               <div
-                style={{ fontSize: "16px", fontWeight: 900, color: "#00B87C" }}
+                style={{
+                  fontSize: "16px",
+                  fontWeight: 900,
+                  color: "#00B87C",
+                }}
               >
                 {pipelineSummary.thisMonth}
               </div>
@@ -6337,7 +7345,11 @@ export function Reports() {
                 Pending
               </div>
               <div
-                style={{ fontSize: "16px", fontWeight: 900, color: "#EF4444" }}
+                style={{
+                  fontSize: "16px",
+                  fontWeight: 900,
+                  color: "#EF4444",
+                }}
               >
                 {pipelineSummary.pending}
               </div>
@@ -6345,16 +7357,28 @@ export function Reports() {
           </div>
 
           <div
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+            }}
           >
             {pipelineStages.map((st) => (
               <div
                 key={st.stage}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate("/recruitment", { state: { stage: st.stage } });
+                  navigate("/recruitment", {
+                    state: {
+                      stage: st.stage,
+                    },
+                  });
                 }}
-                style={{ display: "flex", alignItems: "center", gap: "12px" }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}
               >
                 <span
                   style={{
@@ -6561,7 +7585,11 @@ export function Reports() {
           >
             Leave Analysis
           </h3>
-          <div style={{ height: "180px" }}>
+          <div
+            style={{
+              height: "180px",
+            }}
+          >
             {isLoading ? (
               <div
                 style={{
@@ -6576,7 +7604,12 @@ export function Reports() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={leaveAnalysisData}
-                  margin={{ top: 0, right: 0, left: -25, bottom: 0 }}
+                  margin={{
+                    top: 0,
+                    right: 0,
+                    left: -25,
+                    bottom: 0,
+                  }}
                 >
                   <CartesianGrid
                     vertical={false}
@@ -6587,12 +7620,20 @@ export function Reports() {
                     dataKey="month"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 11, fill: "#9CA3AF", fontWeight: 600 }}
+                    tick={{
+                      fontSize: 11,
+                      fill: "#9CA3AF",
+                      fontWeight: 600,
+                    }}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 11, fill: "#9CA3AF", fontWeight: 600 }}
+                    tick={{
+                      fontSize: 11,
+                      fill: "#9CA3AF",
+                      fontWeight: 600,
+                    }}
                   />
                   <Tooltip />
                   <Bar
@@ -6662,7 +7703,11 @@ export function Reports() {
               landingFunnelData.map((f, i) => (
                 <div
                   key={f.stage}
-                  style={{ display: "flex", alignItems: "center", gap: "12px" }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                  }}
                 >
                   <span
                     style={{
@@ -6733,7 +7778,13 @@ export function Reports() {
       >
         {/* Late Arrival Tracker */}
         <div
-          onClick={() => navigate("/attendance", { state: { filter: "Late" } })}
+          onClick={() =>
+            navigate("/attendance", {
+              state: {
+                filter: "Late",
+              },
+            })
+          }
           style={{
             backgroundColor: "var(--card)",
             borderRadius: "16px",
@@ -6908,7 +7959,11 @@ export function Reports() {
             }}
           >
             {/* Chart 1: Dept Bar Chart */}
-            <div style={{ height: "100px" }}>
+            <div
+              style={{
+                height: "100px",
+              }}
+            >
               <div
                 style={{
                   fontSize: "11px",
@@ -6922,15 +7977,30 @@ export function Reports() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={[
-                    { dept: "Ops", count: 12 },
-                    { dept: "Sales", count: 6 },
-                    { dept: "Eng", count: 2 },
-                    { dept: "Mkt", count: 4 },
+                    {
+                      dept: "Ops",
+                      count: 12,
+                    },
+                    {
+                      dept: "Sales",
+                      count: 6,
+                    },
+                    {
+                      dept: "Eng",
+                      count: 2,
+                    },
+                    {
+                      dept: "Mkt",
+                      count: 4,
+                    },
                   ]}
                 >
                   <XAxis
                     dataKey="dept"
-                    tick={{ fontSize: 9, fill: "#6B7280" }}
+                    tick={{
+                      fontSize: 9,
+                      fill: "#6B7280",
+                    }}
                     axisLine={false}
                     tickLine={false}
                   />
@@ -6940,7 +8010,10 @@ export function Reports() {
                     radius={[2, 2, 0, 0]}
                     onClick={(data) => {
                       navigate("/attendance", {
-                        state: { filter: "Late", dept: data.dept },
+                        state: {
+                          filter: "Late",
+                          dept: data.dept,
+                        },
                       });
                     }}
                   />
@@ -6949,7 +8022,11 @@ export function Reports() {
             </div>
 
             {/* Chart 2: Trend Line */}
-            <div style={{ height: "100px" }}>
+            <div
+              style={{
+                height: "100px",
+              }}
+            >
               <div
                 style={{
                   fontSize: "11px",
@@ -6963,15 +8040,30 @@ export function Reports() {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={[
-                    { month: "Jan", count: 18 },
-                    { month: "Feb", count: 22 },
-                    { month: "Mar", count: 26 },
-                    { month: "Apr", count: 24 },
+                    {
+                      month: "Jan",
+                      count: 18,
+                    },
+                    {
+                      month: "Feb",
+                      count: 22,
+                    },
+                    {
+                      month: "Mar",
+                      count: 26,
+                    },
+                    {
+                      month: "Apr",
+                      count: 24,
+                    },
                   ]}
                 >
                   <XAxis
                     dataKey="month"
-                    tick={{ fontSize: 9, fill: "#6B7280" }}
+                    tick={{
+                      fontSize: 9,
+                      fill: "#6B7280",
+                    }}
                     axisLine={false}
                     tickLine={false}
                   />
@@ -7011,13 +8103,40 @@ export function Reports() {
               }}
             >
               <thead>
-                <tr style={{ color: "#9CA3AF", fontWeight: 700 }}>
-                  <th style={{ padding: "4px 0" }}>Employee</th>
-                  <th style={{ padding: "4px 0" }}>Dept</th>
-                  <th style={{ padding: "4px 0", textAlign: "center" }}>
+                <tr
+                  style={{
+                    color: "#9CA3AF",
+                    fontWeight: 700,
+                  }}
+                >
+                  <th
+                    style={{
+                      padding: "4px 0",
+                    }}
+                  >
+                    Employee
+                  </th>
+                  <th
+                    style={{
+                      padding: "4px 0",
+                    }}
+                  >
+                    Dept
+                  </th>
+                  <th
+                    style={{
+                      padding: "4px 0",
+                      textAlign: "center",
+                    }}
+                  >
                     Count
                   </th>
-                  <th style={{ padding: "4px 0", textAlign: "right" }}>
+                  <th
+                    style={{
+                      padding: "4px 0",
+                      textAlign: "right",
+                    }}
+                  >
                     Avg Delay
                   </th>
                 </tr>
@@ -7050,10 +8169,20 @@ export function Reports() {
                       color: "#374151",
                     }}
                   >
-                    <td style={{ padding: "6px 0", fontWeight: 700 }}>
+                    <td
+                      style={{
+                        padding: "6px 0",
+                        fontWeight: 700,
+                      }}
+                    >
                       {emp.name}
                     </td>
-                    <td style={{ padding: "6px 0", color: "#6B7280" }}>
+                    <td
+                      style={{
+                        padding: "6px 0",
+                        color: "#6B7280",
+                      }}
+                    >
                       {emp.dept}
                     </td>
                     <td
@@ -7136,10 +8265,34 @@ export function Reports() {
                       color: "var(--muted-foreground)",
                     }}
                   >
-                    <th style={{ padding: "4px 0" }}>Dept</th>
-                    <th style={{ padding: "4px 0" }}>Attendance</th>
-                    <th style={{ padding: "4px 0" }}>Perf. Score</th>
-                    <th style={{ padding: "4px 0" }}>Productivity</th>
+                    <th
+                      style={{
+                        padding: "4px 0",
+                      }}
+                    >
+                      Dept
+                    </th>
+                    <th
+                      style={{
+                        padding: "4px 0",
+                      }}
+                    >
+                      Attendance
+                    </th>
+                    <th
+                      style={{
+                        padding: "4px 0",
+                      }}
+                    >
+                      Perf. Score
+                    </th>
+                    <th
+                      style={{
+                        padding: "4px 0",
+                      }}
+                    >
+                      Productivity
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -7150,9 +8303,24 @@ export function Reports() {
                       perf: "4.2",
                       prod: "92%",
                     },
-                    { dept: "Design", att: "91%", perf: "4.0", prod: "88%" },
-                    { dept: "Marketing", att: "87%", perf: "3.5", prod: "82%" },
-                    { dept: "Sales", att: "89%", perf: "3.7", prod: "85%" },
+                    {
+                      dept: "Design",
+                      att: "91%",
+                      perf: "4.0",
+                      prod: "88%",
+                    },
+                    {
+                      dept: "Marketing",
+                      att: "87%",
+                      perf: "3.5",
+                      prod: "82%",
+                    },
+                    {
+                      dept: "Sales",
+                      att: "89%",
+                      perf: "3.7",
+                      prod: "85%",
+                    },
                   ].map((row) => (
                     <tr
                       key={row.dept}
@@ -7161,11 +8329,28 @@ export function Reports() {
                         color: "var(--foreground)",
                       }}
                     >
-                      <td style={{ padding: "8px 0", fontWeight: 700 }}>
+                      <td
+                        style={{
+                          padding: "8px 0",
+                          fontWeight: 700,
+                        }}
+                      >
                         {row.dept}
                       </td>
-                      <td style={{ padding: "8px 0" }}>{row.att}</td>
-                      <td style={{ padding: "8px 0" }}>{row.perf}</td>
+                      <td
+                        style={{
+                          padding: "8px 0",
+                        }}
+                      >
+                        {row.att}
+                      </td>
+                      <td
+                        style={{
+                          padding: "8px 0",
+                        }}
+                      >
+                        {row.perf}
+                      </td>
                       <td
                         style={{
                           padding: "8px 0",
@@ -7250,7 +8435,12 @@ export function Reports() {
               marginBottom: "24px",
             }}
           >
-            <div style={{ display: "flex", gap: "12px" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+              }}
+            >
               {["All", "Workforce", "Finance", "Operations"]
                 .filter(
                   (cat) => !(user?.role === "HR Manager" && cat === "Finance"),
@@ -7434,7 +8624,12 @@ export function Reports() {
                       paddingTop: "12px",
                     }}
                   >
-                    <div style={{ display: "flex", gap: "8px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "8px",
+                      }}
+                    >
                       <button
                         onClick={() => setActiveReport(report.title)}
                         style={{
@@ -7513,7 +8708,12 @@ export function Reports() {
           >
             Custom Report Builder
           </h3>
-          <div style={{ display: "flex", gap: "24px" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "24px",
+            }}
+          >
             {/* Left Field Picker */}
             <div
               style={{
@@ -7571,7 +8771,13 @@ export function Reports() {
                         fontWeight: isSelected ? 700 : 500,
                       }}
                     >
-                      <span style={{ fontSize: "12px" }}>{f}</span>
+                      <span
+                        style={{
+                          fontSize: "12px",
+                        }}
+                      >
+                        {f}
+                      </span>
                       {isSelected ? (
                         <Check size={14} />
                       ) : (
@@ -7670,7 +8876,11 @@ export function Reports() {
                     }}
                   >
                     <div
-                      style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}
+                      style={{
+                        display: "flex",
+                        gap: "12px",
+                        flexWrap: "wrap",
+                      }}
                     >
                       <span
                         style={{
@@ -7712,7 +8922,11 @@ export function Reports() {
 
                     {/* Actions */}
                     <div
-                      style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
+                      style={{
+                        display: "flex",
+                        gap: "8px",
+                        flexWrap: "wrap",
+                      }}
                     >
                       <button
                         onClick={() => handleDownload("CSV (.csv)")}
@@ -7801,7 +9015,12 @@ export function Reports() {
                   </div>
 
                   {/* Search Bar within results */}
-                  <div style={{ position: "relative", width: "100%" }}>
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                    }}
+                  >
                     <Search
                       size={14}
                       style={{
@@ -7939,7 +9158,11 @@ export function Reports() {
                           })}
                         </tr>
                       </thead>
-                      <tbody style={{ backgroundColor: "var(--card)" }}>
+                      <tbody
+                        style={{
+                          backgroundColor: "var(--card)",
+                        }}
+                      >
                         {(() => {
                           let processed = [...queryResults];
 
@@ -7976,7 +9199,6 @@ export function Reports() {
                             start,
                             start + itemsPerPage,
                           );
-
                           if (paginated.length === 0) {
                             return (
                               <tr>
@@ -7993,7 +9215,6 @@ export function Reports() {
                               </tr>
                             );
                           }
-
                           return (
                             <>
                               {paginated.map((row) => (
@@ -8044,7 +9265,10 @@ export function Reports() {
                                         Page {queryPage} of {totalPages}
                                       </span>
                                       <div
-                                        style={{ display: "flex", gap: "4px" }}
+                                        style={{
+                                          display: "flex",
+                                          gap: "4px",
+                                        }}
                                       >
                                         <button
                                           disabled={queryPage === 1}
@@ -8292,13 +9516,25 @@ export function Reports() {
                     outline: "none",
                   }}
                 >
-                  <option style={{ backgroundColor: "var(--card)" }}>
+                  <option
+                    style={{
+                      backgroundColor: "var(--card)",
+                    }}
+                  >
                     Daily
                   </option>
-                  <option style={{ backgroundColor: "var(--card)" }}>
+                  <option
+                    style={{
+                      backgroundColor: "var(--card)",
+                    }}
+                  >
                     Weekly
                   </option>
-                  <option style={{ backgroundColor: "var(--card)" }}>
+                  <option
+                    style={{
+                      backgroundColor: "var(--card)",
+                    }}
+                  >
                     Monthly
                   </option>
                 </select>
@@ -8330,7 +9566,12 @@ export function Reports() {
                 />
               </div>
             </div>
-            <div style={{ display: "flex", gap: "12px" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+              }}
+            >
               <button
                 onClick={() => {
                   setShowScheduleModal(false);
@@ -8452,10 +9693,34 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                   >
-                    <th style={{ padding: "8px" }}>Date</th>
-                    <th style={{ padding: "8px" }}>Category</th>
-                    <th style={{ padding: "8px" }}>Metric</th>
-                    <th style={{ padding: "8px" }}>Status</th>
+                    <th
+                      style={{
+                        padding: "8px",
+                      }}
+                    >
+                      Date
+                    </th>
+                    <th
+                      style={{
+                        padding: "8px",
+                      }}
+                    >
+                      Category
+                    </th>
+                    <th
+                      style={{
+                        padding: "8px",
+                      }}
+                    >
+                      Metric
+                    </th>
+                    <th
+                      style={{
+                        padding: "8px",
+                      }}
+                    >
+                      Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -8486,12 +9751,33 @@ export function Reports() {
                         color: "var(--foreground)",
                       }}
                     >
-                      <td style={{ padding: "10px 8px" }}>{row.date}</td>
-                      <td style={{ padding: "10px 8px" }}>{row.cat}</td>
-                      <td style={{ padding: "10px 8px", fontWeight: 700 }}>
+                      <td
+                        style={{
+                          padding: "10px 8px",
+                        }}
+                      >
+                        {row.date}
+                      </td>
+                      <td
+                        style={{
+                          padding: "10px 8px",
+                        }}
+                      >
+                        {row.cat}
+                      </td>
+                      <td
+                        style={{
+                          padding: "10px 8px",
+                          fontWeight: 700,
+                        }}
+                      >
                         {row.metric}
                       </td>
-                      <td style={{ padding: "10px 8px" }}>
+                      <td
+                        style={{
+                          padding: "10px 8px",
+                        }}
+                      >
                         <span
                           style={{
                             padding: "2px 6px",

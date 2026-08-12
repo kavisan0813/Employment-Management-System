@@ -2,11 +2,9 @@ import React from "react";
 import { useSettingsContext } from "../SettingsContext";
 import { useAuth } from "../../../../context/AuthContext";
 import { Users } from "lucide-react";
-
 export function SettingsModals() {
   const { user } = useAuth();
   const isHR = user?.role === "HR Manager";
-
   const {
     activeModal,
     confirmEditRoleSubmit,
@@ -79,11 +77,8 @@ export function SettingsModals() {
     showToast,
     usersList,
   } = useSettingsContext();
-
   if (!activeModal) return null;
-
   const closeModal = () => setActiveModal(null);
-
   const handleScheduleSubmit = () => {
     if (!scheduleForm.name.trim()) {
       showToast("Schedule Name is required", "error");
@@ -93,7 +88,6 @@ export function SettingsModals() {
       showToast("Schedule Code is required", "error");
       return;
     }
-
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_schedule") {
@@ -146,7 +140,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleDeleteScheduleSubmit = () => {
     if (selectedSchedule && selectedSchedule.empCount > 0) {
       showToast("Cannot delete a schedule with assigned employees", "error");
@@ -165,7 +158,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleLeaveTypeSubmit = () => {
     if (!leaveTypeForm.name.trim()) {
       showToast("Leave Type Name is required", "error");
@@ -175,7 +167,6 @@ export function SettingsModals() {
       showToast("Leave Code is required", "error");
       return;
     }
-
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_leave_type") {
@@ -229,7 +220,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleDeleteLeaveType = () => {
     setIsSubmitting(true);
     setTimeout(() => {
@@ -243,7 +233,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleSaveLeavePolicy = () => {
     setIsSubmitting(true);
     setTimeout(() => {
@@ -259,7 +248,6 @@ export function SettingsModals() {
       closeModal();
     }, 1500);
   };
-
   const handleHolidaySubmit = () => {
     if (!holidayForm.name.trim()) {
       showToast("Holiday Name is required", "error");
@@ -269,7 +257,6 @@ export function SettingsModals() {
       showToast("Date is required", "error");
       return;
     }
-
     const parsedDate = new Date(holidayForm.date);
     const daysOfWeek = [
       "Sunday",
@@ -281,7 +268,6 @@ export function SettingsModals() {
       "Saturday",
     ];
     const dayName = daysOfWeek[parsedDate.getDay()];
-
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_holiday") {
@@ -323,7 +309,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleDeleteHolidaySubmit = () => {
     setIsSubmitting(true);
     setTimeout(() => {
@@ -341,7 +326,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleLocSubmit = () => {
     if (!locForm.name.trim()) {
       showToast("Location Name is required", "error");
@@ -359,7 +343,6 @@ export function SettingsModals() {
       showToast("Country is required", "error");
       return;
     }
-
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_location") {
@@ -410,7 +393,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleDeleteLocSubmit = () => {
     if (selectedLoc && selectedLoc.empCount > 0) {
       showToast("Transfer employees before deleting.", "error");
@@ -429,7 +411,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleDeptSubmit = () => {
     if (!deptForm.name.trim()) {
       showToast("Department Name is required", "error");
@@ -439,7 +420,6 @@ export function SettingsModals() {
       showToast("Department Code is required", "error");
       return;
     }
-
     setIsSubmitting(true);
     setTimeout(() => {
       if (activeModal === "add_department") {
@@ -477,7 +457,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleDeleteDeptSubmit = () => {
     if (selectedDept && selectedDept.empCount > 0) {
       showToast("Transfer employees before deleting.", "error");
@@ -496,7 +475,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleInviteSubmit = () => {
     if (!inviteForm.name.trim()) {
       showToast("Full Name is required", "error");
@@ -514,7 +492,6 @@ export function SettingsModals() {
       showToast("Department is required", "error");
       return;
     }
-
     setIsSubmitting(true);
     setTimeout(() => {
       const initials = inviteForm.name
@@ -523,7 +500,6 @@ export function SettingsModals() {
         .join("")
         .toUpperCase()
         .slice(0, 2);
-
       const newUser = {
         name: inviteForm.name,
         email: inviteForm.email,
@@ -535,7 +511,6 @@ export function SettingsModals() {
         lastLogin: "Never",
         status: "Pending Invite",
       };
-
       setUsersList([...usersList, newUser]);
       setIsSubmitting(false);
       showToast("Invitation sent successfully", "success");
@@ -552,7 +527,6 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleEditSubmit = () => {
     if (!editForm.name.trim()) {
       showToast("Full Name is required", "error");
@@ -562,7 +536,6 @@ export function SettingsModals() {
       showToast("A valid email address is required", "error");
       return;
     }
-
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
@@ -585,13 +558,17 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleReactivateSubmit = () => {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
         usersList.map((u) =>
-          u.email === selectedUser?.email ? { ...u, status: "Active" } : u,
+          u.email === selectedUser?.email
+            ? {
+                ...u,
+                status: "Active",
+              }
+            : u,
         ),
       );
       setIsSubmitting(false);
@@ -599,13 +576,17 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   const handleDeactivateSubmit = () => {
     setIsSubmitting(true);
     setTimeout(() => {
       setUsersList(
         usersList.map((u) =>
-          u.email === selectedUser?.email ? { ...u, status: "Inactive" } : u,
+          u.email === selectedUser?.email
+            ? {
+                ...u,
+                status: "Inactive",
+              }
+            : u,
         ),
       );
       setIsSubmitting(false);
@@ -613,17 +594,20 @@ export function SettingsModals() {
       closeModal();
     }, 1000);
   };
-
   if (activeModal === "add_leave_type" || activeModal === "edit_leave_type") {
     const isEdit = activeModal === "edit_leave_type";
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-xl rounded-2xl p-6 shadow-2xl border border-[var(--border)] max-h-[90vh] overflow-y-auto"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -733,7 +717,10 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setLeaveTypeForm({
                       ...leaveTypeForm,
-                      days: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)),
+                      days:
+                        e.target.value === "" || isNaN(parseInt(e.target.value))
+                          ? undefined
+                          : parseInt(e.target.value),
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -823,7 +810,11 @@ export function SettingsModals() {
                     onChange={(e) =>
                       setLeaveTypeForm({
                         ...leaveTypeForm,
-                        maxCarryForward: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)),
+                        maxCarryForward:
+                          e.target.value === "" ||
+                          isNaN(parseInt(e.target.value))
+                            ? undefined
+                            : parseInt(e.target.value),
                       })
                     }
                     className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -935,7 +926,10 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setLeaveTypeForm({
                       ...leaveTypeForm,
-                      minNoticePeriod: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)),
+                      minNoticePeriod:
+                        e.target.value === "" || isNaN(parseInt(e.target.value))
+                          ? undefined
+                          : parseInt(e.target.value),
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -965,7 +959,10 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setLeaveTypeForm({
                       ...leaveTypeForm,
-                      maxConsecutiveLeave: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)),
+                      maxConsecutiveLeave:
+                        e.target.value === "" || isNaN(parseInt(e.target.value))
+                          ? undefined
+                          : parseInt(e.target.value),
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -1114,18 +1111,21 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "delete_leave_type") {
     const isUsed =
       selectedLeaveType?.code === "CL" || selectedLeaveType?.code === "SL";
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -1202,16 +1202,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "edit_payroll") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-[var(--border)] max-h-[90vh] overflow-y-auto"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -1242,7 +1245,9 @@ export function SettingsModals() {
             {/* TAB 1: PAY CYCLE */}
             <div
               className="border-b pb-4"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               <span className="block text-xs font-bold text-[#00B87C] uppercase mb-3">
                 Payroll Cycle
@@ -1332,7 +1337,9 @@ export function SettingsModals() {
             {/* TAB 2: ATTENDANCE RULES */}
             <div
               className="border-b pb-4"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               <span className="block text-xs font-bold text-[#00B87C] uppercase mb-3">
                 Attendance Integration Rules
@@ -1347,7 +1354,9 @@ export function SettingsModals() {
                 >
                   <span
                     className="text-xs font-semibold"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     Enable LOP Deduction
                   </span>
@@ -1367,7 +1376,9 @@ export function SettingsModals() {
                 >
                   <span
                     className="text-xs font-semibold"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     Overtime Pay Enabled
                   </span>
@@ -1387,7 +1398,9 @@ export function SettingsModals() {
                 >
                   <span
                     className="text-xs font-semibold"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     Late Deduction Toggle
                   </span>
@@ -1496,7 +1509,9 @@ export function SettingsModals() {
 
           <div
             className="flex justify-end gap-3 pt-4 border-t"
-            style={{ borderColor: "var(--border)" }}
+            style={{
+              borderColor: "var(--border)",
+            }}
           >
             <button
               onClick={closeModal}
@@ -1512,7 +1527,9 @@ export function SettingsModals() {
             <button
               onClick={() => setActiveModal("confirm_save_payroll")}
               className="px-4 py-2 text-sm font-bold rounded-xl text-white cursor-pointer"
-              style={{ backgroundColor: "#00B87C" }}
+              style={{
+                backgroundColor: "#00B87C",
+              }}
             >
               Save Changes
             </button>
@@ -1521,16 +1538,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "confirm_save_payroll") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -1594,16 +1614,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "confirm_save_policy") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -1652,7 +1675,9 @@ export function SettingsModals() {
             </span>
             <div
               className="text-xs space-y-1 font-semibold"
-              style={{ color: "var(--foreground)" }}
+              style={{
+                color: "var(--foreground)",
+              }}
             >
               <div>• Updated active Leave Types list</div>
               <div>• Altered entitlement parameters & validations</div>
@@ -1688,17 +1713,20 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "add_holiday" || activeModal === "edit_holiday") {
     const isEdit = activeModal === "edit_holiday";
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-[var(--border)] max-h-[90vh] overflow-y-auto"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -1742,7 +1770,10 @@ export function SettingsModals() {
                 type="text"
                 value={holidayForm.name}
                 onChange={(e) =>
-                  setHolidayForm({ ...holidayForm, name: e.target.value })
+                  setHolidayForm({
+                    ...holidayForm,
+                    name: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -1771,7 +1802,10 @@ export function SettingsModals() {
                   type="date"
                   value={holidayForm.date}
                   onChange={(e) =>
-                    setHolidayForm({ ...holidayForm, date: e.target.value })
+                    setHolidayForm({
+                      ...holidayForm,
+                      date: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -1874,7 +1908,10 @@ export function SettingsModals() {
                 <select
                   value={holidayForm.dept}
                   onChange={(e) =>
-                    setHolidayForm({ ...holidayForm, dept: e.target.value })
+                    setHolidayForm({
+                      ...holidayForm,
+                      dept: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -2014,16 +2051,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "delete_holiday") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -2087,16 +2127,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "view_holiday") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <div>
@@ -2150,7 +2193,9 @@ export function SettingsModals() {
               </span>
               <span
                 className="font-semibold text-sm block mt-1"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 {selectedHoliday?.date} ({selectedHoliday?.day})
               </span>
@@ -2168,7 +2213,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedHoliday?.location}
                 </span>
@@ -2185,7 +2232,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedHoliday?.dept}
                 </span>
@@ -2204,7 +2253,9 @@ export function SettingsModals() {
                 </span>
                 <p
                   className="text-sm mt-1 font-medium"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedHoliday.description}
                 </p>
@@ -2215,7 +2266,9 @@ export function SettingsModals() {
             <button
               onClick={closeModal}
               className="px-6 py-2 text-sm font-bold rounded-xl text-white cursor-pointer transition-all"
-              style={{ backgroundColor: "#00B87C" }}
+              style={{
+                backgroundColor: "#00B87C",
+              }}
             >
               Close
             </button>
@@ -2224,17 +2277,20 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "add_schedule" || activeModal === "edit_schedule") {
     const isEdit = activeModal === "edit_schedule";
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-2xl rounded-2xl p-6 shadow-2xl border border-[var(--border)] max-h-[90vh] overflow-y-auto"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -2279,7 +2335,10 @@ export function SettingsModals() {
                   type="text"
                   value={scheduleForm.name}
                   onChange={(e) =>
-                    setScheduleForm({ ...scheduleForm, name: e.target.value })
+                    setScheduleForm({
+                      ...scheduleForm,
+                      name: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -2381,7 +2440,11 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setScheduleForm({
                       ...scheduleForm,
-                      breakDuration: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
+                      breakDuration:
+                        (e.target.value === "" ||
+                        isNaN(parseInt(e.target.value))
+                          ? undefined
+                          : parseInt(e.target.value)) || 0,
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -2528,7 +2591,11 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setScheduleForm({
                       ...scheduleForm,
-                      graceTime: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
+                      graceTime:
+                        (e.target.value === "" ||
+                        isNaN(parseInt(e.target.value))
+                          ? undefined
+                          : parseInt(e.target.value)) || 0,
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -2588,7 +2655,10 @@ export function SettingsModals() {
                 <select
                   value={scheduleForm.dept}
                   onChange={(e) =>
-                    setScheduleForm({ ...scheduleForm, dept: e.target.value })
+                    setScheduleForm({
+                      ...scheduleForm,
+                      dept: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -2731,7 +2801,6 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "delete_schedule") {
     const hasEmployees = selectedSchedule
       ? selectedSchedule.empCount > 0
@@ -2739,11 +2808,15 @@ export function SettingsModals() {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -2821,16 +2894,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "view_schedule") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-[var(--border)] max-h-[85vh] overflow-y-auto"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-6">
             <div>
@@ -2881,7 +2957,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedSchedule?.startTime === "Flexible"
                     ? "Flexible Hours"
@@ -2894,7 +2972,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedSchedule?.breakDuration} minutes
                 </span>
@@ -2913,7 +2993,9 @@ export function SettingsModals() {
               </span>
               <p
                 className="text-sm mt-1 font-medium"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 {selectedSchedule?.workingDays.join(", ")}
               </p>
@@ -2932,7 +3014,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedSchedule?.graceTime} mins
                 </span>
@@ -2971,7 +3055,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedSchedule?.dept}
                 </span>
@@ -2988,7 +3074,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedSchedule?.location}
                 </span>
@@ -3000,7 +3088,9 @@ export function SettingsModals() {
             <button
               onClick={closeModal}
               className="px-6 py-2 text-sm font-bold rounded-xl text-white cursor-pointer transition-all"
-              style={{ backgroundColor: "#00B87C" }}
+              style={{
+                backgroundColor: "#00B87C",
+              }}
             >
               Close
             </button>
@@ -3009,17 +3099,20 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "add_location" || activeModal === "edit_location") {
     const isEdit = activeModal === "edit_location";
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-[var(--border)] max-h-[90vh] overflow-y-auto"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -3073,7 +3166,11 @@ export function SettingsModals() {
                     ) {
                       newCode = newName.slice(0, 3).toUpperCase();
                     }
-                    setLocForm({ ...locForm, name: newName, code: newCode });
+                    setLocForm({
+                      ...locForm,
+                      name: newName,
+                      code: newCode,
+                    });
                   }}
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -3135,10 +3232,7 @@ export function SettingsModals() {
                     setLocForm({
                       ...locForm,
                       type: e.target.value as
-                        | "Head Office"
-                        | "Branch"
-                        | "Warehouse"
-                        | "Remote",
+                        "Head Office" | "Branch" | "Warehouse" | "Remote",
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -3170,7 +3264,10 @@ export function SettingsModals() {
                 <select
                   value={locForm.manager}
                   onChange={(e) =>
-                    setLocForm({ ...locForm, manager: e.target.value })
+                    setLocForm({
+                      ...locForm,
+                      manager: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -3206,7 +3303,10 @@ export function SettingsModals() {
                 type="text"
                 value={locForm.address}
                 onChange={(e) =>
-                  setLocForm({ ...locForm, address: e.target.value })
+                  setLocForm({
+                    ...locForm,
+                    address: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -3235,7 +3335,10 @@ export function SettingsModals() {
                   type="text"
                   value={locForm.city}
                   onChange={(e) =>
-                    setLocForm({ ...locForm, city: e.target.value })
+                    setLocForm({
+                      ...locForm,
+                      city: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -3262,7 +3365,10 @@ export function SettingsModals() {
                   type="text"
                   value={locForm.state}
                   onChange={(e) =>
-                    setLocForm({ ...locForm, state: e.target.value })
+                    setLocForm({
+                      ...locForm,
+                      state: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -3292,7 +3398,10 @@ export function SettingsModals() {
                   type="text"
                   value={locForm.country}
                   onChange={(e) =>
-                    setLocForm({ ...locForm, country: e.target.value })
+                    setLocForm({
+                      ...locForm,
+                      country: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -3319,7 +3428,10 @@ export function SettingsModals() {
                   type="text"
                   value={locForm.pincode}
                   onChange={(e) =>
-                    setLocForm({ ...locForm, pincode: e.target.value })
+                    setLocForm({
+                      ...locForm,
+                      pincode: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -3348,7 +3460,10 @@ export function SettingsModals() {
                 <select
                   value={locForm.timezone}
                   onChange={(e) =>
-                    setLocForm({ ...locForm, timezone: e.target.value })
+                    setLocForm({
+                      ...locForm,
+                      timezone: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -3382,9 +3497,7 @@ export function SettingsModals() {
                     setLocForm({
                       ...locForm,
                       status: e.target.value as
-                        | "Active"
-                        | "Inactive"
-                        | "Partial",
+                        "Active" | "Inactive" | "Partial",
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -3417,7 +3530,10 @@ export function SettingsModals() {
               <textarea
                 value={locForm.notes}
                 onChange={(e) =>
-                  setLocForm({ ...locForm, notes: e.target.value })
+                  setLocForm({
+                    ...locForm,
+                    notes: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2 text-sm outline-none border transition-all resize-none h-20"
                 style={{
@@ -3460,17 +3576,20 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "delete_location") {
     const hasEmployees = selectedLoc ? selectedLoc.empCount > 0 : false;
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -3549,16 +3668,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "view_location") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-[var(--border)] max-h-[85vh] overflow-y-auto"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-6">
             <div>
@@ -3608,7 +3730,9 @@ export function SettingsModals() {
               </span>
               <p
                 className="text-sm mt-1 font-medium"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 {selectedLoc?.address}, {selectedLoc?.city},{" "}
                 {selectedLoc?.state}, {selectedLoc?.country} -{" "}
@@ -3629,7 +3753,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedLoc?.manager || "Not Assigned"}
                 </span>
@@ -3646,7 +3772,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedLoc?.timezone}
                 </span>
@@ -3666,7 +3794,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "#00B87C" }}
+                  style={{
+                    color: "#00B87C",
+                  }}
                 >
                   {selectedLoc?.empCount} People
                 </span>
@@ -3683,7 +3813,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedLoc?.createdDate}
                 </span>
@@ -3721,7 +3853,9 @@ export function SettingsModals() {
             <button
               onClick={closeModal}
               className="px-6 py-2 text-sm font-bold rounded-xl text-white cursor-pointer transition-all"
-              style={{ backgroundColor: "#00B87C" }}
+              style={{
+                backgroundColor: "#00B87C",
+              }}
             >
               Close
             </button>
@@ -3730,17 +3864,20 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "add_department" || activeModal === "edit_department") {
     const isEdit = activeModal === "edit_department";
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -3793,7 +3930,11 @@ export function SettingsModals() {
                   ) {
                     newCode = newName.slice(0, 2).toUpperCase();
                   }
-                  setDeptForm({ ...deptForm, name: newName, code: newCode });
+                  setDeptForm({
+                    ...deptForm,
+                    name: newName,
+                    code: newCode,
+                  });
                 }}
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -3849,7 +3990,10 @@ export function SettingsModals() {
               <select
                 value={deptForm.head}
                 onChange={(e) =>
-                  setDeptForm({ ...deptForm, head: e.target.value })
+                  setDeptForm({
+                    ...deptForm,
+                    head: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -3883,7 +4027,10 @@ export function SettingsModals() {
               <select
                 value={deptForm.status}
                 onChange={(e) =>
-                  setDeptForm({ ...deptForm, status: e.target.value })
+                  setDeptForm({
+                    ...deptForm,
+                    status: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -3914,7 +4061,10 @@ export function SettingsModals() {
                 placeholder="e.g. ₹50L"
                 value={deptForm.budget}
                 onChange={(e) =>
-                  setDeptForm({ ...deptForm, budget: e.target.value })
+                  setDeptForm({
+                    ...deptForm,
+                    budget: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -3940,7 +4090,10 @@ export function SettingsModals() {
               <textarea
                 value={deptForm.description}
                 onChange={(e) =>
-                  setDeptForm({ ...deptForm, description: e.target.value })
+                  setDeptForm({
+                    ...deptForm,
+                    description: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2 text-sm outline-none border transition-all resize-none h-20"
                 style={{
@@ -3983,18 +4136,20 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "delete_department") {
     const hasEmployees = selectedDept ? selectedDept.empCount > 0 : false;
-
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -4072,16 +4227,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "view_department") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-[var(--border)] max-h-[85vh] overflow-y-auto"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-6">
             <div>
@@ -4133,7 +4291,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedDept?.head || "Not Assigned"}
                 </span>
@@ -4150,7 +4310,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="font-semibold text-sm block mt-1"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {selectedDept?.budget || "None"}
                 </span>
@@ -4258,7 +4420,9 @@ export function SettingsModals() {
                 </span>
                 <span
                   className="text-white text-xs font-bold px-2 py-1 rounded-lg"
-                  style={{ backgroundColor: "#00B87C" }}
+                  style={{
+                    backgroundColor: "#00B87C",
+                  }}
                 >
                   4.2 / 5.0
                 </span>
@@ -4270,7 +4434,9 @@ export function SettingsModals() {
             <button
               onClick={closeModal}
               className="px-6 py-2 text-sm font-bold rounded-xl text-white cursor-pointer transition-all"
-              style={{ backgroundColor: "#00B87C" }}
+              style={{
+                backgroundColor: "#00B87C",
+              }}
             >
               Close
             </button>
@@ -4279,16 +4445,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "invite_user") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -4332,7 +4501,10 @@ export function SettingsModals() {
                 type="text"
                 value={inviteForm.name}
                 onChange={(e) =>
-                  setInviteForm({ ...inviteForm, name: e.target.value })
+                  setInviteForm({
+                    ...inviteForm,
+                    name: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -4360,7 +4532,10 @@ export function SettingsModals() {
                 type="email"
                 value={inviteForm.email}
                 onChange={(e) =>
-                  setInviteForm({ ...inviteForm, email: e.target.value })
+                  setInviteForm({
+                    ...inviteForm,
+                    email: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -4389,7 +4564,10 @@ export function SettingsModals() {
                   disabled={isHR}
                   value={isHR ? "Employee" : inviteForm.role}
                   onChange={(e) =>
-                    setInviteForm({ ...inviteForm, role: e.target.value })
+                    setInviteForm({
+                      ...inviteForm,
+                      role: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all disabled:bg-muted disabled:opacity-75 disabled:cursor-not-allowed"
                   style={{
@@ -4421,7 +4599,10 @@ export function SettingsModals() {
                 <select
                   value={inviteForm.dept}
                   onChange={(e) =>
-                    setInviteForm({ ...inviteForm, dept: e.target.value })
+                    setInviteForm({
+                      ...inviteForm,
+                      dept: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -4454,7 +4635,10 @@ export function SettingsModals() {
               <select
                 value={inviteForm.location}
                 onChange={(e) =>
-                  setInviteForm({ ...inviteForm, location: e.target.value })
+                  setInviteForm({
+                    ...inviteForm,
+                    location: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -4564,7 +4748,10 @@ export function SettingsModals() {
               <textarea
                 value={inviteForm.notes}
                 onChange={(e) =>
-                  setInviteForm({ ...inviteForm, notes: e.target.value })
+                  setInviteForm({
+                    ...inviteForm,
+                    notes: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2 text-sm outline-none border transition-all"
                 style={{
@@ -4595,7 +4782,10 @@ export function SettingsModals() {
               onClick={handleInviteSubmit}
               disabled={isSubmitting}
               className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
-              style={{ border: "none", backgroundColor: "#00B87C" }}
+              style={{
+                border: "none",
+                backgroundColor: "#00B87C",
+              }}
             >
               {isSubmitting ? "Sending..." : "Send Invitation"}
             </button>
@@ -4604,16 +4794,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "edit_user") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -4657,7 +4850,10 @@ export function SettingsModals() {
                 type="text"
                 value={editForm.name}
                 onChange={(e) =>
-                  setEditForm({ ...editForm, name: e.target.value })
+                  setEditForm({
+                    ...editForm,
+                    name: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -4684,7 +4880,10 @@ export function SettingsModals() {
                 type="email"
                 value={editForm.email}
                 onChange={(e) =>
-                  setEditForm({ ...editForm, email: e.target.value })
+                  setEditForm({
+                    ...editForm,
+                    email: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -4712,7 +4911,10 @@ export function SettingsModals() {
                   disabled={isHR}
                   value={editForm.role}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, role: e.target.value })
+                    setEditForm({
+                      ...editForm,
+                      role: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all disabled:bg-muted disabled:opacity-75 disabled:cursor-not-allowed"
                   style={{
@@ -4744,7 +4946,10 @@ export function SettingsModals() {
                 <select
                   value={editForm.dept}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, dept: e.target.value })
+                    setEditForm({
+                      ...editForm,
+                      dept: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -4778,7 +4983,10 @@ export function SettingsModals() {
                 <select
                   value={editForm.location}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, location: e.target.value })
+                    setEditForm({
+                      ...editForm,
+                      location: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                   style={{
@@ -4814,7 +5022,10 @@ export function SettingsModals() {
                   disabled={isHR}
                   value={editForm.status}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, status: e.target.value })
+                    setEditForm({
+                      ...editForm,
+                      status: e.target.value,
+                    })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all disabled:bg-muted disabled:opacity-75 disabled:cursor-not-allowed"
                   style={{
@@ -4847,7 +5058,10 @@ export function SettingsModals() {
                 type="text"
                 value={editForm.permissions}
                 onChange={(e) =>
-                  setEditForm({ ...editForm, permissions: e.target.value })
+                  setEditForm({
+                    ...editForm,
+                    permissions: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
                 style={{
@@ -4876,7 +5090,10 @@ export function SettingsModals() {
               onClick={handleEditSubmit}
               disabled={isSubmitting}
               className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
-              style={{ border: "none", backgroundColor: "#00B87C" }}
+              style={{
+                border: "none",
+                backgroundColor: "#00B87C",
+              }}
             >
               {isSubmitting ? "Saving..." : "Save Changes"}
             </button>
@@ -4885,16 +5102,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "reactivate_user") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -5050,7 +5270,10 @@ export function SettingsModals() {
               onClick={handleReactivateSubmit}
               disabled={isSubmitting}
               className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
-              style={{ border: "none", backgroundColor: "#00B87C" }}
+              style={{
+                border: "none",
+                backgroundColor: "#00B87C",
+              }}
             >
               {isSubmitting ? "Reactivating..." : "Reactivate User"}
             </button>
@@ -5059,16 +5282,19 @@ export function SettingsModals() {
       </div>
     );
   }
-
   if (activeModal === "deactivate_user") {
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.6)",
+        }}
       >
         <div
           className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)]"
-          style={{ backgroundColor: "var(--card)" }}
+          style={{
+            backgroundColor: "var(--card)",
+          }}
         >
           <div className="flex justify-between items-start mb-4">
             <h3
@@ -5152,7 +5378,10 @@ export function SettingsModals() {
               onClick={handleDeactivateSubmit}
               disabled={isSubmitting}
               className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
-              style={{ border: "none", backgroundColor: "#EF4444" }}
+              style={{
+                border: "none",
+                backgroundColor: "#EF4444",
+              }}
             >
               {isSubmitting ? "Deactivating..." : "Deactivate User"}
             </button>
@@ -5161,10 +5390,8 @@ export function SettingsModals() {
       </div>
     );
   }
-
   let title: string;
   let content: React.ReactNode;
-
   switch (activeModal) {
     case "add_schedule":
     case "edit_schedule":
@@ -5699,7 +5926,10 @@ export function SettingsModals() {
                 type="text"
                 value={roleForm.name}
                 onChange={(e) =>
-                  setRoleForm({ ...roleForm, name: e.target.value })
+                  setRoleForm({
+                    ...roleForm,
+                    name: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all focus:border-[var(--primary)]"
                 style={{
@@ -5726,7 +5956,10 @@ export function SettingsModals() {
               <select
                 value={roleForm.status}
                 onChange={(e) =>
-                  setRoleForm({ ...roleForm, status: e.target.value })
+                  setRoleForm({
+                    ...roleForm,
+                    status: e.target.value,
+                  })
                 }
                 className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all focus:border-[var(--primary)]"
                 style={{
@@ -5757,7 +5990,10 @@ export function SettingsModals() {
             <textarea
               value={roleForm.description}
               onChange={(e) =>
-                setRoleForm({ ...roleForm, description: e.target.value })
+                setRoleForm({
+                  ...roleForm,
+                  description: e.target.value,
+                })
               }
               className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all focus:border-[var(--primary)] resize-none"
               style={{
@@ -5773,9 +6009,16 @@ export function SettingsModals() {
           {activeModal === "edit_role" && selectedRoleForEdit && (
             <div
               className="flex items-center gap-2 px-3 py-2 rounded-lg"
-              style={{ backgroundColor: "var(--muted)" }}
+              style={{
+                backgroundColor: "var(--muted)",
+              }}
             >
-              <Users size={14} style={{ color: "var(--muted-foreground)" }} />
+              <Users
+                size={14}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
+              />
               <span
                 style={{
                   fontSize: "12px",
@@ -5784,7 +6027,11 @@ export function SettingsModals() {
                 }}
               >
                 Assigned to{" "}
-                <strong style={{ color: "var(--foreground)" }}>
+                <strong
+                  style={{
+                    color: "var(--foreground)",
+                  }}
+                >
                   {selectedRoleForEdit.members}
                 </strong>{" "}
                 users
@@ -5807,9 +6054,14 @@ export function SettingsModals() {
               </label>
               <button
                 onClick={() => {
-                  const newPerms = { ...roleForm.permissions };
+                  const newPerms = {
+                    ...roleForm.permissions,
+                  };
                   Object.keys(newPerms).forEach((k) => (newPerms[k] = "no"));
-                  setRoleForm({ ...roleForm, permissions: newPerms });
+                  setRoleForm({
+                    ...roleForm,
+                    permissions: newPerms,
+                  });
                 }}
                 className="text-[12px] font-semibold hover:underline transition-colors"
                 style={{
@@ -5834,12 +6086,16 @@ export function SettingsModals() {
               <table className="w-full text-left border-collapse relative">
                 <thead
                   className="sticky top-0 z-10"
-                  style={{ backgroundColor: "var(--muted)" }}
+                  style={{
+                    backgroundColor: "var(--muted)",
+                  }}
                 >
                   <tr>
                     <th
                       className="py-3 px-4 text-[11px] font-bold uppercase tracking-wider"
-                      style={{ color: "var(--muted-foreground)" }}
+                      style={{
+                        color: "var(--muted-foreground)",
+                      }}
                     >
                       Module
                     </th>
@@ -5907,7 +6163,10 @@ export function SettingsModals() {
                         | Iterable<React.ReactNode>
                         | null
                         | undefined;
-                      modules: { id: string; name: string }[];
+                      modules: {
+                        id: string;
+                        name: string;
+                      }[];
                     }) => (
                       <React.Fragment key={group.id}>
                         <tr>
@@ -5928,7 +6187,6 @@ export function SettingsModals() {
                           const p = roleForm.permissions[mod.id] || "no";
                           const isView = p === "view" || p === "full";
                           const isFull = p === "full";
-
                           const handleCheck = (
                             type: string,
                             checked: boolean,
@@ -5947,7 +6205,6 @@ export function SettingsModals() {
                               },
                             }));
                           };
-
                           return (
                             <tr
                               key={mod.id}
@@ -5958,7 +6215,9 @@ export function SettingsModals() {
                             >
                               <td
                                 className="px-4 py-3 text-[13px] font-medium"
-                                style={{ color: "var(--foreground)" }}
+                                style={{
+                                  color: "var(--foreground)",
+                                }}
                               >
                                 {mod.name}
                               </td>
@@ -6184,11 +6443,12 @@ export function SettingsModals() {
     default:
       return null;
   }
-
   return (
     <div
       className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
-      style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,0.6)",
+      }}
     >
       <div
         className={`w-full ${activeModal === "create_role" || activeModal === "edit_role" ? "max-w-2xl" : "max-w-md"} rounded-2xl p-6 shadow-2xl border border-[var(--border)] relative`}
@@ -6223,7 +6483,12 @@ export function SettingsModals() {
             &times;
           </button>
         </div>
-        <div className="mb-6 overflow-y-auto pr-2" style={{ flexGrow: 1 }}>
+        <div
+          className="mb-6 overflow-y-auto pr-2"
+          style={{
+            flexGrow: 1,
+          }}
+        >
           {content}
         </div>
         <div className="flex justify-end gap-3 flex-wrap mt-auto pt-4 border-t border-[var(--border)]">
@@ -6243,7 +6508,10 @@ export function SettingsModals() {
               onClick={handleRoleSubmit}
               disabled={isSubmitting}
               className="px-4 py-2 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer disabled:opacity-50 w-full sm:w-auto"
-              style={{ border: "none", backgroundColor: "#00B87C" }}
+              style={{
+                border: "none",
+                backgroundColor: "#00B87C",
+              }}
             >
               {isSubmitting
                 ? "Processing..."
@@ -6256,7 +6524,10 @@ export function SettingsModals() {
               onClick={confirmEditRoleSubmit}
               disabled={isSubmitting}
               className="px-4 py-2 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer disabled:opacity-50 w-full sm:w-auto"
-              style={{ border: "none", backgroundColor: "#00B87C" }}
+              style={{
+                border: "none",
+                backgroundColor: "#00B87C",
+              }}
             >
               {isSubmitting ? "Processing..." : "Confirm Save"}
             </button>
@@ -6267,7 +6538,10 @@ export function SettingsModals() {
                 closeModal();
               }}
               className="px-4 py-2 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer w-full sm:w-auto"
-              style={{ border: "none", backgroundColor: "#00B87C" }}
+              style={{
+                border: "none",
+                backgroundColor: "#00B87C",
+              }}
             >
               Confirm
             </button>

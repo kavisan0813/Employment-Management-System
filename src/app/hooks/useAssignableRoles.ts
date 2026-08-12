@@ -24,7 +24,7 @@ export function useAssignableRoles() {
   const userId = user?.email || "anonymous";
   const { data, error, isLoading } = useSWR<AssignableRole[]>(
     `/api/roles/assignable?userId=${encodeURIComponent(userId)}`,
-    fetcher
+    fetcher,
   );
 
   return {

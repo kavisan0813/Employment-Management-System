@@ -57,7 +57,8 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     activeEmployees: 300,
     onLeaveEmployees: 10,
     growth: 8,
-    description: "Product placement, digital campaigns, and branding initiatives.",
+    description:
+      "Product placement, digital campaigns, and branding initiatives.",
     createdDate: "Feb 20, 2023",
     lastUpdated: "Mar 15, 2026",
     parentDepartment: "None",
@@ -80,7 +81,8 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     activeEmployees: 176,
     onLeaveEmployees: 4,
     growth: 5,
-    description: "Talent scouting, organizational benefits, and policy rollout.",
+    description:
+      "Talent scouting, organizational benefits, and policy rollout.",
     createdDate: "Jan 05, 2023",
     lastUpdated: "Feb 28, 2026",
     parentDepartment: "None",
@@ -103,13 +105,12 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     activeEmployees: 238,
     onLeaveEmployees: 2,
     growth: 6,
-    description: "Corporate audits, payroll compliance, and bookkeeping operations.",
+    description:
+      "Corporate audits, payroll compliance, and bookkeeping operations.",
     createdDate: "Jun 01, 2023",
     lastUpdated: "Apr 10, 2026",
     parentDepartment: "None",
-    teams: [
-      { name: "Payroll & Benefits", lead: "Bruce Wayne" },
-    ],
+    teams: [{ name: "Payroll & Benefits", lead: "Bruce Wayne" }],
     budgetAmount: "₹55L",
     budgetUsedPct: 91,
     budgetUsedAmount: "₹50.05L",
@@ -126,13 +127,12 @@ export const INITIAL_DEPARTMENTS: Department[] = [
     activeEmployees: 740,
     onLeaveEmployees: 17,
     growth: 14,
-    description: "Logistics fulfillment, quality checks, and supply parameters.",
+    description:
+      "Logistics fulfillment, quality checks, and supply parameters.",
     createdDate: "May 12, 2023",
     lastUpdated: "Dec 15, 2025",
     parentDepartment: "None",
-    teams: [
-      { name: "Logistics Team", lead: "Sanjay Gupta" },
-    ],
+    teams: [{ name: "Logistics Team", lead: "Sanjay Gupta" }],
     budgetAmount: "₹95L",
     budgetUsedPct: 78,
     budgetUsedAmount: "₹74.1L",

@@ -10,9 +10,9 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { StatusBadge } from "../../components/workflow/StatusBadge";
-
+import * as m from "motion/react-m";
 interface HRRequest {
   id: string;
   type: string;
@@ -22,7 +22,6 @@ interface HRRequest {
   priority: "Low" | "Medium" | "High";
   description: string;
 }
-
 const MOCK_REQUESTS: HRRequest[] = [
   {
     id: "REQ-2026-001",
@@ -52,20 +51,17 @@ const MOCK_REQUESTS: HRRequest[] = [
     description: "Requesting to change salary disbursement to my HDFC account.",
   },
 ];
-
 export default function EmployeeHRRequests() {
   const [requests] = useState<HRRequest[]>(MOCK_REQUESTS);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRequest, setSelectedRequest] = useState<HRRequest | null>(
     null,
   );
-
   const filteredRequests = requests.filter(
     (req) =>
       req.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
       req.id.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-10">
       {/* ─── Page Header ─────────────────────────────────────────── */}
@@ -142,9 +138,16 @@ export default function EmployeeHRRequests() {
           >
             <div
               className="w-11 h-11 rounded-[10px] flex items-center justify-center shadow-inner"
-              style={{ backgroundColor: stat.bg }}
+              style={{
+                backgroundColor: stat.bg,
+              }}
             >
-              <stat.icon size={22} style={{ color: stat.color }} />
+              <stat.icon
+                size={22}
+                style={{
+                  color: stat.color,
+                }}
+              />
             </div>
             <div>
               <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">
@@ -152,7 +155,9 @@ export default function EmployeeHRRequests() {
               </p>
               <p
                 className="text-[28px] font-black"
-                style={{ color: stat.color }}
+                style={{
+                  color: stat.color,
+                }}
               >
                 {stat.value}
               </p>
@@ -211,13 +216,7 @@ export default function EmployeeHRRequests() {
                   </td>
                   <td className="px-6 py-5 text-center">
                     <span
-                      className={`text-[12px] font-black ${
-                        req.priority === "High"
-                          ? "text-rose-500"
-                          : req.priority === "Medium"
-                            ? "text-amber-500"
-                            : "text-emerald-500"
-                      }`}
+                      className={`text-[12px] font-black ${req.priority === "High" ? "text-rose-500" : req.priority === "Medium" ? "text-amber-500" : "text-emerald-500"}`}
                     >
                       {req.priority}
                     </span>
@@ -257,7 +256,6 @@ export default function EmployeeHRRequests() {
     </div>
   );
 }
-
 function RequestDetailModal({
   request,
   onClose,
@@ -267,18 +265,34 @@ function RequestDetailModal({
 }) {
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-end">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-background/60 backdrop-blur-sm"
       />
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      <m.div
+        initial={{
+          x: "100%",
+        }}
+        animate={{
+          x: 0,
+        }}
+        exit={{
+          x: "100%",
+        }}
+        transition={{
+          type: "spring",
+          damping: 25,
+          stiffness: 200,
+        }}
         className="relative bg-card w-full max-w-[500px] h-full shadow-2xl border-l border-border flex flex-col"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
@@ -316,13 +330,7 @@ function RequestDetailModal({
                 Priority
               </p>
               <p
-                className={`text-[14px] font-black ${
-                  request.priority === "High"
-                    ? "text-rose-500"
-                    : request.priority === "Medium"
-                      ? "text-amber-500"
-                      : "text-emerald-500"
-                }`}
+                className={`text-[14px] font-black ${request.priority === "High" ? "text-rose-500" : request.priority === "Medium" ? "text-amber-500" : "text-emerald-500"}`}
               >
                 {request.priority}
               </p>
@@ -410,7 +418,7 @@ function RequestDetailModal({
             Notify HR Again
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

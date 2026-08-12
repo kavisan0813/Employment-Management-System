@@ -1,22 +1,44 @@
-import { motion } from "motion/react";
-
+import * as m from "motion/react-m";
 interface OnboardingTabsProps {
   activeTab: "active" | "pre-joining" | "completed" | "templates";
-  setActiveTab: (tab: "active" | "pre-joining" | "completed" | "templates") => void;
+  setActiveTab: (
+    tab: "active" | "pre-joining" | "completed" | "templates",
+  ) => void;
   activeCount: number;
   preJoiningCount: number;
   completedCount: number;
   templateCount: number;
 }
-
-export function OnboardingTabs({ activeTab, setActiveTab, activeCount, preJoiningCount, completedCount, templateCount }: OnboardingTabsProps) {
+export function OnboardingTabs({
+  activeTab,
+  setActiveTab,
+  activeCount,
+  preJoiningCount,
+  completedCount,
+  templateCount,
+}: OnboardingTabsProps) {
   const tabs = [
-    { key: "pre-joining" as const, label: "Pending", count: preJoiningCount },
-    { key: "active" as const, label: "In Progress", count: activeCount },
-    { key: "completed" as const, label: "Completed", count: completedCount },
-    { key: "templates" as const, label: "Templates", count: templateCount },
+    {
+      key: "pre-joining" as const,
+      label: "Pending",
+      count: preJoiningCount,
+    },
+    {
+      key: "active" as const,
+      label: "In Progress",
+      count: activeCount,
+    },
+    {
+      key: "completed" as const,
+      label: "Completed",
+      count: completedCount,
+    },
+    {
+      key: "templates" as const,
+      label: "Templates",
+      count: templateCount,
+    },
   ];
-
   return (
     <div className="flex items-center border-b border-border overflow-x-auto scrollbar-hide">
       {tabs.map((tab) => (
@@ -27,7 +49,7 @@ export function OnboardingTabs({ activeTab, setActiveTab, activeCount, preJoinin
         >
           {tab.label} ({tab.count})
           {activeTab === tab.key && (
-            <motion.div
+            <m.div
               layoutId="onboardingTab"
               className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#00B87C]"
             />

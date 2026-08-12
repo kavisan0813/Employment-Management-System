@@ -3,11 +3,7 @@ import { useNavigate } from "react-router";
 import { MoreVertical, ChevronDown, ChevronUp } from "lucide-react";
 import { Employee } from "../types/employee.types";
 import { HighlightText } from "./HighlightText";
-import {
-  statusConfig,
-  deptColors,
-} from "../utils/employee.utils";
-
+import { statusConfig, deptColors } from "../utils/employee.utils";
 interface EmployeeTableProps {
   paginated: Employee[];
   selectedRows: string[];
@@ -26,9 +22,7 @@ interface EmployeeTableProps {
   canDelete: (emp: Employee) => boolean;
   debouncedSearch: string;
 }
-
 const gridCols = "40px 2.5fr 1.5fr 1.2fr 1.2fr 1.5fr 1.2fr 1fr 1fr 40px";
-
 export default function EmployeeTable({
   paginated,
   selectedRows,
@@ -49,7 +43,6 @@ export default function EmployeeTable({
 }: EmployeeTableProps) {
   const navigate = useNavigate();
   const [actionMenuRow, setActionMenuRow] = useState<string | null>(null);
-
   return (
     <div
       className="rounded-2xl overflow-x-auto shadow-sm"
@@ -59,7 +52,9 @@ export default function EmployeeTable({
       }}
     >
       <div
-        style={{ minWidth: "1150px" }}
+        style={{
+          minWidth: "1150px",
+        }}
         onClick={() => setActionMenuRow(null)}
       >
         {/* Table Header */}
@@ -88,19 +83,45 @@ export default function EmployeeTable({
             />
           </div>
           {[
-            { label: "Employee", key: "name" },
-            { label: "Designation", key: "designation" },
-            { label: "Department", key: "department" },
-            { label: "Location", key: "location" },
-            { label: "Email", key: "email" },
-            { label: "Phone", key: "phone" },
-            { label: "Status", key: "status" },
-            { label: "Joined", key: "joinDate" },
+            {
+              label: "Employee",
+              key: "name",
+            },
+            {
+              label: "Designation",
+              key: "designation",
+            },
+            {
+              label: "Department",
+              key: "department",
+            },
+            {
+              label: "Location",
+              key: "location",
+            },
+            {
+              label: "Email",
+              key: "email",
+            },
+            {
+              label: "Phone",
+              key: "phone",
+            },
+            {
+              label: "Status",
+              key: "status",
+            },
+            {
+              label: "Joined",
+              key: "joinDate",
+            },
           ].map((col) => (
             <div
               key={col.key}
               className="flex items-center gap-1 cursor-pointer hover:opacity-70 transition-opacity text-[11px] font-bold uppercase tracking-wider"
-              style={{ color: "var(--muted-foreground)" }}
+              style={{
+                color: "var(--muted-foreground)",
+              }}
               onClick={() => onSort(col.key)}
             >
               {col.label}
@@ -114,7 +135,9 @@ export default function EmployeeTable({
           ))}
           <div
             className="text-[11px] font-bold uppercase tracking-wider text-right"
-            style={{ color: "var(--muted-foreground)" }}
+            style={{
+              color: "var(--muted-foreground)",
+            }}
           >
             Actions
           </div>
@@ -156,7 +179,9 @@ export default function EmployeeTable({
                 src={emp.avatar || ""}
                 alt={`${emp.name}'s avatar`}
                 className="w-9 h-9 rounded-full object-cover border"
-                style={{ borderColor: "var(--border)" }}
+                style={{
+                  borderColor: "var(--border)",
+                }}
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                   const fallback = document.createElement("div");
@@ -278,13 +303,20 @@ export default function EmployeeTable({
               >
                 <span
                   className="w-1.5 h-1.5 rounded-full"
-                  style={{ backgroundColor: statusConfig[emp.status]?.dot }}
+                  style={{
+                    backgroundColor: statusConfig[emp.status]?.dot,
+                  }}
                 ></span>
                 {emp.status}
               </span>
             </div>
             {/* Joined Date */}
-            <div style={{ fontSize: "13px", color: "var(--foreground)" }}>
+            <div
+              style={{
+                fontSize: "13px",
+                color: "var(--foreground)",
+              }}
+            >
               {new Date(emp.joinDate).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
@@ -301,7 +333,9 @@ export default function EmployeeTable({
                   setActionMenuRow(actionMenuRow === emp.id ? null : emp.id);
                 }}
                 className="p-1.5 rounded-lg transition-colors"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = "var(--secondary)";
                   e.currentTarget.style.color = "var(--primary)";
@@ -329,8 +363,8 @@ export default function EmployeeTable({
                       border: "none",
                     }}
                     onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "var(--background)")
+                      (e.currentTarget.style.backgroundColor =
+                        "var(--background)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -348,8 +382,8 @@ export default function EmployeeTable({
                         border: "none",
                       }}
                       onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--background)")
+                        (e.currentTarget.style.backgroundColor =
+                          "var(--background)")
                       }
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.backgroundColor = "transparent")
@@ -370,8 +404,8 @@ export default function EmployeeTable({
                       border: "none",
                     }}
                     onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "var(--background)")
+                      (e.currentTarget.style.backgroundColor =
+                        "var(--background)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -384,12 +418,17 @@ export default function EmployeeTable({
                     <>
                       <div
                         className="h-px my-1 w-full"
-                        style={{ backgroundColor: "var(--border)" }}
+                        style={{
+                          backgroundColor: "var(--border)",
+                        }}
                       ></div>
                       {canDeactivate(emp) && (
                         <button
                           className="w-full text-left px-4 py-2 text-[13px] font-medium text-red-500 transition-colors hover:bg-red-50"
-                          style={{ background: "transparent", border: "none" }}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                          }}
                           onClick={() => {
                             onDeactivate(emp);
                             setActionMenuRow(null);
@@ -401,7 +440,10 @@ export default function EmployeeTable({
                       {canDelete(emp) && (
                         <button
                           className="w-full text-left px-4 py-2 text-[13px] font-medium text-red-600 transition-colors hover:bg-red-50"
-                          style={{ background: "transparent", border: "none" }}
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                          }}
                           onClick={() => {
                             onConfirmDelete(emp);
                             setActionMenuRow(null);

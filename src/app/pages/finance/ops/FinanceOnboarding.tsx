@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useReducer, useCallback } from "react";
 import {
   IndianRupee,
   Download,
@@ -15,9 +15,9 @@ import {
   Landmark,
   List,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 interface FinancialTask {
   [x: string]: ReactNode;
   id: string;
@@ -27,7 +27,6 @@ interface FinancialTask {
   actionType?: "bank" | "pf" | "form" | "payroll" | "request" | "view";
   doneDate?: string;
 }
-
 interface NewHire {
   id: string;
   name: string;
@@ -43,7 +42,6 @@ interface NewHire {
   tasks: FinancialTask[];
   urgency: "amber" | "red" | "gray";
 }
-
 const NEW_HIRES: NewHire[] = [
   {
     id: "EMP-1285",
@@ -197,7 +195,6 @@ const NEW_HIRES: NewHire[] = [
     ],
   },
 ];
-
 const ALL_HIRES_TABLE = [
   {
     emp: "Priya Sharma",
@@ -272,60 +269,305 @@ const ALL_HIRES_TABLE = [
     payroll: "Pending",
   },
 ];
-
 type Tab = "Pending Tasks" | "All New Hires" | "Completed" | "Settings";
-
 export function FinanceOnboarding() {
-  const [activeTab, setActiveTab] = useState<Tab>("Pending Tasks");
-
-  // Modal states
-  const [showBankModal, setShowBankModal] = useState(false);
-  const [showPFModal, setShowPFModal] = useState(false);
-  const [showPayrollModal, setShowPayrollModal] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<NewHire | null>(
-    null,
-  );
-  const [selectedTask, setSelectedTask] = useState<FinancialTask | null>(null);
-  const [showExportDropdown, setShowExportDropdown] = useState(false);
-  const [showTaxModal, setShowTaxModal] = useState(false);
-  const [showDetailsPanel, setShowDetailsPanel] = useState(false);
-
-  // Bank form
-  const [bankName, setBankName] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [ifscCode, setIfscCode] = useState("");
-  const [accountHolder, setAccountHolder] = useState("");
-  const [accountType, setAccountType] = useState<"Savings" | "Current">(
-    "Savings",
-  );
-  const [bankVerified, setBankVerified] = useState(false);
-  const [verifying, setVerifying] = useState(false);
-
-  // PF form
-  const [uanNumber, setUanNumber] = useState("");
-  const [newUan, setNewUan] = useState(false);
-  const [vpfPercent, setVpfPercent] = useState("");
-  const [esicApplicable, setEsicApplicable] = useState(false);
-  const [esicNumber, setEsicNumber] = useState("");
-  const [nomineeName, setNomineeName] = useState("");
-  const [nomineeRelation, setNomineeRelation] = useState("");
-  const [nomineeDob, setNomineeDob] = useState("");
-  const [nomineeAadhaar, setNomineeAadhaar] = useState("");
-
-  // Payroll form
-  const [effectiveDate, setEffectiveDate] = useState("2026-04-28");
-  const [payBand, setPayBand] = useState("Band C — Engineering");
-  const [prorate, setProrate] = useState(true);
-
-  // Expandable task sections
-  const [expandedTasks, setExpandedTasks] = useState<Record<string, boolean>>(
-    {},
-  );
-
-  const toggleTasks = (id: string) => {
-    setExpandedTasks((prev) => ({ ...prev, [id]: !prev[id] }));
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeTab: "Pending Tasks" as Tab,
+    showBankModal: false,
+    showPFModal: false,
+    showPayrollModal: false,
+    selectedEmployee: null as NewHire | null,
+    selectedTask: null as FinancialTask | null,
+    showExportDropdown: false,
+    showTaxModal: false,
+    showDetailsPanel: false,
+    bankName: "",
+    accountNumber: "",
+    ifscCode: "",
+    accountHolder: "",
+    accountType: "Savings" as "Savings" | "Current",
+    bankVerified: false,
+    verifying: false,
+    uanNumber: "",
+    newUan: false,
+    vpfPercent: "",
+    esicApplicable: false,
+    esicNumber: "",
+    nomineeName: "",
+    nomineeRelation: "",
+    nomineeDob: "",
+    nomineeAadhaar: "",
+    effectiveDate: "2026-04-28",
+    payBand: "Band C — Engineering",
+    prorate: true,
+    expandedTasks: {} as Record<string, boolean>,
   };
-
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    activeTab,
+    showBankModal,
+    showPFModal,
+    showPayrollModal,
+    selectedEmployee,
+    selectedTask,
+    showExportDropdown,
+    showTaxModal,
+    showDetailsPanel,
+    bankName,
+    accountNumber,
+    ifscCode,
+    accountHolder,
+    accountType,
+    bankVerified,
+    verifying,
+    uanNumber,
+    newUan,
+    vpfPercent,
+    esicApplicable,
+    esicNumber,
+    nomineeName,
+    nomineeRelation,
+    nomineeDob,
+    nomineeAadhaar,
+    effectiveDate,
+    payBand,
+    prorate,
+    expandedTasks,
+  } = __state;
+  const setActiveTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeTab: typeof val === "function" ? val(prev.activeTab) : val,
+      })),
+    [],
+  );
+  const setShowBankModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showBankModal:
+          typeof val === "function" ? val(prev.showBankModal) : val,
+      })),
+    [],
+  );
+  const setShowPFModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showPFModal: typeof val === "function" ? val(prev.showPFModal) : val,
+      })),
+    [],
+  );
+  const setShowPayrollModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showPayrollModal:
+          typeof val === "function" ? val(prev.showPayrollModal) : val,
+      })),
+    [],
+  );
+  const setSelectedEmployee = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedEmployee:
+          typeof val === "function" ? val(prev.selectedEmployee) : val,
+      })),
+    [],
+  );
+  const setSelectedTask = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedTask: typeof val === "function" ? val(prev.selectedTask) : val,
+      })),
+    [],
+  );
+  const setShowExportDropdown = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showExportDropdown:
+          typeof val === "function" ? val(prev.showExportDropdown) : val,
+      })),
+    [],
+  );
+  const setShowTaxModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showTaxModal: typeof val === "function" ? val(prev.showTaxModal) : val,
+      })),
+    [],
+  );
+  const setShowDetailsPanel = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showDetailsPanel:
+          typeof val === "function" ? val(prev.showDetailsPanel) : val,
+      })),
+    [],
+  );
+  const setBankName = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        bankName: typeof val === "function" ? val(prev.bankName) : val,
+      })),
+    [],
+  );
+  const setAccountNumber = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        accountNumber:
+          typeof val === "function" ? val(prev.accountNumber) : val,
+      })),
+    [],
+  );
+  const setIfscCode = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        ifscCode: typeof val === "function" ? val(prev.ifscCode) : val,
+      })),
+    [],
+  );
+  const setAccountHolder = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        accountHolder:
+          typeof val === "function" ? val(prev.accountHolder) : val,
+      })),
+    [],
+  );
+  const setAccountType = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        accountType: typeof val === "function" ? val(prev.accountType) : val,
+      })),
+    [],
+  );
+  const setBankVerified = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        bankVerified: typeof val === "function" ? val(prev.bankVerified) : val,
+      })),
+    [],
+  );
+  const setVerifying = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        verifying: typeof val === "function" ? val(prev.verifying) : val,
+      })),
+    [],
+  );
+  const setUanNumber = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        uanNumber: typeof val === "function" ? val(prev.uanNumber) : val,
+      })),
+    [],
+  );
+  const setNewUan = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newUan: typeof val === "function" ? val(prev.newUan) : val,
+      })),
+    [],
+  );
+  const setVpfPercent = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        vpfPercent: typeof val === "function" ? val(prev.vpfPercent) : val,
+      })),
+    [],
+  );
+  const setEsicApplicable = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        esicApplicable:
+          typeof val === "function" ? val(prev.esicApplicable) : val,
+      })),
+    [],
+  );
+  const setEsicNumber = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        esicNumber: typeof val === "function" ? val(prev.esicNumber) : val,
+      })),
+    [],
+  );
+  const setNomineeName = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        nomineeName: typeof val === "function" ? val(prev.nomineeName) : val,
+      })),
+    [],
+  );
+  const setNomineeRelation = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        nomineeRelation:
+          typeof val === "function" ? val(prev.nomineeRelation) : val,
+      })),
+    [],
+  );
+  const setNomineeDob = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        nomineeDob: typeof val === "function" ? val(prev.nomineeDob) : val,
+      })),
+    [],
+  );
+  const setNomineeAadhaar = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        nomineeAadhaar:
+          typeof val === "function" ? val(prev.nomineeAadhaar) : val,
+      })),
+    [],
+  );
+  const setEffectiveDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        effectiveDate:
+          typeof val === "function" ? val(prev.effectiveDate) : val,
+      })),
+    [],
+  );
+  const setPayBand = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        payBand: typeof val === "function" ? val(prev.payBand) : val,
+      })),
+    [],
+  );
+  const setProrate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        prorate: typeof val === "function" ? val(prev.prorate) : val,
+      })),
+    [],
+  );
+  const setExpandedTasks = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        expandedTasks:
+          typeof val === "function" ? val(prev.expandedTasks) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+  // Modal states
+  // Bank form
+  // PF form
+  // Payroll form
+  // Expandable task sections
+  const toggleTasks = (id: string) => {
+    setExpandedTasks((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
   const openBankModal = (emp: NewHire) => {
     setSelectedEmployee(emp);
     setBankName("");
@@ -336,7 +578,6 @@ export function FinanceOnboarding() {
     setBankVerified(false);
     setShowBankModal(true);
   };
-
   const openPFModal = (emp: NewHire) => {
     setSelectedEmployee(emp);
     setUanNumber("");
@@ -350,7 +591,6 @@ export function FinanceOnboarding() {
     setNomineeAadhaar("");
     setShowPFModal(true);
   };
-
   const openPayrollModal = (emp: NewHire) => {
     setSelectedEmployee(emp);
     setEffectiveDate("2026-04-28");
@@ -358,22 +598,18 @@ export function FinanceOnboarding() {
     setProrate(true);
     setShowPayrollModal(true);
   };
-
   const openTaskModal = (task: FinancialTask, emp: NewHire) => {
     setSelectedTask(task);
     setSelectedEmployee(emp);
   };
-
   const openTaxModal = (emp: NewHire) => {
     setSelectedEmployee(emp);
     setShowTaxModal(true);
   };
-
   const openDetailsPanel = (emp: NewHire) => {
     setSelectedEmployee(emp);
     setShowDetailsPanel(true);
   };
-
   const handleVerifyAccount = () => {
     if (!ifscCode || !accountNumber) {
       showToast(
@@ -394,7 +630,6 @@ export function FinanceOnboarding() {
       );
     }, 1200);
   };
-
   const handleSaveBank = () => {
     if (!bankVerified) {
       showToast(
@@ -411,7 +646,6 @@ export function FinanceOnboarding() {
       `Bank details saved for ${selectedEmployee?.name}`,
     );
   };
-
   const handleSavePF = () => {
     if (!uanNumber && !newUan) {
       showToast("Missing UAN", "error", "Please enter or request a new UAN");
@@ -424,7 +658,6 @@ export function FinanceOnboarding() {
       `PF/ESI enrollment saved for ${selectedEmployee?.name}`,
     );
   };
-
   const handleAddToPayroll = () => {
     setShowPayrollModal(false);
     showToast(
@@ -450,18 +683,6 @@ export function FinanceOnboarding() {
   const handlePreviewPayslip = () => {
     showToast("Preview", "info", "Payslip preview generated");
   };
-
-  function setAccount(arg0: number): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function setUan(arg0: number): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function setEsic(arg0: number): void {
-    throw new Error("Function not implemented.");
-  }
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-300 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent relative">
@@ -497,11 +718,22 @@ export function FinanceOnboarding() {
           </button>
           <AnimatePresence>
             {showExportDropdown && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2 }}
+              <m.div
+                initial={{
+                  opacity: 0,
+                  y: 10,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  y: 10,
+                }}
+                transition={{
+                  duration: 0.2,
+                }}
                 className="absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-xl z-50 overflow-hidden"
               >
                 <button
@@ -543,7 +775,7 @@ export function FinanceOnboarding() {
                 >
                   Full Onboarding Report
                 </button>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </div>
@@ -653,15 +885,11 @@ export function FinanceOnboarding() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`relative pb-3 text-[13px] font-semibold uppercase tracking-wider transition-all ${
-                activeTab === tab
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`relative pb-3 text-[13px] font-semibold uppercase tracking-wider transition-all ${activeTab === tab ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               {tab}
               {activeTab === tab && (
-                <motion.div
+                <m.div
                   layoutId="finTab"
                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C] rounded-full"
                 />
@@ -683,7 +911,6 @@ export function FinanceOnboarding() {
             const overdueCount = hire.tasks.filter(
               (t) => t.status === "overdue",
             ).length;
-
             return (
               <div
                 key={hire.id}
@@ -691,11 +918,7 @@ export function FinanceOnboarding() {
               >
                 {/* Employee Header */}
                 <div
-                  className={`p-5 border-l-[3px] ${
-                    hire.urgency === "red"
-                      ? "border-l-red-500"
-                      : "border-l-amber-500"
-                  }`}
+                  className={`p-5 border-l-[3px] ${hire.urgency === "red" ? "border-l-red-500" : "border-l-amber-500"}`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-[14px] font-black text-[#00B87C] shrink-0">
@@ -732,15 +955,7 @@ export function FinanceOnboarding() {
                       onClick={() => openTaskModal(task, hire)}
                     >
                       <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                          task.status === "done"
-                            ? "bg-[#00B87C] border-[#00B87C]"
-                            : task.status === "overdue"
-                              ? "border-red-400"
-                              : task.status === "waiting"
-                                ? "border-gray-300"
-                                : "border-amber-400"
-                        }`}
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${task.status === "done" ? "bg-[#00B87C] border-[#00B87C]" : task.status === "overdue" ? "border-red-400" : task.status === "waiting" ? "border-gray-300" : "border-amber-400"}`}
                       >
                         {task.status === "done" ? (
                           <Check
@@ -757,15 +972,7 @@ export function FinanceOnboarding() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span
-                            className={`text-[13px] font-bold ${
-                              task.status === "done"
-                                ? "text-[#00B87C] line-through"
-                                : task.status === "overdue"
-                                  ? "text-red-500"
-                                  : task.status === "waiting"
-                                    ? "text-gray-400"
-                                    : "text-foreground"
-                            }`}
+                            className={`text-[13px] font-bold ${task.status === "done" ? "text-[#00B87C] line-through" : task.status === "overdue" ? "text-red-500" : task.status === "waiting" ? "text-gray-400" : "text-foreground"}`}
                           >
                             {task.label}
                           </span>
@@ -903,11 +1110,20 @@ export function FinanceOnboarding() {
                   )}
                   <AnimatePresence>
                     {doneList.length > 0 && expanded && (
-                      <motion.div
+                      <m.div
                         key={`completed-tasks-${hire.id}`}
-                        initial={{ scaleY: 0, opacity: 0 }}
-                        animate={{ scaleY: 1, opacity: 1 }}
-                        exit={{ scaleY: 0, opacity: 0 }}
+                        initial={{
+                          scaleY: 0,
+                          opacity: 0,
+                        }}
+                        animate={{
+                          scaleY: 1,
+                          opacity: 1,
+                        }}
+                        exit={{
+                          scaleY: 0,
+                          opacity: 0,
+                        }}
                         className="overflow-hidden origin-top"
                       >
                         <div className="space-y-1 mt-2">
@@ -926,7 +1142,7 @@ export function FinanceOnboarding() {
                             </div>
                           ))}
                         </div>
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
                 </div>
@@ -974,56 +1190,28 @@ export function FinanceOnboarding() {
                     </td>
                     <td className="py-3 pr-4">
                       <span
-                        className={`text-[11px] font-semibold uppercase tracking-wider ${
-                          row.bank === "✓ Done"
-                            ? "text-[#00B87C]"
-                            : row.bank === "Pending"
-                              ? "text-amber-500"
-                              : "text-gray-400"
-                        }`}
+                        className={`text-[11px] font-semibold uppercase tracking-wider ${row.bank === "✓ Done" ? "text-[#00B87C]" : row.bank === "Pending" ? "text-amber-500" : "text-gray-400"}`}
                       >
                         {row.bank}
                       </span>
                     </td>
                     <td className="py-3 pr-4">
                       <span
-                        className={`text-[11px] font-semibold uppercase tracking-wider ${
-                          row.pf === "✓ Done"
-                            ? "text-[#00B87C]"
-                            : row.pf === "Pending"
-                              ? "text-amber-500"
-                              : "text-gray-400"
-                        }`}
+                        className={`text-[11px] font-semibold uppercase tracking-wider ${row.pf === "✓ Done" ? "text-[#00B87C]" : row.pf === "Pending" ? "text-amber-500" : "text-gray-400"}`}
                       >
                         {row.pf}
                       </span>
                     </td>
                     <td className="py-3 pr-4">
                       <span
-                        className={`text-[11px] font-semibold uppercase tracking-wider ${
-                          row.tax === "✓ Done"
-                            ? "text-[#00B87C]"
-                            : row.tax === "⚠ Overdue"
-                              ? "text-red-500"
-                              : row.tax === "Pending"
-                                ? "text-amber-500"
-                                : "text-gray-400"
-                        }`}
+                        className={`text-[11px] font-semibold uppercase tracking-wider ${row.tax === "✓ Done" ? "text-[#00B87C]" : row.tax === "⚠ Overdue" ? "text-red-500" : row.tax === "Pending" ? "text-amber-500" : "text-gray-400"}`}
                       >
                         {row.tax}
                       </span>
                     </td>
                     <td className="py-3 text-right flex items-center justify-end gap-3">
                       <span
-                        className={`text-[11px] font-semibold uppercase tracking-wider ${
-                          row.payroll === "✓ Done"
-                            ? "text-[#00B87C]"
-                            : row.payroll === "⚠ Overdue"
-                              ? "text-red-500"
-                              : row.payroll === "Pending"
-                                ? "text-amber-500"
-                                : "text-gray-400"
-                        }`}
+                        className={`text-[11px] font-semibold uppercase tracking-wider ${row.payroll === "✓ Done" ? "text-[#00B87C]" : row.payroll === "⚠ Overdue" ? "text-red-500" : row.payroll === "Pending" ? "text-amber-500" : "text-gray-400"}`}
                       >
                         {row.payroll}
                       </span>
@@ -1107,19 +1295,38 @@ export function FinanceOnboarding() {
       <AnimatePresence>
         {showBankModal && selectedEmployee && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               onClick={() => setShowBankModal(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               className="relative bg-card w-full max-w-[480px] rounded-[32px] shadow-2xl border border-border overflow-hidden"
             >
               <div className="p-6">
@@ -1172,7 +1379,7 @@ export function FinanceOnboarding() {
                     <input
                       value={accountNumber}
                       onChange={(e) =>
-                        setAccount(
+                        setAccountNumber(
                           e.target.value === "" || isNaN(Number(e.target.value))
                             ? undefined
                             : Number(e.target.value),
@@ -1271,7 +1478,7 @@ export function FinanceOnboarding() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1280,19 +1487,38 @@ export function FinanceOnboarding() {
       <AnimatePresence>
         {showPFModal && selectedEmployee && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               onClick={() => setShowPFModal(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl border border-border overflow-hidden"
             >
               <div className="p-6">
@@ -1324,7 +1550,7 @@ export function FinanceOnboarding() {
                         <input
                           value={uanNumber}
                           onChange={(e) =>
-                            setUan(
+                            setUanNumber(
                               e.target.value === "" ||
                                 isNaN(Number(e.target.value))
                                 ? undefined
@@ -1398,7 +1624,7 @@ export function FinanceOnboarding() {
                         <input
                           value={esicNumber}
                           onChange={(e) =>
-                            setEsic(
+                            setEsicNumber(
                               e.target.value === "" ||
                                 isNaN(Number(e.target.value))
                                 ? undefined
@@ -1476,7 +1702,7 @@ export function FinanceOnboarding() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1485,19 +1711,38 @@ export function FinanceOnboarding() {
       <AnimatePresence>
         {showPayrollModal && selectedEmployee && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               onClick={() => setShowPayrollModal(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl border border-border overflow-hidden"
             >
               <div className="p-6">
@@ -1636,7 +1881,7 @@ export function FinanceOnboarding() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1645,19 +1890,38 @@ export function FinanceOnboarding() {
       <AnimatePresence>
         {selectedTask && selectedEmployee && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               onClick={() => setSelectedTask(null)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               className="relative bg-card w-full max-w-[400px] rounded-[32px] shadow-2xl border border-border overflow-hidden"
             >
               <div className="p-6">
@@ -1706,7 +1970,7 @@ export function FinanceOnboarding() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1715,19 +1979,38 @@ export function FinanceOnboarding() {
       <AnimatePresence>
         {showTaxModal && selectedEmployee && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               onClick={() => setShowTaxModal(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl border border-border overflow-hidden"
             >
               <div className="p-6">
@@ -1810,7 +2093,7 @@ export function FinanceOnboarding() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1819,19 +2102,37 @@ export function FinanceOnboarding() {
       <AnimatePresence>
         {showDetailsPanel && selectedEmployee && (
           <div className="fixed inset-0 z-[5000] flex justify-end">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               onClick={() => setShowDetailsPanel(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="relative w-full max-w-[440px] bg-card h-full shadow-2xl border-l border-border flex flex-col"
             >
               <div className="p-6 border-b border-border flex items-center justify-between bg-muted/5">
@@ -1925,7 +2226,7 @@ export function FinanceOnboarding() {
                   View Tasks
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

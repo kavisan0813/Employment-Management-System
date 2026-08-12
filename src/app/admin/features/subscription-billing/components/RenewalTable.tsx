@@ -57,24 +57,12 @@ export function RenewalTable({ renewals, onRowClick }: RenewalTableProps) {
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-gray-50/50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            <th className="px-5 py-4">
-              Organization
-            </th>
-            <th className="px-5 py-4">
-              Plan
-            </th>
-            <th className="px-5 py-4">
-              Cycle
-            </th>
-            <th className="px-5 py-4">
-              Amount
-            </th>
-            <th className="px-5 py-4">
-              Renewal Date
-            </th>
-            <th className="px-5 py-4">
-              Time Left
-            </th>
+            <th className="px-5 py-4">Organization</th>
+            <th className="px-5 py-4">Plan</th>
+            <th className="px-5 py-4">Cycle</th>
+            <th className="px-5 py-4">Amount</th>
+            <th className="px-5 py-4">Renewal Date</th>
+            <th className="px-5 py-4">Time Left</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 text-sm">

@@ -1,13 +1,15 @@
 export type ExitType =
-  | "Resignation"
-  | "Termination"
-  | "Retirement"
-  | "Contract End"
-  | "Other";
+  "Resignation" | "Termination" | "Retirement" | "Contract End" | "Other";
 
 export type ClearanceStatus = "cleared" | "pending" | "not_started";
 
-export type TabType = "Requests" | "Active" | "Completed" | "Scheduled" | "Exit Analytics" | "Templates";
+export type TabType =
+  | "Requests"
+  | "Active"
+  | "Completed"
+  | "Scheduled"
+  | "Exit Analytics"
+  | "Templates";
 
 /** Configurable, versioned exit workflow template */
 export interface OffboardingTemplate {
@@ -36,13 +38,25 @@ export interface OffboardingTemplate {
       notes?: string;
     }>;
   }>;
-  assets?: Array<{ id: string; name: string; category: string; mandatory: boolean }>;
+  assets?: Array<{
+    id: string;
+    name: string;
+    category: string;
+    mandatory: boolean;
+  }>;
   documents?: Array<{ id: string; name: string; mandatory: boolean }>;
   exitInterviewRequired?: boolean;
   exitInterviewQuestionnaire?: string[];
   knowledgeTransferChecklist?: string[];
   settlementChecklist?: string[];
-  customTasks?: Array<{ id: string; name: string; owner: string; dueDays: number; priority: string; mandatory: boolean }>;
+  customTasks?: Array<{
+    id: string;
+    name: string;
+    owner: string;
+    dueDays: number;
+    priority: string;
+    mandatory: boolean;
+  }>;
 }
 
 export interface ExitTimelineItem {
@@ -117,7 +131,7 @@ export interface ExitEmployee {
   netAmount: number;
   ffStatus: string;
   interviewDone: boolean;
-  
+
   // F&F Settlement Detailed Fields
   bonus?: number;
   incentives?: number;

@@ -29,17 +29,11 @@ import {
   Plus,
   X,
 } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-  Cell,
-  PieChart,
-  Pie,
-} from "recharts";
+import { Suspense } from "react";
+const AttendanceTrendChart = React.lazy(() => import("./AttendanceTrendChart"));
+const AttendanceStatusChart = React.lazy(
+  () => import("./AttendanceStatusChart"),
+);
 
 import {
   attendanceCalendar,
@@ -1487,7 +1481,13 @@ function AdminAttendance() {
           <div className="flex items-center gap-2">
             <select
               value={selectedMonth}
-              onChange={(e) => setSelectedMonth((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+              onChange={(e) =>
+                setSelectedMonth(
+                  e.target.value === "" || isNaN(parseInt(e.target.value))
+                    ? undefined
+                    : parseInt(e.target.value),
+                )
+              }
               className="flex-1 h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               style={{
                 borderColor: "var(--border)",
@@ -1502,7 +1502,13 @@ function AdminAttendance() {
             </select>
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+              onChange={(e) =>
+                setSelectedYear(
+                  e.target.value === "" || isNaN(parseInt(e.target.value))
+                    ? undefined
+                    : parseInt(e.target.value),
+                )
+              }
               className="w-20 h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               style={{
                 borderColor: "var(--border)",
@@ -2344,54 +2350,15 @@ function AdminAttendance() {
             </div>
 
             <div className="h-[240px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={monthlyTrendData}
-                  margin={{ top: 5, right: 5, left: -25, bottom: 0 }}
-                >
-                  <XAxis
-                    dataKey="month"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{
-                      fontSize: 10,
-                      fontWeight: 700,
-                      fill: "var(--muted-foreground)",
-                    }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{
-                      fontSize: 10,
-                      fontWeight: 700,
-                      fill: "var(--muted-foreground)",
-                    }}
-                    domain={[80, 100]}
-                  />
-                  <RechartsTooltip
-                    contentStyle={{
-                      backgroundColor: "var(--card)",
-                      borderColor: "var(--border)",
-                      borderRadius: "10px",
-                      fontSize: "11px",
-                      fontWeight: "bold",
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="attendance"
-                    stroke="var(--primary)"
-                    strokeWidth={3}
-                    dot={{
-                      r: 4,
-                      fill: "var(--primary)",
-                      strokeWidth: 2,
-                      stroke: "white",
-                    }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <Suspense
+                fallback={
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+                  </div>
+                }
+              >
+                <AttendanceTrendChart monthlyTrendData={monthlyTrendData} />
+              </Suspense>
             </div>
           </div>
         </div>
@@ -2507,23 +2474,17 @@ function AdminAttendance() {
             </h3>
 
             <div className="h-[200px] w-full relative flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={statusDistribution}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={55}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {statusDistribution.map((entry) => (
-                      <Cell key={`cell-${entry.color}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+              <Suspense
+                fallback={
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+                  </div>
+                }
+              >
+                <AttendanceStatusChart
+                  statusDistribution={statusDistribution}
+                />
+              </Suspense>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <p
                   className="text-xl font-black"

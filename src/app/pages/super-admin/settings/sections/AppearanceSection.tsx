@@ -1,19 +1,10 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-  CheckCircle,
-  Check,
-} from "lucide-react";
+import { ChevronRight, CheckCircle, Check } from "lucide-react";
 
 export function AppearanceSection() {
-  const {
-    extraConfig,
-    setThemeMode,
-    showToast,
-    themeMode,
-    updateExtraConfig,
-  } = useSettingsContext();
+  const { extraConfig, setThemeMode, showToast, themeMode, updateExtraConfig } =
+    useSettingsContext();
 
   const accentColors = [
     { hex: "#00B87C", name: "Emerald Green" },
@@ -226,10 +217,7 @@ export function AppearanceSection() {
                 desc: "Display only icons when collapsed",
               },
             ].map((item) => (
-              <div
-                key={item.key}
-                className="flex justify-between items-center"
-              >
+              <div key={item.key} className="flex justify-between items-center">
                 <div>
                   <span className="text-[13px] font-medium text-gray-800 dark:text-gray-200 block">
                     {item.label}

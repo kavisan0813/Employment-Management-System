@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   UserCheck,
   Download,
@@ -18,8 +18,8 @@ import {
   User,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
-
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 const NEW_JOINER = {
   id: "EMP-0201",
   name: "Priya Sharma",
@@ -33,7 +33,6 @@ const NEW_JOINER = {
   phone: "+91 98765 43210",
   location: "Bangalore, India",
 };
-
 const ONBOARDING_PHASES = [
   {
     label: "Pre-Joining",
@@ -76,7 +75,6 @@ const ONBOARDING_PHASES = [
     tasksDone: 0,
   },
 ];
-
 interface Task {
   id: number;
   title: string;
@@ -92,7 +90,6 @@ interface Task {
   actionLabel?: string;
   actionType?: "schedule" | "complete" | "intro" | "goals";
 }
-
 const TASKS_DATA: Task[] = [
   {
     id: 1,
@@ -148,7 +145,6 @@ const TASKS_DATA: Task[] = [
     iconColor: "#00B87C",
   },
 ];
-
 const COMPLETED_TASKS = [
   {
     id: 5,
@@ -172,19 +168,33 @@ const COMPLETED_TASKS = [
     doneDate: "Apr 4",
   },
 ];
-
 const TEAM_MEMBERS = [
   {
     name: "Arjun Mehta",
     initials: "AM",
     designation: "Senior Frontend Developer",
   },
-  { name: "Kavita Rao", initials: "KR", designation: "Backend Developer" },
-  { name: "Rahul Verma", initials: "RV", designation: "UI/UX Designer" },
-  { name: "Neha Gupta", initials: "NG", designation: "QA Engineer" },
-  { name: "Vikram Singh", initials: "VS", designation: "DevOps Engineer" },
+  {
+    name: "Kavita Rao",
+    initials: "KR",
+    designation: "Backend Developer",
+  },
+  {
+    name: "Rahul Verma",
+    initials: "RV",
+    designation: "UI/UX Designer",
+  },
+  {
+    name: "Neha Gupta",
+    initials: "NG",
+    designation: "QA Engineer",
+  },
+  {
+    name: "Vikram Singh",
+    initials: "VS",
+    designation: "DevOps Engineer",
+  },
 ];
-
 export function ManagerTeamOnboarding() {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showCompleteConfirm, setShowCompleteConfirm] = useState<number | null>(
@@ -194,10 +204,9 @@ export function ManagerTeamOnboarding() {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showOnboardingPanel, setShowOnboardingPanel] = useState(false);
   const [showCompletedTasks, setShowCompletedTasks] = useState(false);
-  const [completedTasks, setCompletedTasks] = useState<number[]>([]);
+  const completedTasks = useRef<number[]>([]);
   const [buddyAssigned, setBuddyAssigned] = useState(false);
   const [selectedBuddy, setSelectedBuddy] = useState<string | null>(null);
-
   const handleExport = () => {
     const lines = [
       `viyanHR Onboarding Report`,
@@ -212,20 +221,18 @@ export function ManagerTeamOnboarding() {
       `----------------------------------------`,
       `Onboarding Tasks & Status:`,
     ];
-
     TASKS_DATA.forEach((task) => {
-      const isDone =
-        completedTasks.includes(task.id) || task.urgency === "green";
+      const isDone = completedTasks.current.includes(task.id) || task.urgency === "green";
       lines.push(
         `- ${task.title} [${isDone ? "Completed" : "Pending"}] (Due: ${task.due})`,
       );
     });
-
     COMPLETED_TASKS.forEach((task) => {
       lines.push(`- ${task.title} [Completed]`);
     });
-
-    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+    const blob = new Blob([lines.join("\n")], {
+      type: "text/plain",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -238,7 +245,6 @@ export function ManagerTeamOnboarding() {
       "Onboarding summary exported successfully.",
     );
   };
-
   const [scheduleTitle, setScheduleTitle] = useState(
     "Welcome 1:1 — Priya Sharma",
   );
@@ -252,19 +258,16 @@ export function ManagerTeamOnboarding() {
     "Agenda: Introduction, Role overview, Q&A",
   );
   const [notifyEmail, setNotifyEmail] = useState(true);
-
   const [buddySearch, setBuddySearch] = useState("");
   const [buddyMessage, setBuddyMessage] = useState("");
   const [goalTitle, setGoalTitle] = useState("");
   const [goalDescription, setGoalDescription] = useState("");
   const [goalTimeline, setGoalTimeline] = useState("30 days");
-
   const handleMarkComplete = (taskId: number) => {
-    setCompletedTasks((prev) => [...prev, taskId]);
+    completedTasks.current = [...completedTasks.current, taskId];
     setShowCompleteConfirm(null);
     showToast("Task Completed", "success", "Task marked as complete");
   };
-
   const handleScheduleMeeting = () => {
     if (!scheduleDate || !scheduleTime) {
       showToast("Missing Fields", "error", "Please fill in date and time");
@@ -277,7 +280,6 @@ export function ManagerTeamOnboarding() {
       `1:1 with Priya scheduled for ${scheduleDate} at ${scheduleTime}`,
     );
   };
-
   const handleAssignBuddy = () => {
     if (!selectedBuddy) {
       showToast("Select Buddy", "error", "Please select a team member");
@@ -291,7 +293,6 @@ export function ManagerTeamOnboarding() {
       `${selectedBuddy} assigned as Priya's buddy`,
     );
   };
-
   const handleCreateGoal = () => {
     if (!goalTitle) {
       showToast("Missing Title", "error", "Please enter a goal title");
@@ -300,11 +301,9 @@ export function ManagerTeamOnboarding() {
     setShowGoalModal(false);
     showToast("Goals Created", "success", "30-day goals set for Priya");
   };
-
   const filteredTeam = TEAM_MEMBERS.filter((m) =>
     m.name.toLowerCase().includes(buddySearch.toLowerCase()),
   );
-
   const getUrgencyBorder = (urgency: string) => {
     switch (urgency) {
       case "green":
@@ -317,7 +316,6 @@ export function ManagerTeamOnboarding() {
         return "border-l-gray-300";
     }
   };
-
   const getDueChip = (task: Task) => {
     if (task.urgency === "green") {
       return (
@@ -339,7 +337,6 @@ export function ManagerTeamOnboarding() {
       </span>
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-700 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent relative">
       {/* ── Page Header ─────────────────────────────────────── */}
@@ -530,7 +527,9 @@ export function ManagerTeamOnboarding() {
                   <div className="h-2 rounded-full bg-background border border-border overflow-hidden">
                     <div
                       className="h-full rounded-full bg-[#00B87C]"
-                      style={{ width: "45%" }}
+                      style={{
+                        width: "45%",
+                      }}
                     />
                   </div>
                 </div>
@@ -620,7 +619,7 @@ export function ManagerTeamOnboarding() {
 
             <div className="space-y-3">
               {TASKS_DATA.map((task) => {
-                const isDone = completedTasks.includes(task.id);
+                const isDone = completedTasks.current.includes(task.id);
                 return (
                   <div
                     key={task.id}
@@ -629,11 +628,15 @@ export function ManagerTeamOnboarding() {
                     <div className="flex items-start gap-3">
                       <div
                         className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                        style={{ backgroundColor: task.iconBg }}
+                        style={{
+                          backgroundColor: task.iconBg,
+                        }}
                       >
                         <task.icon
                           size={14}
-                          style={{ color: task.iconColor }}
+                          style={{
+                            color: task.iconColor,
+                          }}
                         />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -728,10 +731,19 @@ export function ManagerTeamOnboarding() {
               </button>
               <AnimatePresence>
                 {showCompletedTasks && (
-                  <motion.div
-                    initial={{ scaleY: 0, opacity: 0 }}
-                    animate={{ scaleY: 1, opacity: 1 }}
-                    exit={{ scaleY: 0, opacity: 0 }}
+                  <m.div
+                    initial={{
+                      scaleY: 0,
+                      opacity: 0,
+                    }}
+                    animate={{
+                      scaleY: 1,
+                      opacity: 1,
+                    }}
+                    exit={{
+                      scaleY: 0,
+                      opacity: 0,
+                    }}
                     className="overflow-hidden origin-top"
                   >
                     <div className="space-y-2 mt-3">
@@ -757,7 +769,7 @@ export function ManagerTeamOnboarding() {
                         </div>
                       ))}
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
             </div>
@@ -789,13 +801,7 @@ export function ManagerTeamOnboarding() {
                           block: "center",
                         });
                     }}
-                    className={`w-[22px] h-[22px] rounded-full flex items-center justify-center border-2 transition-all duration-500 text-[11px] font-bold cursor-pointer ${
-                      phase.status === "Done"
-                        ? "bg-[#00B87C] border-[#00B87C] text-white"
-                        : phase.status === "In Progress"
-                          ? "bg-card border-cyan-500 text-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.3)]"
-                          : "bg-card border-border text-muted-foreground"
-                    }`}
+                    className={`w-[22px] h-[22px] rounded-full flex items-center justify-center border-2 transition-all duration-500 text-[11px] font-bold cursor-pointer ${phase.status === "Done" ? "bg-[#00B87C] border-[#00B87C] text-white" : phase.status === "In Progress" ? "bg-card border-cyan-500 text-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.3)]" : "bg-card border-border text-muted-foreground"}`}
                   >
                     {phase.status === "Done" ? (
                       <Check size={11} strokeWidth={3} />
@@ -806,13 +812,7 @@ export function ManagerTeamOnboarding() {
                     )}
                   </div>
                   <span
-                    className={`text-[9px] font-bold text-center max-w-[60px] leading-tight ${
-                      phase.status === "Done"
-                        ? "text-[#00B87C]"
-                        : phase.status === "In Progress"
-                          ? "text-cyan-500"
-                          : "text-muted-foreground"
-                    } uppercase tracking-wider`}
+                    className={`text-[9px] font-bold text-center max-w-[60px] leading-tight ${phase.status === "Done" ? "text-[#00B87C]" : phase.status === "In Progress" ? "text-cyan-500" : "text-muted-foreground"} uppercase tracking-wider`}
                   >
                     {phase.label}
                   </span>
@@ -831,35 +831,17 @@ export function ManagerTeamOnboarding() {
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-2 h-2 rounded-full ${
-                          phase.status === "Done"
-                            ? "bg-[#00B87C]"
-                            : phase.status === "In Progress"
-                              ? "bg-cyan-500"
-                              : "bg-muted-foreground/30"
-                        }`}
+                        className={`w-2 h-2 rounded-full ${phase.status === "Done" ? "bg-[#00B87C]" : phase.status === "In Progress" ? "bg-cyan-500" : "bg-muted-foreground/30"}`}
                       />
                       <span
-                        className={`text-[12px] font-bold ${
-                          phase.status === "Done"
-                            ? "text-[#00B87C]"
-                            : phase.status === "In Progress"
-                              ? "text-cyan-500"
-                              : "text-muted-foreground"
-                        }`}
+                        className={`text-[12px] font-bold ${phase.status === "Done" ? "text-[#00B87C]" : phase.status === "In Progress" ? "text-cyan-500" : "text-muted-foreground"}`}
                       >
                         {phase.label}
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
                       <span
-                        className={`text-[11px] font-bold ${
-                          phase.status === "Done"
-                            ? "text-[#00B87C]"
-                            : phase.status === "In Progress"
-                              ? "text-amber-500"
-                              : "text-muted-foreground/60"
-                        }`}
+                        className={`text-[11px] font-bold ${phase.status === "Done" ? "text-[#00B87C]" : phase.status === "In Progress" ? "text-amber-500" : "text-muted-foreground/60"}`}
                       >
                         {phase.tasks}
                       </span>
@@ -886,17 +868,32 @@ export function ManagerTeamOnboarding() {
       <AnimatePresence>
         {showScheduleModal && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowScheduleModal(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative bg-card w-full max-w-[440px] rounded-[32px] shadow-2xl border border-border overflow-hidden"
             >
               <div className="p-6">
@@ -1025,7 +1022,7 @@ export function ManagerTeamOnboarding() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1034,17 +1031,32 @@ export function ManagerTeamOnboarding() {
       <AnimatePresence>
         {showCompleteConfirm !== null && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowCompleteConfirm(null)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative bg-card w-full max-w-[380px] rounded-[32px] shadow-2xl p-6 border border-border"
             >
               <div className="flex items-center gap-3 mb-4">
@@ -1072,7 +1084,7 @@ export function ManagerTeamOnboarding() {
                   Yes, Complete
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1081,17 +1093,32 @@ export function ManagerTeamOnboarding() {
       <AnimatePresence>
         {showBuddyModal && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowBuddyModal(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative bg-card w-full max-w-[440px] rounded-[32px] shadow-2xl border border-border overflow-hidden"
             >
               <div className="p-6">
@@ -1128,11 +1155,7 @@ export function ManagerTeamOnboarding() {
                     <button
                       key={member.name}
                       onClick={() => setSelectedBuddy(member.name)}
-                      className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left ${
-                        selectedBuddy === member.name
-                          ? "bg-emerald-500/10 border border-[#00B87C]/30"
-                          : "hover:bg-secondary border border-transparent"
-                      }`}
+                      className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left ${selectedBuddy === member.name ? "bg-emerald-500/10 border border-[#00B87C]/30" : "hover:bg-secondary border border-transparent"}`}
                     >
                       <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-[11px] font-bold text-amber-500 shrink-0">
                         {member.initials}
@@ -1182,7 +1205,7 @@ export function ManagerTeamOnboarding() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1191,17 +1214,32 @@ export function ManagerTeamOnboarding() {
       <AnimatePresence>
         {showGoalModal && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowGoalModal(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative bg-card w-full max-w-[440px] rounded-[32px] shadow-2xl border border-border overflow-hidden"
             >
               <div className="p-6">
@@ -1275,7 +1313,7 @@ export function ManagerTeamOnboarding() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1284,18 +1322,34 @@ export function ManagerTeamOnboarding() {
       <AnimatePresence>
         {showOnboardingPanel && (
           <div className="fixed inset-0 z-[4000] flex justify-end">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowOnboardingPanel(false)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="relative bg-card w-full max-w-[480px] h-full shadow-[0_0_50px_rgba(0,0,0,0.15)] border-l border-border flex flex-col overflow-y-auto custom-scrollbar z-50"
             >
               <div className="p-6 border-b border-border flex items-center gap-3 sticky top-0 bg-card z-10">
@@ -1343,84 +1397,56 @@ export function ManagerTeamOnboarding() {
                       className="rounded-2xl border border-border overflow-hidden"
                     >
                       <div
-                        className={`px-4 py-3 border-b border-border flex items-center justify-between ${
-                          phase.status === "Done"
-                            ? "bg-emerald-500/5"
-                            : phase.status === "In Progress"
-                              ? "bg-cyan-500/5"
-                              : "bg-secondary/30"
-                        }`}
+                        className={`px-4 py-3 border-b border-border flex items-center justify-between ${phase.status === "Done" ? "bg-emerald-500/5" : phase.status === "In Progress" ? "bg-cyan-500/5" : "bg-secondary/30"}`}
                       >
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-2 h-2 rounded-full ${
-                              phase.status === "Done"
-                                ? "bg-[#00B87C]"
-                                : phase.status === "In Progress"
-                                  ? "bg-cyan-500"
-                                  : "bg-muted-foreground/30"
-                            }`}
+                            className={`w-2 h-2 rounded-full ${phase.status === "Done" ? "bg-[#00B87C]" : phase.status === "In Progress" ? "bg-cyan-500" : "bg-muted-foreground/30"}`}
                           />
                           <span
-                            className={`text-[13px] font-bold ${
-                              phase.status === "Done"
-                                ? "text-[#00B87C]"
-                                : phase.status === "In Progress"
-                                  ? "text-cyan-500"
-                                  : "text-muted-foreground"
-                            }`}
+                            className={`text-[13px] font-bold ${phase.status === "Done" ? "text-[#00B87C]" : phase.status === "In Progress" ? "text-cyan-500" : "text-muted-foreground"}`}
                           >
                             {phase.label}
                           </span>
                         </div>
                         <span
-                          className={`text-[11px] font-bold ${
-                            phase.status === "Done"
-                              ? "text-[#00B87C]"
-                              : phase.status === "In Progress"
-                                ? "text-amber-500"
-                                : "text-muted-foreground/60"
-                          }`}
+                          className={`text-[11px] font-bold ${phase.status === "Done" ? "text-[#00B87C]" : phase.status === "In Progress" ? "text-amber-500" : "text-muted-foreground/60"}`}
                         >
                           {phase.tasks} tasks
                         </span>
                       </div>
                       <div className="p-4 space-y-2">
-                        {Array.from({ length: phase.tasksTotal }).map(
-                          (_, j) => (
+                        {Array.from({
+                          length: phase.tasksTotal,
+                        }).map((_, j) => (
+                          <div
+                            key={j}
+                            className="flex items-center gap-2.5 py-1.5"
+                          >
                             <div
-                              key={j}
-                              className="flex items-center gap-2.5 py-1.5"
+                              className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${j < phase.tasksDone ? "bg-[#00B87C] border-[#00B87C]" : "border-border"}`}
                             >
-                              <div
-                                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                                  j < phase.tasksDone
-                                    ? "bg-[#00B87C] border-[#00B87C]"
-                                    : "border-border"
-                                }`}
-                              >
-                                {j < phase.tasksDone && (
-                                  <Check
-                                    size={9}
-                                    className="text-white"
-                                    strokeWidth={3}
-                                  />
-                                )}
-                              </div>
-                              <span
-                                className={`text-[12px] font-medium ${j < phase.tasksDone ? "text-foreground" : "text-muted-foreground"}`}
-                              >
-                                {phase.label} task {j + 1}
-                              </span>
+                              {j < phase.tasksDone && (
+                                <Check
+                                  size={9}
+                                  className="text-white"
+                                  strokeWidth={3}
+                                />
+                              )}
                             </div>
-                          ),
-                        )}
+                            <span
+                              className={`text-[12px] font-medium ${j < phase.tasksDone ? "text-foreground" : "text-muted-foreground"}`}
+                            >
+                              {phase.label} task {j + 1}
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ),
                 )}
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

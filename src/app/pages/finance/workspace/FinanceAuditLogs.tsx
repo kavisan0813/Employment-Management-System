@@ -17,10 +17,11 @@ import {
   Check,
   IndianRupee,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 
 /* ─── Types ─── */
+import * as m from "motion/react-m";
 type Severity = "critical" | "warning" | "info";
 type ActionType =
   | "APPROVE"
@@ -39,7 +40,6 @@ type ModuleType =
   | "Finance Reports"
   | "Payroll Settings"
   | "F&F Settlement";
-
 interface AuditLogEntry {
   id: string;
   timestamp: string;
@@ -54,7 +54,11 @@ interface AuditLogEntry {
   isFlagged?: boolean;
   oldValue?: string;
   newValue?: string;
-  sessionEvents?: { timestamp: string; action: string; module: string }[];
+  sessionEvents?: {
+    timestamp: string;
+    action: string;
+    module: string;
+  }[];
 }
 
 /* ─── Mock Data (Finance-scoped only) ─── */
@@ -221,7 +225,11 @@ const initials = (name: string) =>
 /* ─── Severity Config ─── */
 const SEV_CONFIG: Record<
   Severity,
-  { label: string; icon: string; chip: string }
+  {
+    label: string;
+    icon: string;
+    chip: string;
+  }
 > = {
   critical: {
     label: "Critical",
@@ -239,17 +247,39 @@ const SEV_CONFIG: Record<
     chip: "bg-[#F0FDF4] text-[#00B87C] border-[#A7F3D0]",
   },
 };
-
-const ACTION_CONFIG: Record<ActionType, { chip: string }> = {
-  APPROVE: { chip: "bg-[#F0FDF4] text-[#00B87C] border-[#A7F3D0]" },
-  DELETE: { chip: "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]" },
-  UPDATE: { chip: "bg-[#E0F2FE] text-[#0EA5E9] border-[#BAE6FD]" },
-  EXPORT: { chip: "bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]" },
-  CREATE: { chip: "bg-[#DCFCE7] text-[#00B87C] border-[#A7F3D0]" },
-  VIEW: { chip: "bg-[#F3F4F6] text-[#6B7280] border-[#E5E7EB]" },
-  REJECT: { chip: "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]" },
-  RUN: { chip: "bg-[#EDE9FE] text-[#8B5CF6] border-[#DDD6FE]" },
-  PROCESS: { chip: "bg-[#DCFCE7] text-[#00B87C] border-[#A7F3D0]" },
+const ACTION_CONFIG: Record<
+  ActionType,
+  {
+    chip: string;
+  }
+> = {
+  APPROVE: {
+    chip: "bg-[#F0FDF4] text-[#00B87C] border-[#A7F3D0]",
+  },
+  DELETE: {
+    chip: "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]",
+  },
+  UPDATE: {
+    chip: "bg-[#E0F2FE] text-[#0EA5E9] border-[#BAE6FD]",
+  },
+  EXPORT: {
+    chip: "bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]",
+  },
+  CREATE: {
+    chip: "bg-[#DCFCE7] text-[#00B87C] border-[#A7F3D0]",
+  },
+  VIEW: {
+    chip: "bg-[#F3F4F6] text-[#6B7280] border-[#E5E7EB]",
+  },
+  REJECT: {
+    chip: "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]",
+  },
+  RUN: {
+    chip: "bg-[#EDE9FE] text-[#8B5CF6] border-[#DDD6FE]",
+  },
+  PROCESS: {
+    chip: "bg-[#DCFCE7] text-[#00B87C] border-[#A7F3D0]",
+  },
 };
 
 /* ─── Sub-components ─── */
@@ -267,36 +297,58 @@ function KPICard({
   icon: React.ElementType;
 }) {
   const colors = {
-    green: { text: "#00B87C", bg: "#DCFCE7" },
-    red: { text: "#EF4444", bg: "#FEE2E2" },
-    purple: { text: "#8B5CF6", bg: "#EDE9FE" },
-    amber: { text: "#D97706", bg: "#FEF3C7" },
+    green: {
+      text: "#00B87C",
+      bg: "#DCFCE7",
+    },
+    red: {
+      text: "#EF4444",
+      bg: "#FEE2E2",
+    },
+    purple: {
+      text: "#8B5CF6",
+      bg: "#EDE9FE",
+    },
+    amber: {
+      text: "#D97706",
+      bg: "#FEF3C7",
+    },
   };
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
+    <m.div
+      whileHover={{
+        y: -5,
+      }}
       className="p-6 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
     >
       <div
         className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-        style={{ backgroundColor: colors[color].bg }}
+        style={{
+          backgroundColor: colors[color].bg,
+        }}
       >
-        <Icon size={20} style={{ color: colors[color].text }} />
+        <Icon
+          size={20}
+          style={{
+            color: colors[color].text,
+          }}
+        />
       </div>
       <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">
         {title}
       </p>
       <h3
         className="text-[28px] font-bold tracking-tighter"
-        style={{ color: colors[color].text }}
+        style={{
+          color: colors[color].text,
+        }}
       >
         {value}
       </h3>
       <p className="text-[12px] text-[#6B7280] mt-1">{sub}</p>
-    </motion.div>
+    </m.div>
   );
 }
-
 function FilterSelect({
   label,
   options = ["Option 1", "Option 2"],
@@ -313,7 +365,6 @@ function FilterSelect({
     externalValue !== undefined ? externalValue : (internalValue ?? label);
   const onChange =
     externalOnChange !== undefined ? externalOnChange : setInternalValue;
-
   return (
     <div className="relative group">
       <select
@@ -345,17 +396,14 @@ export function FinanceAuditLogs() {
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [showFlags, setShowFlags] = useState(true);
   const [flaggedFilter, setFlaggedFilter] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [moduleFilter, setModuleFilter] = useState("All Modules");
   const [actionFilter, setActionFilter] = useState("All Actions");
   const [userFilter, setUserFilter] = useState("All Users");
   const [dateFilter, setDateFilter] = useState("All Dates");
   const [severityFilter, setSeverityFilter] = useState("All Severities");
-
   const todayLogs = LOGS.filter((l) => l.timestamp.startsWith("Today")).length;
   const flaggedCount = LOGS.filter((l) => l.isFlagged).length;
-
   const displayedLogs = LOGS.filter((log) => {
     // Flagged filter
     if (flaggedFilter && !log.isFlagged) return false;
@@ -403,10 +451,8 @@ export function FinanceAuditLogs() {
       log.severity !== severityFilter.toLowerCase()
     )
       return false;
-
     return true;
   });
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -595,10 +641,19 @@ export function FinanceAuditLogs() {
       {/* FLAGGED ACTIVITIES BANNER */}
       <AnimatePresence>
         {showFlags && flaggedCount > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              y: -10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
             className="flex items-center justify-between px-5 py-3 bg-[#FEF2F2] border-l-4 border-[#EF4444] rounded-xl"
           >
             <div className="flex items-center gap-3">
@@ -625,7 +680,7 @@ export function FinanceAuditLogs() {
                 Review All Flags →
               </button>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -691,10 +746,14 @@ export function FinanceAuditLogs() {
                 const sev = SEV_CONFIG[log.severity];
                 const act = ACTION_CONFIG[log.action];
                 return (
-                  <motion.tr
+                  <m.tr
                     key={log.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{
+                      opacity: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                    }}
                     className="group hover:bg-[#00B87C]/[0.08] transition-all cursor-pointer"
                     style={{
                       borderLeft:
@@ -777,7 +836,7 @@ export function FinanceAuditLogs() {
                         {log.severity === "critical" ? "Review →" : "View →"}
                       </button>
                     </td>
-                  </motion.tr>
+                  </m.tr>
                 );
               })}
             </tbody>
@@ -819,18 +878,40 @@ export function FinanceAuditLogs() {
       <AnimatePresence>
         {selectedLog && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-md"
               onClick={() => setSelectedLog(null)}
             />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+              }}
               className="relative w-full max-w-[520px] bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -861,14 +942,38 @@ export function FinanceAuditLogs() {
               <div className="px-6 py-5 space-y-5 max-h-[55vh] overflow-y-auto">
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { label: "Event ID", value: selectedLog.id.toUpperCase() },
-                    { label: "Timestamp", value: selectedLog.timestamp },
-                    { label: "User", value: selectedLog.user },
-                    { label: "User Role", value: selectedLog.userRole },
-                    { label: "IP Address", value: selectedLog.ip },
-                    { label: "Device/Browser", value: selectedLog.device },
-                    { label: "Action Type", value: selectedLog.action },
-                    { label: "Module", value: selectedLog.module },
+                    {
+                      label: "Event ID",
+                      value: selectedLog.id.toUpperCase(),
+                    },
+                    {
+                      label: "Timestamp",
+                      value: selectedLog.timestamp,
+                    },
+                    {
+                      label: "User",
+                      value: selectedLog.user,
+                    },
+                    {
+                      label: "User Role",
+                      value: selectedLog.userRole,
+                    },
+                    {
+                      label: "IP Address",
+                      value: selectedLog.ip,
+                    },
+                    {
+                      label: "Device/Browser",
+                      value: selectedLog.device,
+                    },
+                    {
+                      label: "Action Type",
+                      value: selectedLog.action,
+                    },
+                    {
+                      label: "Module",
+                      value: selectedLog.module,
+                    },
                     {
                       label: "Record Affected",
                       value: selectedLog.record.split(" —")[0],
@@ -986,7 +1091,7 @@ export function FinanceAuditLogs() {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -995,18 +1100,40 @@ export function FinanceAuditLogs() {
       <AnimatePresence>
         {showExportModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-md"
               onClick={() => setShowExportModal(false)}
             />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+              }}
               className="relative w-full max-w-[440px] bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1128,7 +1255,7 @@ export function FinanceAuditLogs() {
                   <Download size={14} /> Export
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1137,18 +1264,37 @@ export function FinanceAuditLogs() {
       <AnimatePresence>
         {showBlockModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-md"
               onClick={() => setShowBlockModal(false)}
             />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+              }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+              }}
               className="relative w-full max-w-sm bg-card rounded-2xl p-8 text-center shadow-2xl border border-border"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1189,7 +1335,7 @@ export function FinanceAuditLogs() {
                   <Ban size={14} /> Block IP
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

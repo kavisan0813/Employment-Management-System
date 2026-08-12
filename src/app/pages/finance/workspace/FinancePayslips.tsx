@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FileText, Download, X, CheckCircle2 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 interface Payslip {
   id: string;
   month: string;
@@ -13,7 +13,6 @@ interface Payslip {
   status: "Credited" | "Pending";
   isLatest?: boolean;
 }
-
 const payslipsData: Payslip[] = [
   {
     id: "1",
@@ -71,24 +70,20 @@ const payslipsData: Payslip[] = [
     status: "Credited",
   },
 ];
-
 export function FinancePayslips() {
   const [selectedPayslip, setSelectedPayslip] = useState<Payslip | null>(null);
   const [showViewer, setShowViewer] = useState(false);
   const [yearFilter, setYearFilter] = useState("All");
   const [monthFilter, setMonthFilter] = useState("All");
-
   const filteredPayslips = payslipsData.filter((p) => {
     const yearMatch = yearFilter === "All" || p.year === yearFilter;
     const monthMatch = monthFilter === "All" || p.month === monthFilter;
     return yearMatch && monthMatch;
   });
-
   const handleView = (payslip: Payslip) => {
     setSelectedPayslip(payslip);
     setShowViewer(true);
   };
-
   const downloadPayslipFile = (payslip: Payslip) => {
     const content = `
 ==================================================
@@ -108,7 +103,9 @@ Status: ${payslip.status}
 This is a secure, digitally generated pay slip copy.
 Thank you for your valuable contribution.
 `;
-    const blob = new Blob([content], { type: "text/plain" });
+    const blob = new Blob([content], {
+      type: "text/plain",
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -121,19 +118,18 @@ Thank you for your valuable contribution.
       `Salary slip for ${payslip.month} ${payslip.year} downloaded.`,
     );
   };
-
   const downloadAllPayslips = () => {
     let merged = `==================================================\n`;
     merged += `           viyanHR SYSTEM - SALARY HISTORY\n`;
     merged += `==================================================\n`;
     merged += `Employee: Ananya Sharma (EMP-0088)\n\n`;
-
     payslipsData.forEach((p) => {
       merged += `${p.month} ${p.year}: Gross ${p.gross} | Deductions ${p.deductions} | Net Pay ${p.net} [${p.status}]\n`;
     });
     merged += `\nReport generated on May 29, 2026.`;
-
-    const blob = new Blob([merged], { type: "text/plain" });
+    const blob = new Blob([merged], {
+      type: "text/plain",
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -146,7 +142,6 @@ Thank you for your valuable contribution.
       "All historical payslips downloaded.",
     );
   };
-
   const handleEmailPayslip = (payslip: Payslip) => {
     showToast(
       "Email Sent",
@@ -154,7 +149,6 @@ Thank you for your valuable contribution.
       `Payslip for ${payslip.month} ${payslip.year} sent to ananya.sharma@viyanhr.com`,
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6 animate-in fade-in duration-500 overflow-hidden relative">
       {/* PAGE HEADER */}
@@ -322,18 +316,34 @@ Thank you for your valuable contribution.
       <AnimatePresence>
         {showViewer && selectedPayslip && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowViewer(false)}
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
             />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="fixed right-0 top-0 bottom-0 w-full max-w-[440px] bg-card border-l border-border shadow-2xl z-[101] flex flex-col"
             >
               <div className="p-6 border-b border-border flex items-center justify-between">
@@ -467,7 +477,7 @@ Thank you for your valuable contribution.
                   Email Payslip
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
@@ -495,7 +505,6 @@ function KPICard({
     green: "text-emerald-600",
     default: "text-[#111827] dark:text-white",
   };
-
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm group hover:border-[#00B87C]/30 transition-all">
       <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-3">
@@ -521,7 +530,6 @@ function KPICard({
     </div>
   );
 }
-
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
@@ -532,7 +540,6 @@ function InfoItem({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
 function SalaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between items-center text-[12px] font-bold text-muted-foreground">

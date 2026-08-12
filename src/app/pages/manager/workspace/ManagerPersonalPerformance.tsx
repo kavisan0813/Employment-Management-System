@@ -8,19 +8,45 @@ import {
   Plus,
   X,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-const Radar = lazy(() => import("recharts").then(m => ({ default: m.Radar })));
-const RadarChart = lazy(() => import("recharts").then(m => ({ default: m.RadarChart })));
-const PolarGrid = lazy(() => import("recharts").then(m => ({ default: m.PolarGrid })));
-const PolarAngleAxis = lazy(() => import("recharts").then(m => ({ default: m.PolarAngleAxis })));
-const PolarRadiusAxis = lazy(() => import("recharts").then(m => ({ default: m.PolarRadiusAxis })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const Legend = lazy(() => import("recharts").then(m => ({ default: m.Legend })));
-
+import { AnimatePresence } from "motion/react";
+const Radar = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Radar,
+  })),
+);
+const RadarChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.RadarChart,
+  })),
+);
+const PolarGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PolarGrid,
+  })),
+);
+const PolarAngleAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PolarAngleAxis,
+  })),
+);
+const PolarRadiusAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PolarRadiusAxis,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const Legend = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Legend,
+  })),
+);
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 type PerformanceTab = "My Goals" | "Self Review" | "Feedback" | "History";
-
 interface PersonalGoal {
   id: string;
   title: string;
@@ -33,7 +59,6 @@ interface PersonalGoal {
   deadline?: string;
   lastUpdated?: string;
 }
-
 const initialPersonalGoals: PersonalGoal[] = [
   {
     id: "1",
@@ -93,9 +118,14 @@ const initialPersonalGoals: PersonalGoal[] = [
     lastUpdated: "May 4",
   },
 ];
-
 const radarData = [
-  { subject: "Leadership", self: 95, manager: 90, peers: 92, fullMark: 150 },
+  {
+    subject: "Leadership",
+    self: 95,
+    manager: 90,
+    peers: 92,
+    fullMark: 150,
+  },
   {
     subject: "Technical Arch",
     self: 90,
@@ -110,7 +140,13 @@ const radarData = [
     peers: 85,
     fullMark: 150,
   },
-  { subject: "Communication", self: 80, manager: 85, peers: 88, fullMark: 150 },
+  {
+    subject: "Communication",
+    self: 80,
+    manager: 85,
+    peers: 88,
+    fullMark: 150,
+  },
   {
     subject: "Team Mentoring",
     self: 95,
@@ -118,16 +154,20 @@ const radarData = [
     peers: 95,
     fullMark: 150,
   },
-  { subject: "Initiative", self: 90, manager: 90, peers: 88, fullMark: 150 },
+  {
+    subject: "Initiative",
+    self: 90,
+    manager: 90,
+    peers: 88,
+    fullMark: 150,
+  },
 ];
-
 export function ManagerPersonalPerformance() {
   const [activeTab, setActiveTab] = useState<PerformanceTab>("My Goals");
   const [personalGoals, setPersonalGoals] =
     useState<PersonalGoal[]>(initialPersonalGoals);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<PersonalGoal | null>(null);
-
   const handleSubmitSelfReview = () => {
     showToast(
       "Submitted!",
@@ -136,7 +176,6 @@ export function ManagerPersonalPerformance() {
     );
     setActiveTab("My Goals");
   };
-
   const handleRequestGoalSubmit = (title: string, category: string) => {
     const newGoal: PersonalGoal = {
       id: (personalGoals.length + 1).toString(),
@@ -153,7 +192,6 @@ export function ManagerPersonalPerformance() {
     );
     setIsRequestModalOpen(false);
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6 animate-in fade-in duration-500 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
       {/* PAGE HEADER */}
@@ -203,15 +241,11 @@ export function ManagerPersonalPerformance() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-4 text-[12px] font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${
-              activeTab === tab
-                ? "text-[#00B87C]"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+            className={`pb-4 text-[12px] font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
           >
             {tab}
             {activeTab === tab && (
-              <motion.div
+              <m.div
                 layoutId="activeTabPerf"
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C]"
               />
@@ -224,11 +258,20 @@ export function ManagerPersonalPerformance() {
       <div className="min-h-[400px]">
         <AnimatePresence mode="wait">
           {activeTab === "My Goals" && (
-            <motion.div
+            <m.div
               key="goals"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="space-y-6"
             >
               <div className="flex items-center justify-between">
@@ -259,15 +302,24 @@ export function ManagerPersonalPerformance() {
                   />
                 ))}
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           {activeTab === "Self Review" && (
-            <motion.div
+            <m.div
               key="self-review"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="space-y-6 animate-in fade-in"
             >
               <SectionTitle title="SELF ASSESSMENT — FY 2025-26" />
@@ -286,15 +338,24 @@ export function ManagerPersonalPerformance() {
                   Submit Self Review
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           {activeTab === "Feedback" && (
-            <motion.div
+            <m.div
               key="feedback"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="space-y-6"
             >
               <SectionTitle title="360° FEEDBACK SUMMARY" />
@@ -378,15 +439,24 @@ export function ManagerPersonalPerformance() {
                   />
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           )}
 
           {activeTab === "History" && (
-            <motion.div
+            <m.div
               key="history"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
               className="bg-card border border-border rounded-[32px] overflow-hidden shadow-sm"
             >
               <table className="w-full text-left border-collapse">
@@ -429,7 +499,7 @@ export function ManagerPersonalPerformance() {
                   />
                 </tbody>
               </table>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>
@@ -485,11 +555,7 @@ export function ManagerPersonalPerformance() {
                     Priority
                   </span>
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${
-                      selectedGoal.priority === "High"
-                        ? "bg-rose-500/10 text-rose-500 border-rose-200"
-                        : "bg-amber-500/10 text-amber-500 border-amber-200"
-                    }`}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${selectedGoal.priority === "High" ? "bg-rose-500/10 text-rose-500 border-rose-200" : "bg-amber-500/10 text-amber-500 border-amber-200"}`}
                   >
                     {selectedGoal.priority || "Medium"}
                   </span>
@@ -512,7 +578,9 @@ export function ManagerPersonalPerformance() {
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden flex-1 border">
                     <div
                       className="h-full bg-primary rounded-full"
-                      style={{ width: `${selectedGoal.progress}%` }}
+                      style={{
+                        width: `${selectedGoal.progress}%`,
+                      }}
                     />
                   </div>
                   <span className="text-xs font-bold text-primary">
@@ -559,7 +627,6 @@ function KPICard({
     teal: "text-teal-600 bg-teal-500/10 border-teal-500/20",
     purple: "text-purple-600 bg-purple-500/10 border-purple-500/20",
   };
-
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm group hover:border-[#00B87C]/30 transition-all">
       <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">
@@ -578,7 +645,6 @@ function KPICard({
     </div>
   );
 }
-
 function SectionTitle({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-3">
@@ -589,7 +655,6 @@ function SectionTitle({ title }: { title: string }) {
     </div>
   );
 }
-
 function GoalRow({
   title,
   category,
@@ -611,7 +676,6 @@ function GoalRow({
       : status === "Pending"
         ? "text-amber-600 bg-amber-500/10 border-amber-500/20"
         : "text-rose-600 bg-rose-500/10 border-rose-500/20";
-
   return (
     <div
       onClick={onClick}
@@ -642,9 +706,13 @@ function GoalRow({
             <span>{progress}%</span>
           </div>
           <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: `-${100 - (progress)}%` }}
+            <m.div
+              initial={{
+                x: "-100%",
+              }}
+              animate={{
+                x: `-${100 - progress}%`,
+              }}
               className="h-full bg-[#00B87C] rounded-full w-full"
             />
           </div>
@@ -665,7 +733,6 @@ function GoalRow({
     </div>
   );
 }
-
 function RatingSection({ label }: { label: string }) {
   const [rating, setRating] = useState(0);
   return (
@@ -677,11 +744,7 @@ function RatingSection({ label }: { label: string }) {
             key={num}
             type="button"
             onClick={() => setRating(num)}
-            className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg transition-all ${
-              rating === num
-                ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/20 scale-110"
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
-            }`}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg transition-all ${rating === num ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/20 scale-110" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}
           >
             {num}
           </button>
@@ -694,7 +757,6 @@ function RatingSection({ label }: { label: string }) {
     </div>
   );
 }
-
 function FeedbackCard({
   role,
   name,
@@ -732,7 +794,6 @@ function FeedbackCard({
     </div>
   );
 }
-
 function HistoryRow({
   period,
   rating,
@@ -785,13 +846,11 @@ function HistoryRow({
     </tr>
   );
 }
-
 interface RequestGoalModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (title: string, category: string, description: string) => void;
 }
-
 function RequestGoalModal({
   isOpen,
   onClose,
@@ -800,9 +859,7 @@ function RequestGoalModal({
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Technical");
   const [description, setDescription] = useState("");
-
   if (!isOpen) return null;
-
   const handleSubmit = () => {
     if (!title.trim()) {
       showToast("Error", "error", "Goal title is required.");
@@ -813,17 +870,28 @@ function RequestGoalModal({
     setCategory("Technical");
     setDescription("");
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
       <div
         onClick={onClose}
         className="absolute inset-0 bg-black/45 backdrop-blur-sm"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 10,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 10,
+        }}
         className="relative w-full max-w-[460px] bg-card border border-border rounded-[32px] shadow-2xl p-6 flex flex-col"
       >
         <div className="flex items-center justify-between pb-4 border-b border-border">
@@ -892,7 +960,7 @@ function RequestGoalModal({
             Submit Request
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

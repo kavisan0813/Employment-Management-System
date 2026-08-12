@@ -13,7 +13,6 @@ import {
   ArrowDownCircle,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion } from "motion/react";
 import { useAuth } from "../../context/AuthContext";
 import { payrollService } from "../finance/payroll/payroll.service";
 import type { Payslip as RealPayslip } from "../finance/payroll/payroll.types";
@@ -21,6 +20,7 @@ import type { Payslip as RealPayslip } from "../finance/payroll/payroll.types";
 /* ─────────────────────────────────────────────────────────────── */
 /* Types & Data                                                    */
 /* ─────────────────────────────────────────────────────────────── */
+import * as m from "motion/react-m";
 interface Payslip {
   id: string;
   month: string;
@@ -41,7 +41,6 @@ interface Payslip {
     incomeTax: number;
   };
 }
-
 const MOCK_PAYSLIPS: Payslip[] = [
   {
     id: "PAY-2026-04",
@@ -164,7 +163,6 @@ const MOCK_PAYSLIPS: Payslip[] = [
     },
   },
 ];
-
 const YEARS = ["All Years", "2026", "2025", "2024"];
 const MONTHS = [
   "All Months",
@@ -203,19 +201,41 @@ function PayslipModal({
     }
   }, [autoPrint]);
   const earnings = [
-    { label: "Basic Salary", value: payslip.breakdown.basicSalary },
-    { label: "HRA", value: payslip.breakdown.hra },
-    { label: "Conveyance Allowance", value: payslip.breakdown.conveyance },
-    { label: "Medical Allowance", value: payslip.breakdown.medicalAllowance },
-    { label: "Special Allowance", value: payslip.breakdown.specialAllowance },
+    {
+      label: "Basic Salary",
+      value: payslip.breakdown.basicSalary,
+    },
+    {
+      label: "HRA",
+      value: payslip.breakdown.hra,
+    },
+    {
+      label: "Conveyance Allowance",
+      value: payslip.breakdown.conveyance,
+    },
+    {
+      label: "Medical Allowance",
+      value: payslip.breakdown.medicalAllowance,
+    },
+    {
+      label: "Special Allowance",
+      value: payslip.breakdown.specialAllowance,
+    },
   ].filter((e) => e.value > 0);
-
   const deductionItems = [
-    { label: "Provident Fund (PF)", value: payslip.breakdown.providentFund },
-    { label: "Professional Tax", value: payslip.breakdown.professionalTax },
-    { label: "Income Tax (TDS)", value: payslip.breakdown.incomeTax },
+    {
+      label: "Provident Fund (PF)",
+      value: payslip.breakdown.providentFund,
+    },
+    {
+      label: "Professional Tax",
+      value: payslip.breakdown.professionalTax,
+    },
+    {
+      label: "Income Tax (TDS)",
+      value: payslip.breakdown.incomeTax,
+    },
   ].filter((d) => d.value > 0);
-
   const maxRows = Math.max(earnings.length, deductionItems.length);
   const rows = [];
   for (let i = 0; i < maxRows; i++) {
@@ -263,13 +283,11 @@ function PayslipModal({
       "Eighty",
       "Ninety",
     ];
-
     function g(n: number): string {
       if (n < 20) return a[n];
       const digit = n % 10;
       return b[Math.floor(n / 10)] + (digit ? " " + a[digit] : "");
     }
-
     function h(n: number): string {
       if (n < 100) return g(n);
       return (
@@ -278,7 +296,6 @@ function PayslipModal({
         (n % 100 ? " and " + g(n % 100) : "")
       );
     }
-
     function c(n: number): string {
       const parts: string[] = [];
       if (n >= 10000000) {
@@ -298,23 +315,39 @@ function PayslipModal({
       }
       return parts.join(" ");
     }
-
     return "Rupees " + c(num) + " Only";
   })();
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-black/60 backdrop-blur-sm no-print"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-2xl max-h-[90vh] rounded-[32px] shadow-2xl overflow-hidden flex flex-col border border-border print-payslip-card"
       >
         {/* Modal Header */}
@@ -557,7 +590,7 @@ function PayslipModal({
             <Download size={16} /> Download PDF
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -573,7 +606,6 @@ export function EmployeePayslips() {
   const [showMonthDrop, setShowMonthDrop] = useState(false);
   const [previewPayslip, setPreviewPayslip] = useState<Payslip | null>(null);
   const [shouldAutoPrint, setShouldAutoPrint] = useState(false);
-
   const employeeEmail = useMemo(() => {
     if (!user) return "sarah.johnson@viyanhr.com";
     const structures = payrollService.getSalaryStructures();
@@ -582,11 +614,9 @@ export function EmployeePayslips() {
     );
     return match ? user.email : "sarah.johnson@viyanhr.com";
   }, [user]);
-
   const employeePayslips = useMemo(() => {
     const runs = payrollService.getAllPayRuns();
     const disbursedRuns = runs.filter((r) => r.status === "disbursed");
-
     const realPayslips = disbursedRuns
       .map((run) => {
         const ps = run.payslips.find(
@@ -594,11 +624,9 @@ export function EmployeePayslips() {
             p.email.toLowerCase() === employeeEmail.toLowerCase(),
         );
         if (!ps) return null;
-
         const parts = run.month.split(" ");
         const monthStr = parts[0];
         const yearNum = parseInt(parts[1]) || 2026;
-
         return {
           id: `PAY-${run.id}`,
           month: monthStr,
@@ -627,10 +655,8 @@ export function EmployeePayslips() {
         };
       })
       .filter((p) => p !== null) as Payslip[];
-
     return realPayslips.length > 0 ? realPayslips : MOCK_PAYSLIPS;
   }, [employeeEmail]);
-
   const filteredPayslips = useMemo(() => {
     return employeePayslips.filter((p) => {
       const yearMatch =
@@ -640,18 +666,15 @@ export function EmployeePayslips() {
       return yearMatch && monthMatch;
     });
   }, [employeePayslips, selectedYear, selectedMonth]);
-
   const structure = useMemo(() => {
     const structures = payrollService.getSalaryStructures();
     return structures.find(
       (s) => s.email.toLowerCase() === employeeEmail.toLowerCase(),
     );
   }, [employeeEmail]);
-
   const ctcDisplay = structure
     ? `₹${(structure.ctc / 100000).toFixed(1)}L`
     : "₹18L";
-
   const latestPayslip = employeePayslips[0];
   const netPayDisplay = latestPayslip
     ? `₹${latestPayslip.netPay.toLocaleString()}`
@@ -662,7 +685,6 @@ export function EmployeePayslips() {
   const netSubText = latestPayslip
     ? `After all deductions · ${latestPayslip.month} ${latestPayslip.year}`
     : "After all deductions · April 2026";
-
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
       {/* ─── Page Header ─────────────────────────────────────────── */}

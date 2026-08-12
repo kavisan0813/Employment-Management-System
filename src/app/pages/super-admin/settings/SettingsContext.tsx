@@ -977,11 +977,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     name: "",
     code: "",
     type: "General" as
-      | "General"
-      | "Shift"
-      | "Flexible"
-      | "Rotational"
-      | "Part Time",
+      "General" | "Shift" | "Flexible" | "Rotational" | "Part Time",
     startTime: "09:00",
     endTime: "18:00",
     breakDuration: 60,
@@ -1079,11 +1075,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     name: "",
     date: "2026-01-01",
     type: "National" as
-      | "National"
-      | "Company"
-      | "Optional"
-      | "Regional"
-      | "Festival",
+      "National" | "Company" | "Optional" | "Regional" | "Festival",
     location: "All Locations",
     dept: "All",
     recurring: true,

@@ -21,7 +21,13 @@ export function StatusDot({ status }: { status: string }) {
 }
 
 /* XCircle icon (custom SVG) */
-export function XCircle({ size, className }: { size: number; className?: string }) {
+export function XCircle({
+  size,
+  className,
+}: {
+  size: number;
+  className?: string;
+}) {
   return (
     <svg
       width={size}

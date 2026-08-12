@@ -28,7 +28,9 @@ export function RoleMultiSelect({
     return (
       <div className="flex items-center justify-center p-6 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
         <Loader2 className="w-5 h-5 animate-spin text-[var(--primary)] mr-2" />
-        <span className="text-sm font-medium text-slate-500">Loading assignable roles...</span>
+        <span className="text-sm font-medium text-slate-500">
+          Loading assignable roles...
+        </span>
       </div>
     );
   }
@@ -48,7 +50,9 @@ export function RoleMultiSelect({
   if (options.length === 0) {
     return (
       <div className="p-4 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50 text-center">
-        <p className="text-xs text-slate-400 font-medium leading-relaxed">{emptyStateText}</p>
+        <p className="text-xs text-slate-400 font-medium leading-relaxed">
+          {emptyStateText}
+        </p>
       </div>
     );
   }
@@ -72,13 +76,17 @@ export function RoleMultiSelect({
   return (
     <div className="space-y-3">
       {options.map((option) => {
-        const isChecked = selectedIds.includes(option.value);
-        const isDisabled = option.alwaysOn && isChecked && selectedIds.length === 1;
+        const selectedIdsSet = new Set(selectedIds);
+        const isChecked = selectedIdsSet.has(option.value);
+        const isDisabled =
+          option.alwaysOn && isChecked && selectedIds.length === 1;
 
         return (
           <div
             key={option.value}
-            onClick={() => !isDisabled && handleToggle(option.value, option.alwaysOn)}
+            onClick={() =>
+              !isDisabled && handleToggle(option.value, option.alwaysOn)
+            }
             className={`group flex items-center justify-between rounded-2xl border-2 px-4 py-3.5 cursor-pointer select-none transition-all duration-200 ${
               isChecked
                 ? "border-[var(--primary)] bg-emerald-50/10 shadow-sm"

@@ -51,8 +51,12 @@ export function DepartmentFilters({
             onClick={() => onViewModeChange("grid")}
             className="p-1.5 rounded-lg transition-colors"
             style={{
-              backgroundColor: viewMode === "grid" ? "var(--secondary)" : "transparent",
-              color: viewMode === "grid" ? "var(--primary)" : "var(--muted-foreground)",
+              backgroundColor:
+                viewMode === "grid" ? "var(--secondary)" : "transparent",
+              color:
+                viewMode === "grid"
+                  ? "var(--primary)"
+                  : "var(--muted-foreground)",
             }}
             title="Grid View"
           >
@@ -63,8 +67,12 @@ export function DepartmentFilters({
             onClick={() => onViewModeChange("table")}
             className="p-1.5 rounded-lg transition-colors"
             style={{
-              backgroundColor: viewMode === "table" ? "var(--secondary)" : "transparent",
-              color: viewMode === "table" ? "var(--primary)" : "var(--muted-foreground)",
+              backgroundColor:
+                viewMode === "table" ? "var(--secondary)" : "transparent",
+              color:
+                viewMode === "table"
+                  ? "var(--primary)"
+                  : "var(--muted-foreground)",
             }}
             title="Table View"
           >

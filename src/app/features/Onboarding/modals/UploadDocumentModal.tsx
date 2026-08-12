@@ -1,12 +1,19 @@
 import { useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { Upload, X } from "lucide-react";
 import { validateFile } from "../utils/fileValidation";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
-interface UploadDocumentModalProps { show: boolean; onClose: () => void; handleConfirmUpload: () => void; }
-
-export function UploadDocumentModal({ show, onClose, handleConfirmUpload }: UploadDocumentModalProps) {
+import * as m from "motion/react-m";
+interface UploadDocumentModalProps {
+  show: boolean;
+  onClose: () => void;
+  handleConfirmUpload: () => void;
+}
+export function UploadDocumentModal({
+  show,
+  onClose,
+  handleConfirmUpload,
+}: UploadDocumentModalProps) {
   const input = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const choose = (next?: File) => {
@@ -21,19 +28,31 @@ export function UploadDocumentModal({ show, onClose, handleConfirmUpload }: Uplo
   return (
     <AnimatePresence>
       {show && (
-        <motion.div
+        <m.div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
           onClick={onClose}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
+          exit={{
+            opacity: 0,
+          }}
         >
-          <motion.div
+          <m.div
             className="w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-2xl"
             onClick={(event) => event.stopPropagation()}
-            initial={{ scale: 0.95 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0.95 }}
+            initial={{
+              scale: 0.95,
+            }}
+            animate={{
+              scale: 1,
+            }}
+            exit={{
+              scale: 0.95,
+            }}
           >
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -88,8 +107,8 @@ export function UploadDocumentModal({ show, onClose, handleConfirmUpload }: Uplo
                 Upload
               </button>
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

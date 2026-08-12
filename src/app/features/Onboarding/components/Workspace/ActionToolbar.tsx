@@ -9,8 +9,11 @@ interface ActionToolbarProps {
 }
 
 export function ActionToolbar({
-  inlineTaskOpen, setInlineTaskOpen,
-  setShowReminderModal, handleDownloadReport, handleMarkPhaseComplete,
+  inlineTaskOpen,
+  setInlineTaskOpen,
+  setShowReminderModal,
+  handleDownloadReport,
+  handleMarkPhaseComplete,
 }: ActionToolbarProps) {
   return (
     <div className="sticky bottom-0 px-6 py-4 border-t border-border bg-card/95 backdrop-blur-sm flex flex-wrap items-center justify-between gap-3">

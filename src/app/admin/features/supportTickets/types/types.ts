@@ -1,6 +1,7 @@
 // ─── Support & Tickets — Type Definitions ────────────────────────────────────
 
-export type TicketStatus = "Open" | "Assigned" | "In Progress" | "Resolved" | "Closed";
+export type TicketStatus =
+  "Open" | "Assigned" | "In Progress" | "Resolved" | "Closed";
 export type TicketPriority = "Low" | "Medium" | "High" | "Critical";
 export type TicketCategory =
   | "Payroll"
@@ -16,9 +17,16 @@ export type TicketCategory =
   | "Other";
 
 export type IssueSeverity = "Minor" | "Major" | "Critical";
-export type IssueStatus = "Open" | "Investigation" | "Fix In Progress" | "Testing" | "Resolved" | "Closed";
+export type IssueStatus =
+  | "Open"
+  | "Investigation"
+  | "Fix In Progress"
+  | "Testing"
+  | "Resolved"
+  | "Closed";
 
-export type FeatureRequestStatus = "New" | "Under Review" | "Approved" | "Rejected" | "Released";
+export type FeatureRequestStatus =
+  "New" | "Under Review" | "Approved" | "Rejected" | "Released";
 export type FeedbackCategory = "Product" | "Support" | "Training" | "UI";
 export type SLATier = "Critical" | "High" | "Medium" | "Low";
 

@@ -21,22 +21,16 @@ import {
   Clock,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { useLocation } from "react-router";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types & Mock Data                                               */
 /* ─────────────────────────────────────────────────────────────── */
-
+import * as m from "motion/react-m";
 type Category =
-  | "General"
-  | "HR Policy"
-  | "Payroll"
-  | "Holiday"
-  | "Training"
-  | "Emergency";
+  "General" | "HR Policy" | "Payroll" | "Holiday" | "Training" | "Emergency";
 type Priority = "Normal" | "Important" | "Urgent";
-
 interface Announcement {
   id: number;
   title: string;
@@ -55,13 +49,16 @@ interface Announcement {
   isAcknowledged: boolean;
   needsAcknowledgement: boolean;
   isPinned: boolean;
-  attachments: { name: string; size: string; url: string }[];
+  attachments: {
+    name: string;
+    size: string;
+    url: string;
+  }[];
   likes: number;
   comments: number;
   views: number;
   acknowledgedAt?: string;
 }
-
 const MOCK_ANNOUNCEMENTS: Announcement[] = [
   {
     id: 1,
@@ -72,14 +69,21 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
       "Dear Team,\n\nThe Q2 Performance Appraisal cycle is officially commencing. This year, we have introduced a new streamlined self-assessment form in the Performance module. \n\nKey Dates:\n- Self-Review: April 25th - April 30th\n- Manager Review: May 1st - May 5th\n- Final Feedback: May 10th onwards.\n\nPlease ensure your goals are updated before starting the review.",
     category: "HR Policy",
     priority: "Urgent",
-    author: { name: "Arjun Reddy", role: "Corporate HR Head" },
+    author: {
+      name: "Arjun Reddy",
+      role: "Corporate HR Head",
+    },
     postedDate: "2026-04-05",
     isRead: false,
     isAcknowledged: false,
     needsAcknowledgement: true,
     isPinned: true,
     attachments: [
-      { name: "Appraisal_Guidelines_2026.pdf", size: "1.2 MB", url: "#" },
+      {
+        name: "Appraisal_Guidelines_2026.pdf",
+        size: "1.2 MB",
+        url: "#",
+      },
     ],
     likes: 48,
     comments: 12,
@@ -94,7 +98,10 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
       "Following feedback from department heads, we are adjusting our hybrid work model to ensure better team synergy. Effective May 1st, all teams are required to be in the office on Tuesdays and Thursdays. Monday/Wednesday/Friday remain optional based on project requirements.",
     category: "HR Policy",
     priority: "Important",
-    author: { name: "Operations Team", role: "Facility Operations" },
+    author: {
+      name: "Operations Team",
+      role: "Facility Operations",
+    },
     postedDate: "2026-04-02",
     isRead: true,
     isAcknowledged: true,
@@ -102,7 +109,11 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
     needsAcknowledgement: true,
     isPinned: true,
     attachments: [
-      { name: "Hybrid_Work_Policy_v2.pdf", size: "850 KB", url: "#" },
+      {
+        name: "Hybrid_Work_Policy_v2.pdf",
+        size: "850 KB",
+        url: "#",
+      },
     ],
     likes: 32,
     comments: 8,
@@ -117,7 +128,10 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
       "It's time to unwind! We are organizing a 1-day retreat at Green Valley Resorts. The day will include team building activities, a keynote from the CEO, and a gala lunch. Please RSVP via the link provided below.",
     category: "General",
     priority: "Normal",
-    author: { name: "Sarah Johnson", role: "Engagement Lead" },
+    author: {
+      name: "Sarah Johnson",
+      role: "Engagement Lead",
+    },
     postedDate: "2026-04-06",
     isRead: false,
     isAcknowledged: false,
@@ -137,7 +151,10 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
       "We are pleased to inform you that salaries for the month of March 2026 have been successfully disbursed. You can now view and download your payslips from the 'My Payslips' section in the Employee portal.",
     category: "Payroll",
     priority: "Normal",
-    author: { name: "Finance Dept", role: "Payroll Manager" },
+    author: {
+      name: "Finance Dept",
+      role: "Payroll Manager",
+    },
     postedDate: "2026-03-31",
     isRead: true,
     isAcknowledged: false,
@@ -157,7 +174,10 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
       "Due to mandatory transformer maintenance by the city electricity board, there will be no power in the main office building on Sunday, April 12th, from 9:00 AM to 6:00 PM. Please avoid visiting the office during this time.",
     category: "Emergency",
     priority: "Urgent",
-    author: { name: "Admin Services", role: "HQ Security" },
+    author: {
+      name: "Admin Services",
+      role: "HQ Security",
+    },
     postedDate: "2026-04-10",
     isRead: false,
     isAcknowledged: false,
@@ -176,14 +196,21 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
       "We are launching a new training module on leveraging Generative AI for workplace productivity. This is part of our digital transformation initiative. Attendance is mandatory for the initial session.",
     category: "Training",
     priority: "Important",
-    author: { name: "L&D Academy", role: "Training Head" },
+    author: {
+      name: "L&D Academy",
+      role: "Training Head",
+    },
     postedDate: "2026-04-01",
     isRead: false,
     isAcknowledged: false,
     needsAcknowledgement: false,
     isPinned: false,
     attachments: [
-      { name: "Training_Curriculum.pdf", size: "2.1 MB", url: "#" },
+      {
+        name: "Training_Curriculum.pdf",
+        size: "2.1 MB",
+        url: "#",
+      },
     ],
     likes: 18,
     comments: 3,
@@ -215,7 +242,6 @@ function PriorityBadge({ priority }: { priority: Priority }) {
     </span>
   );
 }
-
 function CategoryBadge({ category }: { category: Category }) {
   const getStyleClass = () => {
     switch (category) {
@@ -242,7 +268,6 @@ function CategoryBadge({ category }: { category: Category }) {
     </span>
   );
 }
-
 function AnnouncementSkeleton() {
   return (
     <div className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-4 animate-pulse">
@@ -288,7 +313,6 @@ export function EmployeeAnnouncements() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
-
   useEffect(() => {
     // Simulate loading
     const timer = setTimeout(() => {
@@ -305,7 +329,6 @@ export function EmployeeAnnouncements() {
     }, 1000);
     return () => clearTimeout(timer);
   }, [location.search]);
-
   const filteredData = useMemo(() => {
     return announcements
       .filter((a) => {
@@ -323,7 +346,6 @@ export function EmployeeAnnouncements() {
           (statusFilter === "Awaiting Acknowledge" &&
             a.needsAcknowledgement &&
             !a.isAcknowledged);
-
         return (
           matchesSearch && matchesCategory && matchesPriority && matchesStatus
         );
@@ -342,19 +364,29 @@ export function EmployeeAnnouncements() {
     priorityFilter,
     statusFilter,
   ]);
-
   const handleMarkAsRead = (id: number) => {
     setAnnouncements((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, isRead: true } : a)),
+      prev.map((a) =>
+        a.id === id
+          ? {
+              ...a,
+              isRead: true,
+            }
+          : a,
+      ),
     );
     showToast("Status Updated", "success", "Announcement marked as read.");
     if (selectedAnnouncement?.id === id) {
       setSelectedAnnouncement((prev) =>
-        prev ? { ...prev, isRead: true } : null,
+        prev
+          ? {
+              ...prev,
+              isRead: true,
+            }
+          : null,
       );
     }
   };
-
   const handleAcknowledge = (id: number) => {
     const timestamp = new Date().toLocaleString();
     setAnnouncements((prev) =>
@@ -388,17 +420,14 @@ export function EmployeeAnnouncements() {
       );
     }
   };
-
   const handleDownload = (name: string) => {
     showToast("Downloading", "success", `${name} is being downloaded.`);
   };
-
   const handleArchive = (id: number) => {
     setAnnouncements((prev) => prev.filter((a) => a.id !== id));
     showToast("Archived", "info", "Announcement has been archived.");
     setShowConfirmModal(null);
   };
-
   const announcementHelpers = {
     copyLink: (id: number) => {
       const link = `${window.location.origin}/notifications?id=${id}`;
@@ -406,14 +435,12 @@ export function EmployeeAnnouncements() {
       showToast("Copied", "success", "Announcement link copied to clipboard.");
     },
   };
-
   const resetFilters = () => {
     setSearchQuery("");
     setCategoryFilter("All");
     setPriorityFilter("All");
     setStatusFilter("All");
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-700">
       {/* ─── Page Header ─────────────────────────────────────────── */}
@@ -534,9 +561,9 @@ export function EmployeeAnnouncements() {
       {/* ─── Announcements Grid ───────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <AnnouncementSkeleton key={i} />
-          ))
+          Array.from({
+            length: 6,
+          }).map((_, i) => <AnnouncementSkeleton key={i} />)
         ) : filteredData.length > 0 ? (
           filteredData.map((ann) => (
             <AnnouncementCard
@@ -546,7 +573,10 @@ export function EmployeeAnnouncements() {
               onMarkRead={() => handleMarkAsRead(ann.id)}
               onCopy={() => announcementHelpers.copyLink(ann.id)}
               onArchive={() =>
-                setShowConfirmModal({ type: "archive", id: ann.id })
+                setShowConfirmModal({
+                  type: "archive",
+                  id: ann.id,
+                })
               }
             />
           ))
@@ -588,25 +618,36 @@ export function EmployeeAnnouncements() {
       <AnimatePresence>
         {showConfirmModal && (
           <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowConfirmModal(null)}
               className="absolute inset-0 bg-background/40"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative bg-card w-full max-w-[400px] rounded-[32px] shadow-2xl p-8 border border-border flex flex-col items-center text-center"
             >
               <div
-                className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${
-                  showConfirmModal.type === "archive"
-                    ? "bg-rose-500/10 text-rose-500"
-                    : "bg-primary/10 text-primary"
-                }`}
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${showConfirmModal.type === "archive" ? "bg-rose-500/10 text-rose-500" : "bg-primary/10 text-primary"}`}
               >
                 {showConfirmModal.type === "archive" ? (
                   <Trash2 size={32} />
@@ -631,11 +672,7 @@ export function EmployeeAnnouncements() {
                       handleArchive(showConfirmModal.id);
                     else handleAcknowledge(showConfirmModal.id);
                   }}
-                  className={`w-full py-4 rounded-2xl text-[14px] font-semibold uppercase tracking-wider shadow-xl transition-all active:scale-[0.98] ${
-                    showConfirmModal.type === "archive"
-                      ? "bg-rose-500 text-white shadow-rose-500/25"
-                      : "bg-primary text-white shadow-primary/25"
-                  }`}
+                  className={`w-full py-4 rounded-2xl text-[14px] font-semibold uppercase tracking-wider shadow-xl transition-all active:scale-[0.98] ${showConfirmModal.type === "archive" ? "bg-rose-500 text-white shadow-rose-500/25" : "bg-primary text-white shadow-primary/25"}`}
                 >
                   {showConfirmModal.type === "archive"
                     ? "Yes, Archive It"
@@ -648,14 +685,13 @@ export function EmployeeAnnouncements() {
                   Cancel
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
     </div>
   );
 }
-
 function AnnouncementCard({
   announcement,
   onView,
@@ -670,15 +706,17 @@ function AnnouncementCard({
   onArchive: () => void;
 }) {
   return (
-    <motion.div
+    <m.div
       layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`group bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl flex flex-col justify-between h-full relative overflow-hidden ${
-        !announcement.isRead
-          ? "border-primary/30 ring-1 ring-primary/5"
-          : "border-border"
-      }`}
+      initial={{
+        opacity: 0,
+        y: 10,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      className={`group bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl flex flex-col justify-between h-full relative overflow-hidden ${!announcement.isRead ? "border-primary/30 ring-1 ring-primary/5" : "border-border"}`}
     >
       {!announcement.isRead && (
         <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
@@ -741,11 +779,7 @@ function AnnouncementCard({
           )}
           {announcement.needsAcknowledgement && (
             <div
-              className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest border ${
-                announcement.isAcknowledged
-                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                  : "bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
-              }`}
+              className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest border ${announcement.isAcknowledged ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]"}`}
             >
               <CheckCircle size={12} />{" "}
               {announcement.isAcknowledged
@@ -785,10 +819,9 @@ function AnnouncementCard({
           </div>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }
-
 function AnnouncementDetailModal({
   announcement,
   onClose,
@@ -804,17 +837,35 @@ function AnnouncementDetailModal({
 }) {
   return (
     <div className="fixed inset-0 z-[4000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-background/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 30 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 30,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 30,
+        }}
         className="relative bg-card w-full max-w-[800px] rounded-[36px] shadow-2xl overflow-hidden flex flex-col border border-border"
       >
         <div className="p-8 border-b border-border flex items-start justify-between bg-white dark:bg-card">
@@ -855,7 +906,11 @@ function AnnouncementDetailModal({
                   <Calendar size={14} className="text-primary" />
                   {new Date(announcement.postedDate).toLocaleDateString(
                     "en-GB",
-                    { day: "2-digit", month: "long", year: "numeric" },
+                    {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    },
                   )}
                 </div>
               </div>
@@ -927,11 +982,7 @@ function AnnouncementDetailModal({
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6 p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/10">
             <div className="flex items-center gap-4">
               <div
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                  announcement.isAcknowledged
-                    ? "bg-emerald-500/20 text-emerald-600"
-                    : "bg-amber-500/20 text-amber-600"
-                }`}
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center ${announcement.isAcknowledged ? "bg-emerald-500/20 text-emerald-600" : "bg-amber-500/20 text-amber-600"}`}
               >
                 {announcement.isAcknowledged ? (
                   <CheckCircle size={24} />
@@ -1006,7 +1057,7 @@ function AnnouncementDetailModal({
             </button>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

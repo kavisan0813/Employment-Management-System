@@ -178,18 +178,12 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Onboarding",
         path: "/onboarding",
-        requiredPermission: [
-          P.ONBOARDING_FULL,
-          P.ONBOARDING_MANAGE,
-        ],
+        requiredPermission: [P.ONBOARDING_FULL, P.ONBOARDING_MANAGE],
       },
       {
         label: "Offboarding",
         path: "/offboarding",
-        requiredPermission: [
-          P.OFFBOARDING_FULL,
-          P.OFFBOARDING_MANAGE,
-        ],
+        requiredPermission: [P.OFFBOARDING_FULL, P.OFFBOARDING_MANAGE],
       },
     ],
   },
@@ -253,10 +247,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Documents",
         path: "/documents",
-        requiredPermission: [
-          P.DOCUMENTS_FULL,
-          P.DOCUMENTS_MANAGE,
-        ],
+        requiredPermission: [P.DOCUMENTS_FULL, P.DOCUMENTS_MANAGE],
       },
     ],
   },
@@ -269,11 +260,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Payroll",
         path: "/payroll",
-        requiredPermission: [
-          P.PAYROLL_FULL,
-          P.PAYROLL_VIEW,
-          P.PAYROLL_MANAGE,
-        ],
+        requiredPermission: [P.PAYROLL_FULL, P.PAYROLL_VIEW, P.PAYROLL_MANAGE],
       },
       {
         label: "Expenses",

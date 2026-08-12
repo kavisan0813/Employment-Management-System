@@ -66,7 +66,6 @@ const MOCK_MY_TEAM = [
     actionLabel: "Assign",
   },
 ];
-
 const MOCK_CATALOG = [
   {
     id: "c1",
@@ -123,7 +122,6 @@ const MOCK_CATALOG = [
     color: "from-amber-500 to-amber-700",
   },
 ];
-
 const MOCK_ASSIGNMENTS = [
   {
     id: "a1",
@@ -162,7 +160,6 @@ const MOCK_ASSIGNMENTS = [
     status: "Completed",
   },
 ];
-
 export function ManagerTeamTraining() {
   const [activeTab, setActiveTab] = useState<
     "My Team" | "Training Catalog" | "Assignments"
@@ -177,7 +174,6 @@ export function ManagerTeamTraining() {
   const [courseSearch, setCourseSearch] = useState("");
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
   const [priority, setPriority] = useState("Recommended");
-
   const toggleAssignee = (id: string) => {
     if (id === "all") {
       if (selectedAssignees.length === MOCK_MY_TEAM.length) {
@@ -193,7 +189,6 @@ export function ManagerTeamTraining() {
       setSelectedAssignees([...selectedAssignees, id]);
     }
   };
-
   const getStatusColor = (status: string) => {
     if (status.includes("overdue") || status === "Overdue")
       return "text-red-600 bg-red-50 border-red-100";
@@ -203,7 +198,6 @@ export function ManagerTeamTraining() {
       return "text-teal-600 bg-teal-50 border-teal-100";
     return "text-slate-600 bg-slate-50 border-slate-200";
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* PAGE HEADER */}
@@ -284,10 +278,7 @@ export function ManagerTeamTraining() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === tab
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"
-                }`}
+              className={`px-5 py-3 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === tab ? "text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-t-lg"}`}
             >
               {tab}
               {activeTab === tab && (
@@ -408,10 +399,7 @@ export function ManagerTeamTraining() {
                 <button
                   key={cat}
                   onClick={() => setCatalogFilter(cat)}
-                  className={`px-4 py-1.5 text-xs font-bold rounded-xl border transition-all ${catalogFilter === cat
-                    ? "bg-primary text-white border-primary shadow-sm"
-                    : "bg-background text-foreground border-border hover:bg-secondary"
-                    }`}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-xl border transition-all ${catalogFilter === cat ? "bg-primary text-white border-primary shadow-sm" : "bg-background text-foreground border-border hover:bg-secondary"}`}
                 >
                   {cat}
                 </button>
@@ -547,7 +535,9 @@ export function ManagerTeamTraining() {
                           <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
                             <div
                               className={`h-full rounded-full ${row.progress === 100 ? "bg-emerald-500" : "bg-primary"}`}
-                              style={{ width: `${row.progress}%` }}
+                              style={{
+                                width: `${row.progress}%`,
+                              }}
                             ></div>
                           </div>
                         </div>
@@ -655,10 +645,7 @@ export function ManagerTeamTraining() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => toggleAssignee("all")}
-                    className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${selectedAssignees.length === MOCK_MY_TEAM.length
-                      ? "bg-primary text-white border-primary"
-                      : "bg-secondary text-muted-foreground border-border hover:bg-neutral-200 dark:hover:bg-zinc-800"
-                      }`}
+                    className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${selectedAssignees.length === MOCK_MY_TEAM.length ? "bg-primary text-white border-primary" : "bg-secondary text-muted-foreground border-border hover:bg-neutral-200 dark:hover:bg-zinc-800"}`}
                   >
                     All Team
                   </button>

@@ -1,1 +1,3 @@
-export function Certifications() { return null; }
+export function Certifications() {
+  return null;
+}

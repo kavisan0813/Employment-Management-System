@@ -34,14 +34,12 @@ import {
 
 /* ─── Types ─────────────────────────────── */
 type ApprovalStatus = "Pending" | "Approved" | "Rejected";
-
 interface LeaveHistory {
   date: string;
   action: string;
   by: string;
   comment?: string;
 }
-
 interface LeaveRequest {
   id: string;
   employee: string;
@@ -98,14 +96,23 @@ const leaveData: LeaveRequest[] = [
     remarks: "Taking some time off for family vacation.",
     submissionDate: "2026-04-19T09:00:00Z",
     policyViolations: ["Critical Role Conflict"],
-    balance: { annual: 12, sick: 8, casual: 4, unpaid: 0 },
+    balance: {
+      annual: 12,
+      sick: 8,
+      casual: 4,
+      unpaid: 0,
+    },
     summary: {
       takenThisYear: 5,
       lastLeaveDate: "Jan 15, 2026",
       sickFrequency: "Low",
     },
     history: [
-      { date: "Apr 2, 09:00 AM", action: "Submitted", by: "Sneha Patel" },
+      {
+        date: "Apr 2, 09:00 AM",
+        action: "Submitted",
+        by: "Sneha Patel",
+      },
       {
         date: "Apr 3, 10:15 AM",
         action: "Manager Approved",
@@ -130,16 +137,33 @@ const leaveData: LeaveRequest[] = [
     remarks: "Not feeling well today.",
     submissionDate: "2026-04-08T08:00:00Z",
     attachmentCount: 1,
-    balance: { annual: 15, sick: 7, casual: 5, unpaid: 0 },
+    balance: {
+      annual: 15,
+      sick: 7,
+      casual: 5,
+      unpaid: 0,
+    },
     summary: {
       takenThisYear: 2,
       lastLeaveDate: "Mar 10, 2026",
       sickFrequency: "Medium",
     },
     history: [
-      { date: "Apr 8, 08:00 AM", action: "Submitted", by: "Ravi Kumar" },
-      { date: "Apr 8, 08:30 AM", action: "Manager Approved", by: "David Lee" },
-      { date: "Apr 8, 09:00 AM", action: "HR Approved", by: "Sarah Connor" },
+      {
+        date: "Apr 8, 08:00 AM",
+        action: "Submitted",
+        by: "Ravi Kumar",
+      },
+      {
+        date: "Apr 8, 08:30 AM",
+        action: "Manager Approved",
+        by: "David Lee",
+      },
+      {
+        date: "Apr 8, 09:00 AM",
+        action: "HR Approved",
+        by: "Sarah Connor",
+      },
     ],
   },
   {
@@ -158,14 +182,23 @@ const leaveData: LeaveRequest[] = [
     remarks: "Personal errands.",
     submissionDate: "2026-04-12T14:00:00Z",
     policyViolations: ["Late Request"],
-    balance: { annual: 10, sick: 10, casual: 2, unpaid: 1 },
+    balance: {
+      annual: 10,
+      sick: 10,
+      casual: 2,
+      unpaid: 1,
+    },
     summary: {
       takenThisYear: 8,
       lastLeaveDate: "Feb 20, 2026",
       sickFrequency: "Low",
     },
     history: [
-      { date: "Apr 12, 14:00 PM", action: "Submitted", by: "Meera Thomas" },
+      {
+        date: "Apr 12, 14:00 PM",
+        action: "Submitted",
+        by: "Meera Thomas",
+      },
     ],
   },
   {
@@ -183,16 +216,33 @@ const leaveData: LeaveRequest[] = [
     status: "Approved",
     remarks: "Pre-planned long vacation.",
     submissionDate: "2026-03-20T11:00:00Z",
-    balance: { annual: 20, sick: 10, casual: 5, unpaid: 0 },
-    summary: { takenThisYear: 0, lastLeaveDate: "None", sickFrequency: "None" },
+    balance: {
+      annual: 20,
+      sick: 10,
+      casual: 5,
+      unpaid: 0,
+    },
+    summary: {
+      takenThisYear: 0,
+      lastLeaveDate: "None",
+      sickFrequency: "None",
+    },
     history: [
-      { date: "Mar 20, 11:00 AM", action: "Submitted", by: "Vikram Singh" },
+      {
+        date: "Mar 20, 11:00 AM",
+        action: "Submitted",
+        by: "Vikram Singh",
+      },
       {
         date: "Mar 21, 10:00 AM",
         action: "Manager Approved",
         by: "Alice Wang",
       },
-      { date: "Mar 22, 15:00 PM", action: "HR Approved", by: "Sarah Connor" },
+      {
+        date: "Mar 22, 15:00 PM",
+        action: "HR Approved",
+        by: "Sarah Connor",
+      },
     ],
   },
   {
@@ -212,14 +262,23 @@ const leaveData: LeaveRequest[] = [
     remarks: "Sudden illness.",
     submissionDate: "2026-04-09T07:30:00Z",
     attachmentCount: 1,
-    balance: { annual: 14, sick: 5, casual: 3, unpaid: 0 },
+    balance: {
+      annual: 14,
+      sick: 5,
+      casual: 3,
+      unpaid: 0,
+    },
     summary: {
       takenThisYear: 4,
       lastLeaveDate: "Mar 15, 2026",
       sickFrequency: "High",
     },
     history: [
-      { date: "Apr 9, 07:30 AM", action: "Submitted", by: "Rahul Sharma" },
+      {
+        date: "Apr 9, 07:30 AM",
+        action: "Submitted",
+        by: "Rahul Sharma",
+      },
       {
         date: "Apr 9, 08:00 AM",
         action: "Manager Rejected",
@@ -244,15 +303,28 @@ const leaveData: LeaveRequest[] = [
     remarks: "Attending a wedding.",
     submissionDate: "2026-04-14T09:30:00Z",
     policyViolations: ["Insufficient Balance"],
-    balance: { annual: 2, sick: 10, casual: 5, unpaid: 0 },
+    balance: {
+      annual: 2,
+      sick: 10,
+      casual: 5,
+      unpaid: 0,
+    },
     summary: {
       takenThisYear: 18,
       lastLeaveDate: "Mar 28, 2026",
       sickFrequency: "Low",
     },
     history: [
-      { date: "Apr 14, 09:30 AM", action: "Submitted", by: "Anita Desai" },
-      { date: "Apr 14, 11:00 AM", action: "Manager Approved", by: "Chloe Kim" },
+      {
+        date: "Apr 14, 09:30 AM",
+        action: "Submitted",
+        by: "Anita Desai",
+      },
+      {
+        date: "Apr 14, 11:00 AM",
+        action: "Manager Approved",
+        by: "Chloe Kim",
+      },
     ],
   },
 ];
@@ -260,7 +332,12 @@ const leaveData: LeaveRequest[] = [
 /* ─── Status Config ─────────────────────── */
 const STATUS_CONFIG: Record<
   ApprovalStatus,
-  { bg: string; color: string; icon: React.ElementType; label: string }
+  {
+    bg: string;
+    color: string;
+    icon: React.ElementType;
+    label: string;
+  }
 > = {
   Pending: {
     bg: "rgba(245, 158, 11, 0.1)",
@@ -284,10 +361,26 @@ const STATUS_CONFIG: Record<
 
 /* ─── Leave Analytics Mock Data ─────────── */
 const leaveDistribution = [
-  { type: "Annual Leave", value: 45, color: "#059669" },
-  { type: "Sick Leave", value: 25, color: "#14B8A6" },
-  { type: "Casual Leave", value: 20, color: "#F59E0B" },
-  { type: "Maternity", value: 10, color: "#A78BFA" },
+  {
+    type: "Annual Leave",
+    value: 45,
+    color: "#059669",
+  },
+  {
+    type: "Sick Leave",
+    value: 25,
+    color: "#14B8A6",
+  },
+  {
+    type: "Casual Leave",
+    value: 20,
+    color: "#F59E0B",
+  },
+  {
+    type: "Maternity",
+    value: 10,
+    color: "#A78BFA",
+  },
 ];
 
 /* ─── Components ─────────────────────────── */
@@ -304,14 +397,16 @@ function StatusBadge({
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full font-semibold ${small ? "px-2 py-0.5 text-[11px]" : "px-2.5 py-1 text-xs"}`}
-      style={{ backgroundColor: sc.bg, color: sc.color }}
+      style={{
+        backgroundColor: sc.bg,
+        color: sc.color,
+      }}
     >
       <Icon size={small ? 10 : 12} />
       {sc.label}
     </span>
   );
 }
-
 function DetailDrawer({
   request,
   onClose,
@@ -325,15 +420,14 @@ function DetailDrawer({
 }) {
   const [remarks, setRemarks] = useState("");
   const [showViolationDetails, setShowViolationDetails] = useState(false);
-
   const stage = request.managerApproval === "Pending" ? "manager" : "hr";
-
   const canAct = request.status === "Pending";
-
   return (
     <div
       className="fixed inset-0 z-[2000] flex justify-end"
-      style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
+      style={{
+        backgroundColor: "rgba(0,0,0,0.4)",
+      }}
       onClick={onClose}
     >
       <div
@@ -346,12 +440,16 @@ function DetailDrawer({
       >
         <div
           className="p-6 border-b flex items-center justify-between"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           <div className="flex items-center gap-2">
             <h3
               className="text-lg font-bold"
-              style={{ color: "var(--foreground)" }}
+              style={{
+                color: "var(--foreground)",
+              }}
             >
               Leave Detail
             </h3>
@@ -364,7 +462,9 @@ function DetailDrawer({
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
-            style={{ color: "var(--muted-foreground)" }}
+            style={{
+              color: "var(--muted-foreground)",
+            }}
           >
             <X size={18} />
           </button>
@@ -375,7 +475,9 @@ function DetailDrawer({
           <div className="flex items-center gap-4">
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center shadow-inner"
-              style={{ background: request.avatarColor }}
+              style={{
+                background: request.avatarColor,
+              }}
             >
               <span className="text-white font-bold text-xl">
                 {request.initials}
@@ -385,7 +487,9 @@ function DetailDrawer({
               <div className="flex items-center gap-2">
                 <h2
                   className="text-xl font-bold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   {request.employee}
                 </h2>
@@ -398,7 +502,9 @@ function DetailDrawer({
               </div>
               <p
                 className="font-medium"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 {request.department} Dept · {request.type}
               </p>
@@ -408,12 +514,16 @@ function DetailDrawer({
           {/* SLA / Aging Info */}
           <div
             className="flex items-center gap-2 p-3 rounded-xl bg-neutral-50 dark:bg-zinc-800/50 border border-dashed"
-            style={{ borderColor: "var(--border)" }}
+            style={{
+              borderColor: "var(--border)",
+            }}
           >
             <Clock size={16} className="text-emerald-600" />
             <p
               className="text-xs font-semibold"
-              style={{ color: "var(--muted-foreground)" }}
+              style={{
+                color: "var(--muted-foreground)",
+              }}
             >
               Requested <span className="text-foreground">2 days ago</span>
               {canAct && (
@@ -470,7 +580,9 @@ function DetailDrawer({
           <div>
             <h4
               className="text-sm font-bold mb-3 flex items-center gap-2"
-              style={{ color: "var(--foreground)" }}
+              style={{
+                color: "var(--foreground)",
+              }}
             >
               <History size={16} className="text-emerald-600" /> Current
               Entitlements
@@ -505,7 +617,9 @@ function DetailDrawer({
                 <div
                   key={b.label}
                   className="p-3 rounded-xl border bg-card"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                  }}
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[11px] font-bold uppercase text-muted-foreground">
@@ -513,7 +627,9 @@ function DetailDrawer({
                     </span>
                     <span
                       className="text-xs font-bold"
-                      style={{ color: b.color }}
+                      style={{
+                        color: b.color,
+                      }}
                     >
                       {b.value}
                       {b.total > 0 ? `/${b.total}` : ""}
@@ -539,7 +655,9 @@ function DetailDrawer({
             <div>
               <h4
                 className="text-sm font-bold mb-3"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 Leave Window
               </h4>
@@ -563,7 +681,9 @@ function DetailDrawer({
             <div>
               <h4
                 className="text-sm font-bold mb-3"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 Employee Summary
               </h4>
@@ -596,7 +716,9 @@ function DetailDrawer({
           <div>
             <h4
               className="text-sm font-bold mb-3 flex items-center gap-2"
-              style={{ color: "var(--foreground)" }}
+              style={{
+                color: "var(--foreground)",
+              }}
             >
               <Paperclip size={16} className="text-emerald-600" /> Supporting
               Documents
@@ -604,7 +726,9 @@ function DetailDrawer({
             {request.attachmentCount && request.attachmentCount > 0 ? (
               <div
                 className="p-3 rounded-xl border border-dashed flex items-center justify-between bg-emerald-50/30"
-                style={{ borderColor: "#10B981" }}
+                style={{
+                  borderColor: "#10B981",
+                }}
               >
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-white shadow-sm">
@@ -624,7 +748,9 @@ function DetailDrawer({
             ) : (
               <div
                 className="p-4 rounded-xl border border-dashed text-center"
-                style={{ borderColor: "var(--border)" }}
+                style={{
+                  borderColor: "var(--border)",
+                }}
               >
                 <p className="text-xs text-muted-foreground">
                   No attachments provided.
@@ -638,7 +764,9 @@ function DetailDrawer({
             <div>
               <h4
                 className="text-sm font-bold mb-2 flex items-center gap-2"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 <MessageSquare size={16} className="text-emerald-600" />{" "}
                 Employee Remarks
@@ -659,7 +787,9 @@ function DetailDrawer({
               <div>
                 <h4
                   className="text-sm font-bold mb-2"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Approval Remarks
                 </h4>
@@ -685,13 +815,17 @@ function DetailDrawer({
           <div>
             <h4
               className="text-sm font-bold mb-4"
-              style={{ color: "var(--foreground)" }}
+              style={{
+                color: "var(--foreground)",
+              }}
             >
               Audit Trail
             </h4>
             <div
               className="relative pl-4 border-l-2 space-y-6"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               {request.history.map((hist) => (
                 <div key={hist.date} className="relative">
@@ -705,18 +839,24 @@ function DetailDrawer({
                   <div className="-mt-1">
                     <p
                       className="text-xs font-semibold"
-                      style={{ color: "var(--muted-foreground)" }}
+                      style={{
+                        color: "var(--muted-foreground)",
+                      }}
                     >
                       {hist.date}
                     </p>
                     <p
                       className="text-sm font-bold mt-0.5"
-                      style={{ color: "var(--foreground)" }}
+                      style={{
+                        color: "var(--foreground)",
+                      }}
                     >
                       {hist.action}{" "}
                       <span
                         className="font-normal text-xs ml-1"
-                        style={{ color: "var(--muted-foreground)" }}
+                        style={{
+                          color: "var(--muted-foreground)",
+                        }}
                       >
                         by {hist.by}
                       </span>
@@ -724,7 +864,9 @@ function DetailDrawer({
                     {hist.comment && (
                       <p
                         className="text-xs mt-1 italic p-2 rounded bg-neutral-50 dark:bg-zinc-800"
-                        style={{ color: "var(--muted-foreground)" }}
+                        style={{
+                          color: "var(--muted-foreground)",
+                        }}
                       >
                         "{hist.comment}"
                       </p>
@@ -754,7 +896,9 @@ function DetailDrawer({
                 onReject(request.id, stage, remarks);
               }}
               className="flex-1 py-3 rounded-xl text-sm font-bold transition-all hover:bg-red-50 text-red-600 border border-red-200 shadow-sm"
-              style={{ backgroundColor: "white" }}
+              style={{
+                backgroundColor: "white",
+              }}
             >
               Reject Request
             </button>
@@ -773,33 +917,26 @@ function DetailDrawer({
     </div>
   );
 }
-
 export function LeaveManagement() {
   const { user } = useAuth();
   const [requests, setRequests] = useState<LeaveRequest[]>(leaveData);
-
   const [search, setSearch] = useState("");
   const [currentMonth, setCurrentMonth] = useState(3); // April
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(
     null,
   );
-
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState<"CSV" | "Excel" | "PDF">(
     "Excel",
   );
-
   const [clickedDateStr, setClickedDateStr] = useState<string | null>(null);
-
   const getLeavesForDate = (dateStr: string) => {
     const date = new Date(dateStr);
     const targetDay = date.getDate();
     const targetYear = date.getFullYear();
-
     return requests.filter((r) => {
       if (r.status === "Rejected") return false;
-
       const parseMockDate = (str: string) => {
         const parts = str.trim().split(/\s+/);
         if (parts.length < 2) return null;
@@ -822,12 +959,9 @@ export function LeaveManagement() {
         if (m === undefined || isNaN(d)) return null;
         return new Date(2026, m, d);
       };
-
       const fromDateObj = parseMockDate(r.from);
       const toDateObj = parseMockDate(r.to);
-
       if (!fromDateObj || !toDateObj) return false;
-
       const checkDate = new Date(targetYear, date.getMonth(), targetDay);
       return checkDate >= fromDateObj && checkDate <= toDateObj;
     });
@@ -846,24 +980,23 @@ export function LeaveManagement() {
 
   // Bulk Action States
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
   if (user?.role === "Employee") {
     return <EmployeeLeaves />;
   }
-
   const handleExport = () => {
     const dataToExport =
       selectedIds.length > 0
-        ? (() => { const selectedIdsSet = new Set(selectedIds); return requests.filter((r) => selectedIdsSet.has(r.id)); })()
+        ? (() => {
+            const selectedIdsSet = new Set(selectedIds);
+            return requests.filter((r) => selectedIdsSet.has(r.id));
+          })()
         : requests;
-
     if (exportFormat === "PDF") {
       const printWindow = window.open("", "_blank");
       if (printWindow) {
         const rowsHtml = dataToExport
           .map(
-            (r) =>
-              `<tr>
+            (r) => `<tr>
                 <td style="padding: 10px; border: 1px solid #e2e8f0;"><b>${r.employee}</b></td>
                 <td style="padding: 10px; border: 1px solid #e2e8f0;">${r.department}</td>
                 <td style="padding: 10px; border: 1px solid #e2e8f0;">${r.type}</td>
@@ -876,26 +1009,13 @@ export function LeaveManagement() {
                     font-size: 11px;
                     font-weight: 700;
                     text-transform: uppercase;
-                    background-color: ${
-                      r.status === "Approved"
-                        ? "#dcfce7"
-                        : r.status === "Rejected"
-                          ? "#ffeeeb"
-                          : "#fef3c7"
-                    };
-                    color: ${
-                      r.status === "Approved"
-                        ? "#15803d"
-                        : r.status === "Rejected"
-                          ? "#b91c1c"
-                          : "#b45309"
-                    };
+                    background-color: ${r.status === "Approved" ? "#dcfce7" : r.status === "Rejected" ? "#ffeeeb" : "#fef3c7"};
+                    color: ${r.status === "Approved" ? "#15803d" : r.status === "Rejected" ? "#b91c1c" : "#b45309"};
                   ">${r.status}</span>
                 </td>
               </tr>`,
           )
           .join("");
-
         printWindow.document.write(
           DOMPurify.sanitize(
             `
@@ -1011,7 +1131,6 @@ export function LeaveManagement() {
       setSelectedIds([]);
       return;
     }
-
     const content =
       "Employee,Department,Type,From,To,Days,Status\n" +
       dataToExport
@@ -1020,7 +1139,9 @@ export function LeaveManagement() {
             `${r.employee},${r.department},${r.type},${r.from},${r.to},${r.days},${r.status}`,
         )
         .join("\n");
-    const blob = new Blob([content], { type: "text/csv" });
+    const blob = new Blob([content], {
+      type: "text/csv",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -1032,10 +1153,10 @@ export function LeaveManagement() {
     setIsExportOpen(false);
     setSelectedIds([]);
   };
-
   const filtered = requests.filter((r) => {
     const matchSearch =
       search === "" ||
+
       r.employee.toLowerCase().includes(search.toLowerCase()) ||
       r.department.toLowerCase().includes(search.toLowerCase());
     const matchDept =
@@ -1049,7 +1170,6 @@ export function LeaveManagement() {
       (filters.approvalStage === "HR Pending" && r.hrApproval === "Pending");
     const matchConflict = !filters.conflictOnly || !!r.policyViolations?.length;
     const matchCritical = !filters.criticalOnly || r.criticalRole;
-
     return (
       matchSearch &&
       matchDept &&
@@ -1059,7 +1179,6 @@ export function LeaveManagement() {
       matchCritical
     );
   });
-
   const handleApprove = (
     id: string,
     stage: "manager" | "hr",
@@ -1077,11 +1196,9 @@ export function LeaveManagement() {
             comment: remarks,
           },
         ];
-
         let newManager = r.managerApproval;
         let newHr = r.hrApproval;
         let newStatus = r.status;
-
         if (stage === "manager") {
           newManager = "Approved";
           if (newHr === "Approved") newStatus = "Approved";
@@ -1100,7 +1217,6 @@ export function LeaveManagement() {
     );
     setSelectedRequest(null);
   };
-
   const handleReject = (
     id: string,
     stage: "manager" | "hr",
@@ -1129,7 +1245,6 @@ export function LeaveManagement() {
     );
     setSelectedRequest(null);
   };
-
   const handleBulkAction = (action: "Approve" | "Reject") => {
     if (
       confirm(
@@ -1138,6 +1253,12 @@ export function LeaveManagement() {
     ) {
       setRequests((prev) =>
         prev.map((r) => {
+
+
+
+
+
+
           if (!selectedIds.includes(r.id) || r.status !== "Pending") return r;
           return {
             ...r,
@@ -1158,7 +1279,6 @@ export function LeaveManagement() {
       setSelectedIds([]);
     }
   };
-
   const toggleSelectAll = () => {
     if (selectedIds.length === filtered.length) {
       setSelectedIds([]);
@@ -1166,37 +1286,42 @@ export function LeaveManagement() {
       setSelectedIds(filtered.map((r) => r.id));
     }
   };
-
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   };
-
   const totalReqs = requests.length + 150 - leaveData.length;
-
   const pendingReqs =
     requests.filter((r) => r.status === "Pending").length +
     20 -
     leaveData.filter((r) => r.status === "Pending").length;
-
   const overdueApprovals =
     requests.filter(
       (r) =>
         r.status === "Pending" &&
         new Date().getTime() - new Date(r.submissionDate).getTime() > 86400000,
     ).length + 5;
-
   const getAgingLabel = (dateStr: string) => {
     const hours = Math.floor(
       (new Date().getTime() - new Date(dateStr).getTime()) / 3600000,
     );
-    if (hours < 1) return { label: "Just now", overdue: false };
-    if (hours < 24) return { label: `${hours}h`, overdue: hours > 12 };
+    if (hours < 1)
+      return {
+        label: "Just now",
+        overdue: false,
+      };
+    if (hours < 24)
+      return {
+        label: `${hours}h`,
+        overdue: hours > 12,
+      };
     const days = Math.floor(hours / 24);
-    return { label: `${days}d`, overdue: days >= 1 };
+    return {
+      label: `${days}d`,
+      overdue: days >= 1,
+    };
   };
-
   const dynamicStats = [
     {
       label: "Total Requests",
@@ -1227,7 +1352,6 @@ export function LeaveManagement() {
       icon: Users,
     },
   ];
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* Page Header */}
@@ -1235,13 +1359,17 @@ export function LeaveManagement() {
         <div>
           <h2
             className="text-2xl font-extrabold tracking-tight"
-            style={{ color: "var(--foreground)" }}
+            style={{
+              color: "var(--foreground)",
+            }}
           >
             Enterprise Leave Module
           </h2>
           <p
             className="text-sm font-medium mt-1"
-            style={{ color: "var(--muted-foreground)" }}
+            style={{
+              color: "var(--muted-foreground)",
+            }}
           >
             Comprehensive absence management, workflow approvals, and analytics.
           </p>
@@ -1250,7 +1378,10 @@ export function LeaveManagement() {
           <button
             onClick={() => setIsExportOpen(true)}
             className="px-4 py-2 text-sm font-semibold rounded-xl border border-dashed transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800"
-            style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+            style={{
+              borderColor: "var(--border)",
+              color: "var(--foreground)",
+            }}
           >
             Export Report
           </button>
@@ -1271,11 +1402,15 @@ export function LeaveManagement() {
       {/* Smart Insights Bar */}
       <div
         className="flex items-center gap-6 py-3 px-4 mb-6 rounded-xl border bg-neutral-50 dark:bg-zinc-800/30 overflow-x-auto whitespace-nowrap scrollbar-hide"
-        style={{ borderColor: "var(--border)" }}
+        style={{
+          borderColor: "var(--border)",
+        }}
       >
         <div
           className="flex items-center gap-2 border-r pr-6"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           <Activity size={14} className="text-emerald-600" />
           <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
@@ -1307,7 +1442,9 @@ export function LeaveManagement() {
       {/* Smart Warning Banner (Existing, kept for consistency) */}
       <div
         className="mb-6 rounded-xl flex items-center justify-between p-4 px-5 shadow-sm border border-orange-200"
-        style={{ backgroundColor: "#FFFBEB" }}
+        style={{
+          backgroundColor: "#FFFBEB",
+        }}
       >
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full flex items-center justify-center bg-orange-100">
@@ -1342,26 +1479,34 @@ export function LeaveManagement() {
             <div
               key={card.label}
               className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               <div className="flex items-start justify-between">
                 <div>
                   <p
                     className="text-xs font-bold uppercase tracking-wider mb-2"
-                    style={{ color: "var(--muted-foreground)" }}
+                    style={{
+                      color: "var(--muted-foreground)",
+                    }}
                   >
                     {card.label}
                   </p>
                   <p
                     className="text-3xl font-extrabold tracking-tight"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     {card.value}
                   </p>
                 </div>
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ backgroundColor: card.iconBg }}
+                  style={{
+                    backgroundColor: card.iconBg,
+                  }}
                 >
                   <Icon size={20} color={card.iconColor} />
                 </div>
@@ -1377,18 +1522,24 @@ export function LeaveManagement() {
           {/* Main Table Card */}
           <div
             className="rounded-2xl border shadow-sm flex flex-col bg-card"
-            style={{ borderColor: "var(--border)" }}
+            style={{
+              borderColor: "var(--border)",
+            }}
           >
             <div
               className="px-6 py-5 border-b"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 color="var(--primary)" size={20} />
                   <h3
                     className="text-lg font-bold"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     Leave Workflow Approvals
                   </h3>
@@ -1405,7 +1556,9 @@ export function LeaveManagement() {
                     <input
                       className="bg-transparent text-sm w-32 outline-none"
                       placeholder="Search..."
-                      style={{ color: "var(--foreground)" }}
+                      style={{
+                        color: "var(--foreground)",
+                      }}
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />
@@ -1432,7 +1585,9 @@ export function LeaveManagement() {
               {isFilterExpanded && (
                 <div
                   className="mt-4 pt-4 border-t animate-in fade-in slide-in-from-top-2 duration-200"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                  }}
                 >
                   <div className="grid grid-cols-3 gap-4 mb-4">
                     <div className="space-y-1.5">
@@ -1648,7 +1803,9 @@ export function LeaveManagement() {
                 </thead>
                 <tbody
                   className="divide-y"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                  }}
                 >
                   {filtered.length === 0 ? (
                     <tr>
@@ -1666,7 +1823,6 @@ export function LeaveManagement() {
                     filtered.map((req) => {
                       const isSelected = selectedIds.includes(req.id);
                       const aging = getAgingLabel(req.submissionDate);
-
                       return (
                         <tr
                           key={req.id}
@@ -1690,7 +1846,9 @@ export function LeaveManagement() {
                             <div className="flex items-center gap-3">
                               <div
                                 className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-sm"
-                                style={{ background: req.avatarColor }}
+                                style={{
+                                  background: req.avatarColor,
+                                }}
                               >
                                 <span className="text-white text-xs font-extrabold">
                                   {req.initials}
@@ -1699,13 +1857,17 @@ export function LeaveManagement() {
                               <div>
                                 <p
                                   className="text-sm font-bold truncate max-w-[120px]"
-                                  style={{ color: "var(--foreground)" }}
+                                  style={{
+                                    color: "var(--foreground)",
+                                  }}
                                 >
                                   {req.employee}
                                 </p>
                                 <p
                                   className="text-xs font-medium mt-0.5 truncate max-w-[120px]"
-                                  style={{ color: "var(--muted-foreground)" }}
+                                  style={{
+                                    color: "var(--muted-foreground)",
+                                  }}
                                 >
                                   {req.department}
                                 </p>
@@ -1715,14 +1877,18 @@ export function LeaveManagement() {
                           <td className="px-3 py-3">
                             <p
                               className="text-sm font-semibold"
-                              style={{ color: "var(--foreground)" }}
+                              style={{
+                                color: "var(--foreground)",
+                              }}
                             >
                               {req.type}
                             </p>
                             <div className="flex flex-wrap items-center gap-1.5 mt-1">
                               <span
                                 className="text-xs font-medium px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-zinc-800"
-                                style={{ color: "var(--muted-foreground)" }}
+                                style={{
+                                  color: "var(--muted-foreground)",
+                                }}
                               >
                                 {req.days}d
                               </span>
@@ -1748,7 +1914,9 @@ export function LeaveManagement() {
                           <td className="px-3 py-3">
                             <p
                               className="text-sm font-medium"
-                              style={{ color: "var(--foreground)" }}
+                              style={{
+                                color: "var(--foreground)",
+                              }}
                             >
                               {req.from} - {req.to}
                             </p>
@@ -1790,7 +1958,9 @@ export function LeaveManagement() {
                             >
                               <MoreVertical
                                 size={16}
-                                style={{ color: "var(--muted-foreground)" }}
+                                style={{
+                                  color: "var(--muted-foreground)",
+                                }}
                               />
                             </button>
                           </td>
@@ -1810,14 +1980,19 @@ export function LeaveManagement() {
             >
               <p
                 className="text-xs font-semibold"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 Showing {filtered.length} requests
               </p>
               <div className="flex gap-1">
                 <button
                   className="px-2.5 py-1 text-xs font-bold rounded"
-                  style={{ backgroundColor: "var(--primary)", color: "white" }}
+                  style={{
+                    backgroundColor: "var(--primary)",
+                    color: "white",
+                  }}
                 >
                   1
                 </button>
@@ -1832,28 +2007,42 @@ export function LeaveManagement() {
           <div className="grid grid-cols-2 gap-6">
             <div
               className="rounded-2xl border p-5 bg-card"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3
                   className="text-sm font-bold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Leave Distribution
                 </h3>
                 <BarChart2
                   size={16}
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 />
               </div>
               <div className="space-y-4">
                 {leaveDistribution.map((dist) => (
                   <div key={dist.type}>
                     <div className="flex justify-between text-xs font-semibold mb-1.5">
-                      <span style={{ color: "var(--foreground)" }}>
+                      <span
+                        style={{
+                          color: "var(--foreground)",
+                        }}
+                      >
                         {dist.type}
                       </span>
-                      <span style={{ color: "var(--muted-foreground)" }}>
+                      <span
+                        style={{
+                          color: "var(--muted-foreground)",
+                        }}
+                      >
                         {dist.value}%
                       </span>
                     </div>
@@ -1873,18 +2062,24 @@ export function LeaveManagement() {
 
             <div
               className="rounded-2xl border p-5 bg-card"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3
                   className="text-sm font-bold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Team Availability Trend
                 </h3>
                 <Activity
                   size={16}
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 />
               </div>
               <div className="h-32 flex items-end gap-2 mt-4 px-2">
@@ -1892,7 +2087,9 @@ export function LeaveManagement() {
                   <div
                     key={val}
                     className="flex-1 rounded-t-sm flex flex-col justify-end"
-                    style={{ height: "100%" }}
+                    style={{
+                      height: "100%",
+                    }}
                   >
                     <div
                       className="w-full rounded-t-sm transition-all hover:opacity-80"
@@ -1924,12 +2121,16 @@ export function LeaveManagement() {
           {/* Team Coverage Widget */}
           <div
             className="rounded-2xl border p-5 shadow-sm bg-card"
-            style={{ borderColor: "var(--border)" }}
+            style={{
+              borderColor: "var(--border)",
+            }}
           >
             <div className="flex items-center justify-between mb-4">
               <h3
                 className="text-base font-bold"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 Team Coverage
               </h3>
@@ -1950,7 +2151,9 @@ export function LeaveManagement() {
               <div className="grid grid-cols-2 gap-3">
                 <div
                   className="p-2 rounded-xl bg-neutral-50 dark:bg-zinc-800 border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                  }}
                 >
                   <p className="text-xs font-bold">24/28</p>
                   <p className="text-[9px] font-medium text-muted-foreground">
@@ -1959,7 +2162,9 @@ export function LeaveManagement() {
                 </div>
                 <div
                   className="p-2 rounded-xl bg-neutral-50 dark:bg-zinc-800 border"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                  }}
                 >
                   <p className="text-xs font-bold text-emerald-600">4</p>
                   <p className="text-[9px] font-medium text-muted-foreground">
@@ -1975,7 +2180,9 @@ export function LeaveManagement() {
                 <div className="h-1.5 w-full bg-neutral-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-emerald-500 rounded-full"
-                    style={{ width: "85%" }}
+                    style={{
+                      width: "85%",
+                    }}
                   />
                 </div>
               </div>
@@ -1985,14 +2192,18 @@ export function LeaveManagement() {
           {/* Team Leave Calendar */}
           <div
             className="rounded-2xl border p-4 shadow-sm bg-card"
-            style={{ borderColor: "var(--border)" }}
+            style={{
+              borderColor: "var(--border)",
+            }}
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <CalendarDays size={18} className="text-emerald-600" />
                 <h3
                   className="text-base font-bold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Team Calendar
                 </h3>
@@ -2000,7 +2211,9 @@ export function LeaveManagement() {
               <div className="flex items-center gap-1">
                 <button
                   className="p-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                   onClick={() => setCurrentMonth((m) => Math.max(0, m - 1))}
                 >
                   <ChevronLeft size={16} />
@@ -2032,7 +2245,9 @@ export function LeaveManagement() {
                 </span>
                 <button
                   className="p-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                   onClick={() => setCurrentMonth((m) => Math.min(11, m + 1))}
                 >
                   <ChevronRight size={16} />
@@ -2045,7 +2260,9 @@ export function LeaveManagement() {
                 <div
                   key={d}
                   className="text-[11px] font-bold uppercase"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   {d}
                 </div>
@@ -2066,18 +2283,20 @@ export function LeaveManagement() {
                   "Sick Leave": "#14B8A6",
                   "Casual Leave": "#F59E0B",
                 };
-
                 return (
                   <>
-                    {Array.from({ length: startOffset }).map((_, i) => (
+                    {Array.from({
+                      length: startOffset,
+                    }).map((_, i) => (
                       <div key={`empty-${i}`} />
                     ))}
-                    {Array.from({ length: daysInMonth }).map((_, i) => {
+                    {Array.from({
+                      length: daysInMonth,
+                    }).map((_, i) => {
                       const day = i + 1;
                       const isToday = day === 14 && currentMonth === 3;
                       const dStr = `2026-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
                       const activeLeaves = getLeavesForDate(dStr);
-
                       return (
                         <div
                           key={day}
@@ -2128,35 +2347,49 @@ export function LeaveManagement() {
 
             <div
               className="mt-5 border-t pt-4 flex flex-wrap gap-3"
-              style={{ borderColor: "var(--border)" }}
+              style={{
+                borderColor: "var(--border)",
+              }}
             >
               <div
                 className="flex items-center gap-1.5 text-xs font-semibold"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 <div
                   className="w-2.5 h-2.5 rounded-full"
-                  style={{ backgroundColor: "#059669" }}
+                  style={{
+                    backgroundColor: "#059669",
+                  }}
                 />{" "}
                 Annual
               </div>
               <div
                 className="flex items-center gap-1.5 text-xs font-semibold"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 <div
                   className="w-2.5 h-2.5 rounded-full"
-                  style={{ backgroundColor: "#14B8A6" }}
+                  style={{
+                    backgroundColor: "#14B8A6",
+                  }}
                 />{" "}
                 Sick
               </div>
               <div
                 className="flex items-center gap-1.5 text-xs font-semibold"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 <div
                   className="w-2.5 h-2.5 rounded-full"
-                  style={{ backgroundColor: "#F59E0B" }}
+                  style={{
+                    backgroundColor: "#F59E0B",
+                  }}
                 />{" "}
                 Casual
               </div>
@@ -2166,12 +2399,16 @@ export function LeaveManagement() {
           {/* Pending Approvals Widget */}
           <div
             className="rounded-2xl border p-5 shadow-sm bg-card"
-            style={{ borderColor: "var(--border)" }}
+            style={{
+              borderColor: "var(--border)",
+            }}
           >
             <div className="flex items-center justify-between mb-4">
               <h3
                 className="text-base font-bold"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 Quick Actions
               </h3>
@@ -2195,7 +2432,9 @@ export function LeaveManagement() {
                   >
                     <div
                       className="w-9 h-9 rounded-full shrink-0 flex items-center justify-center text-xs font-bold text-white shadow-sm"
-                      style={{ background: req.avatarColor }}
+                      style={{
+                        background: req.avatarColor,
+                      }}
                     >
                       {req.initials}
                     </div>
@@ -2203,7 +2442,9 @@ export function LeaveManagement() {
                       <div className="flex justify-between items-start">
                         <p
                           className="text-sm font-bold truncate group-hover:text-emerald-600 transition-colors"
-                          style={{ color: "var(--foreground)" }}
+                          style={{
+                            color: "var(--foreground)",
+                          }}
                         >
                           {req.employee}
                         </p>
@@ -2249,7 +2490,9 @@ export function LeaveManagement() {
       {isNewRequestOpen && (
         <div
           className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
           onClick={() => setIsNewRequestOpen(false)}
         >
           <div
@@ -2271,7 +2514,9 @@ export function LeaveManagement() {
                 <UserPlus size={20} className="text-emerald-600" />
                 <h3
                   className="text-lg font-bold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   New Leave Request
                 </h3>
@@ -2279,7 +2524,9 @@ export function LeaveManagement() {
               <button
                 onClick={() => setIsNewRequestOpen(false)}
                 className="p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 <X size={18} />
               </button>
@@ -2334,7 +2581,9 @@ export function LeaveManagement() {
                 <div>
                   <label
                     className="block text-sm font-semibold mb-1.5"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     Select Employee
                   </label>
@@ -2353,7 +2602,9 @@ export function LeaveManagement() {
                 <div>
                   <label
                     className="block text-sm font-semibold mb-1.5"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     Leave Type
                   </label>
@@ -2375,7 +2626,9 @@ export function LeaveManagement() {
                 <div>
                   <label
                     className="block text-sm font-semibold mb-1.5"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     From Date
                   </label>
@@ -2391,7 +2644,9 @@ export function LeaveManagement() {
                 <div>
                   <label
                     className="block text-sm font-semibold mb-1.5"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     To Date
                   </label>
@@ -2409,7 +2664,9 @@ export function LeaveManagement() {
               <div>
                 <label
                   className="block text-sm font-semibold mb-1.5"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Remarks (Audit Log)
                 </label>
@@ -2427,13 +2684,17 @@ export function LeaveManagement() {
               <div>
                 <label
                   className="block text-sm font-semibold mb-1.5"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Attachments (Optional)
                 </label>
                 <div
                   className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-xl transition-colors hover:bg-neutral-50 dark:hover:bg-zinc-800/50"
-                  style={{ borderColor: "var(--border)" }}
+                  style={{
+                    borderColor: "var(--border)",
+                  }}
                 >
                   <div className="space-y-1 text-center">
                     <Paperclip className="mx-auto h-10 w-10 text-muted-foreground" />
@@ -2460,7 +2721,9 @@ export function LeaveManagement() {
               <button
                 onClick={() => setIsNewRequestOpen(false)}
                 className="px-4 py-2 rounded-xl text-sm font-bold transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 Cancel
               </button>
@@ -2482,7 +2745,9 @@ export function LeaveManagement() {
       {isExportOpen && (
         <div
           className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
           onClick={() => setIsExportOpen(false)}
         >
           <div
@@ -2501,10 +2766,17 @@ export function LeaveManagement() {
               }}
             >
               <div className="flex items-center gap-2">
-                <Download size={18} style={{ color: "var(--primary)" }} />
+                <Download
+                  size={18}
+                  style={{
+                    color: "var(--primary)",
+                  }}
+                />
                 <h3
                   className="text-lg font-bold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Export Report
                 </h3>
@@ -2512,7 +2784,9 @@ export function LeaveManagement() {
               <button
                 onClick={() => setIsExportOpen(false)}
                 className="p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 <X size={18} />
               </button>
@@ -2521,7 +2795,9 @@ export function LeaveManagement() {
               <div>
                 <label
                   className="block text-sm font-semibold mb-2"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Export Format
                 </label>
@@ -2573,7 +2849,9 @@ export function LeaveManagement() {
               <div>
                 <label
                   className="block text-sm font-semibold mb-2"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Date Range
                 </label>
@@ -2599,7 +2877,9 @@ export function LeaveManagement() {
                 <label
                   htmlFor="include-rejected"
                   className="text-sm font-medium cursor-pointer"
-                  style={{ color: "var(--muted-foreground)" }}
+                  style={{
+                    color: "var(--muted-foreground)",
+                  }}
                 >
                   Include rejected requests
                 </label>
@@ -2615,7 +2895,9 @@ export function LeaveManagement() {
               <button
                 onClick={() => setIsExportOpen(false)}
                 className="px-4 py-2 rounded-xl text-sm font-bold transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 Cancel
               </button>
@@ -2642,7 +2924,6 @@ export function LeaveManagement() {
               year: "numeric",
             },
           );
-
           return (
             <div
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000] flex items-center justify-center p-4"
@@ -2682,7 +2963,9 @@ export function LeaveManagement() {
                       <div className="flex items-center gap-3">
                         <div
                           className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0"
-                          style={{ background: req.avatarColor }}
+                          style={{
+                            background: req.avatarColor,
+                          }}
                         >
                           {req.initials}
                         </div>

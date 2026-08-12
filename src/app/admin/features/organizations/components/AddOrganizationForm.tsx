@@ -16,7 +16,6 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-
 export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +41,6 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
     confirmPassword: "",
     enabledModules: ["Employee Management", "Attendance", "Leave Management"],
   });
-
   const handleNextStep = () => {
     if (step === 3) {
       if (
@@ -61,15 +59,16 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
     }
     setStep((s) => s + 1);
   };
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >,
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
-
   const handleModuleToggle = (mod: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -78,7 +77,6 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
         : [...prev.enabledModules, mod],
     }));
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     OrganizationService.createOrganization({
@@ -104,7 +102,6 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
     });
     onSuccess();
   };
-
   return (
     <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
       {/* Navigation Header */}
@@ -127,23 +124,33 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
           <div className="w-64 flex-shrink-0">
             <div className="relative border-l-2 border-gray-100 ml-3 space-y-8 py-2">
               {[
-                { id: 1, name: "Basic Information", icon: Building2 },
-                { id: 2, name: "Contact & Address", icon: MapPin },
-                { id: 3, name: "Admin Account", icon: Shield },
-                { id: 4, name: "Plan & Modules", icon: Package },
+                {
+                  id: 1,
+                  name: "Basic Information",
+                  icon: Building2,
+                },
+                {
+                  id: 2,
+                  name: "Contact & Address",
+                  icon: MapPin,
+                },
+                {
+                  id: 3,
+                  name: "Admin Account",
+                  icon: Shield,
+                },
+                {
+                  id: 4,
+                  name: "Plan & Modules",
+                  icon: Package,
+                },
               ].map((s) => {
                 const active = step === s.id;
                 const completed = step > s.id;
                 return (
                   <div key={s.id} className="relative pl-6 flex items-center">
                     <div
-                      className={`absolute -left-[11px] w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
-                        active
-                          ? "bg-indigo-600 ring-4 ring-indigo-50"
-                          : completed
-                            ? "bg-emerald-500"
-                            : "bg-gray-200"
-                      }`}
+                      className={`absolute -left-[11px] w-5 h-5 rounded-full flex items-center justify-center transition-colors ${active ? "bg-indigo-600 ring-4 ring-indigo-50" : completed ? "bg-emerald-500" : "bg-gray-200"}`}
                     >
                       {completed ? (
                         <CheckCircle2 className="w-3 h-3 text-white" />

@@ -27,14 +27,25 @@ import { performanceData } from "../../data/mockData";
 import { useEmployees } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
 import { P, usePermissions, ROLE_IDS } from "../../shared/permission-engine";
-const LineChart = lazy(() => import("recharts").then(m => ({ default: m.LineChart })));
-const Line = lazy(() => import("recharts").then(m => ({ default: m.Line })));
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-
+const LineChart = lazy(() =>
+  import("recharts").then((m) => ({ default: m.LineChart })),
+);
+const Line = lazy(() => import("recharts").then((m) => ({ default: m.Line })));
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({ default: m.XAxis })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({ default: m.YAxis })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({ default: m.CartesianGrid })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({ default: m.Tooltip })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({ default: m.ResponsiveContainer })),
+);
 
 const tabs = [
   "Personal",

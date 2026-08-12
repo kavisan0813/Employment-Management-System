@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useNavigate } from "react-router";
 import {
   BarChart3,
@@ -30,19 +30,14 @@ import {
   ExternalLink,
   TrendingDown,
 } from "lucide-react";
-import {
-  BarChart as RechartsBarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import { motion, AnimatePresence } from "motion/react";
+const FinanceAssetCostChart = React.lazy(
+  () => import("./FinanceAssetCostChart"),
+);
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 
 /* ─── Adjusted Mock Data to match user KPIs: ₹2.4Cr, ₹42L, ₹8L, 14 ─── */
+import * as m from "motion/react-m";
 const ASSET_COST_BY_CATEGORY = [
   {
     id: "cat1",
@@ -115,27 +110,87 @@ const ASSET_COST_BY_CATEGORY = [
     status: "Depreciating",
   },
 ];
-
 const DEPT_ASSET_DIST_DATA = [
-  { department: "Engineering", value: 32, color: "#00B87C" },
-  { department: "Sales", value: 20, color: "#8B5CF6" },
-  { department: "Operations", value: 16, color: "#F59E0B" },
-  { department: "Marketing", value: 13, color: "#3B82F6" },
-  { department: "Finance", value: 9, color: "#EC4899" },
-  { department: "HR", value: 7, color: "#EF4444" },
-  { department: "Legal", value: 3, color: "#14B8A6" },
+  {
+    department: "Engineering",
+    value: 32,
+    color: "#00B87C",
+  },
+  {
+    department: "Sales",
+    value: 20,
+    color: "#8B5CF6",
+  },
+  {
+    department: "Operations",
+    value: 16,
+    color: "#F59E0B",
+  },
+  {
+    department: "Marketing",
+    value: 13,
+    color: "#3B82F6",
+  },
+  {
+    department: "Finance",
+    value: 9,
+    color: "#EC4899",
+  },
+  {
+    department: "HR",
+    value: 7,
+    color: "#EF4444",
+  },
+  {
+    department: "Legal",
+    value: 3,
+    color: "#14B8A6",
+  },
 ];
-
 const ASSET_VALUE_BY_DEPT = [
-  { department: "Engineering", total: 85, depreciated: 32, current: 53 },
-  { department: "Sales", total: 42, depreciated: 15, current: 27 },
-  { department: "Operations", total: 35, depreciated: 14, current: 21 },
-  { department: "Marketing", total: 28, depreciated: 9, current: 19 },
-  { department: "Finance", total: 22, depreciated: 8, current: 14 },
-  { department: "HR", total: 15, depreciated: 5, current: 10 },
-  { department: "Legal", total: 10, depreciated: 3, current: 7 },
+  {
+    department: "Engineering",
+    total: 85,
+    depreciated: 32,
+    current: 53,
+  },
+  {
+    department: "Sales",
+    total: 42,
+    depreciated: 15,
+    current: 27,
+  },
+  {
+    department: "Operations",
+    total: 35,
+    depreciated: 14,
+    current: 21,
+  },
+  {
+    department: "Marketing",
+    total: 28,
+    depreciated: 9,
+    current: 19,
+  },
+  {
+    department: "Finance",
+    total: 22,
+    depreciated: 8,
+    current: 14,
+  },
+  {
+    department: "HR",
+    total: 15,
+    depreciated: 5,
+    current: 10,
+  },
+  {
+    department: "Legal",
+    total: 10,
+    depreciated: 3,
+    current: 7,
+  },
 ];
-
 const ASSET_DETAILS: Record<
   string,
   {
@@ -338,10 +393,14 @@ const ASSET_DETAILS: Record<
     ],
   },
 };
-
 const DEPT_DETAILS: Record<
   string,
-  { headCount: number; totalAssets: number; totalValue: number; avgAge: number }
+  {
+    headCount: number;
+    totalAssets: number;
+    totalValue: number;
+    avgAge: number;
+  }
 > = {
   Engineering: {
     headCount: 180,
@@ -349,7 +408,12 @@ const DEPT_DETAILS: Record<
     totalValue: 10800000,
     avgAge: 2.4,
   },
-  Sales: { headCount: 95, totalAssets: 140, totalValue: 4200000, avgAge: 1.8 },
+  Sales: {
+    headCount: 95,
+    totalAssets: 140,
+    totalValue: 4200000,
+    avgAge: 1.8,
+  },
   Operations: {
     headCount: 72,
     totalAssets: 110,
@@ -362,17 +426,27 @@ const DEPT_DETAILS: Record<
     totalValue: 2800000,
     avgAge: 2.1,
   },
-  Finance: { headCount: 35, totalAssets: 60, totalValue: 2200000, avgAge: 2.6 },
-  HR: { headCount: 28, totalAssets: 45, totalValue: 1500000, avgAge: 3.5 },
-  Legal: { headCount: 15, totalAssets: 25, totalValue: 1000000, avgAge: 4.1 },
+  Finance: {
+    headCount: 35,
+    totalAssets: 60,
+    totalValue: 2200000,
+    avgAge: 2.6,
+  },
+  HR: {
+    headCount: 28,
+    totalAssets: 45,
+    totalValue: 1500000,
+    avgAge: 3.5,
+  },
+  Legal: {
+    headCount: 15,
+    totalAssets: 25,
+    totalValue: 1000000,
+    avgAge: 4.1,
+  },
 };
-
 type KPIModalType =
-  | "totalValue"
-  | "depreciation"
-  | "maintenance"
-  | "replacement"
-  | null;
+  "totalValue" | "depreciation" | "maintenance" | "replacement" | null;
 
 /* ─── Helpers ─── */
 const formatCurrency = (val: number) => {
@@ -381,9 +455,7 @@ const formatCurrency = (val: number) => {
   if (val >= 1000) return `₹${(val / 1000).toFixed(1)}K`;
   return `₹${val}`;
 };
-
 const formatNumber = (val: number) => val.toLocaleString("en-IN");
-
 const getCategoryIcon = (iconName: string, size: number = 16) => {
   switch (iconName) {
     case "Laptop":
@@ -404,7 +476,6 @@ const getCategoryIcon = (iconName: string, size: number = 16) => {
       return <Package size={size} />;
   }
 };
-
 const getCatColor = (iconName: string) => {
   switch (iconName) {
     case "Laptop":
@@ -425,7 +496,6 @@ const getCatColor = (iconName: string) => {
       return "bg-[#F3F4F6] dark:bg-gray-500/10 text-[#6B7280] dark:text-gray-400 border-[#E5E7EB] dark:border-gray-500/20";
   }
 };
-
 const getStatusBadge = (status: string) => {
   switch (status) {
     case "Active":
@@ -466,7 +536,6 @@ const getStatusBadge = (status: string) => {
       );
   }
 };
-
 function SortIcon({
   field,
   sortField,
@@ -481,7 +550,9 @@ function SortIcon({
       <ChevronDown
         size={8}
         className={`-mb-0.5 ${sortField === field && sortDir === "asc" ? "text-[#00B87C]" : "text-muted-foreground/40"}`}
-        style={{ transform: "scaleY(-1)" }}
+        style={{
+          transform: "scaleY(-1)",
+        }}
       />
       <ChevronDown
         size={8}
@@ -490,7 +561,6 @@ function SortIcon({
     </span>
   );
 }
-
 export function FinanceAssetCostReport() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -506,7 +576,6 @@ export function FinanceAssetCostReport() {
   const [selectedCatFilter, setSelectedCatFilter] = useState("All Categories");
   const [showFYDropdown, setShowFYDropdown] = useState(false);
   const [showCatDropdown, setShowCatDropdown] = useState(false);
-
   const totalAssetValue = ASSET_COST_BY_CATEGORY.reduce(
     (s, c) => s + c.totalValue,
     0,
@@ -517,7 +586,6 @@ export function FinanceAssetCostReport() {
   );
   const totalMaintenance = 800000;
   const replacementDue = 14;
-
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -526,7 +594,6 @@ export function FinanceAssetCostReport() {
       setSortDir("asc");
     }
   };
-
   const filteredData = [...ASSET_COST_BY_CATEGORY]
     .filter((c) => c.category.toLowerCase().includes(searchQuery.toLowerCase()))
     .filter(
@@ -560,7 +627,6 @@ export function FinanceAssetCostReport() {
       }
       return sortDir === "asc" ? cmp : -cmp;
     });
-
   const selectedCategoryData = selectedCategory
     ? ASSET_COST_BY_CATEGORY.find((c) => c.id === selectedCategory)
     : null;
@@ -568,7 +634,6 @@ export function FinanceAssetCostReport() {
     ? ASSET_DETAILS[selectedCategory]
     : null;
   const selectedDeptData = selectedDept ? DEPT_DETAILS[selectedDept] : null;
-
   const handleExportPDF = async () => {
     setExportLoading("pdf");
     showToast("Preparing PDF", "info", "Generating Asset Cost Report...");
@@ -577,7 +642,11 @@ export function FinanceAssetCostReport() {
     const content = [
       reportTitle,
       "Asset Valuation and Depreciation Overview",
-      `Generated: ${new Date().toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}`,
+      `Generated: ${new Date().toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })}`,
       "",
       "KPI Summary",
       `  Total Asset Value: ${formatCurrency(totalAssetValue)}`,
@@ -599,7 +668,9 @@ export function FinanceAssetCostReport() {
       "",
       "--- End of Report ---",
     ].join("\n");
-    const blob = new Blob([content], { type: "application/pdf" });
+    const blob = new Blob([content], {
+      type: "application/pdf",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -613,7 +684,6 @@ export function FinanceAssetCostReport() {
       "PDF report downloaded successfully.",
     );
   };
-
   const handleExportCSV = async () => {
     setExportLoading("csv");
     showToast("Preparing CSV", "info", "Generating Asset Cost Data...");
@@ -625,7 +695,9 @@ export function FinanceAssetCostReport() {
         `"${c.category}",${c.count},${c.totalValue},${c.annualDepreciation},${c.bookValue},"${c.status}"`,
     );
     const csv = [headers, ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], {
+      type: "text/csv",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -639,7 +711,6 @@ export function FinanceAssetCostReport() {
       "CSV report downloaded successfully.",
     );
   };
-
   const KPI_MODAL_CONTENT: Record<
     NonNullable<KPIModalType>,
     {
@@ -647,7 +718,11 @@ export function FinanceAssetCostReport() {
       icon: React.ElementType;
       color: string;
       bg: string;
-      data: { label: string; value: string; color: string }[];
+      data: {
+        label: string;
+        value: string;
+        color: string;
+      }[];
     }
   > = {
     totalValue: {
@@ -753,7 +828,11 @@ export function FinanceAssetCostReport() {
           value: "5 assets",
           color: "#EF4444",
         },
-        { label: "Nearing End of Life", value: "9 assets", color: "#F59E0B" },
+        {
+          label: "Nearing End of Life",
+          value: "9 assets",
+          color: "#F59E0B",
+        },
         {
           label: "Recommended Budget",
           value: formatCurrency(6500000),
@@ -762,7 +841,6 @@ export function FinanceAssetCostReport() {
       ],
     },
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500 min-h-screen bg-background">
       {/* HEADER SECTION */}
@@ -770,7 +848,11 @@ export function FinanceAssetCostReport() {
         <div className="flex items-center gap-4">
           <button
             onClick={() =>
-              navigate("/reports", { state: { activeTab: "Asset Reports" } })
+              navigate("/reports", {
+                state: {
+                  activeTab: "Asset Reports",
+                },
+              })
             }
             className="w-10 h-10 rounded-xl border border-border flex items-center justify-center hover:bg-muted transition-all shrink-0"
           >
@@ -849,10 +931,19 @@ export function FinanceAssetCostReport() {
 
       {/* KPI CARDS — all clickable */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0 }}
+        <m.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.3,
+            delay: 0,
+          }}
           onClick={() => setActiveKPIModal("totalValue")}
           className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5 transition-all cursor-pointer"
         >
@@ -876,12 +967,21 @@ export function FinanceAssetCostReport() {
               Across all categories
             </span>
           </div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
+        <m.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.3,
+            delay: 0.1,
+          }}
           onClick={() => setActiveKPIModal("depreciation")}
           className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:-translate-y-0.5 transition-all cursor-pointer"
         >
@@ -908,12 +1008,21 @@ export function FinanceAssetCostReport() {
               % of total value
             </span>
           </div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
+        <m.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.3,
+            delay: 0.2,
+          }}
           onClick={() => setActiveKPIModal("maintenance")}
           className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] hover:border-amber-300 transition-all cursor-pointer"
         >
@@ -937,12 +1046,21 @@ export function FinanceAssetCostReport() {
               YTD spend on repairs
             </span>
           </div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.3 }}
+        <m.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.3,
+            delay: 0.3,
+          }}
           onClick={() => setActiveKPIModal("replacement")}
           className="bg-card border border-border rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all cursor-pointer"
         >
@@ -966,7 +1084,7 @@ export function FinanceAssetCostReport() {
               Assets past useful life
             </span>
           </div>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* SEARCH & FILTER BAR */}
@@ -994,11 +1112,7 @@ export function FinanceAssetCostReport() {
                       setSelectedFY(fy);
                       setShowFYDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${
-                      selectedFY === fy
-                        ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10"
-                        : "text-foreground"
-                    }`}
+                    className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${selectedFY === fy ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10" : "text-foreground"}`}
                   >
                     <Calendar
                       size={14}
@@ -1046,11 +1160,7 @@ export function FinanceAssetCostReport() {
                       setSelectedCatFilter(cat);
                       setShowCatDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${
-                      selectedCatFilter === cat
-                        ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10"
-                        : "text-foreground"
-                    }`}
+                    className={`w-full text-left px-4 py-3 text-[12px] font-bold transition-all hover:bg-muted flex items-center gap-2 ${selectedCatFilter === cat ? "text-[#8B5CF6] dark:text-purple-400 bg-[#EDE9FE]/30 dark:bg-purple-500/10" : "text-foreground"}`}
                   >
                     <Package
                       size={14}
@@ -1216,13 +1326,21 @@ export function FinanceAssetCostReport() {
             <tbody className="divide-y divide-border">
               {filteredData.map((row, idx) => {
                 const catColor = getCatColor(row.icon);
-
                 return (
-                  <motion.tr
+                  <m.tr
                     key={row.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.2, delay: idx * 0.03 }}
+                    initial={{
+                      opacity: 0,
+                      x: -10,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                    }}
+                    transition={{
+                      duration: 0.2,
+                      delay: idx * 0.03,
+                    }}
                     onClick={() => setSelectedCategory(row.id)}
                     className="hover:bg-secondary/30 transition-colors h-16 group cursor-pointer"
                   >
@@ -1273,7 +1391,7 @@ export function FinanceAssetCostReport() {
                         View
                       </button>
                     </td>
-                  </motion.tr>
+                  </m.tr>
                 );
               })}
               {filteredData.length === 0 && (
@@ -1484,10 +1602,17 @@ export function FinanceAssetCostReport() {
                     <div className="flex-1 flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-3 bg-secondary rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ x: "-100%" }}
-                            animate={{ x: `-${100 - totalPct}%` }}
-                            transition={{ duration: 0.8, delay: 0.1 }}
+                          <m.div
+                            initial={{
+                              x: "-100%",
+                            }}
+                            animate={{
+                              x: `-${100 - totalPct}%`,
+                            }}
+                            transition={{
+                              duration: 0.8,
+                              delay: 0.1,
+                            }}
                             className="h-full bg-[#00B87C] rounded-full group-hover:opacity-80 transition-opacity w-full"
                           />
                         </div>
@@ -1497,10 +1622,17 @@ export function FinanceAssetCostReport() {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ x: "-100%" }}
-                            animate={{ x: `-${100 - depPct}%` }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
+                          <m.div
+                            initial={{
+                              x: "-100%",
+                            }}
+                            animate={{
+                              x: `-${100 - depPct}%`,
+                            }}
+                            transition={{
+                              duration: 0.8,
+                              delay: 0.2,
+                            }}
                             className="h-full bg-[#8B5CF6] rounded-full group-hover:opacity-80 transition-opacity w-full"
                           />
                         </div>
@@ -1543,73 +1675,18 @@ export function FinanceAssetCostReport() {
             </div>
           </div>
           <div className="flex-1 w-full h-[320px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <RechartsBarChart
-                data={ASSET_VALUE_BY_DEPT}
-                layout="vertical"
-                margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
-                onClick={(data) => {
-                  if (data?.activeLabel) {
-                    setSelectedDept(data.activeLabel);
-                  }
-                }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  horizontal={false}
-                  stroke="var(--border)"
-                />
-                <XAxis
-                  type="number"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 11, fontWeight: 700, fill: "#94A3B8" }}
-                />
-                <YAxis
-                  dataKey="department"
-                  type="category"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 11, fontWeight: 700, fill: "#94A3B8" }}
-                  width={80}
-                />
-                <Tooltip
-                  cursor={{ fill: "rgba(139,92,246,0.05)" }}
-                  contentStyle={{
-                    backgroundColor: "#0F3047",
-                    border: "none",
-                    borderRadius: "12px",
-                    color: "white",
-                  }}
-                  formatter={(value: number, name: string) => [
-                    `₹${value}L`,
-                    name === "depreciated" ? "Depreciated" : "Book Value",
-                  ]}
-                />
-                <Bar
-                  dataKey="depreciated"
-                  name="depreciated"
-                  fill="#8B5CF6"
-                  radius={[0, 4, 4, 0]}
-                  barSize={16}
-                  cursor="pointer"
-                  onClick={(data) =>
-                    data?.department && setSelectedDept(data.department)
-                  }
-                />
-                <Bar
-                  dataKey="current"
-                  name="current"
-                  fill="#00B87C"
-                  radius={[0, 4, 4, 0]}
-                  barSize={16}
-                  cursor="pointer"
-                  onClick={(data) =>
-                    data?.department && setSelectedDept(data.department)
-                  }
-                />
-              </RechartsBarChart>
-            </ResponsiveContainer>
+            <Suspense
+              fallback={
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-6 h-6 border-2 border-[#00B87C] border-t-transparent rounded-full animate-spin" />
+                </div>
+              }
+            >
+              <FinanceAssetCostChart
+                ASSET_VALUE_BY_DEPT={ASSET_VALUE_BY_DEPT}
+                setSelectedDept={setSelectedDept}
+              />
+            </Suspense>
           </div>
         </div>
       </div>
@@ -1621,20 +1698,42 @@ export function FinanceAssetCostReport() {
             const modal = KPI_MODAL_CONTENT[activeKPIModal];
             const Icon = modal.icon;
             return (
-              <motion.div
+              <m.div
                 key="kpi-modal"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                initial={{
+                  opacity: 0,
+                }}
+                animate={{
+                  opacity: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                }}
+                transition={{
+                  duration: 0.2,
+                }}
                 className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                 onClick={() => setActiveKPIModal(null)}
               >
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  transition={{ duration: 0.2 }}
+                <m.div
+                  initial={{
+                    opacity: 0,
+                    scale: 0.95,
+                    y: 20,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.95,
+                    y: 20,
+                  }}
+                  transition={{
+                    duration: 0.2,
+                  }}
                   onClick={(e) => e.stopPropagation()}
                   className="bg-card border border-border rounded-[32px] w-full max-w-lg max-h-[85vh] overflow-hidden shadow-2xl"
                 >
@@ -1668,17 +1767,28 @@ export function FinanceAssetCostReport() {
                   </div>
                   <div className="px-8 py-6 space-y-4">
                     {modal.data.map((item, idx) => (
-                      <motion.div
+                      <m.div
                         key={item.label}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.2, delay: idx * 0.05 }}
+                        initial={{
+                          opacity: 0,
+                          x: -10,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          x: 0,
+                        }}
+                        transition={{
+                          duration: 0.2,
+                          delay: idx * 0.05,
+                        }}
                         className="flex items-center justify-between p-4 rounded-2xl bg-muted/20 border border-border hover:bg-secondary/30 transition-all"
                       >
                         <div className="flex items-center gap-3">
                           <div
                             className="w-2.5 h-2.5 rounded-full shrink-0"
-                            style={{ backgroundColor: item.color }}
+                            style={{
+                              backgroundColor: item.color,
+                            }}
                           />
                           <span className="text-[13px] font-bold text-foreground">
                             {item.label}
@@ -1686,11 +1796,13 @@ export function FinanceAssetCostReport() {
                         </div>
                         <span
                           className="text-[13px] font-black"
-                          style={{ color: item.color }}
+                          style={{
+                            color: item.color,
+                          }}
                         >
                           {item.value}
                         </span>
-                      </motion.div>
+                      </m.div>
                     ))}
                   </div>
                   <div className="px-8 py-4 border-t border-border flex items-center justify-between">
@@ -1711,8 +1823,8 @@ export function FinanceAssetCostReport() {
                         : "Close"}
                     </button>
                   </div>
-                </motion.div>
-              </motion.div>
+                </m.div>
+              </m.div>
             );
           })()}
       </AnimatePresence>
@@ -1720,20 +1832,42 @@ export function FinanceAssetCostReport() {
       {/* ─── CATEGORY DETAIL MODAL ─── */}
       <AnimatePresence>
         {selectedCategory && selectedCategoryData && selectedDetails && (
-          <motion.div
+          <m.div
             key="category-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setSelectedCategory(null)}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.2 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              transition={{
+                duration: 0.2,
+              }}
               onClick={(e) => e.stopPropagation()}
               className="bg-card border border-border rounded-[32px] w-full max-w-3xl max-h-[85vh] overflow-hidden shadow-2xl"
             >
@@ -1861,28 +1995,50 @@ export function FinanceAssetCostReport() {
                   View All Assets
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* ─── DEPARTMENT DETAIL MODAL ─── */}
       <AnimatePresence>
         {selectedDept && selectedDeptData && (
-          <motion.div
+          <m.div
             key="dept-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={() => setSelectedDept(null)}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.2 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              transition={{
+                duration: 0.2,
+              }}
               onClick={(e) => e.stopPropagation()}
               className="bg-card border border-border rounded-[32px] w-full max-w-lg max-h-[85vh] overflow-hidden shadow-2xl"
             >
@@ -1953,12 +2109,16 @@ export function FinanceAssetCostReport() {
                   </h4>
                   <div className="flex items-center gap-4">
                     <div className="flex-1 h-3 bg-secondary rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ x: "-100%" }}
+                      <m.div
+                        initial={{
+                          x: "-100%",
+                        }}
                         animate={{
                           x: `${-100 + Math.min((selectedDeptData.totalAssets / selectedDeptData.headCount) * 10, 100)}%`,
                         }}
-                        transition={{ duration: 0.8 }}
+                        transition={{
+                          duration: 0.8,
+                        }}
                         className="h-full rounded-full w-full"
                         style={{
                           backgroundColor:
@@ -1994,8 +2154,8 @@ export function FinanceAssetCostReport() {
                   View Department
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

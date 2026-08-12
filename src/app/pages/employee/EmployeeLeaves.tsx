@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router";
 import {
   CalendarX,
@@ -16,7 +16,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import {
   format,
   addMonths,
@@ -31,10 +31,10 @@ import {
 } from "date-fns";
 
 // Types
+import * as m from "motion/react-m";
 type LeaveTab = "My Requests" | "Calendar" | "History" | "Policy";
 type LeaveType = "CL" | "EL" | "SL" | "CO";
 type ApprovalStatus = "Pending" | "Approved" | "Rejected" | "Cancelled";
-
 interface LeaveRecord {
   id: string;
   type: LeaveType;
@@ -48,24 +48,139 @@ interface LeaveRecord {
   approvedBy?: string;
   startsIn?: string;
 }
-
 export function EmployeeLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");
-  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
-  const [showCancelConfirm, setShowCancelConfirm] = useState<string | null>(
-    null,
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeTab: "My Requests" as LeaveTab,
+    isApplyModalOpen: false,
+    showCancelConfirm: null as string | null,
+    currentDate: new Date(),
+    selectedHistoryLeave: null as LeaveRecord | null,
+    selectedLeaveType: "CL" as LeaveType,
+    fromDate: "",
+    toDate: "",
+    leaveReason: "",
+    notifyManager: true,
+    pendingRequests: [
+      {
+        id: "LR-1002",
+        type: "SL",
+        typeFull: "Sick Leave",
+        from: "Apr 18, 2026",
+        to: "Apr 20, 2026",
+        days: 3,
+        reason: "Viral fever, resting at home",
+        status: "Pending",
+        appliedOn: "Apr 17, 2026",
+      },
+    ] as LeaveRecord[],
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
   );
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedHistoryLeave, setSelectedHistoryLeave] =
-    useState<LeaveRecord | null>(null);
-  const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType>("CL");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [leaveReason, setLeaveReason] = useState("");
-  const [notifyManager, setNotifyManager] = useState(true);
-
+  const {
+    activeTab,
+    isApplyModalOpen,
+    showCancelConfirm,
+    currentDate,
+    selectedHistoryLeave,
+    selectedLeaveType,
+    fromDate,
+    toDate,
+    leaveReason,
+    notifyManager,
+    pendingRequests,
+  } = __state;
+  const setActiveTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeTab: typeof val === "function" ? val(prev.activeTab) : val,
+      })),
+    [],
+  );
+  const setIsApplyModalOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isApplyModalOpen:
+          typeof val === "function" ? val(prev.isApplyModalOpen) : val,
+      })),
+    [],
+  );
+  const setShowCancelConfirm = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showCancelConfirm:
+          typeof val === "function" ? val(prev.showCancelConfirm) : val,
+      })),
+    [],
+  );
+  const setCurrentDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        currentDate: typeof val === "function" ? val(prev.currentDate) : val,
+      })),
+    [],
+  );
+  const setSelectedHistoryLeave = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedHistoryLeave:
+          typeof val === "function" ? val(prev.selectedHistoryLeave) : val,
+      })),
+    [],
+  );
+  const setSelectedLeaveType = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedLeaveType:
+          typeof val === "function" ? val(prev.selectedLeaveType) : val,
+      })),
+    [],
+  );
+  const setFromDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        fromDate: typeof val === "function" ? val(prev.fromDate) : val,
+      })),
+    [],
+  );
+  const setToDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        toDate: typeof val === "function" ? val(prev.toDate) : val,
+      })),
+    [],
+  );
+  const setLeaveReason = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        leaveReason: typeof val === "function" ? val(prev.leaveReason) : val,
+      })),
+    [],
+  );
+  const setNotifyManager = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        notifyManager:
+          typeof val === "function" ? val(prev.notifyManager) : val,
+      })),
+    [],
+  );
+  const setPendingRequests = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        pendingRequests:
+          typeof val === "function" ? val(prev.pendingRequests) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Initialize from navigation state if present
   useEffect(() => {
     if (location.state?.activeTab) {
@@ -73,25 +188,13 @@ export function EmployeeLeaves() {
     }
     if (location.state?.openApplyModal) {
       setIsApplyModalOpen(true);
-      navigate(location.pathname, { replace: true });
+      navigate(location.pathname, {
+        replace: true,
+      });
     }
   }, [location, navigate]);
 
   // Leave records state (allows mutations)
-  const [pendingRequests, setPendingRequests] = useState<LeaveRecord[]>([
-    {
-      id: "LR-1002",
-      type: "SL",
-      typeFull: "Sick Leave",
-      from: "Apr 18, 2026",
-      to: "Apr 20, 2026",
-      days: 3,
-      reason: "Viral fever, resting at home",
-      status: "Pending",
-      appliedOn: "Apr 17, 2026",
-    },
-  ]);
-
   const approvedLeaves: LeaveRecord[] = [
     {
       id: "LR-0945",
@@ -107,7 +210,6 @@ export function EmployeeLeaves() {
       startsIn: "Starts in 12 days",
     },
   ];
-
   const [historyLeaves] = useState<LeaveRecord[]>([
     {
       id: "LR-0812",
@@ -143,14 +245,12 @@ export function EmployeeLeaves() {
       appliedOn: "Dec 15, 2025",
     },
   ]);
-
   const leaveTypeLabels: Record<LeaveType, string> = {
     CL: "Casual Leave",
     EL: "Earned Leave",
     SL: "Sick Leave",
     CO: "Comp Off",
   };
-
   const handleCancelRequest = (id: string) => {
     setPendingRequests((prev) => prev.filter((r) => r.id !== id));
     showToast(
@@ -160,7 +260,6 @@ export function EmployeeLeaves() {
     );
     setShowCancelConfirm(null);
   };
-
   const handleSubmitLeave = () => {
     if (!fromDate || !toDate) {
       showToast(
@@ -211,7 +310,6 @@ export function EmployeeLeaves() {
     setLeaveReason("");
     setSelectedLeaveType("CL");
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500">
       {/* ═══════ PAGE HEADER ═══════ */}
@@ -263,7 +361,9 @@ export function EmployeeLeaves() {
             <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#00B87C] rounded-full"
-                style={{ width: "50%" }}
+                style={{
+                  width: "50%",
+                }}
               />
             </div>
             <p className="text-[12px] font-bold text-muted-foreground mt-2">
@@ -294,7 +394,9 @@ export function EmployeeLeaves() {
             <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#00B87C] rounded-full"
-                style={{ width: "75%" }}
+                style={{
+                  width: "75%",
+                }}
               />
             </div>
             <p className="text-[12px] font-bold text-muted-foreground mt-2">
@@ -325,7 +427,9 @@ export function EmployeeLeaves() {
             <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#0EA5E9] rounded-full"
-                style={{ width: "66%" }}
+                style={{
+                  width: "66%",
+                }}
               />
             </div>
             <p className="text-[12px] font-bold text-muted-foreground mt-2">
@@ -356,7 +460,9 @@ export function EmployeeLeaves() {
             <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#8B5CF6] rounded-full"
-                style={{ width: "40%" }}
+                style={{
+                  width: "40%",
+                }}
               />
             </div>
             <p className="text-[12px] font-bold text-muted-foreground mt-2">
@@ -375,15 +481,11 @@ export function EmployeeLeaves() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-4 text-[13px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${
-                  activeTab === tab
-                    ? "text-[#00B87C]"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`pb-4 text-[13px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
               >
                 {tab}
                 {activeTab === tab && (
-                  <motion.div
+                  <m.div
                     layoutId="activeLeaveTab"
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C]"
                   />
@@ -409,28 +511,12 @@ export function EmployeeLeaves() {
                       className="relative bg-card border border-border rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#00B87C]/[0.08] transition-colors group overflow-hidden"
                     >
                       <div
-                        className={`absolute left-0 top-0 bottom-0 w-1 ${
-                          req.type === "CL"
-                            ? "bg-[#00B87C]"
-                            : req.type === "EL"
-                              ? "bg-[#0EA5E9]"
-                              : req.type === "SL"
-                                ? "bg-[#EF4444]"
-                                : "bg-[#8B5CF6]"
-                        }`}
+                        className={`absolute left-0 top-0 bottom-0 w-1 ${req.type === "CL" ? "bg-[#00B87C]" : req.type === "EL" ? "bg-[#0EA5E9]" : req.type === "SL" ? "bg-[#EF4444]" : "bg-[#8B5CF6]"}`}
                       />
 
                       <div className="flex items-start md:items-center gap-4 pl-2">
                         <div
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${
-                            req.type === "CL"
-                              ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                              : req.type === "EL"
-                                ? "bg-sky-500/10 text-sky-600 border-sky-500/20"
-                                : req.type === "SL"
-                                  ? "bg-rose-500/10 text-rose-600 border-rose-500/20"
-                                  : "bg-violet-500/10 text-violet-600 border-violet-500/20"
-                          }`}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${req.type === "CL" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : req.type === "EL" ? "bg-sky-500/10 text-sky-600 border-sky-500/20" : req.type === "SL" ? "bg-rose-500/10 text-rose-600 border-rose-500/20" : "bg-violet-500/10 text-violet-600 border-violet-500/20"}`}
                         >
                           {req.type}
                         </div>
@@ -513,15 +599,7 @@ export function EmployeeLeaves() {
 
                       <div className="flex items-start md:items-center gap-4 pl-2">
                         <div
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${
-                            req.type === "CL"
-                              ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                              : req.type === "EL"
-                                ? "bg-sky-500/10 text-sky-600 border-sky-500/20"
-                                : req.type === "SL"
-                                  ? "bg-rose-500/10 text-rose-600 border-rose-500/20"
-                                  : "bg-violet-500/10 text-violet-600 border-violet-500/20"
-                          }`}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-widest border ${req.type === "CL" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : req.type === "EL" ? "bg-sky-500/10 text-sky-600 border-sky-500/20" : req.type === "SL" ? "bg-rose-500/10 text-rose-600 border-rose-500/20" : "bg-violet-500/10 text-violet-600 border-violet-500/20"}`}
                         >
                           {req.type}
                         </div>
@@ -608,24 +686,19 @@ export function EmployeeLeaves() {
                     const startDate = startOfWeek(monthStart);
                     const endDate = endOfWeek(monthEnd);
                     const dateFormat = "d";
-
                     let formattedDate = "";
-
                     const calendarDays = eachDayOfInterval({
                       start: startDate,
                       end: endDate,
                     });
-
                     return calendarDays.map((calDay) => {
                       formattedDate = format(calDay, dateFormat);
                       const isCurrentMonth = isSameMonth(calDay, monthStart);
                       const isCurrentDay = isToday(calDay);
                       const dateNum = parseInt(formattedDate);
-
                       let bgClass =
                         "bg-card border-border hover:border-[#00B87C]/50 cursor-pointer";
                       let content = null;
-
                       if (!isCurrentMonth) {
                         return (
                           <div
@@ -662,7 +735,6 @@ export function EmployeeLeaves() {
                           </div>
                         );
                       }
-
                       return (
                         <div
                           key={calDay.toISOString()}
@@ -770,13 +842,7 @@ export function EmployeeLeaves() {
                       </td>
                       <td className="py-4 px-4">
                         <span
-                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit ${
-                            leave.status === "Approved"
-                              ? "bg-emerald-500/10 text-[#00B87C]"
-                              : leave.status === "Rejected"
-                                ? "bg-rose-500/10 text-rose-600"
-                                : "bg-muted text-muted-foreground"
-                          }`}
+                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit ${leave.status === "Approved" ? "bg-emerald-500/10 text-[#00B87C]" : leave.status === "Rejected" ? "bg-rose-500/10 text-rose-600" : "bg-muted text-muted-foreground"}`}
                         >
                           {leave.status === "Approved" && (
                             <CheckCircle2 size={12} />
@@ -924,17 +990,35 @@ export function EmployeeLeaves() {
       <AnimatePresence>
         {isApplyModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setIsApplyModalOpen(false)}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 10,
+              }}
               className="relative w-full max-w-[480px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col"
             >
               {/* Header */}
@@ -967,11 +1051,7 @@ export function EmployeeLeaves() {
                       <button
                         key={type}
                         onClick={() => setSelectedLeaveType(type)}
-                        className={`flex-1 py-2 rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all ${
-                          selectedLeaveType === type
-                            ? "bg-[#00B87C] text-white shadow-sm"
-                            : "text-muted-foreground hover:bg-card/50"
-                        }`}
+                        className={`flex-1 py-2 rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all ${selectedLeaveType === type ? "bg-[#00B87C] text-white shadow-sm" : "text-muted-foreground hover:bg-card/50"}`}
                       >
                         {type}
                       </button>
@@ -1081,7 +1161,7 @@ export function EmployeeLeaves() {
                   Submit Request
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1090,17 +1170,35 @@ export function EmployeeLeaves() {
       <AnimatePresence>
         {selectedHistoryLeave && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setSelectedHistoryLeave(null)}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 10,
+              }}
               className="relative w-full max-w-[400px] bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="p-5 border-b border-border flex items-center justify-between">
@@ -1127,8 +1225,14 @@ export function EmployeeLeaves() {
               <div className="p-5 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { label: "From", val: selectedHistoryLeave.from },
-                    { label: "To", val: selectedHistoryLeave.to },
+                    {
+                      label: "From",
+                      val: selectedHistoryLeave.from,
+                    },
+                    {
+                      label: "To",
+                      val: selectedHistoryLeave.to,
+                    },
                     {
                       label: "Days",
                       val: `${selectedHistoryLeave.days} day(s)`,
@@ -1161,11 +1265,7 @@ export function EmployeeLeaves() {
                     Status
                   </span>
                   <span
-                    className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 ${
-                      selectedHistoryLeave.status === "Approved"
-                        ? "bg-emerald-500/10 text-[#00B87C]"
-                        : "bg-rose-500/10 text-rose-600"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 ${selectedHistoryLeave.status === "Approved" ? "bg-emerald-500/10 text-[#00B87C]" : "bg-rose-500/10 text-rose-600"}`}
                   >
                     {selectedHistoryLeave.status === "Approved" ? (
                       <CheckCircle2 size={12} />
@@ -1184,7 +1284,7 @@ export function EmployeeLeaves() {
                   Close
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

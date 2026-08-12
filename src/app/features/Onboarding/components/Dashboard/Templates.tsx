@@ -1,8 +1,7 @@
 import { MoreVertical, Edit3, Copy, Trash2 } from "lucide-react";
-import { motion } from "motion/react";
 import type { Template } from "../../types/onboarding.types";
 import { DepartmentBadge } from "../shared/DepartmentBadge";
-
+import * as m from "motion/react-m";
 interface TemplatesProps {
   templates: Template[];
   showTemplateMenu: string | null;
@@ -12,7 +11,6 @@ interface TemplatesProps {
   handleDuplicateTemplate: (id: string) => void;
   handleDeleteTemplate: (id: string) => void;
 }
-
 export function Templates({
   showTemplateMenu,
   setShowTemplateMenu,
@@ -23,11 +21,17 @@ export function Templates({
   templates,
 }: TemplatesProps) {
   return (
-    <motion.div
+    <m.div
       key="templates"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{
+        opacity: 0,
+      }}
+      animate={{
+        opacity: 1,
+      }}
+      exit={{
+        opacity: 0,
+      }}
       className="bg-card border border-border rounded-[32px] p-6 shadow-sm"
     >
       <div className="flex items-center justify-between mb-6">
@@ -147,6 +151,6 @@ export function Templates({
           ))}
         </div>
       )}
-    </motion.div>
+    </m.div>
   );
 }

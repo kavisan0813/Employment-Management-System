@@ -165,9 +165,9 @@ export function NotificationTemplatesTab({
 
   const validation = activeTemplate
     ? communicationService.validateTemplateVariables(
-      bodyHtml,
-      activeTemplate.available_variables,
-    )
+        bodyHtml,
+        activeTemplate.available_variables,
+      )
     : { valid: true, invalidVars: [] };
 
   return (
@@ -316,7 +316,7 @@ export function NotificationTemplatesTab({
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(
                       bodyHtml ||
-                      '<p class="text-gray-400 italic">Empty body...</p>',
+                        '<p class="text-gray-400 italic">Empty body...</p>',
                     ),
                   }}
                 />

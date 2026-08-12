@@ -25,8 +25,8 @@ import {
   Bot,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
-
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 interface TimelineEntry {
   id: string;
   type:
@@ -39,17 +39,19 @@ interface TimelineEntry {
   user: string;
   timestamp: string;
   comment?: string;
-  attachment?: { name: string; size: string; type: string };
+  attachment?: {
+    name: string;
+    size: string;
+    type: string;
+  };
   newStatus?: string;
 }
-
 interface Attachment {
   name: string;
   size: string;
   type: string;
   url?: string;
 }
-
 interface Ticket {
   id: string;
   subject: string;
@@ -66,11 +68,12 @@ interface Ticket {
   description: string;
   timeline: TimelineEntry[];
   attachments: Attachment[];
-  rating?: { stars: number; feedback: string };
+  rating?: {
+    stars: number;
+    feedback: string;
+  };
 }
-
 const TABS = ["My Tickets", "AI Support Assistant", "Knowledge Base"];
-
 const INITIAL_TICKETS: Ticket[] = [
   {
     id: "#TKT-0421",
@@ -168,28 +171,48 @@ const INITIAL_TICKETS: Ticket[] = [
     attachments: [],
   },
 ];
-
 const FAQ_CATEGORIES = [
-  { name: "IT Setup", icon: Monitor, count: 12 },
-  { name: "Payroll Queries", icon: IndianRupee, count: 8 },
-  { name: "Leave Policy", icon: CalendarDays, count: 15 },
-  { name: "Access Issues", icon: Key, count: 6 },
-  { name: "Onboarding", icon: UserPlus, count: 10 },
-  { name: "Benefits", icon: HeartPulse, count: 14 },
+  {
+    name: "IT Setup",
+    icon: Monitor,
+    count: 12,
+  },
+  {
+    name: "Payroll Queries",
+    icon: IndianRupee,
+    count: 8,
+  },
+  {
+    name: "Leave Policy",
+    icon: CalendarDays,
+    count: 15,
+  },
+  {
+    name: "Access Issues",
+    icon: Key,
+    count: 6,
+  },
+  {
+    name: "Onboarding",
+    icon: UserPlus,
+    count: 10,
+  },
+  {
+    name: "Benefits",
+    icon: HeartPulse,
+    count: 14,
+  },
 ];
-
 export function EmployeeSupport() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("My Tickets");
   const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS);
   const [showNewTicketModal, setShowNewTicketModal] = useState(false);
   const [viewingTicket, setViewingTicket] = useState<Ticket | null>(null);
-
   const [ticketStatusTab, setTicketStatusTab] = useState("All Requests");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterPriority, setFilterPriority] = useState("All");
-
   const filteredTickets = useMemo(() => {
     return tickets.filter((t) => {
       const matchSearch =
@@ -209,25 +232,21 @@ export function EmployeeSupport() {
       return matchSearch && matchStatus && matchCategory && matchPriority;
     });
   }, [tickets, searchQuery, ticketStatusTab, filterCategory, filterPriority]);
-
   const handleAddTicket = (newTicket: Ticket) => {
     setTickets([newTicket, ...tickets]);
   };
-
   const handleUpdateTicket = (updated: Ticket) => {
     setTickets(tickets.map((t) => (t.id === updated.id ? updated : t)));
     if (viewingTicket?.id === updated.id) {
       setViewingTicket(updated);
     }
   };
-
   const openCount = tickets.filter((t) =>
     new Set(["Open", "In Progress", "Waiting for Employee"]).has(t.status),
   ).length;
   const resolvedCount = tickets.filter((t) =>
     new Set(["Resolved", "Closed"]).has(t.status),
   ).length;
-
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-10">
       {/* ─── Page Header ─────────────────────────────────────────── */}
@@ -278,7 +297,12 @@ export function EmployeeSupport() {
           <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
             OPEN TICKETS
           </p>
-          <p className="text-[32px] font-black" style={{ color: "#F59E0B" }}>
+          <p
+            className="text-[32px] font-black"
+            style={{
+              color: "#F59E0B",
+            }}
+          >
             {openCount}
           </p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3">
@@ -298,7 +322,12 @@ export function EmployeeSupport() {
           <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
             RESOLVED
           </p>
-          <p className="text-[32px] font-black" style={{ color: "#00B87C" }}>
+          <p
+            className="text-[32px] font-black"
+            style={{
+              color: "#00B87C",
+            }}
+          >
             {resolvedCount}
           </p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3">
@@ -312,7 +341,12 @@ export function EmployeeSupport() {
           <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
             AVG RESOLUTION
           </p>
-          <p className="text-[32px] font-black" style={{ color: "#111827" }}>
+          <p
+            className="text-[32px] font-black"
+            style={{
+              color: "#111827",
+            }}
+          >
             1.2 days
           </p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3">
@@ -327,11 +361,7 @@ export function EmployeeSupport() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 rounded-[12px] text-[14px] transition-all whitespace-nowrap ${
-              activeTab === tab
-                ? "bg-primary text-white font-black shadow-md shadow-primary/20"
-                : "text-muted-foreground font-bold hover:bg-secondary"
-            }`}
+            className={`px-6 py-3 rounded-[12px] text-[14px] transition-all whitespace-nowrap ${activeTab === tab ? "bg-primary text-white font-black shadow-md shadow-primary/20" : "text-muted-foreground font-bold hover:bg-secondary"}`}
           >
             {tab}
           </button>
@@ -341,12 +371,23 @@ export function EmployeeSupport() {
       {/* ─── Tab Content ──────────────────────────────────────────── */}
       <div className="min-h-[400px]">
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
           >
             {activeTab === "My Tickets" && (
               <MyTicketsTab
@@ -364,7 +405,7 @@ export function EmployeeSupport() {
             )}
             {activeTab === "AI Support Assistant" && <AISupportAssistantTab />}
             {activeTab === "Knowledge Base" && <KnowledgeBaseTab />}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
@@ -421,7 +462,6 @@ function MyTicketsTab({
     "Closed",
     "Cancelled",
   ];
-
   return (
     <div className="space-y-4">
       {/* Filters and Tabs */}
@@ -431,11 +471,7 @@ function MyTicketsTab({
             <button
               key={tab}
               onClick={() => setTicketStatusTab(tab)}
-              className={`px-4 py-2 rounded-xl text-[13px] transition-all whitespace-nowrap ${
-                ticketStatusTab === tab
-                  ? "bg-secondary text-foreground font-black shadow-sm"
-                  : "text-muted-foreground font-bold hover:bg-secondary/50"
-              }`}
+              className={`px-4 py-2 rounded-xl text-[13px] transition-all whitespace-nowrap ${ticketStatusTab === tab ? "bg-secondary text-foreground font-black shadow-sm" : "text-muted-foreground font-bold hover:bg-secondary/50"}`}
             >
               {tab}
             </button>
@@ -590,7 +626,6 @@ function MyTicketsTab({
     </div>
   );
 }
-
 function NewTicketModal({
   onAdd,
   onClose,
@@ -604,11 +639,9 @@ function NewTicketModal({
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject.trim() || !description.trim()) return;
-
     const newTicket: Ticket = {
       id: `#TKT-0${Math.floor(Math.random() * 900) + 100}`,
       subject,
@@ -655,7 +688,6 @@ function NewTicketModal({
           ]
         : [],
     };
-
     onAdd(newTicket);
     showToast(
       "Ticket Raised",
@@ -664,26 +696,42 @@ function NewTicketModal({
     );
     onClose();
   };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
     }
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col max-h-[90vh]"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
@@ -794,11 +842,7 @@ function NewTicketModal({
                       key={level}
                       type="button"
                       onClick={() => setPriority(level)}
-                      className={`py-3.5 rounded-2xl text-[13px] font-black transition-all border-2 ${
-                        priority === level
-                          ? "bg-[#00B87C] text-white border-[#00B87C] shadow-lg shadow-emerald-500/20 scale-[1.02]"
-                          : "bg-[#F0FDF4]/50 dark:bg-emerald-500/5 text-slate-500 border-transparent hover:border-emerald-500/20"
-                      }`}
+                      className={`py-3.5 rounded-2xl text-[13px] font-black transition-all border-2 ${priority === level ? "bg-[#00B87C] text-white border-[#00B87C] shadow-lg shadow-emerald-500/20 scale-[1.02]" : "bg-[#F0FDF4]/50 dark:bg-emerald-500/5 text-slate-500 border-transparent hover:border-emerald-500/20"}`}
                     >
                       {level}
                     </button>
@@ -881,11 +925,10 @@ function NewTicketModal({
             </div>
           </form>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
-
 function TicketDetailModal({
   ticket,
   onUpdate,
@@ -903,15 +946,12 @@ function TicketDetailModal({
   const [commentText, setCommentText] = useState("");
   const [commentFile, setCommentFile] = useState<File | null>(null);
   const commentFileInputRef = useRef<HTMLInputElement>(null);
-
   const [selectedStars, setSelectedStars] = useState(0);
   const [ratingFeedback, setRatingFeedback] = useState("");
-
   const isClosed =
     ticket.status === "Resolved" ||
     ticket.status === "Closed" ||
     ticket.status === "Cancelled";
-
   const handleCancel = () => {
     const updated: Ticket = {
       ...ticket,
@@ -938,10 +978,8 @@ function TicketDetailModal({
     );
     setShowCancelConfirm(false);
   };
-
   const handleAddComment = () => {
     if (!commentText.trim() && !commentFile) return;
-
     const newEntry: TimelineEntry = {
       id: Math.random().toString(),
       type: "comment",
@@ -956,7 +994,6 @@ function TicketDetailModal({
           }
         : undefined,
     };
-
     const updated: Ticket = {
       ...ticket,
       timeline: [...ticket.timeline, newEntry],
@@ -973,18 +1010,34 @@ function TicketDetailModal({
   };
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-end">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
       />
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ type: "spring", damping: 30, stiffness: 300 }}
+      <m.div
+        initial={{
+          x: "100%",
+        }}
+        animate={{
+          x: 0,
+        }}
+        exit={{
+          x: "100%",
+        }}
+        transition={{
+          type: "spring",
+          damping: 30,
+          stiffness: 300,
+        }}
         className="relative bg-card w-full max-w-[500px] h-full shadow-2xl border-l border-border flex flex-col"
       >
         <div className="p-8 border-b border-border flex items-center justify-between bg-secondary/20">
@@ -1354,22 +1407,37 @@ function TicketDetailModal({
             </div>
           )}
         </div>
-      </motion.div>
+      </m.div>
 
       <AnimatePresence>
         {showCancelConfirm && (
           <div className="fixed inset-0 z-[4000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-slate-950/40 dark:bg-black/60"
               onClick={() => setShowCancelConfirm(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative bg-card w-full max-w-[400px] rounded-2xl p-6 border border-border shadow-2xl flex flex-col items-center text-center"
             >
               <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-500 mb-4">
@@ -1396,7 +1464,7 @@ function TicketDetailModal({
                   Yes, Cancel Request
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1404,17 +1472,32 @@ function TicketDetailModal({
       <AnimatePresence>
         {previewAttachment && (
           <div className="fixed inset-0 z-[4000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
               onClick={() => setPreviewAttachment(null)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+              }}
               className="relative bg-card w-full max-w-[600px] rounded-2xl overflow-hidden border border-border shadow-2xl flex flex-col"
             >
               <div className="p-4 border-b border-border flex items-center justify-between bg-secondary/20">
@@ -1462,21 +1545,19 @@ function TicketDetailModal({
                   Please download the file to view its contents.
                 </p>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
     </div>
   );
 }
-
 interface ChatMessage {
   id: string;
   sender: "user" | "ai";
   text: string;
   timestamp: string;
 }
-
 function AISupportAssistantTab() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -1492,18 +1573,16 @@ function AISupportAssistantTab() {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
-
   useState(() => {
     scrollToBottom();
   });
-
   const handleSend = (textToSend: string) => {
     if (!textToSend.trim()) return;
-
     const userMsg: ChatMessage = {
       id: Math.random().toString(),
       sender: "user",
@@ -1513,19 +1592,15 @@ function AISupportAssistantTab() {
         minute: "2-digit",
       }),
     };
-
     setMessages((prev) => [...prev, userMsg]);
     setInputText("");
     setIsTyping(true);
-
     setTimeout(() => {
       scrollToBottom();
     }, 50);
-
     setTimeout(() => {
       let reply: string;
       const lower = textToSend.toLowerCase();
-
       if (
         lower.includes("ram") ||
         lower.includes("hardware") ||
@@ -1562,7 +1637,6 @@ function AISupportAssistantTab() {
         reply =
           "I'm here to help! If you have a specific request, you can submit a support ticket directly to our HR or IT desk by clicking the green '+ Raise New Ticket' button. You can also search through our FAQ categories in the **Knowledge Base** tab.";
       }
-
       const aiMsg: ChatMessage = {
         id: Math.random().toString(),
         sender: "ai",
@@ -1572,23 +1646,19 @@ function AISupportAssistantTab() {
           minute: "2-digit",
         }),
       };
-
       setMessages((prev) => [...prev, aiMsg]);
       setIsTyping(false);
-
       setTimeout(() => {
         scrollToBottom();
       }, 50);
     }, 1000);
   };
-
   const suggestions = [
     "Upgrade RAM or Laptop",
     "Reset portal password",
     "How to apply for leave",
     "Submit expense reimbursement",
   ];
-
   return (
     <div className="max-w-2xl mx-auto bg-card rounded-[32px] border border-border shadow-sm overflow-hidden flex flex-col h-[550px]">
       {/* Bot Header */}
@@ -1615,19 +1685,11 @@ function AISupportAssistantTab() {
             className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[80%] p-4 rounded-2xl text-[13px] leading-relaxed font-medium ${
-                msg.sender === "user"
-                  ? "bg-primary text-white rounded-tr-none shadow-md shadow-primary/10"
-                  : "bg-white dark:bg-secondary/40 border border-border rounded-tl-none text-foreground"
-              }`}
+              className={`max-w-[80%] p-4 rounded-2xl text-[13px] leading-relaxed font-medium ${msg.sender === "user" ? "bg-primary text-white rounded-tr-none shadow-md shadow-primary/10" : "bg-white dark:bg-secondary/40 border border-border rounded-tl-none text-foreground"}`}
             >
               <p className="whitespace-pre-wrap">{msg.text}</p>
               <span
-                className={`text-[9px] block mt-1.5 text-right font-bold ${
-                  msg.sender === "user"
-                    ? "text-emerald-100"
-                    : "text-muted-foreground"
-                }`}
+                className={`text-[9px] block mt-1.5 text-right font-bold ${msg.sender === "user" ? "text-emerald-100" : "text-muted-foreground"}`}
               >
                 {msg.timestamp}
               </span>
@@ -1640,15 +1702,21 @@ function AISupportAssistantTab() {
             <div className="bg-white dark:bg-secondary/40 border border-border p-4 rounded-2xl rounded-tl-none flex items-center gap-1.5">
               <span
                 className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
-                style={{ animationDelay: "0ms" }}
+                style={{
+                  animationDelay: "0ms",
+                }}
               />
               <span
                 className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
-                style={{ animationDelay: "150ms" }}
+                style={{
+                  animationDelay: "150ms",
+                }}
               />
               <span
                 className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"
-                style={{ animationDelay: "300ms" }}
+                style={{
+                  animationDelay: "300ms",
+                }}
               />
             </div>
           </div>
@@ -1697,12 +1765,10 @@ function AISupportAssistantTab() {
     </div>
   );
 }
-
 function KnowledgeBaseTab() {
   const [selectedCategory, setSelectedCategory] = useState<
     (typeof FAQ_CATEGORIES)[0] | null
   >(null);
-
   const DUMMY_ARTICLES = [
     "How to reset my portal password?",
     "Where can I find the updated holiday calendar?",
@@ -1710,7 +1776,6 @@ function KnowledgeBaseTab() {
     "How to claim travel expenses?",
     "Understanding the new remote work policy",
   ];
-
   return (
     <div className="space-y-8">
       {/* Search Bar */}
@@ -1763,17 +1828,35 @@ function KnowledgeBaseTab() {
       <AnimatePresence>
         {selectedCategory && (
           <div className="fixed inset-0 z-[4000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
               onClick={() => setSelectedCategory(null)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[600px] rounded-[32px] overflow-hidden border border-border shadow-2xl flex flex-col max-h-[85vh]"
             >
               <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
@@ -1828,7 +1911,7 @@ function KnowledgeBaseTab() {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import {
   X,
   Plus,
@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import type { OffboardingTemplate } from "../types/offboarding.types";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 interface OffboardingTemplateEditorModalProps {
   showTemplateEditor: boolean;
   setShowTemplateEditor: (v: boolean) => void;
@@ -21,7 +21,6 @@ interface OffboardingTemplateEditorModalProps {
   departments: string[];
   saveTemplate: (template: OffboardingTemplate) => void;
 }
-
 const emptyTemplate = (): OffboardingTemplate => ({
   id: "",
   name: "",
@@ -113,9 +112,21 @@ const emptyTemplate = (): OffboardingTemplate => ({
     },
   ],
   documents: [
-    { id: "resignation", name: "Resignation Letter", mandatory: true },
-    { id: "exit_form", name: "Exit Interview Form", mandatory: true },
-    { id: "relieving", name: "Relieving Letter", mandatory: false },
+    {
+      id: "resignation",
+      name: "Resignation Letter",
+      mandatory: true,
+    },
+    {
+      id: "exit_form",
+      name: "Exit Interview Form",
+      mandatory: true,
+    },
+    {
+      id: "relieving",
+      name: "Relieving Letter",
+      mandatory: false,
+    },
   ],
   exitInterviewRequired: true,
   exitInterviewQuestionnaire: [
@@ -144,7 +155,6 @@ const emptyTemplate = (): OffboardingTemplate => ({
     },
   ],
 });
-
 export function OffboardingTemplateEditorModal({
   showTemplateEditor,
   setShowTemplateEditor,
@@ -168,23 +178,18 @@ export function OffboardingTemplateEditorModal({
   const [customTaskMandatory, setCustomTaskMandatory] = useState(true);
   const [customTaskApproval, setCustomTaskApproval] = useState(true);
   const [customTaskDesc, setCustomTaskDesc] = useState("");
-
   const [customAssetName, setCustomAssetName] = useState("");
   const [customAssetCategory, setCustomAssetCategory] = useState("Hardware");
   const [customAssetMandatory] = useState(true);
-
   const [customDocName, setCustomDocName] = useState("");
   const [customDocMandatory] = useState(true);
-
   const [customQuestion, setCustomQuestion] = useState("");
   const [customKtItem, setCustomKtItem] = useState("");
-
   const [prevEditingTemplate, setPrevEditingTemplate] = useState<string | null>(
     editingTemplate,
   );
   const [prevShowTemplateEditor, setPrevShowTemplateEditor] =
     useState<boolean>(showTemplateEditor);
-
   if (
     editingTemplate !== prevEditingTemplate ||
     showTemplateEditor !== prevShowTemplateEditor
@@ -259,13 +264,15 @@ export function OffboardingTemplateEditorModal({
     setCustomTaskName("");
     setCustomTaskDesc("");
   };
-
   const removeClearanceTask = (deptId: string, taskId: string) => {
     setDraft((current) => ({
       ...current,
       clearances: (current.clearances || []).map((c) =>
         c.id === deptId
-          ? { ...c, tasks: c.tasks.filter((t) => t.id !== taskId) }
+          ? {
+              ...c,
+              tasks: c.tasks.filter((t) => t.id !== taskId),
+            }
           : c,
       ),
     }));
@@ -288,7 +295,6 @@ export function OffboardingTemplateEditorModal({
     }));
     setCustomAssetName("");
   };
-
   const removeAssetRule = (id: string) => {
     setDraft((current) => ({
       ...current,
@@ -312,7 +318,6 @@ export function OffboardingTemplateEditorModal({
     }));
     setCustomDocName("");
   };
-
   const removeDocumentRule = (id: string) => {
     setDraft((current) => ({
       ...current,
@@ -332,7 +337,6 @@ export function OffboardingTemplateEditorModal({
     }));
     setCustomQuestion("");
   };
-
   const removeQuestion = (idx: number) => {
     setDraft((current) => ({
       ...current,
@@ -341,7 +345,6 @@ export function OffboardingTemplateEditorModal({
       ).filter((_, i) => i !== idx),
     }));
   };
-
   const addKtItem = () => {
     if (!customKtItem.trim()) return;
     setDraft((current) => ({
@@ -353,7 +356,6 @@ export function OffboardingTemplateEditorModal({
     }));
     setCustomKtItem("");
   };
-
   const removeKtItem = (idx: number) => {
     setDraft((current) => ({
       ...current,
@@ -362,7 +364,6 @@ export function OffboardingTemplateEditorModal({
       ).filter((_, i) => i !== idx),
     }));
   };
-
   const submit = (status: "draft" | "active") => {
     if (!draft.name.trim() || !draft.department) {
       showToast(
@@ -378,23 +379,37 @@ export function OffboardingTemplateEditorModal({
     });
     setShowTemplateEditor(false);
   };
-
   return (
     <AnimatePresence>
       {showTemplateEditor && (
-        <motion.div
+        <m.div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
           onClick={() => setShowTemplateEditor(false)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
+          exit={{
+            opacity: 0,
+          }}
         >
-          <motion.div
+          <m.div
             className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[36px] bg-card border border-border shadow-2xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
-            initial={{ scale: 0.96, y: 15 }}
-            animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.96, y: 15 }}
+            initial={{
+              scale: 0.96,
+              y: 15,
+            }}
+            animate={{
+              scale: 1,
+              y: 0,
+            }}
+            exit={{
+              scale: 0.96,
+              y: 15,
+            }}
           >
             {/* Header */}
             <div className="px-8 py-6 border-b border-border flex justify-between items-center shrink-0">
@@ -423,13 +438,21 @@ export function OffboardingTemplateEditorModal({
             {/* Tabs */}
             <div className="px-8 border-b border-border bg-muted/5 flex gap-2 shrink-0">
               {[
-                { key: "info", label: "1. Info & Filters", icon: Settings },
+                {
+                  key: "info",
+                  label: "1. Info & Filters",
+                  icon: Settings,
+                },
                 {
                   key: "clearances",
                   label: "2. Clearances Tasks",
                   icon: ShieldCheck,
                 },
-                { key: "assets", label: "3. Assets & Docs", icon: FileCheck },
+                {
+                  key: "assets",
+                  label: "3. Assets & Docs",
+                  icon: FileCheck,
+                },
                 {
                   key: "process",
                   label: "4. KT & Exit Interview",
@@ -443,11 +466,7 @@ export function OffboardingTemplateEditorModal({
                       tab.key as "info" | "clearances" | "assets" | "process",
                     )
                   }
-                  className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${
-                    activeTab === tab.key
-                      ? "border-[#00B87C] text-[#00B87C]"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${activeTab === tab.key ? "border-[#00B87C] text-[#00B87C]" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                 >
                   <tab.icon size={13} />
                   {tab.label}
@@ -468,7 +487,10 @@ export function OffboardingTemplateEditorModal({
                       <input
                         value={draft.name}
                         onChange={(e) =>
-                          setDraft({ ...draft, name: e.target.value })
+                          setDraft({
+                            ...draft,
+                            name: e.target.value,
+                          })
                         }
                         placeholder="e.g. Engineering Exit template"
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:border-[#00B87C]"
@@ -494,7 +516,10 @@ export function OffboardingTemplateEditorModal({
                       <select
                         value={draft.department}
                         onChange={(e) =>
-                          setDraft({ ...draft, department: e.target.value })
+                          setDraft({
+                            ...draft,
+                            department: e.target.value,
+                          })
                         }
                         className="w-full rounded-xl border border-[#00B87C]/20 bg-background px-4 py-3 text-xs font-bold outline-none"
                       >
@@ -516,10 +541,7 @@ export function OffboardingTemplateEditorModal({
                           setDraft({
                             ...draft,
                             status: e.target.value as
-                              | "draft"
-                              | "active"
-                              | "inactive"
-                              | "archived",
+                              "draft" | "active" | "inactive" | "archived",
                           })
                         }
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none"
@@ -538,7 +560,10 @@ export function OffboardingTemplateEditorModal({
                     <textarea
                       value={draft.description}
                       onChange={(e) =>
-                        setDraft({ ...draft, description: e.target.value })
+                        setDraft({
+                          ...draft,
+                          description: e.target.value,
+                        })
                       }
                       placeholder="e.g. Standard offboarding sequence containing KT, hardware collection, and F&F calculations..."
                       rows={3}
@@ -552,7 +577,10 @@ export function OffboardingTemplateEditorModal({
                         type="checkbox"
                         checked={draft.isDefault || false}
                         onChange={(e) =>
-                          setDraft({ ...draft, isDefault: e.target.checked })
+                          setDraft({
+                            ...draft,
+                            isDefault: e.target.checked,
+                          })
                         }
                         className="h-4.5 w-4.5 rounded border-border text-[#00B87C] focus:ring-[#00B87C]"
                       />
@@ -612,13 +640,7 @@ export function OffboardingTemplateEditorModal({
                                   {task.name}
                                 </strong>
                                 <span
-                                  className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${
-                                    task.priority === "High"
-                                      ? "bg-red-50 text-red-500 border-red-500/15"
-                                      : task.priority === "Medium"
-                                        ? "bg-amber-50 text-amber-500 border-amber-500/15"
-                                        : "bg-blue-50 text-blue-500 border-blue-500/15"
-                                  }`}
+                                  className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${task.priority === "High" ? "bg-red-50 text-red-500 border-red-500/15" : task.priority === "Medium" ? "bg-amber-50 text-amber-500 border-amber-500/15" : "bg-blue-50 text-blue-500 border-blue-500/15"}`}
                                 >
                                   {task.priority || "Medium"} Priority
                                 </span>
@@ -739,7 +761,12 @@ export function OffboardingTemplateEditorModal({
                             type="number"
                             value={customTaskDue}
                             onChange={(e) =>
-                              setCustomTaskDue((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))
+                              setCustomTaskDue(
+                                e.target.value === "" ||
+                                  isNaN(Number(e.target.value))
+                                  ? undefined
+                                  : Number(e.target.value),
+                              )
                             }
                             min={0}
                             className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"
@@ -1064,8 +1091,8 @@ export function OffboardingTemplateEditorModal({
                 </button>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

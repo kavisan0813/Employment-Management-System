@@ -6,14 +6,12 @@
 import React from "react";
 import { Globe } from "lucide-react";
 import { SystemConfig } from "../types/platformSettings.types";
-
 interface Props {
   config: SystemConfig;
   setConfig: React.Dispatch<React.SetStateAction<SystemConfig>>;
   getFormattedDatePreview: () => string;
   getFormattedNumberPreview: () => string;
 }
-
 export function LocalizationSettingsView({
   config,
   setConfig,
@@ -32,12 +30,10 @@ export function LocalizationSettingsView({
       } as unknown as SystemConfig["localization"],
     }));
   };
-
   const inputClass =
     "w-full text-sm p-3 border border-gray-200 rounded-xl bg-white outline-none focus:border-indigo-400 transition-colors";
   const labelClass =
     "text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block";
-
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -68,6 +64,10 @@ export function LocalizationSettingsView({
                 >
                   <input
                     type="checkbox"
+
+
+
+
                     checked={config.localization.supportedLanguages.includes(
                       lang,
                     )}
@@ -139,8 +139,14 @@ export function LocalizationSettingsView({
                 label: "Default Language",
                 val: config.localization.defaultLanguage,
               },
-              { label: "Date Preview", val: getFormattedDatePreview() },
-              { label: "Number Scale", val: getFormattedNumberPreview() },
+              {
+                label: "Date Preview",
+                val: getFormattedDatePreview(),
+              },
+              {
+                label: "Number Scale",
+                val: getFormattedNumberPreview(),
+              },
               {
                 label: "Calendar",
                 val: `${config.localization.calendarFormat} Calendar`,

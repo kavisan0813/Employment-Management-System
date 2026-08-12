@@ -447,28 +447,39 @@ export function RolesPermissionsPage() {
               <h2 className="text-xl font-bold">
                 {activeModal === "create_role" ? "Create Role" : "Edit Role"}
               </h2>
-              <button onClick={() => setActiveModal(null)} className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+              <button
+                onClick={() => setActiveModal(null)}
+                className="text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+              >
                 ✕
               </button>
             </div>
-            
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Role Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium mb-1">
+                  Role Name <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 border rounded-md bg-transparent text-[var(--foreground)]"
                   value={roleForm.name}
-                  onChange={(e) => setRoleForm({ ...roleForm, name: e.target.value })}
+                  onChange={(e) =>
+                    setRoleForm({ ...roleForm, name: e.target.value })
+                  }
                   placeholder="e.g. IT Administrator"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1">
+                  Description
+                </label>
                 <textarea
                   className="w-full px-3 py-2 border rounded-md bg-transparent text-[var(--foreground)]"
                   value={roleForm.description}
-                  onChange={(e) => setRoleForm({ ...roleForm, description: e.target.value })}
+                  onChange={(e) =>
+                    setRoleForm({ ...roleForm, description: e.target.value })
+                  }
                   placeholder="Brief description of this role's responsibilities"
                   rows={3}
                 />
@@ -487,7 +498,11 @@ export function RolesPermissionsPage() {
                 onClick={handleRoleSubmit}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Saving..." : (activeModal === "create_role" ? "Create Role" : "Update Role")}
+                {isSubmitting
+                  ? "Saving..."
+                  : activeModal === "create_role"
+                    ? "Create Role"
+                    : "Update Role"}
               </button>
             </div>
           </div>
@@ -495,9 +510,13 @@ export function RolesPermissionsPage() {
       ) : activeModal === "confirm_edit_role" ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl p-6 shadow-2xl border border-[var(--border)] relative bg-[var(--background)]">
-            <h2 className="text-xl font-bold mb-4 text-center">Confirm Changes</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">
+              Confirm Changes
+            </h2>
             <p className="text-[var(--muted-foreground)] text-center mb-6">
-              Are you sure you want to update the permissions for {selectedRoleForEdit?.name}? This may affect users currently assigned to this role.
+              Are you sure you want to update the permissions for{" "}
+              {selectedRoleForEdit?.name}? This may affect users currently
+              assigned to this role.
             </p>
             <div className="flex justify-center gap-3">
               <button

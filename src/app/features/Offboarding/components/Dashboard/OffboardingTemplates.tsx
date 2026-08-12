@@ -1,7 +1,6 @@
 import { MoreVertical, Edit3, Copy, Trash2 } from "lucide-react";
-import { motion } from "motion/react";
 import type { OffboardingTemplate } from "../../types/offboarding.types";
-
+import * as m from "motion/react-m";
 interface OffboardingTemplatesProps {
   templates: OffboardingTemplate[];
   showTemplateMenu: string | null;
@@ -11,7 +10,6 @@ interface OffboardingTemplatesProps {
   handleDuplicateTemplate: (id: string) => void;
   handleDeleteTemplate: (id: string) => void;
 }
-
 export function OffboardingTemplates({
   showTemplateMenu,
   setShowTemplateMenu,
@@ -22,11 +20,17 @@ export function OffboardingTemplates({
   templates,
 }: OffboardingTemplatesProps) {
   return (
-    <motion.div
+    <m.div
       key="offboarding-templates"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{
+        opacity: 0,
+      }}
+      animate={{
+        opacity: 1,
+      }}
+      exit={{
+        opacity: 0,
+      }}
       className="bg-card border border-border rounded-[32px] p-6 shadow-sm"
     >
       <div className="flex items-center justify-between mb-6">
@@ -155,6 +159,6 @@ export function OffboardingTemplates({
           ))}
         </div>
       )}
-    </motion.div>
+    </m.div>
   );
 }

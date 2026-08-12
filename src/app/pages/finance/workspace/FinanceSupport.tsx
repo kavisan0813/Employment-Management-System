@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useMemo, useRef, useReducer, useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   Headphones,
@@ -18,8 +18,8 @@ import {
   Send,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
-
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 interface TimelineEntry {
   id: string;
   type:
@@ -32,17 +32,19 @@ interface TimelineEntry {
   user: string;
   timestamp: string;
   comment?: string;
-  attachment?: { name: string; size: string; type: string };
+  attachment?: {
+    name: string;
+    size: string;
+    type: string;
+  };
   newStatus?: string;
 }
-
 interface Attachment {
   name: string;
   size: string;
   type: string;
   url?: string;
 }
-
 interface Ticket {
   id: string;
   subject: string;
@@ -60,9 +62,7 @@ interface Ticket {
   timeline: TimelineEntry[];
   attachments: Attachment[];
 }
-
 const TABS = ["My Tickets", "New Ticket", "Knowledge Base"];
-
 const INITIAL_TICKETS: Ticket[] = [
   {
     id: "#TKT-0421",
@@ -129,24 +129,145 @@ const INITIAL_TICKETS: Ticket[] = [
     attachments: [],
   },
 ];
-
 const KB_CATEGORIES = [
-  { name: "IT Setup", icon: Monitor, count: 12 },
-  { name: "Payroll Queries", icon: IndianRupee, count: 8 },
-  { name: "TDS Help", icon: FileCode, count: 15 },
-  { name: "PF FAQs", icon: ShieldCheck, count: 6 },
-  { name: "Access Issues", icon: Key, count: 10 },
-  { name: "Finance Tools", icon: Zap, count: 14 },
+  {
+    name: "IT Setup",
+    icon: Monitor,
+    count: 12,
+  },
+  {
+    name: "Payroll Queries",
+    icon: IndianRupee,
+    count: 8,
+  },
+  {
+    name: "TDS Help",
+    icon: FileCode,
+    count: 15,
+  },
+  {
+    name: "PF FAQs",
+    icon: ShieldCheck,
+    count: 6,
+  },
+  {
+    name: "Access Issues",
+    icon: Key,
+    count: 10,
+  },
+  {
+    name: "Finance Tools",
+    icon: Zap,
+    count: 14,
+  },
 ];
-
 export function FinanceSupport() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("My Tickets");
-  const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [ticketStatusTab, setTicketStatusTab] = useState("All Requests");
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeTab: "My Tickets",
+    tickets: INITIAL_TICKETS as Ticket[],
+    searchQuery: "",
+    ticketStatusTab: "All Requests",
+    selectedTicket: null as Ticket | null,
+    subject: "",
+    category: "Finance Tool",
+    priority: "Medium",
+    description: "",
+    file: null as File | null,
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    activeTab,
+    tickets,
+    searchQuery,
+    ticketStatusTab,
+    selectedTicket,
+    subject,
+    category,
+    priority,
+    description,
+    file,
+  } = __state;
+  const setActiveTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeTab: typeof val === "function" ? val(prev.activeTab) : val,
+      })),
+    [],
+  );
+  const setTickets = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        tickets: typeof val === "function" ? val(prev.tickets) : val,
+      })),
+    [],
+  );
+  const setSearchQuery = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        searchQuery: typeof val === "function" ? val(prev.searchQuery) : val,
+      })),
+    [],
+  );
+  const setTicketStatusTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        ticketStatusTab:
+          typeof val === "function" ? val(prev.ticketStatusTab) : val,
+      })),
+    [],
+  );
+  const setSelectedTicket = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedTicket:
+          typeof val === "function" ? val(prev.selectedTicket) : val,
+      })),
+    [],
+  );
+  const setSubject = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        subject: typeof val === "function" ? val(prev.subject) : val,
+      })),
+    [],
+  );
+  const setCategory = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        category: typeof val === "function" ? val(prev.category) : val,
+      })),
+    [],
+  );
+  const setPriority = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        priority: typeof val === "function" ? val(prev.priority) : val,
+      })),
+    [],
+  );
+  const setDescription = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        description: typeof val === "function" ? val(prev.description) : val,
+      })),
+    [],
+  );
+  const setFile = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        file: typeof val === "function" ? val(prev.file) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const handleAddReply = (ticketId: string, replyText: string) => {
     if (!replyText.trim()) return;
     const newComment: TimelineEntry = {
@@ -156,7 +277,6 @@ export function FinanceSupport() {
       timestamp: "Just now",
       comment: replyText,
     };
-
     const nextTickets = tickets.map((t) => {
       if (t.id === ticketId) {
         const updatedTicket = {
@@ -177,13 +297,7 @@ export function FinanceSupport() {
   };
 
   // New Ticket Form State
-  const [subject, setSubject] = useState("");
-  const [category, setCategory] = useState("Finance Tool");
-  const [priority, setPriority] = useState("Medium");
-  const [description, setDescription] = useState("");
-  const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const filteredTickets = useMemo(() => {
     return tickets.filter((t) => {
       const matchSearch =
@@ -192,11 +306,9 @@ export function FinanceSupport() {
       return matchSearch;
     });
   }, [tickets, searchQuery]);
-
   const handleRaiseTicket = (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject.trim() || !description.trim()) return;
-
     const newTicket: Ticket = {
       id: `#TKT-0${Math.floor(Math.random() * 900) + 100}`,
       subject,
@@ -239,7 +351,6 @@ export function FinanceSupport() {
           ]
         : [],
     };
-
     setTickets([newTicket, ...tickets]);
     showToast(
       "Ticket Raised",
@@ -254,7 +365,6 @@ export function FinanceSupport() {
     setDescription("");
     setFile(null);
   };
-
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-10">
       {/* ─── Page Header ─────────────────────────────────────────── */}
@@ -304,7 +414,12 @@ export function FinanceSupport() {
           <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
             OPEN TICKETS
           </p>
-          <p className="text-[32px] font-black" style={{ color: "#F59E0B" }}>
+          <p
+            className="text-[32px] font-black"
+            style={{
+              color: "#F59E0B",
+            }}
+          >
             1
           </p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3">
@@ -322,7 +437,12 @@ export function FinanceSupport() {
           <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
             RESOLVED
           </p>
-          <p className="text-[32px] font-black" style={{ color: "#00B87C" }}>
+          <p
+            className="text-[32px] font-black"
+            style={{
+              color: "#00B87C",
+            }}
+          >
             5
           </p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3">
@@ -334,7 +454,12 @@ export function FinanceSupport() {
           <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
             AVG RESOLUTION
           </p>
-          <p className="text-[32px] font-black" style={{ color: "#0D9488" }}>
+          <p
+            className="text-[32px] font-black"
+            style={{
+              color: "#0D9488",
+            }}
+          >
             1.2 days
           </p>
           <p className="text-[13px] font-bold text-muted-foreground mt-3">
@@ -349,11 +474,7 @@ export function FinanceSupport() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 rounded-[12px] text-[14px] transition-all whitespace-nowrap ${
-              activeTab === tab
-                ? "bg-primary text-white font-black shadow-md shadow-primary/20"
-                : "text-muted-foreground font-bold hover:bg-secondary"
-            }`}
+            className={`px-6 py-3 rounded-[12px] text-[14px] transition-all whitespace-nowrap ${activeTab === tab ? "bg-primary text-white font-black shadow-md shadow-primary/20" : "text-muted-foreground font-bold hover:bg-secondary"}`}
           >
             {tab}
           </button>
@@ -363,12 +484,23 @@ export function FinanceSupport() {
       {/* ─── Tab Content ──────────────────────────────────────────── */}
       <div className="min-h-[400px]">
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
           >
             {activeTab === "My Tickets" && (
               <div className="space-y-4">
@@ -378,11 +510,7 @@ export function FinanceSupport() {
                       <button
                         key={tab}
                         onClick={() => setTicketStatusTab(tab)}
-                        className={`px-4 py-2 rounded-xl text-[13px] transition-all whitespace-nowrap ${
-                          ticketStatusTab === tab
-                            ? "bg-secondary text-foreground font-black shadow-sm"
-                            : "text-muted-foreground font-bold hover:bg-secondary/50"
-                        }`}
+                        className={`px-4 py-2 rounded-xl text-[13px] transition-all whitespace-nowrap ${ticketStatusTab === tab ? "bg-secondary text-foreground font-black shadow-sm" : "text-muted-foreground font-bold hover:bg-secondary/50"}`}
                       >
                         {tab}
                       </button>
@@ -541,11 +669,7 @@ export function FinanceSupport() {
                           key={level}
                           type="button"
                           onClick={() => setPriority(level)}
-                          className={`py-3 rounded-xl text-[13px] font-black transition-all border-2 ${
-                            priority === level
-                              ? "bg-[#00B87C] text-white border-[#00B87C] shadow-lg shadow-emerald-500/20"
-                              : "bg-secondary/50 text-muted-foreground border-transparent hover:border-emerald-500/20"
-                          }`}
+                          className={`py-3 rounded-xl text-[13px] font-black transition-all border-2 ${priority === level ? "bg-[#00B87C] text-white border-[#00B87C] shadow-lg shadow-emerald-500/20" : "bg-secondary/50 text-muted-foreground border-transparent hover:border-emerald-500/20"}`}
                         >
                           {level}
                         </button>
@@ -576,7 +700,9 @@ export function FinanceSupport() {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       required
-                      style={{ height: "120px" }}
+                      style={{
+                        height: "120px",
+                      }}
                       className="w-full bg-secondary/50 border border-border rounded-2xl px-6 py-4 text-[15px] font-medium text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-all resize-none"
                     />
                   </div>
@@ -656,7 +782,7 @@ export function FinanceSupport() {
                 </div>
               </div>
             )}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
@@ -681,21 +807,18 @@ interface TicketDetailsModalProps {
   onClose: () => void;
   onSendReply: (replyText: string) => void;
 }
-
 function TicketDetailsModal({
   ticket,
   onClose,
   onSendReply,
 }: TicketDetailsModalProps) {
   const [replyText, setReplyText] = useState("");
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyText.trim()) return;
     onSendReply(replyText);
     setReplyText("");
   };
-
   return (
     <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -825,7 +948,6 @@ function TicketDetailsModal({
               {ticket.timeline.map((entry) => {
                 let bulletBg = "bg-border";
                 let descriptionNode: React.ReactNode;
-
                 switch (entry.type) {
                   case "created":
                     bulletBg = "bg-blue-500";
@@ -897,7 +1019,6 @@ function TicketDetailsModal({
                       </span>
                     );
                 }
-
                 return (
                   <div key={entry.id} className="relative group">
                     <div
@@ -927,7 +1048,9 @@ function TicketDetailsModal({
             placeholder="Type your reply here..."
             className="flex-1 bg-secondary/50 border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-all resize-none max-h-[80px]"
             rows={1}
-            style={{ height: "40px" }}
+            style={{
+              height: "40px",
+            }}
             onKeyDown={(e) => {
               if (e.nativeEvent.isComposing) return;
               if (e.key === "Enter" && !e.shiftKey) {

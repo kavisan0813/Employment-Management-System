@@ -26,10 +26,22 @@ export const ROLE_NAVIGATION: Record<string, SettingsCategory[]> = {
     {
       title: "HR POLICIES",
       items: [
-        { id: "attendance_policy", label: "Attendance Policy", iconName: "ClipboardCheck" },
+        {
+          id: "attendance_policy",
+          label: "Attendance Policy",
+          iconName: "ClipboardCheck",
+        },
         { id: "leave_policy", label: "Leave Policy", iconName: "TreePalm" },
-        { id: "payroll_settings", label: "Payroll Settings", iconName: "IndianRupee" },
-        { id: "performance_settings", label: "Performance & Appraisal", iconName: "Star" },
+        {
+          id: "payroll_settings",
+          label: "Payroll Settings",
+          iconName: "IndianRupee",
+        },
+        {
+          id: "performance_settings",
+          label: "Performance & Appraisal",
+          iconName: "Star",
+        },
       ],
     },
     {
@@ -53,7 +65,11 @@ export const ROLE_NAVIGATION: Record<string, SettingsCategory[]> = {
       title: "NOTIFICATIONS",
       items: [
         { id: "email_templates", label: "Email Templates", iconName: "Mail" },
-        { id: "notification_rules", label: "Notification Rules", iconName: "Bell" },
+        {
+          id: "notification_rules",
+          label: "Notification Rules",
+          iconName: "Bell",
+        },
         { id: "sms", label: "SMS Settings", iconName: "Smartphone" },
       ],
     },
@@ -63,14 +79,26 @@ export const ROLE_NAVIGATION: Record<string, SettingsCategory[]> = {
         { id: "appearance", label: "Appearance", iconName: "Palette" },
         { id: "language", label: "Language & Region", iconName: "Globe" },
         { id: "backup", label: "Backup & Restore", iconName: "Database" },
-        { id: "import_export", label: "Data Import / Export", iconName: "Download" },
+        {
+          id: "import_export",
+          label: "Data Import / Export",
+          iconName: "Download",
+        },
       ],
     },
     {
       title: "WORKFLOW AUTOMATION",
       items: [
-        { id: "workflows", label: "Approval Workflows", iconName: "GitPullRequest" },
-        { id: "leave_approvals", label: "Leave Approvals", iconName: "CheckCircle" },
+        {
+          id: "workflows",
+          label: "Approval Workflows",
+          iconName: "GitPullRequest",
+        },
+        {
+          id: "leave_approvals",
+          label: "Leave Approvals",
+          iconName: "CheckCircle",
+        },
         { id: "shift_swaps", label: "Shift Swap Rules", iconName: "RefreshCw" },
       ],
     },
@@ -78,8 +106,16 @@ export const ROLE_NAVIGATION: Record<string, SettingsCategory[]> = {
       title: "MODULE SETTINGS",
       items: [
         { id: "docs", label: "Document Settings", iconName: "FileCode" },
-        { id: "training", label: "Training Settings", iconName: "GraduationCap" },
-        { id: "onboarding", label: "Onboarding Settings", iconName: "UserPlus" },
+        {
+          id: "training",
+          label: "Training Settings",
+          iconName: "GraduationCap",
+        },
+        {
+          id: "onboarding",
+          label: "Onboarding Settings",
+          iconName: "UserPlus",
+        },
       ],
     },
   ],
@@ -94,17 +130,33 @@ export const ROLE_NAVIGATION: Record<string, SettingsCategory[]> = {
     {
       title: "HR POLICIES",
       items: [
-        { id: "attendance_policy", label: "Attendance Policy", iconName: "ClipboardCheck" },
+        {
+          id: "attendance_policy",
+          label: "Attendance Policy",
+          iconName: "ClipboardCheck",
+        },
         { id: "leave_policy", label: "Leave Policy", iconName: "TreePalm" },
-        { id: "payroll_settings", label: "Payroll Settings", iconName: "IndianRupee" },
-        { id: "performance_settings", label: "Performance & Appraisal", iconName: "Star" },
+        {
+          id: "payroll_settings",
+          label: "Payroll Settings",
+          iconName: "IndianRupee",
+        },
+        {
+          id: "performance_settings",
+          label: "Performance & Appraisal",
+          iconName: "Star",
+        },
       ],
     },
     {
       title: "NOTIFICATIONS",
       items: [
         { id: "email_templates", label: "Email Templates", iconName: "Mail" },
-        { id: "notification_rules", label: "Notification Rules", iconName: "Bell" },
+        {
+          id: "notification_rules",
+          label: "Notification Rules",
+          iconName: "Bell",
+        },
         { id: "sms", label: "SMS Settings", iconName: "Smartphone" },
       ],
     },
@@ -118,8 +170,16 @@ export const ROLE_NAVIGATION: Record<string, SettingsCategory[]> = {
     {
       title: "WORKFLOW AUTOMATION",
       items: [
-        { id: "workflows", label: "Approval Workflows", iconName: "GitPullRequest" },
-        { id: "leave_approvals", label: "Leave Approvals", iconName: "CheckCircle" },
+        {
+          id: "workflows",
+          label: "Approval Workflows",
+          iconName: "GitPullRequest",
+        },
+        {
+          id: "leave_approvals",
+          label: "Leave Approvals",
+          iconName: "CheckCircle",
+        },
         { id: "shift_swaps", label: "Shift Swap Rules", iconName: "RefreshCw" },
       ],
     },
@@ -127,12 +187,20 @@ export const ROLE_NAVIGATION: Record<string, SettingsCategory[]> = {
       title: "MODULE SETTINGS",
       items: [
         { id: "docs", label: "Document Settings", iconName: "FileCode" },
-        { id: "training", label: "Training Settings", iconName: "GraduationCap" },
-        { id: "onboarding", label: "Onboarding Settings", iconName: "UserPlus" },
+        {
+          id: "training",
+          label: "Training Settings",
+          iconName: "GraduationCap",
+        },
+        {
+          id: "onboarding",
+          label: "Onboarding Settings",
+          iconName: "UserPlus",
+        },
       ],
     },
   ],
-  "Employee": [
+  Employee: [
     {
       title: "ACCOUNT",
       items: [
@@ -159,7 +227,11 @@ export const ROLE_NAVIGATION: Record<string, SettingsCategory[]> = {
       title: "SUPPORT",
       items: [
         { id: "emp_help", label: "Help & FAQ", iconName: "HelpCircle" },
-        { id: "emp_contact", label: "Contact HR / Support", iconName: "Headphones" },
+        {
+          id: "emp_contact",
+          label: "Contact HR / Support",
+          iconName: "Headphones",
+        },
       ],
     },
   ],

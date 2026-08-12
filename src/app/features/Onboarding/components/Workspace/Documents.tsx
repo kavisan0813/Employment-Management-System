@@ -12,8 +12,12 @@ interface DocumentsProps {
 }
 
 export function Documents({
-  documents, uploadedDocs,
-  handleViewDoc, handleRequestDoc, handleUploadClick, handleUploadDoc,
+  documents,
+  uploadedDocs,
+  handleViewDoc,
+  handleRequestDoc,
+  handleUploadClick,
+  handleUploadDoc,
 }: DocumentsProps) {
   return (
     <div className="mx-6 mb-5 p-5 bg-muted/20 border border-border rounded-2xl">
@@ -47,24 +51,59 @@ export function Documents({
           <tbody className="divide-y divide-border/50">
             {documents.map((doc) => (
               <tr key={doc.id} className="text-[12px]">
-                <td className="py-2.5 pr-4 font-bold text-foreground">{doc.name}</td>
+                <td className="py-2.5 pr-4 font-bold text-foreground">
+                  {doc.name}
+                </td>
                 <td className="py-2.5 pr-4">
                   <span
                     className={`inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider ${doc.status === "uploaded" ? "text-[#00B87C]" : doc.status === "pending" ? "text-[#F59E0B]" : doc.status === "missing" ? "text-[#EF4444]" : "text-muted-foreground"}`}
                   >
-                    {doc.status === "uploaded" ? <CheckCircle2 size={12} /> : doc.status === "pending" ? <Clock size={12} /> : doc.status === "missing" ? <XCircle size={12} /> : <HelpCircle size={12} />}
-                    {doc.status === "uploaded" ? "Uploaded" : doc.status === "pending" ? "Pending" : doc.status === "missing" ? "Missing" : "Optional"}
+                    {doc.status === "uploaded" ? (
+                      <CheckCircle2 size={12} />
+                    ) : doc.status === "pending" ? (
+                      <Clock size={12} />
+                    ) : doc.status === "missing" ? (
+                      <XCircle size={12} />
+                    ) : (
+                      <HelpCircle size={12} />
+                    )}
+                    {doc.status === "uploaded"
+                      ? "Uploaded"
+                      : doc.status === "pending"
+                        ? "Pending"
+                        : doc.status === "missing"
+                          ? "Missing"
+                          : "Optional"}
                   </span>
                 </td>
-                <td className="py-2.5 pr-4 text-muted-foreground">{doc.uploadedBy || "—"}</td>
-                <td className="py-2.5 pr-4 text-muted-foreground">{doc.date || "—"}</td>
+                <td className="py-2.5 pr-4 text-muted-foreground">
+                  {doc.uploadedBy || "—"}
+                </td>
+                <td className="py-2.5 pr-4 text-muted-foreground">
+                  {doc.date || "—"}
+                </td>
                 <td className="py-2.5 text-right">
                   {doc.status === "uploaded" ? (
-                    <button onClick={() => handleViewDoc(doc.name)} className="text-[11px] font-semibold text-[#00B87C] uppercase tracking-wider hover:underline">View</button>
+                    <button
+                      onClick={() => handleViewDoc(doc.name)}
+                      className="text-[11px] font-semibold text-[#00B87C] uppercase tracking-wider hover:underline"
+                    >
+                      View
+                    </button>
                   ) : doc.status === "pending" ? (
-                    <button onClick={() => handleRequestDoc(doc.name)} className="text-[11px] font-semibold text-[#F59E0B] uppercase tracking-wider hover:underline">Request</button>
+                    <button
+                      onClick={() => handleRequestDoc(doc.name)}
+                      className="text-[11px] font-semibold text-[#F59E0B] uppercase tracking-wider hover:underline"
+                    >
+                      Request
+                    </button>
                   ) : doc.status === "missing" ? (
-                    <button onClick={() => handleUploadClick(doc.id, doc.name)} className="text-[11px] font-semibold text-[#EF4444] uppercase tracking-wider hover:underline">Upload</button>
+                    <button
+                      onClick={() => handleUploadClick(doc.id, doc.name)}
+                      className="text-[11px] font-semibold text-[#EF4444] uppercase tracking-wider hover:underline"
+                    >
+                      Upload
+                    </button>
                   ) : (
                     <span className="text-muted-foreground">—</span>
                   )}

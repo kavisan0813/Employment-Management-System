@@ -24,8 +24,8 @@ import {
   Paperclip,
   Send,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 interface ExpenseClaim {
   id: string;
   employee: {
@@ -44,7 +44,6 @@ interface ExpenseClaim {
   paymentMode?: string;
   project?: string;
 }
-
 const MOCK_EXPENSES: ExpenseClaim[] = [
   {
     id: "EXP-1284",
@@ -119,7 +118,6 @@ const MOCK_EXPENSES: ExpenseClaim[] = [
     project: "Internal Ops",
   },
 ];
-
 export function FinanceExpenses() {
   const location = useLocation();
   const [expenses, setExpenses] = useState<ExpenseClaim[]>(MOCK_EXPENSES);
@@ -143,28 +141,24 @@ export function FinanceExpenses() {
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [departmentFilter, setDepartmentFilter] = useState("All Departments");
   const [amountFilter, setAmountFilter] = useState("Any Amount");
-
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
-
   const handleExport = (mode: "all" | "selected") => {
     setExportMode(mode);
     setShowExportModal(true);
   };
-
   const executeExport = () => {
     setIsExporting(true);
     setTimeout(() => {
       const expensesToExport =
         exportMode === "selected"
           ? (() => {
-            const selectedRowsSet = new Set(selectedRows);
-            return expenses.filter((exp) => selectedRowsSet.has(exp.id));
-          })()
+              const selectedRowsSet = new Set(selectedRows);
+              return expenses.filter((exp) => selectedRowsSet.has(exp.id));
+            })()
           : expenses;
-
       const headers = [
         "ID,Employee,Department,Category,Description,Amount,Receipt Status,Submitted On,Status",
       ];
@@ -172,9 +166,10 @@ export function FinanceExpenses() {
         (exp) =>
           `${exp.id},"${exp.employee.name}",${exp.employee.department},${exp.category},"${exp.description}",${exp.amount},${exp.receiptStatus},"${exp.submittedOn}",${exp.status}`,
       );
-
       const csvContent = headers.concat(rows).join("\n");
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob([csvContent], {
+        type: "text/csv;charset=utf-8;",
+      });
       const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
@@ -183,7 +178,6 @@ export function FinanceExpenses() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
       setIsExporting(false);
       setShowExportModal(false);
       showToast(
@@ -191,10 +185,11 @@ export function FinanceExpenses() {
       );
     }, 1500);
   };
-
   const filteredExpenses = expenses.filter((exp) => {
     const matchesTab = activeTab === "All" || exp.status === activeTab;
     const matchesSearch =
+
+
       exp.employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       exp.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory =
@@ -217,13 +212,11 @@ export function FinanceExpenses() {
       matchesAmount
     );
   });
-
   const toggleRow = (id: string) => {
     setSelectedRows((prev) =>
       prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id],
     );
   };
-
   const toggleAll = () => {
     if (
       selectedRows.length === filteredExpenses.length &&
@@ -234,7 +227,6 @@ export function FinanceExpenses() {
       setSelectedRows(filteredExpenses.map((e) => e.id));
     }
   };
-
   const pendingCount =
     34 + expenses.filter((e) => e.status === "Pending").length;
   const approvedCount =
@@ -246,7 +238,6 @@ export function FinanceExpenses() {
     expenses
       .filter((e) => e.status === "Approved")
       .reduce((sum, e) => sum + e.amount, 0);
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -313,15 +304,11 @@ export function FinanceExpenses() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as typeof activeTab)}
-                className={`px-8 py-4 text-[14px] font-semibold tracking-wider uppercase transition-all relative ${
-                  isActive
-                    ? "text-[#00B87C]"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`px-8 py-4 text-[14px] font-semibold tracking-wider uppercase transition-all relative ${isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
               >
                 {tab} {count && `(${count})`}
                 {isActive && (
-                  <motion.div
+                  <m.div
                     layoutId="activeTab"
                     className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#00B87C]"
                   />
@@ -398,10 +385,19 @@ export function FinanceExpenses() {
         {/* BULK ACTIONS BAR */}
         <AnimatePresence>
           {selectedRows.length > 0 && (
-            <motion.div
-              initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -50, opacity: 0 }}
+            <m.div
+              initial={{
+                y: -50,
+                opacity: 0,
+              }}
+              animate={{
+                y: 0,
+                opacity: 1,
+              }}
+              exit={{
+                y: -50,
+                opacity: 0,
+              }}
               className="sticky top-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-b border-[#00B87C]/30 shadow-lg px-8 py-3 flex items-center justify-between z-[20]"
             >
               <div className="flex items-center gap-4">
@@ -419,10 +415,14 @@ export function FinanceExpenses() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => {
+                    const selectedRowsSet = new Set(selectedRows);
                     setExpenses((prev) =>
                       prev.map((exp) =>
-                        selectedRows.includes(exp.id)
-                          ? { ...exp, status: "Approved" }
+                        selectedRowsSet.has(exp.id)
+                          ? {
+                              ...exp,
+                              status: "Approved",
+                            }
                           : exp,
                       ),
                     );
@@ -437,10 +437,14 @@ export function FinanceExpenses() {
                 </button>
                 <button
                   onClick={() => {
+                    const selectedRowsSet = new Set(selectedRows);
                     setExpenses((prev) =>
                       prev.map((exp) =>
-                        selectedRows.includes(exp.id)
-                          ? { ...exp, status: "Rejected" }
+                        selectedRowsSet.has(exp.id)
+                          ? {
+                              ...exp,
+                              status: "Rejected",
+                            }
                           : exp,
                       ),
                     );
@@ -458,7 +462,7 @@ export function FinanceExpenses() {
                   Export Selected
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
 
@@ -509,7 +513,7 @@ export function FinanceExpenses() {
             </thead>
             <tbody className="divide-y divide-border">
               {filteredExpenses.map((exp, i) => (
-                <motion.tr
+                <m.tr
                   key={exp.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -534,7 +538,9 @@ export function FinanceExpenses() {
                     <div className="flex items-center gap-3">
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold"
-                        style={{ backgroundColor: exp.employee.avatarColor }}
+                        style={{
+                          backgroundColor: exp.employee.avatarColor,
+                        }}
                       >
                         {exp.employee.name
                           .split(" ")
@@ -588,17 +594,16 @@ export function FinanceExpenses() {
                               setExpenses((prev) =>
                                 prev.map((e) =>
                                   e.id === exp.id
-                                    ? { ...e, status: "Approved" }
+                                    ? {
+                                        ...e,
+                                        status: "Approved",
+                                      }
                                     : e,
                                 ),
                               );
                               showToast(`Expense ${exp.id} Approved!`);
                             }}
-                            className={`p-1.5 rounded-lg border transition-all ${
-                              exp.receiptStatus === "Missing"
-                                ? "bg-muted border-border text-muted-foreground cursor-not-allowed opacity-50"
-                                : "bg-[#00B87C] border-[#00B87C] text-white hover:bg-emerald-600 shadow-sm"
-                            }`}
+                            className={`p-1.5 rounded-lg border transition-all ${exp.receiptStatus === "Missing" ? "bg-muted border-border text-muted-foreground cursor-not-allowed opacity-50" : "bg-[#00B87C] border-[#00B87C] text-white hover:bg-emerald-600 shadow-sm"}`}
                             title={
                               exp.receiptStatus === "Missing"
                                 ? "Receipt required for approval"
@@ -626,7 +631,7 @@ export function FinanceExpenses() {
                       )}
                     </div>
                   </td>
-                </motion.tr>
+                </m.tr>
               ))}
             </tbody>
           </table>
@@ -637,18 +642,34 @@ export function FinanceExpenses() {
       <AnimatePresence>
         {viewingExpense && (
           <div className="fixed inset-0 z-[2100] flex justify-end">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
               onClick={() => setViewingExpense(null)}
-            ></motion.div>
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            ></m.div>
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="relative w-full max-w-[400px] h-full bg-card shadow-[-20px_0_40px_rgba(0,0,0,0.1)] flex flex-col"
             >
               <div className="p-6 border-b border-border">
@@ -680,13 +701,7 @@ export function FinanceExpenses() {
 
               {/* Status Banner */}
               <div
-                className={`px-6 py-2 flex items-center gap-2 ${
-                  viewingExpense.status === "Approved"
-                    ? "bg-[#DCFCE7] text-[#166534]"
-                    : viewingExpense.status === "Pending"
-                      ? "bg-[#FEF3C7] text-[#92400E]"
-                      : "bg-[#FEE2E2] text-[#991B1B]"
-                }`}
+                className={`px-6 py-2 flex items-center gap-2 ${viewingExpense.status === "Approved" ? "bg-[#DCFCE7] text-[#166534]" : viewingExpense.status === "Pending" ? "bg-[#FEF3C7] text-[#92400E]" : "bg-[#FEE2E2] text-[#991B1B]"}`}
               >
                 {viewingExpense.status === "Approved" ? (
                   <CheckCircle2 size={14} />
@@ -878,7 +893,10 @@ export function FinanceExpenses() {
                       setExpenses((prev) =>
                         prev.map((e) =>
                           e.id === viewingExpense.id
-                            ? { ...e, status: "Approved" }
+                            ? {
+                                ...e,
+                                status: "Approved",
+                              }
                             : e,
                         ),
                       );
@@ -906,7 +924,7 @@ export function FinanceExpenses() {
                   Request More Info
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -915,17 +933,35 @@ export function FinanceExpenses() {
       <AnimatePresence>
         {rejectingExpense && (
           <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setRejectingExpense(null)}
-            ></motion.div>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            ></m.div>
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[460px] rounded-[32px] overflow-hidden shadow-2xl"
             >
               <div className="p-8 pb-0 flex flex-col items-center text-center">
@@ -968,7 +1004,10 @@ export function FinanceExpenses() {
                     setExpenses((prev) =>
                       prev.map((e) =>
                         e.id === rejectingExpense.id
-                          ? { ...e, status: "Rejected" }
+                          ? {
+                              ...e,
+                              status: "Rejected",
+                            }
                           : e,
                       ),
                     );
@@ -981,7 +1020,7 @@ export function FinanceExpenses() {
                   Confirm Reject
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -990,17 +1029,35 @@ export function FinanceExpenses() {
       <AnimatePresence>
         {clarifyingExpense && (
           <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setClarifyingExpense(null)}
-            ></motion.div>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            ></m.div>
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[460px] rounded-[32px] overflow-hidden shadow-2xl"
             >
               <div className="p-8 pb-0 flex flex-col items-center text-center">
@@ -1053,7 +1110,7 @@ export function FinanceExpenses() {
                   Send Query
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1061,10 +1118,22 @@ export function FinanceExpenses() {
       {/* TOAST */}
       <AnimatePresence>
         {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              y: 50,
+              scale: 0.9,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              y: 20,
+              scale: 0.9,
+            }}
             className="fixed bottom-6 right-6 z-[3000] bg-card border border-border shadow-2xl rounded-2xl p-4 flex items-center gap-3"
           >
             <div className="w-8 h-8 rounded-full bg-[#00B87C]/10 flex items-center justify-center">
@@ -1079,7 +1148,7 @@ export function FinanceExpenses() {
             >
               <X size={16} />
             </button>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -1087,17 +1156,35 @@ export function FinanceExpenses() {
       <AnimatePresence>
         {showExportModal && (
           <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => !isExporting && setShowExportModal(false)}
-            ></motion.div>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            ></m.div>
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[420px] rounded-[32px] overflow-hidden shadow-2xl"
             >
               <div className="p-8 pb-0 flex flex-col items-center text-center">
@@ -1119,10 +1206,17 @@ export function FinanceExpenses() {
                       Processing File...
                     </p>
                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ x: "-100%" }}
-                        animate={{ x: "0%" }}
-                        transition={{ duration: 1.5, ease: "linear" }}
+                      <m.div
+                        initial={{
+                          x: "-100%",
+                        }}
+                        animate={{
+                          x: "0%",
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          ease: "linear",
+                        }}
                         className="h-full bg-[#00B87C] rounded-full w-full"
                       />
                     </div>
@@ -1146,14 +1240,13 @@ export function FinanceExpenses() {
                   {isExporting ? "Exporting..." : "Download CSV"}
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
     </div>
   );
 }
-
 function KPICard({
   title,
   value,
@@ -1168,22 +1261,46 @@ function KPICard({
   icon: React.ElementType;
 }) {
   const colors = {
-    amber: { text: "#D97706", bg: "#FEF3C7", iconColor: "#D97706" },
-    green: { text: "#00B87C", bg: "#DCFCE7", iconColor: "#10B981" },
-    red: { text: "#EF4444", bg: "#FEE2E2", iconColor: "#EF4444" },
-    dark: { text: "#111827", bg: "#F3F4F6", iconColor: "#64748B" },
+    amber: {
+      text: "#D97706",
+      bg: "#FEF3C7",
+      iconColor: "#D97706",
+    },
+    green: {
+      text: "#00B87C",
+      bg: "#DCFCE7",
+      iconColor: "#10B981",
+    },
+    red: {
+      text: "#EF4444",
+      bg: "#FEE2E2",
+      iconColor: "#EF4444",
+    },
+    dark: {
+      text: "#111827",
+      bg: "#F3F4F6",
+      iconColor: "#64748B",
+    },
   };
-
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
+    <m.div
+      whileHover={{
+        y: -5,
+      }}
       className="p-6 bg-card border border-border rounded-[32px] shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
     >
       <div
         className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-        style={{ backgroundColor: colors[color].bg }}
+        style={{
+          backgroundColor: colors[color].bg,
+        }}
       >
-        <Icon size={18} style={{ color: colors[color].iconColor }} />
+        <Icon
+          size={18}
+          style={{
+            color: colors[color].iconColor,
+          }}
+        />
       </div>
       <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">
         {title}
@@ -1191,7 +1308,9 @@ function KPICard({
       <div className="flex items-end gap-2">
         <h3
           className="text-[28px] font-bold tracking-tighter"
-          style={{ color: colors[color].text }}
+          style={{
+            color: colors[color].text,
+          }}
         >
           {value}
         </h3>
@@ -1201,10 +1320,9 @@ function KPICard({
           </span>
         )}
       </div>
-    </motion.div>
+    </m.div>
   );
 }
-
 function FilterSelect({
   label,
   options = ["Option 1", "Option 2"],
@@ -1219,7 +1337,6 @@ function FilterSelect({
   const [internalValue, setInternalValue] = useState<string | null>(null);
   const value = externalValue ?? internalValue ?? label;
   const handleChange = externalOnChange ?? setInternalValue;
-
   return (
     <div className="relative group">
       <select
@@ -1243,7 +1360,6 @@ function FilterSelect({
     </div>
   );
 }
-
 function CategoryChip({ category }: { category: ExpenseClaim["category"] }) {
   const styles = {
     Travel:
@@ -1256,7 +1372,6 @@ function CategoryChip({ category }: { category: ExpenseClaim["category"] }) {
     Others:
       "bg-slate-50 text-slate-600 border-slate-100 dark:bg-slate-500/10 dark:text-slate-400 dark:border-slate-500/20",
   };
-
   return (
     <span
       className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wider border ${styles[category]}`}
@@ -1265,15 +1380,10 @@ function CategoryChip({ category }: { category: ExpenseClaim["category"] }) {
     </span>
   );
 }
-
 function ReceiptStatus({ status }: { status: ExpenseClaim["receiptStatus"] }) {
   return (
     <span
-      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wider border flex items-center gap-1 w-fit ${
-        status === "Attached"
-          ? "bg-[#F0FDF4] text-[#00B87C] border-[#00B87C]/20"
-          : "bg-[#FEF2F2] text-[#EF4444] border-[#EF4444]/20"
-      }`}
+      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wider border flex items-center gap-1 w-fit ${status === "Attached" ? "bg-[#F0FDF4] text-[#00B87C] border-[#00B87C]/20" : "bg-[#FEF2F2] text-[#EF4444] border-[#EF4444]/20"}`}
     >
       {status === "Attached" ? (
         <Check size={10} strokeWidth={4} />
@@ -1284,14 +1394,12 @@ function ReceiptStatus({ status }: { status: ExpenseClaim["receiptStatus"] }) {
     </span>
   );
 }
-
 function StatusChip({ status }: { status: ExpenseClaim["status"] }) {
   const styles = {
     Approved: "bg-[#F0FDF4] text-[#00B87C] border-[#00B87C]/20",
     Pending: "bg-[#FFFBEB] text-[#D97706] border-[#FBBF24]/20",
     Rejected: "bg-[#FEF2F2] text-[#EF4444] border-[#EF4444]/20",
   };
-
   return (
     <span
       className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border flex items-center justify-center w-fit gap-1.5 ${styles[status]}`}
@@ -1304,7 +1412,6 @@ function StatusChip({ status }: { status: ExpenseClaim["status"] }) {
     </span>
   );
 }
-
 function Checkbox({
   checked,
   onChange,
@@ -1315,17 +1422,12 @@ function Checkbox({
   return (
     <button
       onClick={onChange}
-      className={`w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${
-        checked
-          ? "bg-[#00B87C] border-[#00B87C]"
-          : "bg-card border-border hover:border-[#00B87C]/50"
-      }`}
+      className={`w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${checked ? "bg-[#00B87C] border-[#00B87C]" : "bg-card border-border hover:border-[#00B87C]/50"}`}
     >
       {checked && <Check size={14} strokeWidth={4} className="text-white" />}
     </button>
   );
 }
-
 function DetailItem({
   icon: Icon,
   label,
@@ -1349,7 +1451,6 @@ function DetailItem({
     </div>
   );
 }
-
 function TimelineStep({
   label,
   date,
@@ -1363,15 +1464,7 @@ function TimelineStep({
     <div className="flex gap-4 relative group">
       <div className="flex flex-col items-center gap-1.5">
         <div
-          className={`w-3.5 h-3.5 rounded-full border-2 z-10 ${
-            status === "success"
-              ? "bg-[#00B87C] border-[#00B87C]"
-              : status === "active"
-                ? "bg-card border-[#00B87C] animate-pulse shadow-[0_0_8px_rgba(0,184,124,0.4)]"
-                : status === "error"
-                  ? "bg-rose-500 border-rose-500"
-                  : "bg-card border-border"
-          }`}
+          className={`w-3.5 h-3.5 rounded-full border-2 z-10 ${status === "success" ? "bg-[#00B87C] border-[#00B87C]" : status === "active" ? "bg-card border-[#00B87C] animate-pulse shadow-[0_0_8px_rgba(0,184,124,0.4)]" : status === "error" ? "bg-rose-500 border-rose-500" : "bg-card border-border"}`}
         />
         <div
           className={`w-[1px] flex-1 bg-border group-last:hidden ${status === "success" ? "bg-[#00B87C]/30" : ""}`}
@@ -1379,15 +1472,7 @@ function TimelineStep({
       </div>
       <div className="pb-4">
         <p
-          className={`text-[12px] font-bold uppercase tracking-widest leading-none ${
-            status === "success"
-              ? "text-[#00B87C]"
-              : status === "active"
-                ? "text-[#00B87C]"
-                : status === "error"
-                  ? "text-rose-500"
-                  : "text-muted-foreground"
-          }`}
+          className={`text-[12px] font-bold uppercase tracking-widest leading-none ${status === "success" ? "text-[#00B87C]" : status === "active" ? "text-[#00B87C]" : status === "error" ? "text-rose-500" : "text-muted-foreground"}`}
         >
           {label}
         </p>

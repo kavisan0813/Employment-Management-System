@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import {
   Package,
   Download,
@@ -17,14 +17,9 @@ import {
   Calendar,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 type AssetStatus =
-  | "Assigned"
-  | "Pending Return"
-  | "Overdue"
-  | "Available"
-  | "Maintenance";
-
+  "Assigned" | "Pending Return" | "Overdue" | "Available" | "Maintenance";
 interface TeamAsset {
   id: string;
   assetId: string;
@@ -37,7 +32,6 @@ interface TeamAsset {
   condition: string;
   notes: string;
 }
-
 interface TeamMember {
   id: string;
   name: string;
@@ -46,7 +40,6 @@ interface TeamMember {
   department: string;
   assets: TeamAsset[];
 }
-
 interface PendingRequest {
   id: string;
   employeeName: string;
@@ -57,7 +50,6 @@ interface PendingRequest {
   urgency: string;
   submittedDate: string;
 }
-
 const TEAM_DATA: TeamMember[] = [
   {
     id: "EMP-0142",
@@ -225,7 +217,6 @@ const TEAM_DATA: TeamMember[] = [
     ],
   },
 ];
-
 const PENDING_REQUESTS: PendingRequest[] = [
   {
     id: "req-1",
@@ -249,7 +240,6 @@ const PENDING_REQUESTS: PendingRequest[] = [
     submittedDate: "5 days ago",
   },
 ];
-
 function getCategoryIcon(category: string, size: number = 18) {
   switch (category) {
     case "Laptop":
@@ -264,7 +254,6 @@ function getCategoryIcon(category: string, size: number = 18) {
       return <Package size={size} />;
   }
 }
-
 function getCategoryColor(category: string): {
   bg: string;
   text: string;
@@ -272,20 +261,43 @@ function getCategoryColor(category: string): {
 } {
   switch (category) {
     case "Laptop":
-      return { bg: "#DCFCE7", text: "#00B87C", border: "#A7F3D0" };
+      return {
+        bg: "#DCFCE7",
+        text: "#00B87C",
+        border: "#A7F3D0",
+      };
     case "Smartphone":
-      return { bg: "#EDE9FE", text: "#8B5CF6", border: "#DDD6FE" };
+      return {
+        bg: "#EDE9FE",
+        text: "#8B5CF6",
+        border: "#DDD6FE",
+      };
     case "Monitor":
-      return { bg: "#E0F2FE", text: "#0EA5E9", border: "#BAE6FD" };
+      return {
+        bg: "#E0F2FE",
+        text: "#0EA5E9",
+        border: "#BAE6FD",
+      };
     case "Printer":
-      return { bg: "#FEF3C7", text: "#F59E0B", border: "#FDE68A" };
+      return {
+        bg: "#FEF3C7",
+        text: "#F59E0B",
+        border: "#FDE68A",
+      };
     case "Accessories":
-      return { bg: "#FCE7F3", text: "#EC4899", border: "#FBCFE8" };
+      return {
+        bg: "#FCE7F3",
+        text: "#EC4899",
+        border: "#FBCFE8",
+      };
     default:
-      return { bg: "#F3F4F6", text: "#6B7280", border: "#E5E7EB" };
+      return {
+        bg: "#F3F4F6",
+        text: "#6B7280",
+        border: "#E5E7EB",
+      };
   }
 }
-
 function getStatusBadge(status: AssetStatus) {
   switch (status) {
     case "Assigned":
@@ -326,7 +338,6 @@ function getStatusBadge(status: AssetStatus) {
       );
   }
 }
-
 export function ManagerTeamAssets() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAsset, setSelectedAsset] = useState<{
@@ -338,11 +349,12 @@ export function ManagerTeamAssets() {
   const [requestType, setRequestType] = useState("");
   const [requestReason, setRequestReason] = useState("");
   const [requestUrgency, setRequestUrgency] = useState("Medium");
-
   const allAssets = TEAM_DATA.flatMap((member) =>
-    member.assets.map((asset) => ({ ...asset, member })),
+    member.assets.map((asset) => ({
+      ...asset,
+      member,
+    })),
   );
-
   const filteredAssets = allAssets.filter((item) => {
     const q = searchQuery.toLowerCase();
     return (
@@ -352,7 +364,6 @@ export function ManagerTeamAssets() {
       item.assetId.toLowerCase().includes(q)
     );
   });
-
   const handleExport = () => {
     const headers = [
       "Asset ID",
@@ -383,7 +394,9 @@ export function ManagerTeamAssets() {
       ].join(","),
     );
     const csv = [headers.join(","), ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob([csv], {
+      type: "text/csv",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -392,7 +405,6 @@ export function ManagerTeamAssets() {
     URL.revokeObjectURL(url);
     showToast("Exported!", "success", "Team assets report downloaded as CSV.");
   };
-
   const totalValue = TEAM_DATA.reduce(
     (sum, m) =>
       sum +
@@ -402,38 +414,31 @@ export function ManagerTeamAssets() {
       }, 0),
     0,
   );
-
   const formatValue = (val: number) => {
     if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
     if (val >= 1000) return `₹${(val / 1000).toFixed(1)}K`;
     return `₹${val}`;
   };
-
   const membersWithAssets = TEAM_DATA.filter((m) => m.assets.length > 0).length;
   const pendingReturnCount = allAssets.filter(
     (a) => a.status === "Pending Return",
   ).length;
   const assetCount = allAssets.length;
-
   const handleApproveRequest = (id: string) => {
     setPendingRequests((prev) => prev.filter((r) => r.id !== id));
   };
-
   const handleRejectRequest = (id: string) => {
     setPendingRequests((prev) => prev.filter((r) => r.id !== id));
   };
-
   const handleTeamRequest = () => {
     setShowRequestModal(true);
   };
-
   const submitTeamRequest = () => {
     setShowRequestModal(false);
     setRequestType("");
     setRequestReason("");
     setRequestUrgency("Medium");
   };
-
   return (
     <div className="p-8 max-w-[1600px] mx-auto min-h-screen">
       {/* PAGE HEADER */}
@@ -617,7 +622,10 @@ export function ManagerTeamAssets() {
                       <div
                         className="flex items-center gap-3 cursor-pointer"
                         onClick={() =>
-                          setSelectedAsset({ member: item.member, asset: item })
+                          setSelectedAsset({
+                            member: item.member,
+                            asset: item,
+                          })
                         }
                       >
                         <div
@@ -659,7 +667,10 @@ export function ManagerTeamAssets() {
                     <td className="px-6 py-3 text-right">
                       <button
                         onClick={() =>
-                          setSelectedAsset({ member: item.member, asset: item })
+                          setSelectedAsset({
+                            member: item.member,
+                            asset: item,
+                          })
                         }
                         className="text-[11px] font-bold text-[#00B87C] uppercase tracking-wider flex items-center gap-1 ml-auto hover:gap-2 transition-all"
                       >
@@ -737,11 +748,7 @@ export function ManagerTeamAssets() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${
-                        req.urgency === "High"
-                          ? "bg-red-50 text-red-600 border border-red-200"
-                          : "bg-amber-50 text-amber-600 border border-amber-200"
-                      }`}
+                      className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${req.urgency === "High" ? "bg-red-50 text-red-600 border border-red-200" : "bg-amber-50 text-amber-600 border border-amber-200"}`}
                     >
                       {req.urgency}
                     </span>
@@ -789,18 +796,34 @@ export function ManagerTeamAssets() {
       <AnimatePresence>
         {selectedAsset && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setSelectedAsset(null)}
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2100]"
             />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="fixed top-0 right-0 h-screen w-full max-w-[420px] bg-card border-l border-border z-[2200] shadow-2xl flex flex-col"
             >
               {/* Header */}
@@ -965,7 +988,7 @@ export function ManagerTeamAssets() {
                   Close Details <X size={16} />
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
@@ -974,20 +997,38 @@ export function ManagerTeamAssets() {
       <AnimatePresence>
         {showRequestModal && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setShowRequestModal(false)}
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000]"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="fixed inset-0 z-[2000] flex items-center justify-center p-4 pointer-events-none"
             >
-              <motion.div
+              <m.div
                 onClick={(e) => e.stopPropagation()}
                 className="w-full max-w-[480px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden pointer-events-auto"
               >
@@ -1043,15 +1084,7 @@ export function ManagerTeamAssets() {
                         <button
                           key={u}
                           onClick={() => setRequestUrgency(u)}
-                          className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all ${
-                            requestUrgency === u
-                              ? u === "High"
-                                ? "bg-red-50 text-red-600 border-red-200"
-                                : u === "Medium"
-                                  ? "bg-amber-50 text-amber-600 border-amber-200"
-                                  : "bg-blue-50 text-blue-600 border-blue-200"
-                              : "bg-background text-muted-foreground border-border hover:bg-secondary"
-                          }`}
+                          className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all ${requestUrgency === u ? (u === "High" ? "bg-red-50 text-red-600 border-red-200" : u === "Medium" ? "bg-amber-50 text-amber-600 border-amber-200" : "bg-blue-50 text-blue-600 border-blue-200") : "bg-background text-muted-foreground border-border hover:bg-secondary"}`}
                         >
                           {u}
                         </button>
@@ -1089,8 +1122,8 @@ export function ManagerTeamAssets() {
                     Submit Request
                   </button>
                 </div>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>

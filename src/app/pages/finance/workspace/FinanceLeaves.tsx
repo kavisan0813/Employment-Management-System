@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useReducer, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router";
 import {
   CalendarX,
@@ -14,7 +14,7 @@ import {
   ChevronRight,
   Download,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import {
   format,
   addMonths,
@@ -30,10 +30,10 @@ import {
 import { showToast } from "../../../components/workflow/ToastNotification";
 
 // Types
+import * as m from "motion/react-m";
 type LeaveTab = "My Requests" | "Calendar" | "History" | "Policy";
 type LeaveType = "CL" | "EL" | "SL" | "CO";
 type ApprovalStatus = "Pending" | "Approved" | "Rejected" | "Cancelled";
-
 interface LeaveRecord {
   id: string;
   type: LeaveType;
@@ -47,43 +47,153 @@ interface LeaveRecord {
   approvedBy?: string;
   startsIn?: string;
 }
-
 const LEAVE_TYPE_LABELS: Record<LeaveType, string> = {
   CL: "Casual Leave",
   EL: "Earned Leave",
   SL: "Sick Leave",
   CO: "Comp Off",
 };
-
 const LEAVE_TYPE_COLORS: Record<LeaveType, string> = {
   CL: "#00B87C",
   EL: "#0EA5E9",
   SL: "#EF4444",
   CO: "#8B5CF6",
 };
-
 export function FinanceLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState<LeaveTab>("My Requests");
-  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
-  const [showCancelConfirm, setShowCancelConfirm] = useState<string | null>(
-    null,
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeTab: "My Requests" as LeaveTab,
+    isApplyModalOpen: false,
+    showCancelConfirm: null as string | null,
+    currentDate: new Date(),
+    selectedLeaveType: "CL" as LeaveType,
+    fromDate: "",
+    toDate: "",
+    leaveReason: "",
+    notifyManager: true,
+    historyFilter: "All" as "All" | "Approved" | "Rejected",
+    pendingRequests: [
+      {
+        id: "LR-1002",
+        type: "SL",
+        typeFull: "Sick Leave",
+        from: "Apr 18, 2026",
+        to: "Apr 20, 2026",
+        days: 3,
+        reason: "Viral fever, resting at home",
+        status: "Pending",
+        appliedOn: "Apr 17, 2026",
+      },
+    ] as LeaveRecord[],
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
   );
-  const [currentDate, setCurrentDate] = useState(new Date());
-
+  const {
+    activeTab,
+    isApplyModalOpen,
+    showCancelConfirm,
+    currentDate,
+    selectedLeaveType,
+    fromDate,
+    toDate,
+    leaveReason,
+    notifyManager,
+    historyFilter,
+    pendingRequests,
+  } = __state;
+  const setActiveTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeTab: typeof val === "function" ? val(prev.activeTab) : val,
+      })),
+    [],
+  );
+  const setIsApplyModalOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isApplyModalOpen:
+          typeof val === "function" ? val(prev.isApplyModalOpen) : val,
+      })),
+    [],
+  );
+  const setShowCancelConfirm = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showCancelConfirm:
+          typeof val === "function" ? val(prev.showCancelConfirm) : val,
+      })),
+    [],
+  );
+  const setCurrentDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        currentDate: typeof val === "function" ? val(prev.currentDate) : val,
+      })),
+    [],
+  );
+  const setSelectedLeaveType = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedLeaveType:
+          typeof val === "function" ? val(prev.selectedLeaveType) : val,
+      })),
+    [],
+  );
+  const setFromDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        fromDate: typeof val === "function" ? val(prev.fromDate) : val,
+      })),
+    [],
+  );
+  const setToDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        toDate: typeof val === "function" ? val(prev.toDate) : val,
+      })),
+    [],
+  );
+  const setLeaveReason = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        leaveReason: typeof val === "function" ? val(prev.leaveReason) : val,
+      })),
+    [],
+  );
+  const setNotifyManager = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        notifyManager:
+          typeof val === "function" ? val(prev.notifyManager) : val,
+      })),
+    [],
+  );
+  const setHistoryFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        historyFilter:
+          typeof val === "function" ? val(prev.historyFilter) : val,
+      })),
+    [],
+  );
+  const setPendingRequests = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        pendingRequests:
+          typeof val === "function" ? val(prev.pendingRequests) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Modal state
-  const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType>("CL");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [leaveReason, setLeaveReason] = useState("");
-  const [notifyManager, setNotifyManager] = useState(true);
-
   // History filter
-  const [historyFilter, setHistoryFilter] = useState<
-    "All" | "Approved" | "Rejected"
-  >("All");
-
   // Initialize from navigation state if present
   useEffect(() => {
     if (location.state?.activeTab) {
@@ -91,25 +201,13 @@ export function FinanceLeaves() {
     }
     if (location.state?.openApplyModal) {
       setIsApplyModalOpen(true);
-      navigate(location.pathname, { replace: true });
+      navigate(location.pathname, {
+        replace: true,
+      });
     }
   }, [location, navigate]);
 
   // Mock Data
-  const [pendingRequests, setPendingRequests] = useState<LeaveRecord[]>([
-    {
-      id: "LR-1002",
-      type: "SL",
-      typeFull: "Sick Leave",
-      from: "Apr 18, 2026",
-      to: "Apr 20, 2026",
-      days: 3,
-      reason: "Viral fever, resting at home",
-      status: "Pending",
-      appliedOn: "Apr 17, 2026",
-    },
-  ]);
-
   const approvedLeaves: LeaveRecord[] = [
     {
       id: "LR-0945",
@@ -125,7 +223,6 @@ export function FinanceLeaves() {
       startsIn: "Starts in 12 days",
     },
   ];
-
   const historyLeaves: LeaveRecord[] = [
     {
       id: "LR-0812",
@@ -172,12 +269,10 @@ export function FinanceLeaves() {
       appliedOn: "Nov 30, 2025",
     },
   ];
-
   const filteredHistory =
     historyFilter === "All"
       ? historyLeaves
       : historyLeaves.filter((l) => l.status === historyFilter);
-
   const handleCancelRequest = (id: string) => {
     setPendingRequests((prev) => prev.filter((r) => r.id !== id));
     setShowCancelConfirm(null);
@@ -187,7 +282,6 @@ export function FinanceLeaves() {
       "Leave request has been cancelled.",
     );
   };
-
   const handleSubmitLeave = () => {
     if (!fromDate || !toDate) {
       showToast(
@@ -238,7 +332,6 @@ export function FinanceLeaves() {
       `${LEAVE_TYPE_LABELS[selectedLeaveType]} request submitted successfully.`,
     );
   };
-
   const computedDays =
     fromDate && toDate
       ? Math.max(
@@ -249,14 +342,30 @@ export function FinanceLeaves() {
           ) + 1,
         )
       : 0;
-
-  const leaveBalances: Record<LeaveType, { used: number; total: number }> = {
-    CL: { used: 6, total: 12 },
-    EL: { used: 6, total: 24 },
-    SL: { used: 4, total: 12 },
-    CO: { used: 3, total: 5 },
+  const leaveBalances: Record<
+    LeaveType,
+    {
+      used: number;
+      total: number;
+    }
+  > = {
+    CL: {
+      used: 6,
+      total: 12,
+    },
+    EL: {
+      used: 6,
+      total: 24,
+    },
+    SL: {
+      used: 4,
+      total: 12,
+    },
+    CO: {
+      used: 3,
+      total: 5,
+    },
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500">
       {/* ═══════ PAGE HEADER ═══════ */}
@@ -284,7 +393,9 @@ export function FinanceLeaves() {
                     `${l.id},${l.typeFull},${l.from},${l.to},${l.days},"${l.reason}",${l.status},${l.appliedOn}`,
                 ),
               ].join("\n");
-              const blob = new Blob([csvContent], { type: "text/csv" });
+              const blob = new Blob([csvContent], {
+                type: "text/csv",
+              });
               const url = URL.createObjectURL(blob);
               const a = document.createElement("a");
               a.href = url;
@@ -331,7 +442,10 @@ export function FinanceLeaves() {
               <div className="flex items-center gap-3 mb-4">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs"
-                  style={{ backgroundColor: `${color}20`, color }}
+                  style={{
+                    backgroundColor: `${color}20`,
+                    color,
+                  }}
                 >
                   {type}
                 </div>
@@ -342,7 +456,9 @@ export function FinanceLeaves() {
               <div className="flex items-end gap-2">
                 <span
                   className="text-[32px] font-black tracking-tight leading-none"
-                  style={{ color }}
+                  style={{
+                    color,
+                  }}
                 >
                   {remaining}
                 </span>
@@ -354,7 +470,10 @@ export function FinanceLeaves() {
                 <div className="h-1.5 w-full bg-[#F3F4F6] dark:bg-zinc-800 rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all"
-                    style={{ width: `${pct}%`, backgroundColor: color }}
+                    style={{
+                      width: `${pct}%`,
+                      backgroundColor: color,
+                    }}
                   />
                 </div>
                 <p className="text-[12px] font-bold text-muted-foreground mt-2">
@@ -375,15 +494,11 @@ export function FinanceLeaves() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-4 text-[13px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${
-                  activeTab === tab
-                    ? "text-[#00B87C]"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`pb-4 text-[13px] font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
               >
                 {tab}
                 {activeTab === tab && (
-                  <motion.div
+                  <m.div
                     layoutId="activeLeaveTab"
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C]"
                   />
@@ -410,7 +525,9 @@ export function FinanceLeaves() {
                     >
                       <div
                         className={`absolute left-0 top-0 bottom-0 w-1`}
-                        style={{ backgroundColor: LEAVE_TYPE_COLORS[req.type] }}
+                        style={{
+                          backgroundColor: LEAVE_TYPE_COLORS[req.type],
+                        }}
                       />
 
                       <div className="flex items-start md:items-center gap-4 pl-2">
@@ -593,22 +710,18 @@ export function FinanceLeaves() {
                     const monthEnd = endOfMonth(monthStart);
                     const startDate = startOfWeek(monthStart);
                     const endDate = endOfWeek(monthEnd);
-
                     const calendarDays = eachDayOfInterval({
                       start: startDate,
                       end: endDate,
                     });
-
                     return calendarDays.map((calDay) => {
                       const formattedDate = format(calDay, "d");
                       const isCurrentMonth = isSameMonth(calDay, monthStart);
                       const isCurrentDay = isToday(calDay);
                       const dateNum = parseInt(formattedDate);
-
                       let bgClass =
                         "bg-card border-border hover:border-[#00B87C]/50 cursor-pointer";
                       let content = null;
-
                       if (!isCurrentMonth) {
                         return (
                           <div
@@ -621,7 +734,6 @@ export function FinanceLeaves() {
                           </div>
                         );
                       }
-
                       if (dateNum === 5) {
                         bgClass = "bg-[#0EA5E9]/5 border-[#0EA5E9]/20";
                         content = (
@@ -644,7 +756,6 @@ export function FinanceLeaves() {
                           </div>
                         );
                       }
-
                       return (
                         <div
                           key={calDay.toISOString()}
@@ -701,11 +812,7 @@ export function FinanceLeaves() {
                   <button
                     key={f}
                     onClick={() => setHistoryFilter(f)}
-                    className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all border ${
-                      historyFilter === f
-                        ? "bg-[#00B87C] text-white border-[#00B87C]"
-                        : "bg-card text-muted-foreground border-border hover:border-[#00B87C]/50"
-                    }`}
+                    className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all border ${historyFilter === f ? "bg-[#00B87C] text-white border-[#00B87C]" : "bg-card text-muted-foreground border-border hover:border-[#00B87C]/50"}`}
                   >
                     {f}
                   </button>
@@ -776,13 +883,7 @@ export function FinanceLeaves() {
                         </td>
                         <td className="py-4 px-4">
                           <span
-                            className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit ${
-                              leave.status === "Approved"
-                                ? "bg-emerald-500/10 text-[#00B87C]"
-                                : leave.status === "Rejected"
-                                  ? "bg-rose-500/10 text-rose-600"
-                                  : "bg-muted text-muted-foreground"
-                            }`}
+                            className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest flex items-center gap-1 w-fit ${leave.status === "Approved" ? "bg-emerald-500/10 text-[#00B87C]" : leave.status === "Rejected" ? "bg-rose-500/10 text-rose-600" : "bg-muted text-muted-foreground"}`}
                           >
                             {leave.status === "Approved" && (
                               <CheckCircle2 size={12} />
@@ -955,17 +1056,35 @@ export function FinanceLeaves() {
       <AnimatePresence>
         {isApplyModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               onClick={() => setIsApplyModalOpen(false)}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 10,
+              }}
               className="relative w-full max-w-[480px] bg-card border border-border rounded-2xl shadow-2xl flex flex-col"
             >
               {/* Header */}
@@ -998,14 +1117,12 @@ export function FinanceLeaves() {
                       <button
                         key={type}
                         onClick={() => setSelectedLeaveType(type)}
-                        className={`flex-1 py-2 rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all ${
-                          selectedLeaveType === type
-                            ? "text-white shadow-sm"
-                            : "text-muted-foreground hover:bg-card/50"
-                        }`}
+                        className={`flex-1 py-2 rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all ${selectedLeaveType === type ? "text-white shadow-sm" : "text-muted-foreground hover:bg-card/50"}`}
                         style={
                           selectedLeaveType === type
-                            ? { backgroundColor: LEAVE_TYPE_COLORS[type] }
+                            ? {
+                                backgroundColor: LEAVE_TYPE_COLORS[type],
+                              }
                             : {}
                         }
                       >
@@ -1140,7 +1257,7 @@ export function FinanceLeaves() {
                   Submit Request
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

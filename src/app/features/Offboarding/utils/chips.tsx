@@ -1,6 +1,14 @@
 import React from "react";
 import { ExitType, ClearanceStatus } from "../types/offboarding.types";
-import { Check, Clock, X, User, Laptop, Briefcase, ShieldCheck } from "lucide-react";
+import {
+  Check,
+  Clock,
+  X,
+  User,
+  Laptop,
+  Briefcase,
+  ShieldCheck,
+} from "lucide-react";
 
 export const getClearanceIcon = (iconName: string): React.ElementType => {
   switch (iconName) {

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import {
   Clock,
@@ -26,7 +26,6 @@ interface Shift {
   department: string;
   manager: string;
 }
-
 interface ShiftRequest {
   id: string;
   type: "Swap" | "Time Change" | "Availability" | "Issue";
@@ -38,7 +37,6 @@ interface ShiftRequest {
   managerComment?: string;
   createdAt: string;
 }
-
 const INITIAL_REQUESTS: ShiftRequest[] = [
   {
     id: "REQ-001",
@@ -71,7 +69,6 @@ interface ShiftColor {
   text: string;
   border: string;
 }
-
 const SHIFT_COLORS: Record<string, ShiftColor> = {
   Morning: {
     bg: "bg-emerald-500/10",
@@ -106,7 +103,6 @@ interface ShiftOverviewProps {
   trend?: string;
   trendColor?: "amber" | "teal";
 }
-
 function PersonalShiftOverviewCard({
   label,
   value,
@@ -130,11 +126,7 @@ function PersonalShiftOverviewCard({
         </span>
         {trend && (
           <span
-            className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
-              trendColor === "amber"
-                ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                : "bg-emerald-500/10 text-primary border-primary/20"
-            }`}
+            className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${trendColor === "amber" ? "bg-amber-500/10 text-amber-600 border-amber-500/20" : "bg-emerald-500/10 text-primary border-primary/20"}`}
           >
             {trend}
           </span>
@@ -186,7 +178,6 @@ const Modal = ({
     </div>
   );
 };
-
 const getRequestStatusStyle = (status: ShiftRequest["status"]): string => {
   switch (status) {
     case "Pending":
@@ -201,7 +192,6 @@ const getRequestStatusStyle = (status: ShiftRequest["status"]): string => {
       return "bg-secondary text-muted-foreground border-border";
   }
 };
-
 const StatusBadge = ({ status }: { status: ShiftRequest["status"] }) => {
   return (
     <span
@@ -211,15 +201,15 @@ const StatusBadge = ({ status }: { status: ShiftRequest["status"] }) => {
     </span>
   );
 };
-
 function getShiftForDate(d: Date): Shift {
-  const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
+  const dayName = d.toLocaleDateString("en-US", {
+    weekday: "short",
+  });
   const dateStr = d.toLocaleDateString("en-US", {
     month: "short",
     day: "2-digit",
   });
   const isWeekend = d.getDay() === 0 || d.getDay() === 6;
-
   if (isWeekend) {
     return {
       id: `S-OFF-${d.getTime()}`,
@@ -233,12 +223,10 @@ function getShiftForDate(d: Date): Shift {
       manager: "Suresh Kumar",
     };
   }
-
   const shiftVal = (d.getDate() + d.getMonth() * 7) % 3;
   let type: "Morning" | "Evening" | "Night" = "Morning";
   let time = "08:00 AM - 04:00 PM";
   let location = "Head Office, BLR";
-
   if (shiftVal === 1) {
     type = "Evening";
     time = "04:00 PM - 12:00 AM";
@@ -248,7 +236,6 @@ function getShiftForDate(d: Date): Shift {
     time = "12:00 AM - 08:00 AM";
     location = "Head Office, BLR";
   }
-
   return {
     id: `S-${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`,
     date: dateStr,
@@ -289,19 +276,19 @@ export function EmployeeSchedule() {
     }
     return dates;
   }, [navDate]);
-
   const thisWeekShiftsCount = useMemo(() => {
     return weekDates.filter((d) => getShiftForDate(d).type !== "Off Day")
       .length;
   }, [weekDates]);
-
   const nextDayOff = useMemo(() => {
     let d = new Date(navDate);
     for (let i = 0; i < 7; i++) {
       const shift = getShiftForDate(d);
       if (shift.type === "Off Day") {
         return {
-          dayName: d.toLocaleDateString("en-US", { weekday: "long" }),
+          dayName: d.toLocaleDateString("en-US", {
+            weekday: "long",
+          }),
           dateStr: d.toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
@@ -312,9 +299,11 @@ export function EmployeeSchedule() {
       d = new Date(d);
       d.setDate(d.getDate() + 1);
     }
-    return { dayName: "None", dateStr: "N/A" };
+    return {
+      dayName: "None",
+      dateStr: "N/A",
+    };
   }, [navDate]);
-
   const upcomingShiftsList = useMemo(() => {
     const list: Shift[] = [];
     let d = new Date(navDate);
@@ -374,7 +363,10 @@ export function EmployeeSchedule() {
     const sun = new Date(mon);
     sun.setDate(mon.getDate() + 6);
     const fmt = (d: Date) =>
-      d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
     return `${fmt(mon)} – ${fmt(sun)}, ${sun.getFullYear()}`;
   }, [view, navDate]);
 
@@ -392,24 +384,19 @@ export function EmployeeSchedule() {
   const [selectedRequest, setSelectedRequest] = useState<ShiftRequest | null>(
     null,
   );
-  const [requestToCancel, setRequestToCancel] = useState<ShiftRequest | null>(
-    null,
-  );
+  const requestToCancel = useRef<ShiftRequest | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   // Data State
   const [requests, setRequests] = useState<ShiftRequest[]>(INITIAL_REQUESTS);
-
   const handleRequestSwap = (shift?: Shift) => {
     if (shift) setSelectedShift(shift);
     setShowSwapModal(true);
   };
-
   const handleViewDetails = (shift: Shift) => {
     setSelectedShift(shift);
     setShowDetailsModal(true);
   };
-
   const renderRequests = () => {
     return (
       <div className="space-y-6 animate-in slide-in-from-right duration-500">
@@ -512,7 +499,7 @@ export function EmployeeSchedule() {
                           {req.status === "Pending" && (
                             <button
                               onClick={() => {
-                                setRequestToCancel(req);
+                                requestToCancel.current = req;
                                 setShowCancelModal(true);
                               }}
                               className="px-4 py-2 text-[12px] font-black text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
@@ -532,7 +519,6 @@ export function EmployeeSchedule() {
       </div>
     );
   };
-
   const renderCalendar = () => {
     return (
       <div className="flex flex-col gap-8 animate-in fade-in duration-700">
@@ -759,13 +745,7 @@ export function EmployeeSchedule() {
                       <div
                         key={day}
                         onClick={() => handleViewDetails(shift)}
-                        className={`min-h-[80px] rounded-xl border p-2 flex flex-col gap-1 transition-colors cursor-pointer hover:border-[#00B87C]/50 ${
-                          isToday
-                            ? "border-[#00B87C] bg-[#00B87C]/5"
-                            : shift.type === "Off Day"
-                              ? "border-border/50 bg-muted/20"
-                              : "border-border bg-card"
-                        }`}
+                        className={`min-h-[80px] rounded-xl border p-2 flex flex-col gap-1 transition-colors cursor-pointer hover:border-[#00B87C]/50 ${isToday ? "border-[#00B87C] bg-[#00B87C]/5" : shift.type === "Off Day" ? "border-border/50 bg-muted/20" : "border-border bg-card"}`}
                       >
                         <span
                           className={`text-[12px] font-bold ${isToday ? "w-6 h-6 rounded-full bg-[#00B87C] text-white flex items-center justify-center text-[11px] font-black" : "text-foreground"}`}
@@ -791,9 +771,18 @@ export function EmployeeSchedule() {
               </div>
               <div className="flex flex-wrap gap-4 mt-6 pt-5 border-t border-border">
                 {[
-                  { label: "Morning", color: "bg-primary" },
-                  { label: "Evening", color: "bg-amber-500" },
-                  { label: "Night", color: "bg-purple-500" },
+                  {
+                    label: "Morning",
+                    color: "bg-primary",
+                  },
+                  {
+                    label: "Evening",
+                    color: "bg-amber-500",
+                  },
+                  {
+                    label: "Night",
+                    color: "bg-purple-500",
+                  },
                   {
                     label: "Off Day",
                     color: "bg-secondary border border-border",
@@ -851,7 +840,11 @@ export function EmployeeSchedule() {
                       label: "Team Sync & Code Review",
                       type: "work",
                     },
-                    { time: "12:00 AM", label: "Clock-out", type: "end" },
+                    {
+                      time: "12:00 AM",
+                      label: "Clock-out",
+                      type: "end",
+                    },
                   ];
                 }
                 if (shift.type === "Night") {
@@ -876,7 +869,11 @@ export function EmployeeSchedule() {
                       label: "Automated Testing & Deployment",
                       type: "work",
                     },
-                    { time: "08:00 AM", label: "Clock-out", type: "end" },
+                    {
+                      time: "08:00 AM",
+                      label: "Clock-out",
+                      type: "end",
+                    },
                   ];
                 }
                 return [
@@ -900,10 +897,13 @@ export function EmployeeSchedule() {
                     label: "Team Sync / PR Reviews",
                     type: "work",
                   },
-                  { time: "04:00 PM", label: "Clock-out", type: "end" },
+                  {
+                    time: "04:00 PM",
+                    label: "Clock-out",
+                    type: "end",
+                  },
                 ];
               })();
-
               return (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Day Timeline */}
@@ -917,11 +917,7 @@ export function EmployeeSchedule() {
                         })}
                       </h4>
                       <span
-                        className={`px-3 py-1 rounded-full text-[11px] font-black border ${
-                          shift.type === "Off Day"
-                            ? "bg-secondary text-muted-foreground border-border"
-                            : "bg-emerald-500/10 text-primary border-primary/20"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-[11px] font-black border ${shift.type === "Off Day" ? "bg-secondary text-muted-foreground border-border" : "bg-emerald-500/10 text-primary border-primary/20"}`}
                       >
                         {shift.type === "Off Day" ? "Off Day" : "Work Day"}
                       </span>
@@ -966,10 +962,22 @@ export function EmployeeSchedule() {
                               ? "Off Day"
                               : `${shift.type} Shift`,
                         },
-                        { label: "Timing", val: shift.time },
-                        { label: "Duration", val: shift.hours },
-                        { label: "Location", val: shift.location },
-                        { label: "Manager", val: shift.manager },
+                        {
+                          label: "Timing",
+                          val: shift.time,
+                        },
+                        {
+                          label: "Duration",
+                          val: shift.hours,
+                        },
+                        {
+                          label: "Location",
+                          val: shift.location,
+                        },
+                        {
+                          label: "Manager",
+                          val: shift.manager,
+                        },
                       ].map((f) => (
                         <div
                           key={f.label}
@@ -1152,7 +1160,6 @@ export function EmployeeSchedule() {
       </div>
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 overflow-hidden">
       {currentPage === "calendar" ? renderCalendar() : renderRequests()}
@@ -1199,10 +1206,22 @@ export function EmployeeSchedule() {
 
             <div className="space-y-4">
               {[
-                { label: "Timing", value: selectedShift.time },
-                { label: "Location", value: selectedShift.location },
-                { label: "Department", value: selectedShift.department },
-                { label: "Reporting Manager", value: selectedShift.manager },
+                {
+                  label: "Timing",
+                  value: selectedShift.time,
+                },
+                {
+                  label: "Location",
+                  value: selectedShift.location,
+                },
+                {
+                  label: "Department",
+                  value: selectedShift.department,
+                },
+                {
+                  label: "Reporting Manager",
+                  value: selectedShift.manager,
+                },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -1651,7 +1670,7 @@ export function EmployeeSchedule() {
               {selectedRequest.status === "Pending" && (
                 <button
                   onClick={() => {
-                    setRequestToCancel(selectedRequest);
+                    requestToCancel.current = selectedRequest;
                     setShowCancelModal(true);
                   }}
                   className="flex-1 py-3.5 rounded-xl font-black text-[13px] bg-red-500 text-white hover:opacity-90 transition-all"
@@ -1694,11 +1713,14 @@ export function EmployeeSchedule() {
             </button>
             <button
               onClick={() => {
-                if (requestToCancel) {
+                if (requestToCancel.current) {
                   setRequests((prev) =>
                     prev.map((r) =>
-                      r.id === requestToCancel.id
-                        ? { ...r, status: "Cancelled" }
+                      r.id === requestToCancel.current.id
+                        ? {
+                            ...r,
+                            status: "Cancelled",
+                          }
                         : r,
                     ),
                   );

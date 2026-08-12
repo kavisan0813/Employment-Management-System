@@ -6,7 +6,12 @@
  * This file can be unit-tested independently.
  */
 
-import type { SalaryStructure, Payslip, PayslipEarnings, PayslipDeductions } from "./payroll.types";
+import type {
+  SalaryStructure,
+  Payslip,
+  PayslipEarnings,
+  PayslipDeductions,
+} from "./payroll.types";
 
 /* ═══════════════════════════════════════════════════════════════════
  * HELPER: Professional Tax (PT)
@@ -16,24 +21,25 @@ import type { SalaryStructure, Payslip, PayslipEarnings, PayslipDeductions } fro
  * and Karnataka. Other states default to ₹200.
  * ═══════════════════════════════════════════════════════════════════ */
 
-const PT_SLABS: Record<string, { min: number; max: number; amount: number }[]> = {
-  Maharashtra: [
-    { min: 0, max: 7500, amount: 0 },
-    { min: 7501, max: 10000, amount: 175 },
-    { min: 10001, max: Infinity, amount: 200 },
-  ],
-  Karnataka: [
-    { min: 0, max: 25000, amount: 0 },
-    { min: 25001, max: Infinity, amount: 200 },
-  ],
-  "Tamil Nadu": [
-    { min: 0, max: 21000, amount: 0 },
-    { min: 21001, max: 30000, amount: 135 },
-    { min: 30001, max: 45000, amount: 315 },
-    { min: 45001, max: 60000, amount: 690 },
-    { min: 60001, max: Infinity, amount: 1025 },
-  ],
-};
+const PT_SLABS: Record<string, { min: number; max: number; amount: number }[]> =
+  {
+    Maharashtra: [
+      { min: 0, max: 7500, amount: 0 },
+      { min: 7501, max: 10000, amount: 175 },
+      { min: 10001, max: Infinity, amount: 200 },
+    ],
+    Karnataka: [
+      { min: 0, max: 25000, amount: 0 },
+      { min: 25001, max: Infinity, amount: 200 },
+    ],
+    "Tamil Nadu": [
+      { min: 0, max: 21000, amount: 0 },
+      { min: 21001, max: 30000, amount: 135 },
+      { min: 30001, max: 45000, amount: 315 },
+      { min: 45001, max: 60000, amount: 690 },
+      { min: 60001, max: Infinity, amount: 1025 },
+    ],
+  };
 
 /**
  * Returns monthly Professional Tax based on gross salary and state.
@@ -42,7 +48,10 @@ const PT_SLABS: Record<string, { min: number; max: number; amount: number }[]> =
  * @param state - State code (e.g. "Maharashtra", "Karnataka")
  * @returns PT amount in INR
  */
-export function getProfessionalTax(monthlyGross: number, state: string): number {
+export function getProfessionalTax(
+  monthlyGross: number,
+  state: string,
+): number {
   const slabs = PT_SLABS[state];
   if (!slabs) {
     // Default: ₹200 if gross > ₹15,000, else ₹0
@@ -68,10 +77,10 @@ export function getProfessionalTax(monthlyGross: number, state: string): number 
 const NEW_REGIME_SLABS: { min: number; max: number; rate: number }[] = [
   { min: 0, max: 300000, rate: 0 },
   { min: 300001, max: 700000, rate: 0.05 },
-  { min: 700001, max: 1000000, rate: 0.10 },
+  { min: 700001, max: 1000000, rate: 0.1 },
   { min: 1000001, max: 1200000, rate: 0.15 },
-  { min: 1200001, max: 1500000, rate: 0.20 },
-  { min: 1500001, max: Infinity, rate: 0.30 },
+  { min: 1200001, max: 1500000, rate: 0.2 },
+  { min: 1500001, max: Infinity, rate: 0.3 },
 ];
 
 /**

@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type InvoiceStatus = "Paid" | "Pending" | "Overdue" | "Cancelled" | "Refunded";
+export type InvoiceStatus =
+  "Paid" | "Pending" | "Overdue" | "Cancelled" | "Refunded";
 
 export interface InvoiceLineItem {
   description: string;

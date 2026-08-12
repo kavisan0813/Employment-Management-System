@@ -15,9 +15,14 @@ export const userManagementService = {
 
   getSuperAdmins: (): AdminTeamMember[] => db.settings.getTeam(),
   saveSuperAdmins: (admins: AdminTeamMember[]) => db.settings.saveTeam(admins),
-  updateSuperAdminStatus: (adminId: string, status: AdminTeamMember["status"]) => {
+  updateSuperAdminStatus: (
+    adminId: string,
+    status: AdminTeamMember["status"],
+  ) => {
     const admins = db.settings.getTeam();
-    db.settings.saveTeam(admins.map(a => a.id === adminId ? { ...a, status } : a));
+    db.settings.saveTeam(
+      admins.map((a) => (a.id === adminId ? { ...a, status } : a)),
+    );
   },
 
   killSession: (sessionId: string) => {

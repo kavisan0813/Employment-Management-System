@@ -60,7 +60,10 @@ export function useUserManagement() {
     loadData();
   };
 
-  const updateSuperAdminStatus = (adminId: string, status: AdminTeamMember["status"]) => {
+  const updateSuperAdminStatus = (
+    adminId: string,
+    status: AdminTeamMember["status"],
+  ) => {
     userManagementService.updateSuperAdminStatus(adminId, status);
     loadData();
   };

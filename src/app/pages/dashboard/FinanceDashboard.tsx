@@ -16,8 +16,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { motion } from "motion/react";
-
+import * as m from "motion/react-m";
 /* ═══════════════════════════════════════════════════════════════
    FINANCE PERSONAL DASHBOARD
    ═══════════════════════════════════════════════════════════════ */
@@ -29,7 +28,6 @@ export function FinancePersonalDashboard() {
   const hour = new Date().getHours();
   const greeting =
     hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
-
   const firstName = user?.name?.split(" ")[0] || "Ananya";
   const initials = user?.initials || "AD";
 
@@ -96,7 +94,12 @@ export function FinancePersonalDashboard() {
       chip: "8 days remaining",
       chipColor: "#00B87C",
       chipBg: "rgba(0,184,124,0.1)",
-      onClick: () => navigate("/leave", { state: { openApplyModal: true } }),
+      onClick: () =>
+        navigate("/leave", {
+          state: {
+            openApplyModal: true,
+          },
+        }),
     },
     {
       icon: FileText,
@@ -108,7 +111,11 @@ export function FinancePersonalDashboard() {
       chipColor: "#F59E0B",
       chipBg: "rgba(245,158,11,0.1)",
       onClick: () =>
-        navigate("/my-documents", { state: { activeTab: "Financial" } }),
+        navigate("/my-documents", {
+          state: {
+            activeTab: "Financial",
+          },
+        }),
     },
     {
       icon: Star,
@@ -120,7 +127,11 @@ export function FinancePersonalDashboard() {
       chipColor: "#F59E0B",
       chipBg: "rgba(245,158,11,0.1)",
       onClick: () =>
-        navigate("/performance", { state: { activeTab: "Self Review" } }),
+        navigate("/performance", {
+          state: {
+            activeTab: "Self Review",
+          },
+        }),
     },
     {
       icon: Receipt,
@@ -132,7 +143,11 @@ export function FinancePersonalDashboard() {
       chipColor: "#6B7280",
       chipBg: "rgba(107,114,128,0.1)",
       onClick: () =>
-        navigate("/finance/my-expenses", { state: { activeTab: "Draft" } }),
+        navigate("/finance/my-expenses", {
+          state: {
+            activeTab: "Draft",
+          },
+        }),
     },
   ];
 
@@ -143,7 +158,12 @@ export function FinancePersonalDashboard() {
       label: "Apply Leave",
       color: "#00B87C",
       bg: "#DCFCE7",
-      onClick: () => navigate("/leave", { state: { openApplyModal: true } }),
+      onClick: () =>
+        navigate("/leave", {
+          state: {
+            openApplyModal: true,
+          },
+        }),
     },
     {
       icon: Download,
@@ -159,7 +179,9 @@ export function FinancePersonalDashboard() {
       bg: "#FEF3C7",
       onClick: () =>
         navigate("/finance/my-expenses", {
-          state: { openNewExpense: true },
+          state: {
+            openNewExpense: true,
+          },
         }),
     },
     {
@@ -234,7 +256,6 @@ export function FinancePersonalDashboard() {
       statusColor: "#9CA3AF",
     },
   ];
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6 animate-in fade-in duration-500">
       {/* ═══════ PAGE HEADER ═══════ */}
@@ -299,10 +320,18 @@ export function FinancePersonalDashboard() {
       </div>
 
       {/* ═══════ GREETING BANNER ═══════ */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          y: 12,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          duration: 0.4,
+        }}
         className="w-full bg-card rounded-2xl p-8 mb-8 flex items-center justify-between border border-border shadow-sm relative overflow-hidden group"
       >
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#0EA5E9]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-700"></div>
@@ -333,16 +362,25 @@ export function FinancePersonalDashboard() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* ═══════ KPI CARDS ═══════ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiCards.map((kpi, i) => (
-          <motion.div
+          <m.div
             key={kpi.label}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08 * i, duration: 0.35 }}
+            initial={{
+              opacity: 0,
+              y: 16,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.08 * i,
+              duration: 0.35,
+            }}
             className="rounded-2xl p-5 group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
             style={{
               backgroundColor: "var(--card)",
@@ -406,7 +444,7 @@ export function FinancePersonalDashboard() {
                 {kpi.trend}
               </span>
             </div>
-          </motion.div>
+          </m.div>
         ))}
       </div>
 
@@ -415,10 +453,19 @@ export function FinancePersonalDashboard() {
         {/* ─── LEFT COLUMN (65%) ─── */}
         <div className="lg:col-span-6 space-y-6">
           {/* PENDING ACTIONS */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.35 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              y: 12,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.3,
+              duration: 0.35,
+            }}
             className="rounded-2xl overflow-hidden"
             style={{
               backgroundColor: "var(--card)",
@@ -456,7 +503,9 @@ export function FinancePersonalDashboard() {
                   key={action.title}
                   onClick={action.onClick}
                   className="flex items-center gap-3 px-5 py-3.5 cursor-pointer transition-all group"
-                  style={{ minHeight: 52 }}
+                  style={{
+                    minHeight: 52,
+                  }}
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.backgroundColor = "#F0FDF4")
                   }
@@ -516,13 +565,22 @@ export function FinancePersonalDashboard() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* TODAY'S SCHEDULE */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.35 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              y: 12,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.4,
+              duration: 0.35,
+            }}
             className="rounded-2xl"
             style={{
               backgroundColor: "var(--card)",
@@ -594,16 +652,25 @@ export function FinancePersonalDashboard() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
 
         {/* ─── RIGHT COLUMN (35%) ─── */}
         <div className="lg:col-span-4 space-y-6">
           {/* QUICK ACTIONS */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.35 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              y: 12,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.35,
+              duration: 0.35,
+            }}
             className="rounded-2xl p-5"
             style={{
               backgroundColor: "var(--card)",
@@ -668,13 +735,22 @@ export function FinancePersonalDashboard() {
                 </button>
               ))}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* LATEST ANNOUNCEMENTS */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45, duration: 0.35 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              y: 12,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.45,
+              duration: 0.35,
+            }}
             className="rounded-2xl"
             style={{
               backgroundColor: "var(--card)",
@@ -712,14 +788,18 @@ export function FinancePersonalDashboard() {
                   key={ann.id}
                   onClick={() =>
                     navigate("/notifications", {
-                      state: { activeTab: "Announcements" },
+                      state: {
+                        activeTab: "Announcements",
+                      },
                     })
                   }
                   className="flex items-start gap-3 px-5 py-3 cursor-pointer transition-all hover:bg-[var(--accent)]"
                 >
                   <div
                     className="w-1 h-8 rounded-full shrink-0 mt-0.5"
-                    style={{ backgroundColor: ann.borderColor }}
+                    style={{
+                      backgroundColor: ann.borderColor,
+                    }}
                   />
                   <div className="flex-1 min-w-0">
                     <p
@@ -771,13 +851,22 @@ export function FinancePersonalDashboard() {
                 View All Announcements <ChevronRight size={14} />
               </button>
             </div>
-          </motion.div>
+          </m.div>
 
           {/* MY TEAM QUICK VIEW */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.55, duration: 0.35 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              y: 12,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.55,
+              duration: 0.35,
+            }}
             className="rounded-2xl"
             style={{
               backgroundColor: "var(--card)",
@@ -878,7 +967,7 @@ export function FinancePersonalDashboard() {
                 View Full Directory <ChevronRight size={14} />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </div>

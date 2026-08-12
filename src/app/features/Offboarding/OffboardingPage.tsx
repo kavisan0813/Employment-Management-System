@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { TabType } from "./types/offboarding.types";
 import { useOffboarding } from "./hooks/useOffboarding";
 import { Header } from "./components/Header";
@@ -15,7 +15,7 @@ import { ExitInterviewModal } from "./modals/ExitInterviewModal";
 import { RequestsTab } from "./components/RequestsTab";
 import { OffboardingTemplates } from "./components/Dashboard/OffboardingTemplates";
 import { OffboardingTemplateEditorModal } from "./modals/OffboardingTemplateEditorModal";
-
+import * as m from "motion/react-m";
 export function OffboardingPage() {
   const [activeTab, setActiveTab] = useState<TabType>("Active");
   const [requestsCount, setRequestsCount] = useState(() => {
@@ -38,7 +38,6 @@ export function OffboardingPage() {
     id: string;
     type: "interview" | "clearance";
   } | null>(null);
-
   const {
     exits,
     stats,
@@ -65,14 +64,12 @@ export function OffboardingPage() {
     handleDuplicateTemplate,
     handleAssignTemplate,
   } = useOffboarding();
-
   const currentExit = showDetail
     ? exits.find((e) => e.id === showDetail)
     : null;
   const completeExit = showComplete
     ? exits.find((e) => e.id === showComplete)
     : null;
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -102,12 +99,23 @@ export function OffboardingPage() {
 
       {/* TAB CONTENT */}
       <AnimatePresence mode="wait">
-        <motion.div
+        <m.div
           key={activeTab}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
+          initial={{
+            opacity: 0,
+            y: 10,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          exit={{
+            opacity: 0,
+            y: -10,
+          }}
+          transition={{
+            duration: 0.2,
+          }}
         >
           {activeTab === "Templates" && (
             <OffboardingTemplates
@@ -135,7 +143,10 @@ export function OffboardingPage() {
                   onSendReminder={() => setShowReminder(exit.id)}
                   onComplete={() => setShowComplete(exit.id)}
                   onScheduleInterview={() =>
-                    setShowSchedule({ id: exit.id, type: "interview" })
+                    setShowSchedule({
+                      id: exit.id,
+                      type: "interview",
+                    })
                   }
                 />
               ))}
@@ -152,7 +163,10 @@ export function OffboardingPage() {
                   onSendReminder={() => setShowReminder(exit.id)}
                   onComplete={() => setShowComplete(exit.id)}
                   onScheduleInterview={() =>
-                    setShowSchedule({ id: exit.id, type: "interview" })
+                    setShowSchedule({
+                      id: exit.id,
+                      type: "interview",
+                    })
                   }
                 />
               ))}
@@ -174,7 +188,10 @@ export function OffboardingPage() {
                   onSendReminder={() => setShowReminder(exit.id)}
                   onComplete={() => setShowComplete(exit.id)}
                   onScheduleInterview={() =>
-                    setShowSchedule({ id: exit.id, type: "interview" })
+                    setShowSchedule({
+                      id: exit.id,
+                      type: "interview",
+                    })
                   }
                 />
               ))}
@@ -191,7 +208,7 @@ export function OffboardingPage() {
               Exit analytics coming soon.
             </div>
           )}
-        </motion.div>
+        </m.div>
       </AnimatePresence>
 
       {/* INITIATE EXIT MODAL */}
@@ -219,7 +236,10 @@ export function OffboardingPage() {
           }}
           onScheduleInterview={() => {
             setShowDetail(null);
-            setShowSchedule({ id: currentExit.id, type: "interview" });
+            setShowSchedule({
+              id: currentExit.id,
+              type: "interview",
+            });
           }}
           onSendToFinance={() => handleSendToFinance(currentExit.id)}
           onApproveClearance={(dept, approvedBy, comments) =>

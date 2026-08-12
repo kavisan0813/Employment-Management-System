@@ -4,7 +4,8 @@
  */
 
 export type PaymentStatus = "Success" | "Failed" | "Pending" | "Refunded";
-export type PaymentMethod = "Credit Card" | "Bank Transfer" | "PayPal" | "Wire Transfer";
+export type PaymentMethod =
+  "Credit Card" | "Bank Transfer" | "PayPal" | "Wire Transfer";
 
 export interface Payment {
   id: string;

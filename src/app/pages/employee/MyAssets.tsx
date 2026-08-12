@@ -19,10 +19,10 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 
 /* ─── Types ─────────────────────────────────────────────── */
-
+import * as m from "motion/react-m";
 interface MyAsset {
   id: string;
   name: string;
@@ -99,17 +99,35 @@ function AssetDetailModal({
   const Icon = asset.icon;
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[480px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
@@ -158,9 +176,19 @@ function AssetDetailModal({
 
           <div className="bg-card border border-border rounded-2xl overflow-hidden">
             {[
-              { label: "Category", value: asset.category },
-              { label: "Serial Number", value: asset.serialNo, mono: true },
-              { label: "Condition", value: asset.condition },
+              {
+                label: "Category",
+                value: asset.category,
+              },
+              {
+                label: "Serial Number",
+                value: asset.serialNo,
+                mono: true,
+              },
+              {
+                label: "Condition",
+                value: asset.condition,
+              },
               {
                 label: "Warranty",
                 value: asset.warrantyLabel,
@@ -174,17 +202,13 @@ function AssetDetailModal({
             ].map((row, i) => (
               <div
                 key={row.label}
-                className={`flex items-center justify-between px-4 py-3 ${
-                  i > 0 ? "border-t border-border" : ""
-                }`}
+                className={`flex items-center justify-between px-4 py-3 ${i > 0 ? "border-t border-border" : ""}`}
               >
                 <span className="text-[11px] font-black text-muted-foreground uppercase tracking-wider">
                   {row.label}
                 </span>
                 <span
-                  className={`text-[13px] font-bold text-foreground flex items-center ${
-                    row.mono ? "font-mono" : ""
-                  }`}
+                  className={`text-[13px] font-bold text-foreground flex items-center ${row.mono ? "font-mono" : ""}`}
                 >
                   {row.value}
                   {row.extra}
@@ -222,7 +246,7 @@ function AssetDetailModal({
             Report Issue
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -239,7 +263,6 @@ function ReportIssueModal({
   const [issueType, setIssueType] = useState("");
   const [description, setDescription] = useState("");
   const [urgency, setUrgency] = useState<"Normal" | "Urgent">("Normal");
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!issueType || !description.trim()) {
@@ -253,20 +276,37 @@ function ReportIssueModal({
     );
     onClose();
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[480px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
@@ -335,13 +375,7 @@ function ReportIssueModal({
                   key={u}
                   type="button"
                   onClick={() => setUrgency(u)}
-                  className={`flex-1 py-2.5 text-[12px] font-black rounded-xl transition-all ${
-                    urgency === u
-                      ? u === "Urgent"
-                        ? "bg-rose-500 text-white shadow-sm"
-                        : "bg-card text-foreground shadow-sm border border-border"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`flex-1 py-2.5 text-[12px] font-black rounded-xl transition-all ${urgency === u ? (u === "Urgent" ? "bg-rose-500 text-white shadow-sm" : "bg-card text-foreground shadow-sm border border-border") : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {u === "Urgent" ? (
                     <span className="flex items-center justify-center gap-1.5">
@@ -384,7 +418,7 @@ function ReportIssueModal({
             </button>
           </div>
         </form>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -395,7 +429,6 @@ function AssetRequestModal({ onClose }: { onClose: () => void }) {
   const [assetType, setAssetType] = useState("");
   const [reason, setReason] = useState("");
   const [urgency, setUrgency] = useState<"Normal" | "Urgent">("Normal");
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!assetType || !reason.trim()) {
@@ -409,20 +442,37 @@ function AssetRequestModal({ onClose }: { onClose: () => void }) {
     );
     onClose();
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
@@ -491,13 +541,7 @@ function AssetRequestModal({ onClose }: { onClose: () => void }) {
                   key={u}
                   type="button"
                   onClick={() => setUrgency(u)}
-                  className={`flex-1 py-2.5 text-[12px] font-black rounded-xl transition-all ${
-                    urgency === u
-                      ? u === "Urgent"
-                        ? "bg-rose-500 text-white shadow-sm"
-                        : "bg-card text-foreground shadow-sm border border-border"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`flex-1 py-2.5 text-[12px] font-black rounded-xl transition-all ${urgency === u ? (u === "Urgent" ? "bg-rose-500 text-white shadow-sm" : "bg-card text-foreground shadow-sm border border-border") : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {u === "Urgent" ? (
                     <span className="flex items-center justify-center gap-1.5">
@@ -545,7 +589,7 @@ function AssetRequestModal({ onClose }: { onClose: () => void }) {
             </button>
           </div>
         </form>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -556,7 +600,6 @@ export function MyAssets() {
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [detailAsset, setDetailAsset] = useState<MyAsset | null>(null);
   const [reportAsset, setReportAsset] = useState<MyAsset | null>(null);
-
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
       {/* ─── Page Header ─────────────────────────────────────── */}

@@ -19,13 +19,13 @@ import {
   FileSpreadsheet,
   Printer,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { useAuth } from "../../../context/AuthContext";
 import { payrollService } from "../payroll/payroll.service";
 import type { Payslip as RealPayslip } from "../payroll/payroll.types";
 import { employees as mockEmployees } from "../../../data/mockData";
-
+import * as m from "motion/react-m";
 interface PayrollRecord {
   id: string;
   name: string;
@@ -40,7 +40,6 @@ interface PayrollRecord {
   status: "Processed" | "Pending" | "On Hold";
   avatarColor: string;
 }
-
 const MOCK_RECORDS: PayrollRecord[] = [
   {
     id: "EMP1284",
@@ -113,12 +112,10 @@ const MOCK_RECORDS: PayrollRecord[] = [
     avatarColor: "#3B82F6",
   },
 ];
-
 export function FinancePayroll() {
   const { user } = useAuth();
   const [activeMonth] = useState("April 2026");
   const [refreshKey, setRefreshKey] = useState(0);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEmployee, setSelectedEmployee] =
     useState<PayrollRecord | null>(null);
@@ -157,7 +154,6 @@ export function FinancePayroll() {
             : ps.department === "Design"
               ? "#F59E0B"
               : "#EF4444";
-
       return {
         id: ps.employeeId,
         name: ps.employeeName,
@@ -177,7 +173,6 @@ export function FinancePayroll() {
       };
     });
   }, [activeRun]);
-
   const handleExport = (type: string) => {
     setExportDropdownOpen(false);
     const headers =
@@ -187,14 +182,15 @@ export function FinancePayroll() {
         `"${r.name}",${r.department},${r.basic},${r.hra},${r.allowances},${r.gross},${r.deductions},${r.net},${r.status}`,
     );
     const csvContent = [headers, ...rows].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
+    const blob = new Blob([csvContent], {
+      type: "text/csv",
+    });
     const linkEl = document.createElement("a");
     linkEl.href = URL.createObjectURL(blob);
     linkEl.download = `payroll_${type.toLowerCase().replace(/ /g, "_")}.csv`;
     linkEl.click();
     showToast(`${type} exported successfully.`);
   };
-
   const filteredRecords = records.filter((rec: PayrollRecord) => {
     const matchesSearch =
       rec.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -224,7 +220,6 @@ export function FinancePayroll() {
     [records],
   );
   const totalEmployeesCount = records.length;
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -232,7 +227,9 @@ export function FinancePayroll() {
         <div className="flex items-center gap-4">
           <div
             className="w-11 h-11 rounded-[10px] flex items-center justify-center shadow-inner"
-            style={{ backgroundColor: "#EDE9FE" }}
+            style={{
+              backgroundColor: "#EDE9FE",
+            }}
           >
             <IndianRupee size={22} className="text-[#8B5CF6]" />
           </div>
@@ -287,13 +284,7 @@ export function FinancePayroll() {
               setRunModalStep(1);
             }}
             disabled={!activeRun || activeRun.status === "disbursed"}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm transition-all hover:opacity-90 shadow-lg ${
-              !activeRun || activeRun.status === "disbursed"
-                ? "bg-slate-400 cursor-not-allowed shadow-none"
-                : activeRun.status === "pending"
-                  ? "bg-[#8B5CF6] shadow-[#8B5CF6]/20"
-                  : "bg-[#00B87C] shadow-[#00B87C]/20"
-            }`}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-sm transition-all hover:opacity-90 shadow-lg ${!activeRun || activeRun.status === "disbursed" ? "bg-slate-400 cursor-not-allowed shadow-none" : activeRun.status === "pending" ? "bg-[#8B5CF6] shadow-[#8B5CF6]/20" : "bg-[#00B87C] shadow-[#00B87C]/20"}`}
           >
             <Play size={18} fill="white" />
             {!activeRun
@@ -380,11 +371,26 @@ export function FinancePayroll() {
         <div className="flex items-center justify-between relative px-2 mb-8">
           <div className="absolute top-[18px] left-0 right-0 h-[2px] bg-border z-0 mx-12" />
           {[
-            { label: "Data Collection", name: "Data Collection" },
-            { label: "Attendance Lock", name: "Attendance Lock" },
-            { label: "Calculation", name: "Calculation" },
-            { label: "Approval", name: "Approval" },
-            { label: "Disbursement", name: "Disbursement" },
+            {
+              label: "Data Collection",
+              name: "Data Collection",
+            },
+            {
+              label: "Attendance Lock",
+              name: "Attendance Lock",
+            },
+            {
+              label: "Calculation",
+              name: "Calculation",
+            },
+            {
+              label: "Approval",
+              name: "Approval",
+            },
+            {
+              label: "Disbursement",
+              name: "Disbursement",
+            },
           ].map((step) => {
             const stepStatus = (() => {
               if (!activeRun) {
@@ -419,7 +425,6 @@ export function FinancePayroll() {
               }
               return "Done"; // disbursed
             })();
-
             return (
               <div
                 key={step.name}
@@ -429,13 +434,7 @@ export function FinancePayroll() {
                 }
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-500 group-hover:scale-110 ${
-                    stepStatus === "Done"
-                      ? "bg-[#00B87C] border-[#00B87C] text-white"
-                      : stepStatus === "Active"
-                        ? "bg-card border-[#0D9488] text-[#0D9488] shadow-[0_0_15px_rgba(13,148,136,0.3)] animate-pulse"
-                        : "bg-card border-border text-muted-foreground group-hover:border-[#0D9488]/50 group-hover:text-[#0D9488]/50"
-                  }`}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-500 group-hover:scale-110 ${stepStatus === "Done" ? "bg-[#00B87C] border-[#00B87C] text-white" : stepStatus === "Active" ? "bg-card border-[#0D9488] text-[#0D9488] shadow-[0_0_15px_rgba(13,148,136,0.3)] animate-pulse" : "bg-card border-border text-muted-foreground group-hover:border-[#0D9488]/50 group-hover:text-[#0D9488]/50"}`}
                 >
                   {stepStatus === "Done" ? (
                     <CheckCircle2 size={18} strokeWidth={2.5} />
@@ -446,13 +445,7 @@ export function FinancePayroll() {
                   )}
                 </div>
                 <span
-                  className={`text-[11px] font-bold uppercase tracking-widest text-center max-w-[100px] transition-colors group-hover:text-foreground ${
-                    stepStatus === "Done"
-                      ? "text-[#00B87C]"
-                      : stepStatus === "Active"
-                        ? "text-[#0D9488]"
-                        : "text-muted-foreground"
-                  }`}
+                  className={`text-[11px] font-bold uppercase tracking-widest text-center max-w-[100px] transition-colors group-hover:text-foreground ${stepStatus === "Done" ? "text-[#00B87C]" : stepStatus === "Active" ? "text-[#0D9488]" : "text-muted-foreground"}`}
                 >
                   {step.label}
                 </span>
@@ -604,11 +597,19 @@ export function FinancePayroll() {
             </thead>
             <tbody className="divide-y divide-border">
               {filteredRecords.map((rec: PayrollRecord, i: number) => (
-                <motion.tr
+                <m.tr
                   key={rec.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
+                  initial={{
+                    opacity: 0,
+                    x: -10,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                  }}
+                  transition={{
+                    delay: i * 0.05,
+                  }}
                   className="group hover:bg-[#00B87C]/[0.08] dark:hover:bg-emerald-500/5 transition-all cursor-pointer h-[56px]"
                   onClick={() => setSelectedEmployee(rec)}
                 >
@@ -616,7 +617,9 @@ export function FinancePayroll() {
                     <div className="flex items-center gap-3">
                       <div
                         className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-white text-[11px] font-semibold"
-                        style={{ backgroundColor: rec.avatarColor }}
+                        style={{
+                          backgroundColor: rec.avatarColor,
+                        }}
                       >
                         {rec.name
                           .split(" ")
@@ -675,7 +678,7 @@ export function FinancePayroll() {
                       />
                     </div>
                   </td>
-                </motion.tr>
+                </m.tr>
               ))}
             </tbody>
           </table>
@@ -686,18 +689,34 @@ export function FinancePayroll() {
       <AnimatePresence>
         {selectedEmployee && (
           <div className="fixed inset-0 z-[2100] flex justify-end">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm no-print"
               onClick={() => setSelectedEmployee(null)}
-            ></motion.div>
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            ></m.div>
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="relative w-full max-w-[440px] h-full bg-card shadow-[-20px_0_40px_rgba(0,0,0,0.1)] flex flex-col print-payslip-card"
             >
               <div className="p-6 border-b border-border flex items-center justify-between no-print">
@@ -848,7 +867,7 @@ export function FinancePayroll() {
                   Email Slip
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -857,18 +876,37 @@ export function FinancePayroll() {
       <AnimatePresence>
         {showRunModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-md"
               onClick={() => setShowRunModal(false)}
-            ></motion.div>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            ></m.div>
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+              }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+              }}
               className="relative w-full max-w-[460px] bg-card rounded-[40px] overflow-hidden shadow-2xl"
             >
               <div className="p-8 pb-4">
@@ -1132,7 +1170,7 @@ export function FinancePayroll() {
                     : "Proceed to Review"}
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1173,7 +1211,6 @@ export function FinancePayroll() {
     </div>
   );
 }
-
 function KPICard({
   title,
   value,
@@ -1207,17 +1244,25 @@ function KPICard({
       iconColor: "#EF4444",
     },
   };
-
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
+    <m.div
+      whileHover={{
+        y: -5,
+      }}
       className="p-6 bg-card border border-border rounded-[32px] shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
     >
       <div
         className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-        style={{ backgroundColor: colors[color].iconBg }}
+        style={{
+          backgroundColor: colors[color].iconBg,
+        }}
       >
-        <Icon size={18} style={{ color: colors[color].iconColor }} />
+        <Icon
+          size={18}
+          style={{
+            color: colors[color].iconColor,
+          }}
+        />
       </div>
       <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">
         {title}
@@ -1225,7 +1270,9 @@ function KPICard({
       <div className="flex items-end gap-2">
         <h3
           className="text-[28px] font-bold tracking-tighter"
-          style={{ color: colors[color].text }}
+          style={{
+            color: colors[color].text,
+          }}
         >
           {value}
         </h3>
@@ -1235,17 +1282,15 @@ function KPICard({
           </span>
         )}
       </div>
-    </motion.div>
+    </m.div>
   );
 }
-
 function StatusChip({ status }: { status: PayrollRecord["status"] }) {
   const styles = {
     Processed: "bg-[#F0FDF4] text-[#00B87C] border-[#00B87C]/20",
     Pending: "bg-[#FFFBEB] text-[#D97706] border-[#FBBF24]/20",
     "On Hold": "bg-[#FEF2F2] text-[#EF4444] border-[#EF4444]/20",
   };
-
   return (
     <span
       className={`px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider border ${styles[status]} flex items-center justify-center w-fit gap-1.5`}
@@ -1258,7 +1303,6 @@ function StatusChip({ status }: { status: PayrollRecord["status"] }) {
     </span>
   );
 }
-
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
@@ -1271,7 +1315,6 @@ function InfoItem({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
 function TableItem({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex justify-between items-center group/item">
@@ -1284,7 +1327,6 @@ function TableItem({ label, value }: { label: string; value: number }) {
     </div>
   );
 }
-
 function ChecklistItem({
   label,
   status,
@@ -1295,13 +1337,7 @@ function ChecklistItem({
   return (
     <div className="flex items-center gap-4 bg-muted/20 p-3.5 rounded-2xl border border-border/50">
       <div
-        className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${
-          status === "success"
-            ? "bg-emerald-500/10 text-emerald-500"
-            : status === "warning"
-              ? "bg-amber-500/10 text-amber-500"
-              : "bg-teal-500/10 text-teal-500"
-        }`}
+        className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${status === "success" ? "bg-emerald-500/10 text-emerald-500" : status === "warning" ? "bg-amber-500/10 text-amber-500" : "bg-teal-500/10 text-teal-500"}`}
       >
         {status === "success" ? (
           <CheckCircle2 size={16} />

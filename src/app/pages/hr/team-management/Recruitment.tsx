@@ -38,12 +38,7 @@ import type {
 
 /* ─── Types ──────────────────────────────────────────────── */
 type Stage =
-  | "Applied"
-  | "Screening"
-  | "Round 1"
-  | "Round 2"
-  | "Offer"
-  | "Hired";
+  "Applied" | "Screening" | "Round 1" | "Round 2" | "Offer" | "Hired";
 type Source = "LinkedIn" | "Indeed" | "Referral";
 type ToastKind = "success" | "error" | "info" | "warning";
 

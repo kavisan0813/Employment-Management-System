@@ -21,12 +21,7 @@ import { PaymentsPage } from "./pages/PaymentsPage";
 import { RenewalTrackingPage } from "./pages/RenewalTrackingPage";
 
 type BillingTab =
-  | "overview"
-  | "plans"
-  | "subscriptions"
-  | "invoices"
-  | "payments"
-  | "renewals";
+  "overview" | "plans" | "subscriptions" | "invoices" | "payments" | "renewals";
 
 const TABS: { id: BillingTab; label: string; icon: React.ElementType }[] = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -68,8 +63,7 @@ export default function SubscriptionBillingView() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-1.5 py-4">
-
-        {/* Header Profile Section */}
+      {/* Header Profile Section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between pb-5 border-b border-gray-200 gap-4 font-semibold">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
@@ -84,7 +78,7 @@ export default function SubscriptionBillingView() {
 
       {/* Tab navigation */}
       <div className="w-full overflow-hidden">
-  <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
+        <div className="flex items-center gap-1 p-1 overflow-x-auto no-scrollbar scroll-smooth">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;

@@ -610,7 +610,10 @@ export function useOffboarding() {
           { ...tpl, id: tpl.id || `exit-template-${Date.now()}`, version: 1 },
         ];
     setTemplates(next);
-    localStorage.setItem("viyan_offboarding_templates:v1", JSON.stringify(next));
+    localStorage.setItem(
+      "viyan_offboarding_templates:v1",
+      JSON.stringify(next),
+    );
     window.dispatchEvent(new Event("viyan:offboarding-updated"));
     showToast(
       "Template Saved",
@@ -622,7 +625,10 @@ export function useOffboarding() {
   const deleteTemplate = (id: string) => {
     const next = templates.filter((t) => t.id !== id);
     setTemplates(next);
-    localStorage.setItem("viyan_offboarding_templates:v1", JSON.stringify(next));
+    localStorage.setItem(
+      "viyan_offboarding_templates:v1",
+      JSON.stringify(next),
+    );
     window.dispatchEvent(new Event("viyan:offboarding-updated"));
     showToast(
       "Template Deleted",
@@ -643,7 +649,10 @@ export function useOffboarding() {
       };
       const next = [...templates, duplicated];
       setTemplates(next);
-      localStorage.setItem("viyan_offboarding_templates:v1", JSON.stringify(next));
+      localStorage.setItem(
+        "viyan_offboarding_templates:v1",
+        JSON.stringify(next),
+      );
       window.dispatchEvent(new Event("viyan:offboarding-updated"));
       showToast(
         "Template Duplicated",

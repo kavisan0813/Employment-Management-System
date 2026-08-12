@@ -44,15 +44,12 @@ import {
   HelpFAQSection,
   ContactSupportSection,
 } from "./sections";
-
 interface SettingsLayoutProps {
   role: "Super Admin" | "HR Manager" | "Employee";
 }
-
 export function SettingsLayout({ role }: SettingsLayoutProps) {
   // If Employee, we use local state for simplicity and self-containment
   const isEmployee = role === "Employee";
-
   const context = useContext(SettingsContext);
   if (!isEmployee && !context) {
     throw new Error("SettingsContext must be used within SettingsProvider");
@@ -67,13 +64,11 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
   const setActiveSubTab = isEmployee
     ? setEmpActiveSection
     : context!.setActiveSubTab;
-
   const [localSearch, setLocalSearch] = useState("");
   const sidebarSearch = isEmployee ? localSearch : context!.sidebarSearch;
   const setSidebarSearch = isEmployee
     ? setLocalSearch
     : context!.setSidebarSearch;
-
   const [localCollapsed, setLocalCollapsed] = useState<string[]>([]);
   const collapsedCategories = isEmployee
     ? localCollapsed
@@ -81,13 +76,11 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
   const setCollapsedCategories = isEmployee
     ? setLocalCollapsed
     : context!.setCollapsedCategories;
-
   const [localSidebarOpen, setLocalSidebarOpen] = useState(false);
   const isSidebarOpen = isEmployee ? localSidebarOpen : context!.isSidebarOpen;
   const setIsSidebarOpen = isEmployee
     ? setLocalSidebarOpen
     : context!.setIsSidebarOpen;
-
   const navigation = ROLE_NAVIGATION[role] || [];
 
   // Filter navigation items by search
@@ -96,7 +89,10 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
       const filteredItems = category.items.filter((item) =>
         item.label.toLowerCase().includes(sidebarSearch.toLowerCase()),
       );
-      return { ...category, items: filteredItems };
+      return {
+        ...category,
+        items: filteredItems,
+      };
     })
     .filter((category) => category.items.length > 0);
 
@@ -124,7 +120,6 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
         );
       }
     }
-
     switch (activeSubTab) {
       // System Sections
       case "company":
@@ -205,14 +200,11 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
         return (
           <ContactSupportSection onModal={setEmpModal} navigate={() => {}} />
         );
-
       default:
         return <div>Section not found: {activeSubTab}</div>;
     }
   };
-
   const GearIcon = Icons.Settings;
-
   return (
     <div
       className="w-full px-4 md:px-8 py-6 pb-10"
@@ -228,7 +220,9 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
       {/* PAGE HEADER */}
       <div
         className="sticky top-0 bg-[var(--background)] flex items-center gap-4 py-4 mb-6 border-b border-[var(--border)]"
-        style={{ zIndex: 60 }}
+        style={{
+          zIndex: 60,
+        }}
       >
         <div
           style={{
@@ -282,7 +276,12 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
         }}
       >
         <GearIcon size={16} className="text-[#00B87C]" />
-        <span style={{ fontSize: "13px", fontWeight: 600 }}>
+        <span
+          style={{
+            fontSize: "13px",
+            fontWeight: 600,
+          }}
+        >
           {isSidebarOpen ? "Close Menu" : "Settings Menu"}
         </span>
       </button>
@@ -304,9 +303,7 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
             alignSelf: "flex-start",
             zIndex: 40,
           }}
-          className={`w-full md:w-[220px] flex-shrink-0 transition-all duration-300 ${
-            isSidebarOpen ? "block" : "hidden md:block"
-          }`}
+          className={`w-full md:w-[220px] flex-shrink-0 transition-all duration-300 ${isSidebarOpen ? "block" : "hidden md:block"}`}
         >
           {/* Search Settings Input */}
           <div className="mb-4">
@@ -353,9 +350,7 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
                   </span>
                   <Icons.ChevronDown
                     size={12}
-                    className={`text-[#94A3B8] transition-transform duration-200 ${
-                      isCollapsed ? "rotate-[-90deg]" : ""
-                    }`}
+                    className={`text-[#94A3B8] transition-transform duration-200 ${isCollapsed ? "rotate-[-90deg]" : ""}`}
                   />
                 </div>
 

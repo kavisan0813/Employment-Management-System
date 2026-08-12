@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useReducer } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -115,19 +115,175 @@ const BRUSH_SHIFTS: Record<string, ShiftDetails> = {
 };
 
 export function ManagerTeamSchedule() {
-  const [selectedDept, setSelectedDept] = useState("All Departments");
-  const [view, setView] = useState<"Week" | "Month" | "Day">("Week");
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [activeBrush, setActiveBrush] = useState<string | null>(null);
-
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    selectedDept: "All Departments",
+    view: "Week" as "Week" | "Month" | "Day",
+    showAddModal: false,
+    activeBrush: null as string | null,
+    weekStartDate: new Date(2026, 3, 6) as Date,
+    shiftsByDate: {} as Record<string, Record<string, ShiftDetails | null>>,
+    isPainting: false,
+    swapRequests: [
+      {
+        id: "s1",
+        emp1: "Arjun M.",
+        emp2: "Dev P.",
+        avatar1: "AM",
+        avatar2: "DP",
+        color1: "#059669",
+        color2: "#2563EB",
+        details: "Morning ↔ Night",
+        dateText: "Wed Apr 8 Evening ↔ Wed Apr 8 Morning",
+        reason: "Personal appointment clash on Wednesday morning.",
+      },
+      {
+        id: "s2",
+        emp1: "Sneha R.",
+        emp2: "Priya S.",
+        avatar1: "SR",
+        avatar2: "PS",
+        color1: "#7C3AED",
+        color2: "#DB2777",
+        details: "Night ↔ Evening",
+        dateText: "Tue Apr 7 Night ↔ Wed Apr 8 Evening",
+        reason: "Medical check-up scheduled for Tuesday night.",
+      },
+    ],
+    viewingSwap: null as (typeof swapRequests)[0] | null,
+    selectedEmployeeForModal: "",
+    selectedDayIndexForModal: null as number | null,
+    newShiftType: "Morning (06:00 - 14:00)",
+    newShiftDate: "",
+    newShiftNotes: "",
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    selectedDept,
+    view,
+    showAddModal,
+    activeBrush,
+    weekStartDate,
+    shiftsByDate,
+    isPainting,
+    swapRequests,
+    viewingSwap,
+    selectedEmployeeForModal,
+    selectedDayIndexForModal,
+    newShiftType,
+    newShiftDate,
+    newShiftNotes,
+  } = __state;
+  const setSelectedDept = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedDept: typeof val === "function" ? val(prev.selectedDept) : val,
+      })),
+    [],
+  );
+  const setView = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        view: typeof val === "function" ? val(prev.view) : val,
+      })),
+    [],
+  );
+  const setShowAddModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showAddModal: typeof val === "function" ? val(prev.showAddModal) : val,
+      })),
+    [],
+  );
+  const setActiveBrush = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeBrush: typeof val === "function" ? val(prev.activeBrush) : val,
+      })),
+    [],
+  );
+  const setWeekStartDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        weekStartDate:
+          typeof val === "function" ? val(prev.weekStartDate) : val,
+      })),
+    [],
+  );
+  const setShiftsByDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        shiftsByDate: typeof val === "function" ? val(prev.shiftsByDate) : val,
+      })),
+    [],
+  );
+  const setIsPainting = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isPainting: typeof val === "function" ? val(prev.isPainting) : val,
+      })),
+    [],
+  );
+  const setSwapRequests = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        swapRequests: typeof val === "function" ? val(prev.swapRequests) : val,
+      })),
+    [],
+  );
+  const setViewingSwap = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        viewingSwap: typeof val === "function" ? val(prev.viewingSwap) : val,
+      })),
+    [],
+  );
+  const setSelectedEmployeeForModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedEmployeeForModal:
+          typeof val === "function" ? val(prev.selectedEmployeeForModal) : val,
+      })),
+    [],
+  );
+  const setSelectedDayIndexForModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedDayIndexForModal:
+          typeof val === "function" ? val(prev.selectedDayIndexForModal) : val,
+      })),
+    [],
+  );
+  const setNewShiftType = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newShiftType: typeof val === "function" ? val(prev.newShiftType) : val,
+      })),
+    [],
+  );
+  const setNewShiftDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newShiftDate: typeof val === "function" ? val(prev.newShiftDate) : val,
+      })),
+    [],
+  );
+  const setNewShiftNotes = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newShiftNotes:
+          typeof val === "function" ? val(prev.newShiftNotes) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Week navigation state
-  const [weekStartDate, setWeekStartDate] = useState<Date>(
-    new Date(2026, 3, 6),
-  ); // Apr 6, 2026
-  const [shiftsByDate, setShiftsByDate] = useState<
-    Record<string, Record<string, ShiftDetails | null>>
-  >({});
-
   const getShiftForDate = useCallback(
     (empName: string, dateStr: string) => {
       // Check user edits first
@@ -191,39 +347,7 @@ export function ManagerTeamSchedule() {
       };
     });
   }, [weekStartDate, getShiftForDate]);
-  const [isPainting, setIsPainting] = useState(false);
-
   // Shift Swap Requests State
-  const [swapRequests, setSwapRequests] = useState([
-    {
-      id: "s1",
-      emp1: "Arjun M.",
-      emp2: "Dev P.",
-      avatar1: "AM",
-      avatar2: "DP",
-      color1: "#059669",
-      color2: "#2563EB",
-      details: "Morning ↔ Night",
-      dateText: "Wed Apr 8 Evening ↔ Wed Apr 8 Morning",
-      reason: "Personal appointment clash on Wednesday morning.",
-    },
-    {
-      id: "s2",
-      emp1: "Sneha R.",
-      emp2: "Priya S.",
-      avatar1: "SR",
-      avatar2: "PS",
-      color1: "#7C3AED",
-      color2: "#DB2777",
-      details: "Night ↔ Evening",
-      dateText: "Tue Apr 7 Night ↔ Wed Apr 8 Evening",
-      reason: "Medical check-up scheduled for Tuesday night.",
-    },
-  ]);
-  const [viewingSwap, setViewingSwap] = useState<
-    (typeof swapRequests)[0] | null
-  >(null);
-
   const handleApproveSwap = (id: string) => {
     const swap = swapRequests.find((s) => s.id === id);
     if (!swap) return;
@@ -260,14 +384,6 @@ export function ManagerTeamSchedule() {
   };
 
   // Modal specific fields
-  const [selectedEmployeeForModal, setSelectedEmployeeForModal] = useState("");
-  const [selectedDayIndexForModal, setSelectedDayIndexForModal] = useState<
-    number | null
-  >(null);
-  const [newShiftType, setNewShiftType] = useState("Morning (06:00 - 14:00)");
-  const [newShiftDate, setNewShiftDate] = useState("");
-  const [newShiftNotes, setNewShiftNotes] = useState("");
-
   // Attach a global mouseup listener to stop painting if mouse button is released outside cells
   React.useEffect(() => {
     const handleGlobalMouseUp = () => {

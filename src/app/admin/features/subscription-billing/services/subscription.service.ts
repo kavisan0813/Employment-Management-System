@@ -5,7 +5,10 @@
 
 import { db, pushAuditLog } from "../../../../admin/mockData";
 import { Subscription } from "../../../../admin/types";
-import { SubscriptionRecord, SubscriptionStats } from "../types/subscription.types";
+import {
+  SubscriptionRecord,
+  SubscriptionStats,
+} from "../types/subscription.types";
 
 const CURRENT_ADMIN = "admin@ems.io";
 
@@ -79,10 +82,16 @@ export const SubscriptionService = {
     };
   },
 
-  changePlan(subId: string, newPlan: "Starter" | "Growth" | "Enterprise", newAmount: number): void {
-    const subs = db.subscriptions.get().map((s) =>
-      s.id === subId ? { ...s, plan: newPlan, amount: newAmount } : s
-    );
+  changePlan(
+    subId: string,
+    newPlan: "Starter" | "Growth" | "Enterprise",
+    newAmount: number,
+  ): void {
+    const subs = db.subscriptions
+      .get()
+      .map((s) =>
+        s.id === subId ? { ...s, plan: newPlan, amount: newAmount } : s,
+      );
     db.subscriptions.save(subs);
 
     pushAuditLog(
@@ -92,14 +101,18 @@ export const SubscriptionService = {
       "platform_admin",
       null,
       "Active",
-      { subscriptionId: subId, newPlan, amount: String(newAmount) }
+      { subscriptionId: subId, newPlan, amount: String(newAmount) },
     );
   },
 
   cancelSubscription(subId: string): void {
-    const subs = db.subscriptions.get().map((s) =>
-      s.id === subId ? { ...s, status: "Inactive" as const, renewalDate: null } : s
-    );
+    const subs = db.subscriptions
+      .get()
+      .map((s) =>
+        s.id === subId
+          ? { ...s, status: "Inactive" as const, renewalDate: null }
+          : s,
+      );
     db.subscriptions.save(subs);
 
     pushAuditLog(
@@ -109,7 +122,7 @@ export const SubscriptionService = {
       "platform_admin",
       null,
       "Active",
-      { subscriptionId: subId }
+      { subscriptionId: subId },
     );
   },
 
@@ -119,8 +132,12 @@ export const SubscriptionService = {
 
     const subs = db.subscriptions.get().map((s) =>
       s.id === subId
-        ? { ...s, status: "Active" as const, renewalDate: renewalDate.toISOString().slice(0, 10) }
-        : s
+        ? {
+            ...s,
+            status: "Active" as const,
+            renewalDate: renewalDate.toISOString().slice(0, 10),
+          }
+        : s,
     );
     db.subscriptions.save(subs);
 
@@ -131,15 +148,21 @@ export const SubscriptionService = {
       "platform_admin",
       null,
       "Active",
-      { subscriptionId: subId }
+      { subscriptionId: subId },
     );
   },
 
   toggleBillingCycle(subId: string): void {
     const subs = db.subscriptions.get().map((s) =>
       s.id === subId
-        ? { ...s, billingCycle: s.billingCycle === "Monthly" ? ("Annual" as const) : ("Monthly" as const) }
-        : s
+        ? {
+            ...s,
+            billingCycle:
+              s.billingCycle === "Monthly"
+                ? ("Annual" as const)
+                : ("Monthly" as const),
+          }
+        : s,
     );
     db.subscriptions.save(subs);
   },

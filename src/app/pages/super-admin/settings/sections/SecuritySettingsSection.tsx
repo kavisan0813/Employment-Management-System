@@ -407,7 +407,13 @@ export function SecuritySettingsSection() {
             max="120"
             step="5"
             value={secIdleTimeout}
-            onChange={(e) => setSecIdleTimeout((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
+            onChange={(e) =>
+              setSecIdleTimeout(
+                e.target.value === "" || isNaN(Number(e.target.value))
+                  ? undefined
+                  : Number(e.target.value),
+              )
+            }
             className="w-full cursor-pointer"
             style={{ accentColor: "#00B87C" }}
           />

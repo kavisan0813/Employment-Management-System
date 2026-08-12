@@ -69,7 +69,10 @@ interface RegisteredUser {
   candidateStatus?: "Pending" | "Completed";
 }
 
-const ROLE_ICONS: Omit<Record<UserRole, React.ComponentType<LucideProps>>, "IT"> = {
+const ROLE_ICONS: Omit<
+  Record<UserRole, React.ComponentType<LucideProps>>,
+  "IT"
+> = {
   "Platform Admin": ShieldCheck,
   "Super Admin": ShieldAlert,
   "HR Manager": Users,
@@ -154,14 +157,24 @@ export function Login() {
       const role: UserRole = detectRole(email);
       let registeredAccount: RegisteredUser | undefined;
       try {
-        registeredAccount = (JSON.parse(localStorage.getItem("viyan_registered_users:v1") || "[]") as RegisteredUser[])
-          .find((account) => account.email.toLowerCase() === email.toLowerCase());
-        if (registeredAccount?.password && registeredAccount.password !== password) {
+        registeredAccount = (
+          JSON.parse(
+            localStorage.getItem("viyan_registered_users:v1") || "[]",
+          ) as RegisteredUser[]
+        ).find(
+          (account) => account.email.toLowerCase() === email.toLowerCase(),
+        );
+        if (
+          registeredAccount?.password &&
+          registeredAccount.password !== password
+        ) {
           setIsLoading(false);
           alert("Invalid email or password.");
           return;
         }
-      } catch { /* system/demo accounts retain their existing login path */ }
+      } catch {
+        /* system/demo accounts retain their existing login path */
+      }
 
       // Check system db for name/initials
       let accountName = "";
@@ -222,16 +235,19 @@ export function Login() {
       login({
         name: accountName,
         email:
-          email || (DEMO_ACCOUNTS[role as Exclude<UserRole, "IT">] ? DEMO_ACCOUNTS[role as Exclude<UserRole, "IT">].email : email),
+          email ||
+          (DEMO_ACCOUNTS[role as Exclude<UserRole, "IT">]
+            ? DEMO_ACCOUNTS[role as Exclude<UserRole, "IT">].email
+            : email),
         role,
         initials: accountInitials,
       });
 
       const route =
-        role === "Employee" && registeredAccount?.candidateStatus !== "Completed"
+        role === "Employee" &&
+        registeredAccount?.candidateStatus !== "Completed"
           ? "/onboarding"
-          :
-          role === "Platform Admin"
+          : role === "Platform Admin"
             ? "/platform-admin/dashboard"
             : ROLE_HOME_ROUTE[role] || "/employee/dashboard";
       navigate(route, { replace: true });
@@ -562,8 +578,9 @@ export function Login() {
                     type="button"
                     onClick={() => handleDemoLogin(role)}
                     disabled={isLoading}
-                    className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${isLast ? "col-span-2 justify-center" : ""
-                      }`}
+                    className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${
+                      isLast ? "col-span-2 justify-center" : ""
+                    }`}
                     style={{
                       borderColor: config.color + "30",
                       backgroundColor: config.bg,

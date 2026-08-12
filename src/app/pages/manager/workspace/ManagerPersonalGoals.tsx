@@ -9,23 +9,14 @@ import {
   X,
   MoreVertical,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 type GoalStatus =
-  | "All"
-  | "In Progress"
-  | "Completed"
-  | "At Risk"
-  | "Not Started";
+  "All" | "In Progress" | "Completed" | "At Risk" | "Not Started";
 type Priority = "High" | "Medium" | "Low";
 type Category =
-  | "Leadership"
-  | "Compliance"
-  | "Strategy"
-  | "Personal"
-  | "Technical";
-
+  "Leadership" | "Compliance" | "Strategy" | "Personal" | "Technical";
 interface Goal {
   id: string;
   title: string;
@@ -38,7 +29,6 @@ interface Goal {
   manager: string;
   status: GoalStatus;
 }
-
 const goalsData: Goal[] = [
   {
     id: "1",
@@ -101,7 +91,6 @@ const goalsData: Goal[] = [
     status: "At Risk",
   },
 ];
-
 export function ManagerPersonalGoals() {
   const [activeTab, setActiveTab] = useState<GoalStatus>("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -112,18 +101,20 @@ export function ManagerPersonalGoals() {
     useState<Goal | null>(null);
   const [activeMenuGoalId, setActiveMenuGoalId] = useState<string | null>(null);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
-
   const filteredGoals = goals.filter(
     (goal) => activeTab === "All" || goal.status === activeTab,
   );
-
   const handleAddGoal = (newGoalData: Partial<Goal>) => {
     if (editingGoal) {
       // update
       setGoals((prev) =>
         prev.map((g) =>
           g.id === editingGoal.id
-            ? { ...g, ...newGoalData, lastUpdated: "Today" }
+            ? {
+                ...g,
+                ...newGoalData,
+                lastUpdated: "Today",
+              }
             : g,
         ),
       );
@@ -152,7 +143,6 @@ export function ManagerPersonalGoals() {
     }
     setIsModalOpen(false);
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 space-y-6 animate-in fade-in duration-500 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
       {/* PAGE HEADER */}
@@ -235,9 +225,13 @@ export function ManagerPersonalGoals() {
               </span>
             </div>
             <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
-              <motion.div
-                initial={{ x: "-100%" }}
-                animate={{ x: `-${100 - avgProgress}%` }}
+              <m.div
+                initial={{
+                  x: "-100%",
+                }}
+                animate={{
+                  x: `-${100 - avgProgress}%`,
+                }}
                 className="h-full bg-[#00B87C] rounded-full w-full"
               />
             </div>
@@ -261,15 +255,11 @@ export function ManagerPersonalGoals() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-4 text-[12px] font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${
-                activeTab === tab
-                  ? "text-[#00B87C]"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`pb-4 text-[12px] font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
             >
               {tab}
               {activeTab === tab && (
-                <motion.div
+                <m.div
                   layoutId="activeTabGoals"
                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00B87C]"
                 />
@@ -301,7 +291,11 @@ export function ManagerPersonalGoals() {
                   setGoals((prev) =>
                     prev.map((g) =>
                       g.id === goal.id
-                        ? { ...g, progress: 100, status: "Completed" }
+                        ? {
+                            ...g,
+                            progress: 100,
+                            status: "Completed",
+                          }
                         : g,
                     ),
                   );
@@ -399,11 +393,7 @@ export function ManagerPersonalGoals() {
                     Priority
                   </span>
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${
-                      selectedGoalForDetails.priority === "High"
-                        ? "bg-rose-500/10 text-rose-500 border-rose-200"
-                        : "bg-amber-500/10 text-amber-500 border-amber-200"
-                    }`}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${selectedGoalForDetails.priority === "High" ? "bg-rose-500/10 text-rose-500 border-rose-200" : "bg-amber-500/10 text-amber-500 border-amber-200"}`}
                   >
                     {selectedGoalForDetails.priority}
                   </span>
@@ -425,7 +415,9 @@ export function ManagerPersonalGoals() {
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden flex-1 border">
                     <div
                       className="h-full bg-primary rounded-full"
-                      style={{ width: `${selectedGoalForDetails.progress}%` }}
+                      style={{
+                        width: `${selectedGoalForDetails.progress}%`,
+                      }}
                     />
                   </div>
                   <span className="text-xs font-bold text-primary">
@@ -470,7 +462,6 @@ function KPICard({
     teal: "text-teal-600 bg-teal-500/10 border-teal-500/20",
     red: "text-rose-600 bg-rose-500/10 border-rose-500/20",
   };
-
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm group hover:border-[#00B87C]/30 transition-all">
       <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-3">
@@ -484,7 +475,6 @@ function KPICard({
     </div>
   );
 }
-
 interface GoalItemProps {
   goal: Goal;
   onViewDetails: () => void;
@@ -495,7 +485,6 @@ interface GoalItemProps {
   onMarkCompleted: () => void;
   onEdit: () => void;
 }
-
 const GoalItem = forwardRef<HTMLDivElement, GoalItemProps>(
   (
     {
@@ -518,21 +507,28 @@ const GoalItem = forwardRef<HTMLDivElement, GoalItemProps>(
       ) : (
         <div className="w-4 h-4 rounded-full border-2 border-[#00B87C]/50 border-t-[#00B87C] animate-spin" />
       );
-
     const priorityColor =
       goal.priority === "High"
         ? "text-rose-600 bg-rose-500/10 border-rose-500/20"
         : goal.priority === "Medium"
           ? "text-amber-600 bg-amber-500/10 border-amber-500/20"
           : "text-muted-foreground bg-muted/50 border-border";
-
     return (
-      <motion.div
+      <m.div
         ref={ref}
         layout
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.98 }}
+        initial={{
+          opacity: 0,
+          scale: 0.98,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.98,
+        }}
         className="p-4 rounded-2xl border border-border bg-card hover:border-[#00B87C]/30 transition-all space-y-4 group relative"
       >
         {/* TOP ROW */}
@@ -599,9 +595,13 @@ const GoalItem = forwardRef<HTMLDivElement, GoalItemProps>(
         {/* PROGRESS ROW */}
         <div className="space-y-2">
           <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: `-${100 - goal.progress}%` }}
+            <m.div
+              initial={{
+                x: "-100%",
+              }}
+              animate={{
+                x: `-${100 - goal.progress}%`,
+              }}
               className="h-full bg-[#00B87C] rounded-full w-full"
             />
           </div>
@@ -652,12 +652,11 @@ const GoalItem = forwardRef<HTMLDivElement, GoalItemProps>(
             />
           </div>
         </div>
-      </motion.div>
+      </m.div>
     );
   },
 );
 GoalItem.displayName = "GoalItem";
-
 function AddGoalModal({
   isOpen,
   onClose,
@@ -675,12 +674,10 @@ function AddGoalModal({
   const [deadline, setDeadline] = useState("");
   const [kr, setKr] = useState("");
   const [description, setDescription] = useState("");
-
   const [prevEditingGoal, setPrevEditingGoal] = useState<Goal | null>(
     editingGoal,
   );
   const [prevIsOpen, setPrevIsOpen] = useState<boolean>(isOpen);
-
   if (editingGoal !== prevEditingGoal || isOpen !== prevIsOpen) {
     setPrevEditingGoal(editingGoal);
     setPrevIsOpen(isOpen);
@@ -702,9 +699,7 @@ function AddGoalModal({
       }
     }
   }
-
   if (!isOpen) return null;
-
   const handleSubmit = () => {
     if (!title.trim()) {
       showToast("Error", "error", "Goal title is required.");
@@ -718,20 +713,37 @@ function AddGoalModal({
       kr: kr || "Key result details",
     });
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-black/45 backdrop-blur-sm"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.9,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.9,
+          y: 20,
+        }}
         className="relative w-full max-w-[480px] bg-card border border-border rounded-[32px] shadow-2xl overflow-hidden"
       >
         <div className="p-8 space-y-6">
@@ -779,11 +791,7 @@ function AddGoalModal({
                       key={cat}
                       type="button"
                       onClick={() => setCategory(cat as Category)}
-                      className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all ${
-                        isActive
-                          ? "bg-[#00B87C] text-white border-[#00B87C]"
-                          : "border-border hover:border-[#00B87C] text-foreground bg-transparent"
-                      }`}
+                      className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all ${isActive ? "bg-[#00B87C] text-white border-[#00B87C]" : "border-border hover:border-[#00B87C] text-foreground bg-transparent"}`}
                     >
                       {cat}
                     </button>
@@ -881,11 +889,10 @@ function AddGoalModal({
             </button>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
-
 function CheckInGoalModal({
   goal,
   isOpen,
@@ -902,13 +909,10 @@ function CheckInGoalModal({
     goal ? goal.status : "In Progress",
   );
   const [checkInComment, setCheckInComment] = useState("");
-
   if (!isOpen || !goal) return null;
-
   const handleSaveCheckIn = () => {
     onSave(progress, status);
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
       <div
@@ -941,7 +945,13 @@ function CheckInGoalModal({
               min="0"
               max="100"
               value={progress}
-              onChange={(e) => setProgress((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
+              onChange={(e) =>
+                setProgress(
+                  e.target.value === "" || isNaN(parseInt(e.target.value))
+                    ? undefined
+                    : parseInt(e.target.value),
+                )
+              }
               className="w-full accent-primary"
             />
           </div>

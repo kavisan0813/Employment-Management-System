@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import {
   FileText,
   Plus,
@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import type { Template } from "../types/onboarding.types";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
+import * as m from "motion/react-m";
 interface TemplateEditorModalProps {
   showTemplatesPanel: boolean;
   setShowTemplatesPanel: (v: boolean) => void;
@@ -28,7 +28,6 @@ interface TemplateEditorModalProps {
   handleDuplicateTemplate: (id: string) => void;
   handleDeleteTemplate: (id: string) => void;
 }
-
 const emptyTemplate = (): Template => ({
   id: "",
   name: "",
@@ -54,7 +53,6 @@ const emptyTemplate = (): Template => ({
   training: [],
   policies: [],
 });
-
 export function TemplateEditorModal(props: TemplateEditorModalProps) {
   const {
     templates,
@@ -65,7 +63,6 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
     handleDuplicateTemplate,
     handleDeleteTemplate,
   } = props;
-
   const [draft, setDraft] = useState<Template>(emptyTemplate);
   const [activeTab, setActiveTab] = useState<"info" | "candidate" | "company">(
     "info",
@@ -76,7 +73,6 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
   const [customDocMandatory] = useState(true);
   const [customDocSize, setCustomDocSize] = useState(5);
   const [customDocIssuedByOrg, setCustomDocIssuedByOrg] = useState(false);
-
   const [customTaskName, setCustomTaskName] = useState("");
   const [customTaskOwner, setCustomTaskOwner] = useState("HR Manager");
   const [customTaskVerifier, setCustomTaskVerifier] = useState("HR Manager");
@@ -84,7 +80,6 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
   const [customTaskPriority, setCustomTaskPriority] = useState("Medium");
   const [customTaskMandatory, setCustomTaskMandatory] = useState(true);
   const [customTaskDesc, setCustomTaskDesc] = useState("");
-
   const [prevTaskOwners, setPrevTaskOwners] = useState(taskOwners);
   if (taskOwners !== prevTaskOwners) {
     setPrevTaskOwners(taskOwners);
@@ -96,14 +91,12 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
       setCustomTaskOwner(taskOwners[0]);
     }
   }
-
   const [prevEditingTemplate, setPrevEditingTemplate] = useState<string | null>(
     editingTemplate,
   );
   const [prevShowTemplateEditor, setPrevShowTemplateEditor] = useState<boolean>(
     props.showTemplateEditor,
   );
-
   if (
     editingTemplate !== prevEditingTemplate ||
     props.showTemplateEditor !== prevShowTemplateEditor
@@ -164,13 +157,15 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
     setCustomTaskName("");
     setCustomTaskDesc("");
   };
-
   const removeCompanyTask = (sectionId: string, taskId: string) => {
     setDraft((current) => ({
       ...current,
       sections: (current.sections || []).map((sec) =>
         sec.id === sectionId
-          ? { ...sec, tasks: sec.tasks.filter((t) => t.id !== taskId) }
+          ? {
+              ...sec,
+              tasks: sec.tasks.filter((t) => t.id !== taskId),
+            }
           : sec,
       ),
     }));
@@ -197,14 +192,12 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
     setCustomDocName("");
     setCustomDocIssuedByOrg(false);
   };
-
   const removeDocumentRule = (id: string) => {
     setDraft((current) => ({
       ...current,
       documents: (current.documents || []).filter((d) => d.id !== id),
     }));
   };
-
   const submitTemplate = (status: "draft" | "active") => {
     if (!draft.name.trim() || !draft.dept) {
       showToast(
@@ -223,7 +216,6 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
     const trainingTasksCount = (draft.training || []).length;
     const totalTasksCount =
       companyTasksCount + docTasksCount + formTasksCount + trainingTasksCount;
-
     saveTemplate({
       ...draft,
       status,
@@ -232,25 +224,36 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
     });
     props.setShowTemplateEditor(false);
   };
-
   return (
     <>
       {/* Templates Slider Panel */}
       <AnimatePresence>
         {props.showTemplatesPanel && (
-          <motion.div
+          <m.div
             className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
             onClick={() => props.setShowTemplatesPanel(false)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
           >
-            <motion.div
+            <m.div
               className="absolute right-0 top-0 h-full w-full max-w-[480px] overflow-y-auto border-l border-border bg-card p-6 shadow-2xl flex flex-col"
               onClick={(event) => event.stopPropagation()}
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
             >
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -309,11 +312,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                           </p>
                         </div>
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${
-                            template.status === "active"
-                              ? "bg-[#E8F8F0] text-[#00B87C] border-[#00B87C]/20"
-                              : "bg-muted text-muted-foreground border-border"
-                          }`}
+                          className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${template.status === "active" ? "bg-[#E8F8F0] text-[#00B87C] border-[#00B87C]/20" : "bg-muted text-muted-foreground border-border"}`}
                         >
                           {template.status}
                         </span>
@@ -365,27 +364,42 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                   ))
                 )}
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Main Template Editor Modal */}
       <AnimatePresence>
         {props.showTemplateEditor && (
-          <motion.div
+          <m.div
             className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4"
             onClick={() => props.setShowTemplateEditor(false)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
           >
-            <motion.div
+            <m.div
               className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-[36px] bg-card border border-border shadow-2xl flex flex-col"
               onClick={(event) => event.stopPropagation()}
-              initial={{ scale: 0.97, y: 15 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.97, y: 15 }}
+              initial={{
+                scale: 0.97,
+                y: 15,
+              }}
+              animate={{
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.97,
+                y: 15,
+              }}
             >
               {/* Header */}
               <div className="px-8 py-6 border-b border-border flex justify-between items-center shrink-0">
@@ -415,7 +429,11 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
               <div className="px-8 border-b border-border bg-muted/5 flex gap-2 shrink-0">
                 {(
                   [
-                    { key: "info", label: "1. Scope & Rules", icon: Settings },
+                    {
+                      key: "info",
+                      label: "1. Scope & Rules",
+                      icon: Settings,
+                    },
                     {
                       key: "candidate",
                       label: "2. Candidate Process",
@@ -431,11 +449,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
-                    className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${
-                      activeTab === tab.key
-                        ? "border-[#00B87C] text-[#00B87C]"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`px-5 py-4 text-[11px] font-black uppercase tracking-wider border-b-2 flex items-center gap-2 transition-all cursor-pointer ${activeTab === tab.key ? "border-[#00B87C] text-[#00B87C]" : "border-transparent text-muted-foreground hover:text-foreground"}`}
                   >
                     <tab.icon size={13} />
                     {tab.label}
@@ -455,7 +469,10 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                       <input
                         value={draft.name}
                         onChange={(e) =>
-                          setDraft({ ...draft, name: e.target.value })
+                          setDraft({
+                            ...draft,
+                            name: e.target.value,
+                          })
                         }
                         placeholder="e.g. Engineering Onboarding Default"
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] transition-all"
@@ -470,7 +487,10 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                         <select
                           value={draft.dept}
                           onChange={(e) =>
-                            setDraft({ ...draft, dept: e.target.value })
+                            setDraft({
+                              ...draft,
+                              dept: e.target.value,
+                            })
                           }
                           className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] transition-all"
                         >
@@ -489,7 +509,10 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                         <input
                           value={draft.designation || ""}
                           onChange={(e) =>
-                            setDraft({ ...draft, designation: e.target.value })
+                            setDraft({
+                              ...draft,
+                              designation: e.target.value,
+                            })
                           }
                           placeholder="e.g. Software Engineer"
                           className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] transition-all"
@@ -554,7 +577,10 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                       <textarea
                         value={draft.description || ""}
                         onChange={(e) =>
-                          setDraft({ ...draft, description: e.target.value })
+                          setDraft({
+                            ...draft,
+                            description: e.target.value,
+                          })
                         }
                         placeholder="Provide details about this template's workflow scope..."
                         rows={3}
@@ -568,7 +594,10 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                           type="checkbox"
                           checked={draft.isDefault || false}
                           onChange={(e) =>
-                            setDraft({ ...draft, isDefault: e.target.checked })
+                            setDraft({
+                              ...draft,
+                              isDefault: e.target.checked,
+                            })
                           }
                           className="h-4.5 w-4.5 rounded border-border text-[#00B87C] focus:ring-[#00B87C]"
                         />
@@ -641,7 +670,12 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                           <select
                             value={customDocSize}
                             onChange={(e) =>
-                              setCustomDocSize((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))
+                              setCustomDocSize(
+                                e.target.value === "" ||
+                                  isNaN(Number(e.target.value))
+                                  ? undefined
+                                  : Number(e.target.value),
+                              )
                             }
                             className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs font-bold outline-none"
                           >
@@ -715,13 +749,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                                     {task.name}
                                   </strong>
                                   <span
-                                    className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${
-                                      task.priority === "High"
-                                        ? "bg-red-50 text-red-500 border-red-500/15"
-                                        : task.priority === "Medium"
-                                          ? "bg-amber-50 text-amber-500 border-amber-500/15"
-                                          : "bg-blue-50 text-blue-500 border-blue-500/15"
-                                    }`}
+                                    className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase border ${task.priority === "High" ? "bg-red-50 text-red-500 border-red-500/15" : task.priority === "Medium" ? "bg-amber-50 text-amber-500 border-amber-500/15" : "bg-blue-50 text-blue-500 border-blue-500/15"}`}
                                   >
                                     {task.priority} Priority
                                   </span>
@@ -847,7 +875,12 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                               type="number"
                               value={customTaskDue}
                               onChange={(e) =>
-                                setCustomTaskDue((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))
+                                setCustomTaskDue(
+                                  e.target.value === "" ||
+                                    isNaN(Number(e.target.value))
+                                    ? undefined
+                                    : Number(e.target.value),
+                                )
                               }
                               min={1}
                               className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"
@@ -939,8 +972,8 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                   )}
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

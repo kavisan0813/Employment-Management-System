@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from "react";
 
 interface WorkflowCounts {
   total: number;
@@ -24,9 +31,9 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
     rejected: 51,
   });
 
-  const updateCounts = (newCounts: Partial<WorkflowCounts>) => {
+  const updateCounts = useCallback((newCounts: Partial<WorkflowCounts>) => {
     setCounts((prev) => ({ ...prev, ...newCounts }));
-  };
+  }, []);
 
   const value = useMemo(
     () => ({ counts, updateCounts }),

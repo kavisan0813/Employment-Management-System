@@ -18,12 +18,7 @@ import { usePlans } from "../hooks/usePlans";
 import { SubscriptionService } from "../services/subscription.service";
 
 type BillingTab =
-  | "overview"
-  | "plans"
-  | "subscriptions"
-  | "invoices"
-  | "payments"
-  | "renewals";
+  "overview" | "plans" | "subscriptions" | "invoices" | "payments" | "renewals";
 
 interface BillingDashboardProps {
   onNavigateTab?: (tab: BillingTab) => void;

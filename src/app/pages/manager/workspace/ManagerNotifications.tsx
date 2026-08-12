@@ -17,17 +17,11 @@ import {
   BookOpen,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
-
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 type NotificationCategory = "All" | "Unread" | "Approvals" | "System";
 type NotificationType =
-  | "Leave"
-  | "Expense"
-  | "HR"
-  | "Attendance"
-  | "Performance"
-  | "Training";
-
+  "Leave" | "Expense" | "HR" | "Attendance" | "Performance" | "Training";
 interface Notification {
   id: number;
   type: NotificationType;
@@ -39,7 +33,6 @@ interface Notification {
   isImportant: boolean;
   path: string;
 }
-
 const MOCK_NOTIFICATIONS: Notification[] = [
   {
     id: 1,
@@ -100,7 +93,6 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     path: "/manager/directory",
   },
 ];
-
 export function ManagerNotifications() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<NotificationCategory>("All");
@@ -108,7 +100,6 @@ export function ManagerNotifications() {
     useState<Notification[]>(MOCK_NOTIFICATIONS);
   const [typeFilter, setTypeFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
-
   const filteredNotifications = useMemo(() => {
     return notifications.filter((n) => {
       const matchesTab =
@@ -116,38 +107,47 @@ export function ManagerNotifications() {
         (activeTab === "Unread" && !n.isRead) ||
         (activeTab === "Approvals" && n.category === "Approvals") ||
         (activeTab === "System" && n.category === "System");
-
       const matchesType = typeFilter === "All" || n.type === typeFilter;
-
       const matchesSearch =
         n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         n.message.toLowerCase().includes(searchQuery.toLowerCase());
-
       return matchesTab && matchesType && matchesSearch;
     });
   }, [notifications, activeTab, typeFilter, searchQuery]);
-
   const markAsRead = (id: number) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+      prev.map((n) =>
+        n.id === id
+          ? {
+              ...n,
+              isRead: true,
+            }
+          : n,
+      ),
     );
     showToast("Success", "success", "Notification marked as read");
   };
-
   const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    setNotifications((prev) =>
+      prev.map((n) => ({
+        ...n,
+        isRead: true,
+      })),
+    );
     showToast("Success", "success", "All notifications marked as read");
   };
-
   const deleteNotification = (id: number) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
     showToast("Deleted", "info", "Notification removed");
   };
-
   const getIcon = (type: NotificationType) => {
     switch (type) {
       case "Leave":
-        return { icon: Calendar, color: "#F59E0B", bg: "rgba(245,158,11,0.1)" };
+        return {
+          icon: Calendar,
+          color: "#F59E0B",
+          bg: "rgba(245,158,11,0.1)",
+        };
       case "Expense":
         return {
           icon: CreditCard,
@@ -161,9 +161,17 @@ export function ManagerNotifications() {
           bg: "rgba(139,92,246,0.1)",
         };
       case "Training":
-        return { icon: BookOpen, color: "#06B6D4", bg: "rgba(6,182,212,0.1)" };
+        return {
+          icon: BookOpen,
+          color: "#06B6D4",
+          bg: "rgba(6,182,212,0.1)",
+        };
       case "Attendance":
-        return { icon: Clock, color: "#EF4444", bg: "rgba(239,68,68,0.1)" };
+        return {
+          icon: Clock,
+          color: "#EF4444",
+          bg: "rgba(239,68,68,0.1)",
+        };
       case "HR":
       default:
         return {
@@ -173,7 +181,6 @@ export function ManagerNotifications() {
         };
     }
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-700 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
       {/* ─── Header ─────────────────────────────────────────────── */}
@@ -214,11 +221,7 @@ export function ManagerNotifications() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2 rounded-xl text-[13px] font-bold transition-all ${
-                  activeTab === tab
-                    ? "bg-card text-[#00B87C] shadow-sm ring-1 ring-border"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`px-6 py-2 rounded-xl text-[13px] font-bold transition-all ${activeTab === tab ? "bg-card text-[#00B87C] shadow-sm ring-1 ring-border" : "text-muted-foreground hover:text-foreground"}`}
               >
                 {tab}
                 {tab === "Unread" &&
@@ -278,17 +281,22 @@ export function ManagerNotifications() {
             filteredNotifications.map((notification) => {
               const iconData = getIcon(notification.type);
               return (
-                <motion.div
+                <m.div
                   key={notification.id}
                   layout
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className={`group relative bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl flex flex-col md:flex-row items-center gap-6 ${
-                    !notification.isRead
-                      ? "border-[#00B87C]/30 bg-[#00B87C]/[0.02]"
-                      : "border-border"
-                  }`}
+                  initial={{
+                    opacity: 0,
+                    x: -20,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.95,
+                  }}
+                  className={`group relative bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl flex flex-col md:flex-row items-center gap-6 ${!notification.isRead ? "border-[#00B87C]/30 bg-[#00B87C]/[0.02]" : "border-border"}`}
                 >
                   {/* Left: Icon */}
                   <div
@@ -306,7 +314,9 @@ export function ManagerNotifications() {
                     <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
                       <span
                         className="text-[11px] font-bold uppercase tracking-[2px]"
-                        style={{ color: iconData.color }}
+                        style={{
+                          color: iconData.color,
+                        }}
                       >
                         {notification.type}
                       </span>
@@ -362,13 +372,17 @@ export function ManagerNotifications() {
                       <div className="w-2.5 h-2.5 rounded-full bg-[#00B87C] absolute top-6 right-6 shadow-[0_0_12px_rgba(0,184,124,0.5)] md:hidden lg:block group-hover:hidden" />
                     )}
                   </div>
-                </motion.div>
+                </m.div>
               );
             })
           ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
               className="py-20 flex flex-col items-center justify-center text-center bg-card rounded-[32px] border border-dashed border-border"
             >
               <div className="w-20 h-20 rounded-[32px] bg-secondary flex items-center justify-center text-muted-foreground/30 mb-6">
@@ -391,7 +405,7 @@ export function ManagerNotifications() {
               >
                 Clear all filters
               </button>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

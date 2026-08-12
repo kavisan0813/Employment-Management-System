@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { motion } from "motion/react";
 import { toast } from "sonner";
 import {
   Folder,
@@ -22,12 +21,12 @@ import {
 } from "lucide-react";
 
 /* ─── Types ─────────────────────────────── */
+import * as m from "motion/react-m";
 interface VersionLog {
   version: string;
   updatedBy: string;
   updatedDate: string;
 }
-
 interface DocItem {
   id: string;
   name: string;
@@ -65,8 +64,16 @@ const initialDocs: DocItem[] = [
     size: "2.4 MB",
     type: "PDF",
     versions: [
-      { version: "v2.1", updatedBy: "Sarah J.", updatedDate: "2026-04-01" },
-      { version: "v2.0", updatedBy: "Dave K.", updatedDate: "2025-12-15" },
+      {
+        version: "v2.1",
+        updatedBy: "Sarah J.",
+        updatedDate: "2026-04-01",
+      },
+      {
+        version: "v2.0",
+        updatedBy: "Dave K.",
+        updatedDate: "2025-12-15",
+      },
     ],
   },
   {
@@ -81,7 +88,11 @@ const initialDocs: DocItem[] = [
     size: "1.1 MB",
     type: "DOC",
     versions: [
-      { version: "v1.0", updatedBy: "Dave K.", updatedDate: "2026-02-15" },
+      {
+        version: "v1.0",
+        updatedBy: "Dave K.",
+        updatedDate: "2026-02-15",
+      },
     ],
   },
   {
@@ -96,7 +107,11 @@ const initialDocs: DocItem[] = [
     size: "850 KB",
     type: "XLS",
     versions: [
-      { version: "v1.4", updatedBy: "HR Admin", updatedDate: "2026-03-10" },
+      {
+        version: "v1.4",
+        updatedBy: "HR Admin",
+        updatedDate: "2026-03-10",
+      },
     ],
   },
   {
@@ -112,7 +127,11 @@ const initialDocs: DocItem[] = [
     size: "1.8 MB",
     type: "PDF",
     versions: [
-      { version: "v1.0", updatedBy: "Sarah J.", updatedDate: "2025-12-28" },
+      {
+        version: "v1.0",
+        updatedBy: "Sarah J.",
+        updatedDate: "2025-12-28",
+      },
     ],
   },
   {
@@ -127,11 +146,14 @@ const initialDocs: DocItem[] = [
     size: "1.5 MB",
     type: "DOC",
     versions: [
-      { version: "v1.1", updatedBy: "Sys Admin", updatedDate: "2026-01-05" },
+      {
+        version: "v1.1",
+        updatedBy: "Sys Admin",
+        updatedDate: "2026-01-05",
+      },
     ],
   },
 ];
-
 export function Documents() {
   const [docs, setDocs] = useState<DocItem[]>(initialDocs);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
@@ -159,7 +181,6 @@ export function Documents() {
     expiry: "",
     notes: "",
   });
-
   const handleExport = () => {
     const csvContent =
       "data:text/csv;charset=utf-8,Name,Category,Status,UploadedBy,Date\n" +
@@ -177,11 +198,9 @@ export function Documents() {
     link.click();
     document.body.removeChild(link);
   };
-
   const handleUploadSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!uploadForm.name.trim()) return;
-
     const newDoc: DocItem = {
       id: `D${Math.floor(Math.random() * 1000)}`,
       name: uploadForm.name,
@@ -207,7 +226,6 @@ export function Documents() {
         },
       ],
     };
-
     setDocs((prev) => [newDoc, ...prev]);
     setShowUploadModal(false);
     setUploadForm({
@@ -219,17 +237,21 @@ export function Documents() {
       notes: "",
     });
   };
-
   const handleArchive = (id: string) => {
     setDocs((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, status: "Archived" } : d)),
+      prev.map((d) =>
+        d.id === id
+          ? {
+              ...d,
+              status: "Archived",
+            }
+          : d,
+      ),
     );
   };
-
   const handleDelete = (id: string) => {
     setDocs((prev) => prev.filter((d) => d.id !== id));
   };
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Active":
@@ -246,7 +268,6 @@ export function Documents() {
         return "bg-neutral-500/5 text-slate-600 border-neutral-500/10";
     }
   };
-
   const getFileIconColor = (type: string) => {
     return type ? "bg-[#00B87C] text-white" : "bg-[#00B87C] text-white";
   };
@@ -261,7 +282,6 @@ export function Documents() {
     const matchesStatus = statusFilter === "All" || doc.status === statusFilter;
     return matchesSearch && matchesCat && matchesDept && matchesStatus;
   });
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 font-inter">
       {/* ── Page Header ── */}
@@ -350,9 +370,11 @@ export function Documents() {
             colorName: "emerald",
           },
         ].map((kpi) => (
-          <motion.div
+          <m.div
             key={kpi.label}
-            whileHover={{ y: -5 }}
+            whileHover={{
+              y: -5,
+            }}
             className="relative group bg-card border border-border p-5 rounded-3xl shadow-sm flex flex-col justify-between overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-[#00B87C]/5 transition-all duration-300"
           >
             {/* Glow circle */}
@@ -379,10 +401,12 @@ export function Documents() {
             <div className="mt-4 w-full h-1 bg-muted/50 rounded-full overflow-hidden relative z-10">
               <div
                 className={`h-full ${kpi.colorName === "amber" ? "bg-amber-500" : "bg-[#00B87C]"} transition-all duration-1000`}
-                style={{ width: kpi.percent }}
+                style={{
+                  width: kpi.percent,
+                }}
               />
             </div>
-          </motion.div>
+          </m.div>
         ))}
       </div>
 
@@ -461,21 +485,13 @@ export function Documents() {
 
           <div className="flex items-center gap-0.5 border border-border rounded-xl p-0.5 bg-white dark:bg-zinc-900/50 h-[34px] self-end ml-auto">
             <button
-              className={`p-1.5 rounded-lg transition-all ${
-                viewMode === "grid"
-                  ? "bg-[#00B87C] text-white shadow-sm"
-                  : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-              }`}
+              className={`p-1.5 rounded-lg transition-all ${viewMode === "grid" ? "bg-[#00B87C] text-white shadow-sm" : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"}`}
               onClick={() => setViewMode("grid")}
             >
               <Grid size={15} />
             </button>
             <button
-              className={`p-1.5 rounded-lg transition-all ${
-                viewMode === "list"
-                  ? "bg-[#00B87C] text-white shadow-sm"
-                  : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-              }`}
+              className={`p-1.5 rounded-lg transition-all ${viewMode === "list" ? "bg-[#00B87C] text-white shadow-sm" : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"}`}
               onClick={() => setViewMode("list")}
             >
               <List size={15} />
@@ -704,7 +720,10 @@ export function Documents() {
                   className="w-full text-xs px-3 py-2 border border-border bg-white dark:bg-zinc-900/50 rounded-xl font-bold outline-none focus:border-[#00B87C] focus:ring-4 focus:ring-[#00B87C]/5 transition-all"
                   value={uploadForm.name}
                   onChange={(e) =>
-                    setUploadForm({ ...uploadForm, name: e.target.value })
+                    setUploadForm({
+                      ...uploadForm,
+                      name: e.target.value,
+                    })
                   }
                 />
               </div>
@@ -740,7 +759,10 @@ export function Documents() {
                     className="w-full text-xs px-3 py-2 border border-border bg-white dark:bg-zinc-900/50 rounded-xl font-bold text-foreground outline-none focus:border-[#00B87C] focus:ring-4 focus:ring-[#00B87C]/5 transition-all cursor-pointer"
                     value={uploadForm.expiry}
                     onChange={(e) =>
-                      setUploadForm({ ...uploadForm, expiry: e.target.value })
+                      setUploadForm({
+                        ...uploadForm,
+                        expiry: e.target.value,
+                      })
                     }
                   />
                 </div>

@@ -21,17 +21,57 @@ interface Note {
 
 const DEFAULT_ACTIVITIES: Record<string, ActivityItem[]> = {
   nh1: [
-    { id: "a1", event: "IT setup & system credentials completed", actor: "IT Team", date: "Apr 8, 2026", time: "10:30 AM", type: "it" },
-    { id: "a2", event: "Offer letter signed electronically", actor: "Priya Sharma", date: "Apr 5, 2026", time: "04:15 PM", type: "candidate" },
-    { id: "a3", event: "Background check verified & documents collected", actor: "HR Operations", date: "Apr 3, 2026", time: "11:00 AM", type: "hr" },
-    { id: "a4", event: "Onboarding initiated & default template assigned", actor: "Suresh Iyer", date: "Apr 2, 2026", time: "09:00 AM", type: "system" },
+    {
+      id: "a1",
+      event: "IT setup & system credentials completed",
+      actor: "IT Team",
+      date: "Apr 8, 2026",
+      time: "10:30 AM",
+      type: "it",
+    },
+    {
+      id: "a2",
+      event: "Offer letter signed electronically",
+      actor: "Priya Sharma",
+      date: "Apr 5, 2026",
+      time: "04:15 PM",
+      type: "candidate",
+    },
+    {
+      id: "a3",
+      event: "Background check verified & documents collected",
+      actor: "HR Operations",
+      date: "Apr 3, 2026",
+      time: "11:00 AM",
+      type: "hr",
+    },
+    {
+      id: "a4",
+      event: "Onboarding initiated & default template assigned",
+      actor: "Suresh Iyer",
+      date: "Apr 2, 2026",
+      time: "09:00 AM",
+      type: "system",
+    },
   ],
 };
 
 const DEFAULT_NOTES: Record<string, Note[]> = {
   nh1: [
-    { id: "n1", author: "Suresh Iyer (Manager)", text: "Priya seems highly motivated. IT credentials have been setup. Ready for day 1 onboarding session.", date: "Apr 8, 2026", time: "11:15 AM" },
-    { id: "n2", author: "HR Operations", text: "Background verification completed without issues. Experience letters from previous employer verified.", date: "Apr 3, 2026", time: "11:05 AM" },
+    {
+      id: "n1",
+      author: "Suresh Iyer (Manager)",
+      text: "Priya seems highly motivated. IT credentials have been setup. Ready for day 1 onboarding session.",
+      date: "Apr 8, 2026",
+      time: "11:15 AM",
+    },
+    {
+      id: "n2",
+      author: "HR Operations",
+      text: "Background verification completed without issues. Experience letters from previous employer verified.",
+      date: "Apr 3, 2026",
+      time: "11:05 AM",
+    },
   ],
 };
 
@@ -41,15 +81,28 @@ interface ActivityLogProps {
 }
 
 export function ActivityLog({ employeeId, employeeName }: ActivityLogProps) {
-  const [activities, setActivities] = useState<ActivityItem[]>(() => DEFAULT_ACTIVITIES[employeeId] || []);
-  const [notes, setNotes] = useState<Note[]>(() => DEFAULT_NOTES[employeeId] || []);
+  const [activities, setActivities] = useState<ActivityItem[]>(
+    () => DEFAULT_ACTIVITIES[employeeId] || [],
+  );
+  const [notes, setNotes] = useState<Note[]>(
+    () => DEFAULT_NOTES[employeeId] || [],
+  );
   const [noteText, setNoteText] = useState("");
 
   // Sync state when switching employees
   useEffect(() => {
-    setActivities(DEFAULT_ACTIVITIES[employeeId] || [
-      { id: "a-init", event: `Onboarding queue entry for ${employeeName}`, actor: "System", date: "Today", time: "Just now", type: "system" }
-    ]);
+    setActivities(
+      DEFAULT_ACTIVITIES[employeeId] || [
+        {
+          id: "a-init",
+          event: `Onboarding queue entry for ${employeeName}`,
+          actor: "System",
+          date: "Today",
+          time: "Just now",
+          type: "system",
+        },
+      ],
+    );
     setNotes(DEFAULT_NOTES[employeeId] || []);
   }, [employeeId, employeeName]);
 
@@ -65,12 +118,19 @@ export function ActivityLog({ employeeId, employeeName }: ActivityLogProps) {
       author: "HR Manager",
       text: noteText,
       date: "Today",
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     setNotes((prev) => [newNote, ...prev]);
     setNoteText("");
-    showToast("Note Added", "success", "Your comment has been added to internal records.");
+    showToast(
+      "Note Added",
+      "success",
+      "Your comment has been added to internal records.",
+    );
 
     // Optionally append note event to activity list
     const newActivity: ActivityItem = {
@@ -102,20 +162,31 @@ export function ActivityLog({ employeeId, employeeName }: ActivityLogProps) {
 
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[12px] font-bold text-foreground">{act.event}</span>
-                  <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
-                    act.type === "hr" ? "bg-[#8B5CF6]/10 text-[#8B5CF6]" :
-                    act.type === "it" ? "bg-[#0EA5E9]/10 text-[#0EA5E9]" :
-                    act.type === "candidate" ? "bg-[#00B87C]/10 text-[#00B87C]" :
-                    "bg-muted text-muted-foreground"
-                  }`}>
+                  <span className="text-[12px] font-bold text-foreground">
+                    {act.event}
+                  </span>
+                  <span
+                    className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                      act.type === "hr"
+                        ? "bg-[#8B5CF6]/10 text-[#8B5CF6]"
+                        : act.type === "it"
+                          ? "bg-[#0EA5E9]/10 text-[#0EA5E9]"
+                          : act.type === "candidate"
+                            ? "bg-[#00B87C]/10 text-[#00B87C]"
+                            : "bg-muted text-muted-foreground"
+                    }`}
+                  >
                     {act.type}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 mt-0.5 text-[10px] font-semibold text-muted-foreground">
-                  <span className="flex items-center gap-1"><User size={10} /> {act.actor}</span>
+                  <span className="flex items-center gap-1">
+                    <User size={10} /> {act.actor}
+                  </span>
                   <span>•</span>
-                  <span className="flex items-center gap-1"><Clock size={10} /> {act.date} at {act.time}</span>
+                  <span className="flex items-center gap-1">
+                    <Clock size={10} /> {act.date} at {act.time}
+                  </span>
                 </div>
               </div>
             </div>
@@ -156,10 +227,14 @@ export function ActivityLog({ employeeId, employeeName }: ActivityLogProps) {
             </p>
           ) : (
             notes.map((note) => (
-              <div key={note.id} className="p-4 bg-muted/20 border border-border rounded-2xl space-y-2">
+              <div
+                key={note.id}
+                className="p-4 bg-muted/20 border border-border rounded-2xl space-y-2"
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-black text-foreground flex items-center gap-1.5">
-                    <MessageSquare size={12} className="text-[#00B87C]" /> {note.author}
+                    <MessageSquare size={12} className="text-[#00B87C]" />{" "}
+                    {note.author}
                   </span>
                   <span className="text-[9px] font-semibold text-muted-foreground">
                     {note.date} at {note.time}

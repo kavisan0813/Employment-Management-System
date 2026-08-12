@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect, useReducer, useCallback, useState } from "react";
 import { EmployeeSelfProfile } from "../employee/EmployeeSelfProfile";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -31,22 +31,36 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
-
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 const profileTabs = [
   "Personal Info",
   "Employment",
   "Recent Activity",
   "Settings",
 ];
-
 const settingsSections = [
-  { id: "company", label: "Company", icon: Building2 },
-  { id: "account", label: "Account", icon: User },
-  { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "security", label: "Security & Privacy", icon: Shield },
+  {
+    id: "company",
+    label: "Company",
+    icon: Building2,
+  },
+  {
+    id: "account",
+    label: "Account",
+    icon: User,
+  },
+  {
+    id: "notifications",
+    label: "Notifications",
+    icon: Bell,
+  },
+  {
+    id: "security",
+    label: "Security & Privacy",
+    icon: Shield,
+  },
 ];
-
 const initialSkills = [
   "HR Strategy",
   "Talent Acquisition",
@@ -55,7 +69,6 @@ const initialSkills = [
   "Performance Management",
   "HRIS Systems",
 ];
-
 const activityLog = [
   {
     action: "Updated payroll for March 2026",
@@ -83,19 +96,32 @@ const activityLog = [
     type: "recruitment",
   },
 ];
-
 const stats = [
-  { label: "Employees Managed", value: "247", icon: Users, color: "#059669" },
-  { label: "Years Experience", value: "8", icon: TrendingUp, color: "#14B8A6" },
+  {
+    label: "Employees Managed",
+    value: "247",
+    icon: Users,
+    color: "#059669",
+  },
+  {
+    label: "Years Experience",
+    value: "8",
+    icon: TrendingUp,
+    color: "#14B8A6",
+  },
   {
     label: "Tasks Completed",
     value: "1,284",
     icon: CheckCircle2,
     color: "#22C55E",
   },
-  { label: "Avg Response Time", value: "1.2h", icon: Clock, color: "#F59E0B" },
+  {
+    label: "Avg Response Time",
+    value: "1.2h",
+    icon: Clock,
+    color: "#F59E0B",
+  },
 ];
-
 function Toggle({
   label,
   desc,
@@ -109,7 +135,9 @@ function Toggle({
   return (
     <div
       className="flex items-center justify-between py-4"
-      style={{ borderBottom: "1px solid var(--border)" }}
+      style={{
+        borderBottom: "1px solid var(--border)",
+      }}
     >
       <div>
         <p
@@ -157,7 +185,6 @@ function Toggle({
     </div>
   );
 }
-
 function InputField({
   label,
   value,
@@ -203,19 +230,223 @@ function InputField({
     </div>
   );
 }
-
 export function UserProfile() {
   const { user, login } = useAuth();
-
-  const [activeTab, setActiveTab] = useState("Personal Info");
-  const [activeSettingsSection, setActiveSettingsSection] = useState("company");
-  const [isEditing, setIsEditing] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeTab: "Personal Info",
+    activeSettingsSection: "company",
+    isEditing: false,
+    saved: false,
+    showPassword: false,
+    showNewPassword: false,
+    avatarPreview: null as string | null,
+    firstName: "Ryan",
+    lastName: "Park",
+    email: "ryan.park@viyanhr.com",
+    phone: "+1 (415) 823-9100",
+    location: "San Francisco, CA",
+    jobTitle: "HR Administrator",
+    department: "Human Resources",
+    reportsTo: "Sarah Mitchell, VP HR",
+    bio: "Experienced HR professional with 8+ years managing full-cycle human resources for fast-growing tech organizations. Passionate about building strong employee cultures, optimizing HR processes, and leveraging data-driven decisions.",
+    website: "ryanpark.hr.dev",
+    linkedin: "linkedin.com/in/ryanpark",
+    twitter: "@ryanpark_hr",
+    github: "github.com/ryanpark",
+    activeSkills: initialSkills,
+    newSkill: "",
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    activeTab,
+    activeSettingsSection,
+    isEditing,
+    saved,
+    showPassword,
+    showNewPassword,
+    avatarPreview,
+    firstName,
+    lastName,
+    email,
+    phone,
+    location,
+    jobTitle,
+    department,
+    reportsTo,
+    bio,
+    website,
+    linkedin,
+    twitter,
+    github,
+    activeSkills,
+    newSkill,
+  } = __state;
+  const setActiveTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeTab: typeof val === "function" ? val(prev.activeTab) : val,
+      })),
+    [],
+  );
+  const setActiveSettingsSection = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeSettingsSection:
+          typeof val === "function" ? val(prev.activeSettingsSection) : val,
+      })),
+    [],
+  );
+  const setIsEditing = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isEditing: typeof val === "function" ? val(prev.isEditing) : val,
+      })),
+    [],
+  );
+  const setSaved = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        saved: typeof val === "function" ? val(prev.saved) : val,
+      })),
+    [],
+  );
+  const setShowPassword = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showPassword: typeof val === "function" ? val(prev.showPassword) : val,
+      })),
+    [],
+  );
+  const setShowNewPassword = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showNewPassword:
+          typeof val === "function" ? val(prev.showNewPassword) : val,
+      })),
+    [],
+  );
+  const setAvatarPreview = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        avatarPreview:
+          typeof val === "function" ? val(prev.avatarPreview) : val,
+      })),
+    [],
+  );
+  const setFirstName = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        firstName: typeof val === "function" ? val(prev.firstName) : val,
+      })),
+    [],
+  );
+  const setLastName = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        lastName: typeof val === "function" ? val(prev.lastName) : val,
+      })),
+    [],
+  );
+  const setEmail = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        email: typeof val === "function" ? val(prev.email) : val,
+      })),
+    [],
+  );
+  const setPhone = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        phone: typeof val === "function" ? val(prev.phone) : val,
+      })),
+    [],
+  );
+  const setLocation = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        location: typeof val === "function" ? val(prev.location) : val,
+      })),
+    [],
+  );
+  const setJobTitle = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        jobTitle: typeof val === "function" ? val(prev.jobTitle) : val,
+      })),
+    [],
+  );
+  const setDepartment = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        department: typeof val === "function" ? val(prev.department) : val,
+      })),
+    [],
+  );
+  const setReportsTo = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        reportsTo: typeof val === "function" ? val(prev.reportsTo) : val,
+      })),
+    [],
+  );
+  const setBio = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        bio: typeof val === "function" ? val(prev.bio) : val,
+      })),
+    [],
+  );
+  const setWebsite = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        website: typeof val === "function" ? val(prev.website) : val,
+      })),
+    [],
+  );
+  const setLinkedin = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        linkedin: typeof val === "function" ? val(prev.linkedin) : val,
+      })),
+    [],
+  );
+  const setTwitter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        twitter: typeof val === "function" ? val(prev.twitter) : val,
+      })),
+    [],
+  );
+  const setGithub = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        github: typeof val === "function" ? val(prev.github) : val,
+      })),
+    [],
+  );
+  const setActiveSkills = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeSkills: typeof val === "function" ? val(prev.activeSkills) : val,
+      })),
+    [],
+  );
+  const setNewSkill = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newSkill: typeof val === "function" ? val(prev.newSkill) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-
   // Load avatar from localStorage by user email
   useEffect(() => {
     if (user?.email) {
@@ -227,24 +458,6 @@ export function UserProfile() {
   }, [user]);
 
   // Form states matching details
-  const [firstName, setFirstName] = useState("Ryan");
-  const [lastName, setLastName] = useState("Park");
-  const [email, setEmail] = useState("ryan.park@viyanhr.com");
-  const [phone, setPhone] = useState("+1 (415) 823-9100");
-  const [location, setLocation] = useState("San Francisco, CA");
-  const [jobTitle, setJobTitle] = useState("HR Administrator");
-  const [department, setDepartment] = useState("Human Resources");
-  const [reportsTo, setReportsTo] = useState("Sarah Mitchell, VP HR");
-  const [bio, setBio] = useState(
-    "Experienced HR professional with 8+ years managing full-cycle human resources for fast-growing tech organizations. Passionate about building strong employee cultures, optimizing HR processes, and leveraging data-driven decisions.",
-  );
-  const [website, setWebsite] = useState("ryanpark.hr.dev");
-  const [linkedin, setLinkedin] = useState("linkedin.com/in/ryanpark");
-  const [twitter, setTwitter] = useState("@ryanpark_hr");
-  const [github, setGithub] = useState("github.com/ryanpark");
-  const [activeSkills, setActiveSkills] = useState(initialSkills);
-  const [newSkill, setNewSkill] = useState("");
-
   // Update default form values if current user email or name changes
   useEffect(() => {
     if (user) {
@@ -260,7 +473,6 @@ export function UserProfile() {
       );
     }
   }, [user]);
-
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
@@ -281,7 +493,6 @@ export function UserProfile() {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-
   const handleAddSkill = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
     if (e.key === "Enter" && newSkill.trim()) {
@@ -294,11 +505,9 @@ export function UserProfile() {
       );
     }
   };
-
   const handleRemoveSkill = (skillToRemove: string) => {
     setActiveSkills(activeSkills.filter((s) => s !== skillToRemove));
   };
-
   const handleSave = () => {
     if (user) {
       const updatedUser = {
@@ -314,9 +523,7 @@ export function UserProfile() {
             .toUpperCase()
             .slice(0, 2) || "RP",
       };
-
       login(updatedUser);
-
       try {
         const registeredRaw = localStorage.getItem("viyan_registered_users:v1");
         if (registeredRaw) {
@@ -343,7 +550,6 @@ export function UserProfile() {
         console.log(err);
       }
     }
-
     setSaved(true);
     setIsEditing(false);
     showToast(
@@ -353,7 +559,6 @@ export function UserProfile() {
     );
     setTimeout(() => setSaved(false), 3000);
   };
-
   const activityTypeColor: Record<string, string> = {
     payroll: "#059669",
     leave: "#14B8A6",
@@ -361,14 +566,11 @@ export function UserProfile() {
     report: "#F59E0B",
     recruitment: "#0EA5E9",
   };
-
   const avatarInitials = user?.initials || "RP";
   const fullName = `${firstName} ${lastName}`;
-
   if (user?.role === "Employee") {
     return <EmployeeSelfProfile />;
   }
-
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20 text-foreground">
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
@@ -501,7 +703,10 @@ export function UserProfile() {
               <div key={s.label} className="flex items-center gap-4 px-4">
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                  style={{ backgroundColor: `${s.color}18`, color: s.color }}
+                  style={{
+                    backgroundColor: `${s.color}18`,
+                    color: s.color,
+                  }}
                 >
                   <s.icon size={22} />
                 </div>
@@ -525,11 +730,7 @@ export function UserProfile() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-8 py-3 rounded-[14px] text-[14px] transition-all whitespace-nowrap flex items-center gap-2 ${
-              activeTab === tab
-                ? "bg-secondary text-primary font-black shadow-sm"
-                : "text-muted-foreground font-bold hover:text-foreground hover:bg-background"
-            }`}
+            className={`px-8 py-3 rounded-[14px] text-[14px] transition-all whitespace-nowrap flex items-center gap-2 ${activeTab === tab ? "bg-secondary text-primary font-black shadow-sm" : "text-muted-foreground font-bold hover:text-foreground hover:bg-background"}`}
           >
             {tab}
           </button>
@@ -539,12 +740,23 @@ export function UserProfile() {
       {/* ─── Tab Content ──────────────────────────────────────────── */}
       <div className="min-h-[400px]">
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
           >
             {activeTab === "Personal Info" && (
               <div className="flex flex-col lg:flex-row gap-8">
@@ -822,11 +1034,7 @@ export function UserProfile() {
                     <button
                       key={sec.id}
                       onClick={() => setActiveSettingsSection(sec.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all border-none text-left cursor-pointer mb-1 ${
-                        activeSettingsSection === sec.id
-                          ? "bg-secondary text-primary font-black shadow-sm"
-                          : "text-muted-foreground font-bold hover:text-foreground hover:bg-background"
-                      }`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all border-none text-left cursor-pointer mb-1 ${activeSettingsSection === sec.id ? "bg-secondary text-primary font-black shadow-sm" : "text-muted-foreground font-bold hover:text-foreground hover:bg-background"}`}
                     >
                       <sec.icon size={15} />
                       <span className="text-[13px]">{sec.label}</span>
@@ -1245,15 +1453,19 @@ export function UserProfile() {
                 </div>
               </div>
             )}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
       {/* ─── Save Bar (Editing Mode) ─────────────────────────────── */}
       {isEditing && (
-        <motion.div
-          initial={{ y: 100 }}
-          animate={{ y: 0 }}
+        <m.div
+          initial={{
+            y: 100,
+          }}
+          animate={{
+            y: 0,
+          }}
           className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-card/40 rounded-2xl border border-border shadow-2xl p-4 flex items-center gap-6 animate-in slide-in-from-bottom-10"
         >
           <p className="text-sm font-bold text-foreground px-4 border-r border-border">
@@ -1273,7 +1485,7 @@ export function UserProfile() {
               Save Changes
             </button>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </div>
   );

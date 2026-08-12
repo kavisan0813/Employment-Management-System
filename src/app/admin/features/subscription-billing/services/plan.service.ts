@@ -26,7 +26,8 @@ const SEED_PLANS: Plan[] = [
     id: "plan-growth",
     name: "Growth",
     tier: "Growth",
-    description: "For growing companies that need advanced HR workflows and payroll.",
+    description:
+      "For growing companies that need advanced HR workflows and payroll.",
     monthlyPrice: 1200,
     annualPrice: 12000,
     currency: "USD",
@@ -42,7 +43,8 @@ const SEED_PLANS: Plan[] = [
     id: "plan-enterprise",
     name: "Enterprise",
     tier: "Enterprise",
-    description: "Full-featured solution for large enterprises with unlimited capabilities.",
+    description:
+      "Full-featured solution for large enterprises with unlimited capabilities.",
     monthlyPrice: 3500,
     annualPrice: 35000,
     currency: "USD",
@@ -106,7 +108,7 @@ export const PlanService = {
 
   update(id: string, data: Partial<Plan>): void {
     const plans = getPlansStore().map((p) =>
-      p.id === id ? { ...p, ...data, updatedAt: new Date().toISOString() } : p
+      p.id === id ? { ...p, ...data, updatedAt: new Date().toISOString() } : p,
     );
     savePlansStore(plans);
   },
@@ -114,8 +116,14 @@ export const PlanService = {
   toggleStatus(id: string): void {
     const plans = getPlansStore().map((p) =>
       p.id === id
-        ? { ...p, status: p.status === "Active" ? ("Inactive" as const) : ("Active" as const) }
-        : p
+        ? {
+            ...p,
+            status:
+              p.status === "Active"
+                ? ("Inactive" as const)
+                : ("Active" as const),
+          }
+        : p,
     );
     savePlansStore(plans);
   },

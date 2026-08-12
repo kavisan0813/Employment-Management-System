@@ -67,9 +67,7 @@ export function TenantOverrideSimulator({ config }: Props) {
           onChange={(e) =>
             setSelectedDemoTenant(
               e.target.value as
-                | "Acme India"
-                | "viyan Dubai"
-                | "Viyan Singapore",
+                "Acme India" | "viyan Dubai" | "Viyan Singapore",
             )
           }
           className="text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg p-2 outline-none focus:border-indigo-400"

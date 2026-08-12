@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   Clock,
   ChevronLeft,
@@ -25,7 +25,6 @@ interface Shift {
   department: string;
   manager: string;
 }
-
 interface ShiftRequest {
   id: string;
   type: "Swap" | "Time Change" | "Availability" | "Issue";
@@ -98,7 +97,6 @@ const UPCOMING_SHIFTS: Shift[] = [
     manager: "Ryan Park",
   },
 ];
-
 const INITIAL_REQUESTS: ShiftRequest[] = [
   {
     id: "REQ-001",
@@ -131,7 +129,6 @@ interface ShiftColor {
   text: string;
   border: string;
 }
-
 const SHIFT_COLORS: Record<string, ShiftColor> = {
   Morning: {
     bg: "bg-emerald-500/10",
@@ -166,7 +163,6 @@ interface ShiftOverviewProps {
   trend?: string;
   trendColor?: "amber" | "teal";
 }
-
 function PersonalShiftOverviewCard({
   label,
   value,
@@ -190,11 +186,7 @@ function PersonalShiftOverviewCard({
         </span>
         {trend && (
           <span
-            className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
-              trendColor === "amber"
-                ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                : "bg-emerald-500/10 text-primary border-primary/20"
-            }`}
+            className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${trendColor === "amber" ? "bg-amber-500/10 text-amber-600 border-amber-500/20" : "bg-emerald-500/10 text-primary border-primary/20"}`}
           >
             {trend}
           </span>
@@ -246,7 +238,6 @@ const Modal = ({
     </div>
   );
 };
-
 const getRequestStatusStyle = (status: ShiftRequest["status"]): string => {
   switch (status) {
     case "Pending":
@@ -261,7 +252,6 @@ const getRequestStatusStyle = (status: ShiftRequest["status"]): string => {
       return "bg-secondary text-muted-foreground border-border";
   }
 };
-
 const StatusBadge = ({ status }: { status: ShiftRequest["status"] }) => {
   return (
     <span
@@ -329,7 +319,10 @@ export function ManagerPersonalSchedule() {
     const sun = new Date(mon);
     sun.setDate(mon.getDate() + 6);
     const fmt = (d: Date) =>
-      d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
     return `${fmt(mon)} – ${fmt(sun)}, ${sun.getFullYear()}`;
   }, [view, navDate]);
 
@@ -347,24 +340,19 @@ export function ManagerPersonalSchedule() {
   const [selectedRequest, setSelectedRequest] = useState<ShiftRequest | null>(
     null,
   );
-  const [requestToCancel, setRequestToCancel] = useState<ShiftRequest | null>(
-    null,
-  );
+  const requestToCancel = useRef<ShiftRequest | null>(null);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   // Data State
   const [requests, setRequests] = useState<ShiftRequest[]>(INITIAL_REQUESTS);
-
   const handleRequestSwap = (shift?: Shift) => {
     if (shift) setSelectedShift(shift);
     setShowSwapModal(true);
   };
-
   const handleViewDetails = (shift: Shift) => {
     setSelectedShift(shift);
     setShowDetailsModal(true);
   };
-
   const renderRequests = () => {
     return (
       <div className="space-y-6 animate-in slide-in-from-right duration-500">
@@ -467,7 +455,7 @@ export function ManagerPersonalSchedule() {
                           {req.status === "Pending" && (
                             <button
                               onClick={() => {
-                                setRequestToCancel(req);
+                                requestToCancel.current = req;
                                 setShowCancelModal(true);
                               }}
                               className="px-4 py-2 text-[12px] font-black text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
@@ -487,7 +475,6 @@ export function ManagerPersonalSchedule() {
       </div>
     );
   };
-
   const renderCalendar = () => {
     return (
       <div className="flex flex-col gap-8 animate-in fade-in duration-700">
@@ -743,13 +730,7 @@ export function ManagerPersonalSchedule() {
                     return (
                       <div
                         key={day}
-                        className={`min-h-[80px] rounded-xl border p-2 flex flex-col gap-1 transition-colors cursor-pointer hover:border-[#00B87C]/50 ${
-                          isToday
-                            ? "border-[#00B87C] bg-[#00B87C]/5"
-                            : isWeekend
-                              ? "border-border/50 bg-muted/20"
-                              : "border-border bg-card"
-                        }`}
+                        className={`min-h-[80px] rounded-xl border p-2 flex flex-col gap-1 transition-colors cursor-pointer hover:border-[#00B87C]/50 ${isToday ? "border-[#00B87C] bg-[#00B87C]/5" : isWeekend ? "border-border/50 bg-muted/20" : "border-border bg-card"}`}
                       >
                         <span
                           className={`text-[12px] font-bold ${isToday ? "w-6 h-6 rounded-full bg-[#00B87C] text-white flex items-center justify-center text-[11px] font-black" : "text-foreground"}`}
@@ -775,9 +756,18 @@ export function ManagerPersonalSchedule() {
               </div>
               <div className="flex flex-wrap gap-4 mt-6 pt-5 border-t border-border">
                 {[
-                  { label: "Morning", color: "bg-primary" },
-                  { label: "Evening", color: "bg-amber-500" },
-                  { label: "Night", color: "bg-purple-500" },
+                  {
+                    label: "Morning",
+                    color: "bg-primary",
+                  },
+                  {
+                    label: "Evening",
+                    color: "bg-amber-500",
+                  },
+                  {
+                    label: "Night",
+                    color: "bg-purple-500",
+                  },
                   {
                     label: "Off Day",
                     color: "bg-secondary border border-border",
@@ -838,7 +828,11 @@ export function ManagerPersonalSchedule() {
                       label: "Team Sync / PR Reviews",
                       type: "work",
                     },
-                    { time: "04:00 PM", label: "Clock-out", type: "end" },
+                    {
+                      time: "04:00 PM",
+                      label: "Clock-out",
+                      type: "end",
+                    },
                   ].map((item, i) => (
                     <div key={item.label} className="flex items-start gap-4">
                       <span className="w-[80px] text-[11px] font-black text-muted-foreground pt-1 shrink-0">
@@ -866,11 +860,26 @@ export function ManagerPersonalSchedule() {
                     Shift Details
                   </h4>
                   {[
-                    { label: "Shift Type", val: "Morning Shift" },
-                    { label: "Timing", val: "08:00 AM – 04:00 PM" },
-                    { label: "Duration", val: "8 hours" },
-                    { label: "Location", val: "Head Office, BLR" },
-                    { label: "Manager", val: "Ryan Park" },
+                    {
+                      label: "Shift Type",
+                      val: "Morning Shift",
+                    },
+                    {
+                      label: "Timing",
+                      val: "08:00 AM – 04:00 PM",
+                    },
+                    {
+                      label: "Duration",
+                      val: "8 hours",
+                    },
+                    {
+                      label: "Location",
+                      val: "Head Office, BLR",
+                    },
+                    {
+                      label: "Manager",
+                      val: "Ryan Park",
+                    },
                   ].map((f) => (
                     <div
                       key={f.label}
@@ -1048,7 +1057,6 @@ export function ManagerPersonalSchedule() {
       </div>
     );
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 overflow-hidden">
       {currentPage === "calendar" ? renderCalendar() : renderRequests()}
@@ -1095,10 +1103,22 @@ export function ManagerPersonalSchedule() {
 
             <div className="space-y-4">
               {[
-                { label: "Timing", value: selectedShift.time },
-                { label: "Location", value: selectedShift.location },
-                { label: "Department", value: selectedShift.department },
-                { label: "Reporting Manager", value: selectedShift.manager },
+                {
+                  label: "Timing",
+                  value: selectedShift.time,
+                },
+                {
+                  label: "Location",
+                  value: selectedShift.location,
+                },
+                {
+                  label: "Department",
+                  value: selectedShift.department,
+                },
+                {
+                  label: "Reporting Manager",
+                  value: selectedShift.manager,
+                },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -1547,7 +1567,7 @@ export function ManagerPersonalSchedule() {
               {selectedRequest.status === "Pending" && (
                 <button
                   onClick={() => {
-                    setRequestToCancel(selectedRequest);
+                    requestToCancel.current = selectedRequest;
                     setShowCancelModal(true);
                   }}
                   className="flex-1 py-3.5 rounded-xl font-black text-[13px] bg-red-500 text-white hover:opacity-90 transition-all"
@@ -1590,11 +1610,14 @@ export function ManagerPersonalSchedule() {
             </button>
             <button
               onClick={() => {
-                if (requestToCancel) {
+                if (requestToCancel.current) {
                   setRequests((prev) =>
                     prev.map((r) =>
-                      r.id === requestToCancel.id
-                        ? { ...r, status: "Cancelled" }
+                      r.id === requestToCancel.current.id
+                        ? {
+                            ...r,
+                            status: "Cancelled",
+                          }
                         : r,
                     ),
                   );

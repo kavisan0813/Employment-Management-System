@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo, useReducer, useCallback } from "react";
 import { toast } from "sonner";
 import {
   FileText,
@@ -19,9 +19,10 @@ import {
   Ban,
   Check,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 
 /* ─── Types ─── */
+import * as m from "motion/react-m";
 type Severity = "critical" | "warning" | "info";
 type ActionType =
   | "APPROVE"
@@ -41,7 +42,6 @@ type ModuleType =
   | "Payroll"
   | "Schedule"
   | "Security";
-
 interface AuditLogEntry {
   id: string;
   timestamp: string;
@@ -56,7 +56,11 @@ interface AuditLogEntry {
   isFlagged?: boolean;
   oldValue?: string;
   newValue?: string;
-  sessionEvents?: { timestamp: string; action: string; module: string }[];
+  sessionEvents?: {
+    timestamp: string;
+    action: string;
+    module: string;
+  }[];
 }
 
 /* ─── Mock Data ─── */
@@ -176,7 +180,11 @@ const initials = (name: string) =>
 /* ─── Severity Config ─── */
 const SEV_CONFIG: Record<
   Severity,
-  { label: string; icon: string; chip: string }
+  {
+    label: string;
+    icon: string;
+    chip: string;
+  }
 > = {
   critical: {
     label: "Critical",
@@ -194,18 +202,37 @@ const SEV_CONFIG: Record<
     chip: "bg-[#F0FDF4] text-[#00B87C] border-[#A7F3D0]",
   },
 };
-
-const ACTION_CONFIG: Record<ActionType, { chip: string }> = {
-  APPROVE: { chip: "bg-[#F0FDF4] text-[#00B87C] border-[#A7F3D0]" },
-  DELETE: { chip: "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]" },
-  UPDATE: { chip: "bg-[#E0F2FE] text-[#0EA5E9] border-[#BAE6FD]" },
-  EXPORT: { chip: "bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]" },
-  RUN: { chip: "bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]" },
-  "LOGIN FAILED": { chip: "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]" },
-  CREATE: { chip: "bg-[#DCFCE7] text-[#00B87C] border-[#A7F3D0]" },
-  VIEW: { chip: "bg-[#F3F4F6] text-[#6B7280] border-[#E5E7EB]" },
+const ACTION_CONFIG: Record<
+  ActionType,
+  {
+    chip: string;
+  }
+> = {
+  APPROVE: {
+    chip: "bg-[#F0FDF4] text-[#00B87C] border-[#A7F3D0]",
+  },
+  DELETE: {
+    chip: "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]",
+  },
+  UPDATE: {
+    chip: "bg-[#E0F2FE] text-[#0EA5E9] border-[#BAE6FD]",
+  },
+  EXPORT: {
+    chip: "bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]",
+  },
+  RUN: {
+    chip: "bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]",
+  },
+  "LOGIN FAILED": {
+    chip: "bg-[#FEF2F2] text-[#EF4444] border-[#FECACA]",
+  },
+  CREATE: {
+    chip: "bg-[#DCFCE7] text-[#00B87C] border-[#A7F3D0]",
+  },
+  VIEW: {
+    chip: "bg-[#F3F4F6] text-[#6B7280] border-[#E5E7EB]",
+  },
 };
-
 const getSeverityConfig = (severity: Severity) => {
   switch (severity) {
     case "critical":
@@ -217,7 +244,6 @@ const getSeverityConfig = (severity: Severity) => {
       return SEV_CONFIG.info;
   }
 };
-
 const getActionConfig = (action: ActionType) => {
   switch (action) {
     case "APPROVE":
@@ -257,65 +283,319 @@ function KPICard({
   onClick?: () => void;
 }) {
   const colors = {
-    green: { text: "#00B87C", bg: "#DCFCE7" },
-    red: { text: "#EF4444", bg: "#FEE2E2" },
-    teal: { text: "#0EA5E9", bg: "#E0F2FE" },
-    purple: { text: "#8B5CF6", bg: "#EDE9FE" },
+    green: {
+      text: "#00B87C",
+      bg: "#DCFCE7",
+    },
+    red: {
+      text: "#EF4444",
+      bg: "#FEE2E2",
+    },
+    teal: {
+      text: "#0EA5E9",
+      bg: "#E0F2FE",
+    },
+    purple: {
+      text: "#8B5CF6",
+      bg: "#EDE9FE",
+    },
   };
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
+    <m.div
+      whileHover={{
+        y: -5,
+      }}
       onClick={onClick}
       className={`p-6 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group ${onClick ? "cursor-pointer active:scale-[0.98]" : ""}`}
     >
       <div
         className="w-9 h-9 rounded-[10px] flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-        style={{ backgroundColor: colors[color].bg }}
+        style={{
+          backgroundColor: colors[color].bg,
+        }}
       >
-        <Icon size={20} style={{ color: colors[color].text }} />
+        <Icon
+          size={20}
+          style={{
+            color: colors[color].text,
+          }}
+        />
       </div>
       <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-2">
         {title}
       </p>
       <h3
         className="text-[28px] font-bold tracking-tighter"
-        style={{ color: colors[color].text }}
+        style={{
+          color: colors[color].text,
+        }}
       >
         {value}
       </h3>
       <p className="text-[12px] text-[#6B7280] mt-1">{sub}</p>
-    </motion.div>
+    </m.div>
   );
 }
-
 export function AuditLogs() {
-  const [logs, setLogs] = useState<AuditLogEntry[]>(LOGS);
-  const [selectedLog, setSelectedLog] = useState<AuditLogEntry | null>(null);
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [showAlertModal, setShowAlertModal] = useState(false);
-  const [showBlockModal, setShowBlockModal] = useState(false);
-  const [showFlags, setShowFlags] = useState(true);
-  const [flaggedFilter, setFlaggedFilter] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    logs: LOGS as AuditLogEntry[],
+    selectedLog: null as AuditLogEntry | null,
+    showExportModal: false,
+    showAlertModal: false,
+    showBlockModal: false,
+    showFlags: true,
+    flaggedFilter: false,
+    currentPage: 1,
+    searchQuery: "",
+    moduleDropdownOpen: false,
+    actionDropdownOpen: false,
+    userDropdownOpen: false,
+    dateDropdownOpen: false,
+    severityDropdownOpen: false,
+    moduleFilter: "All",
+    actionFilter: "All",
+    userFilter: "All",
+    dateFilter: "All",
+    severityFilter: "All",
+    blockedUsers: [] as string[],
+    blockedIPs: [] as string[],
+    alertAction: "Any Action",
+    alertModule: "Any Module",
+    exportFromDate: "",
+    exportToDate: "",
+    exportFormat: "CSV",
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    logs,
+    selectedLog,
+    showExportModal,
+    showAlertModal,
+    showBlockModal,
+    showFlags,
+    flaggedFilter,
+    currentPage,
+    searchQuery,
+    moduleDropdownOpen,
+    actionDropdownOpen,
+    userDropdownOpen,
+    dateDropdownOpen,
+    severityDropdownOpen,
+    moduleFilter,
+    actionFilter,
+    userFilter,
+    dateFilter,
+    severityFilter,
+    blockedUsers,
+    blockedIPs,
+    alertAction,
+    alertModule,
+    exportFromDate,
+    exportToDate,
+    exportFormat,
+  } = __state;
+  const setLogs = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        logs: typeof val === "function" ? val(prev.logs) : val,
+      })),
+    [],
+  );
+  const setSelectedLog = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedLog: typeof val === "function" ? val(prev.selectedLog) : val,
+      })),
+    [],
+  );
+  const setShowExportModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showExportModal:
+          typeof val === "function" ? val(prev.showExportModal) : val,
+      })),
+    [],
+  );
+  const setShowAlertModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showAlertModal:
+          typeof val === "function" ? val(prev.showAlertModal) : val,
+      })),
+    [],
+  );
+  const setShowBlockModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showBlockModal:
+          typeof val === "function" ? val(prev.showBlockModal) : val,
+      })),
+    [],
+  );
+  const setShowFlags = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showFlags: typeof val === "function" ? val(prev.showFlags) : val,
+      })),
+    [],
+  );
+  const setFlaggedFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        flaggedFilter:
+          typeof val === "function" ? val(prev.flaggedFilter) : val,
+      })),
+    [],
+  );
+  const setCurrentPage = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        currentPage: typeof val === "function" ? val(prev.currentPage) : val,
+      })),
+    [],
+  );
+  const setSearchQuery = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        searchQuery: typeof val === "function" ? val(prev.searchQuery) : val,
+      })),
+    [],
+  );
+  const setModuleDropdownOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        moduleDropdownOpen:
+          typeof val === "function" ? val(prev.moduleDropdownOpen) : val,
+      })),
+    [],
+  );
+  const setActionDropdownOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        actionDropdownOpen:
+          typeof val === "function" ? val(prev.actionDropdownOpen) : val,
+      })),
+    [],
+  );
+  const setUserDropdownOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        userDropdownOpen:
+          typeof val === "function" ? val(prev.userDropdownOpen) : val,
+      })),
+    [],
+  );
+  const setDateDropdownOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        dateDropdownOpen:
+          typeof val === "function" ? val(prev.dateDropdownOpen) : val,
+      })),
+    [],
+  );
+  const setSeverityDropdownOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        severityDropdownOpen:
+          typeof val === "function" ? val(prev.severityDropdownOpen) : val,
+      })),
+    [],
+  );
+  const setModuleFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        moduleFilter: typeof val === "function" ? val(prev.moduleFilter) : val,
+      })),
+    [],
+  );
+  const setActionFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        actionFilter: typeof val === "function" ? val(prev.actionFilter) : val,
+      })),
+    [],
+  );
+  const setUserFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        userFilter: typeof val === "function" ? val(prev.userFilter) : val,
+      })),
+    [],
+  );
+  const setDateFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        dateFilter: typeof val === "function" ? val(prev.dateFilter) : val,
+      })),
+    [],
+  );
+  const setSeverityFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        severityFilter:
+          typeof val === "function" ? val(prev.severityFilter) : val,
+      })),
+    [],
+  );
+  const setBlockedUsers = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        blockedUsers: typeof val === "function" ? val(prev.blockedUsers) : val,
+      })),
+    [],
+  );
+  const setBlockedIPs = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        blockedIPs: typeof val === "function" ? val(prev.blockedIPs) : val,
+      })),
+    [],
+  );
+  const setAlertAction = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        alertAction: typeof val === "function" ? val(prev.alertAction) : val,
+      })),
+    [],
+  );
+  const setAlertModule = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        alertModule: typeof val === "function" ? val(prev.alertModule) : val,
+      })),
+    [],
+  );
+  const setExportFromDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        exportFromDate:
+          typeof val === "function" ? val(prev.exportFromDate) : val,
+      })),
+    [],
+  );
+  const setExportToDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        exportToDate: typeof val === "function" ? val(prev.exportToDate) : val,
+      })),
+    [],
+  );
+  const setExportFormat = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        exportFormat: typeof val === "function" ? val(prev.exportFormat) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const logsPerPage = 4;
-  const [searchQuery, setSearchQuery] = useState("");
-  const [moduleDropdownOpen, setModuleDropdownOpen] = useState(false);
-  const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
-  const [severityDropdownOpen, setSeverityDropdownOpen] = useState(false);
-  const [moduleFilter, setModuleFilter] = useState("All");
-  const [actionFilter, setActionFilter] = useState("All");
-  const [userFilter, setUserFilter] = useState("All");
-  const [dateFilter, setDateFilter] = useState("All");
-  const [severityFilter, setSeverityFilter] = useState("All");
-  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
-  const [blockedIPs, setBlockedIPs] = useState<string[]>([]);
-  const [alertAction, setAlertAction] = useState("Any Action");
-  const [alertModule, setAlertModule] = useState("Any Module");
-  const [exportFromDate, setExportFromDate] = useState("");
-  const [exportToDate, setExportToDate] = useState("");
-  const [exportFormat, setExportFormat] = useState("CSV");
   const todayLogsCount = useMemo(
     () => logs.filter((l) => l.timestamp.startsWith("Today")).length,
     [logs],
@@ -328,7 +608,6 @@ export function AuditLogs() {
     () => logs.filter((l) => l.severity === "critical").length,
     [logs],
   );
-
   const handleResetFilters = () => {
     setSearchQuery("");
     setModuleFilter("All");
@@ -340,7 +619,6 @@ export function AuditLogs() {
     setCurrentPage(1);
     toast.success("Filters reset successfully");
   };
-
   const displayedLogs = useMemo(() => {
     return logs.filter((log) => {
       if (flaggedFilter && !log.isFlagged) return false;
@@ -378,17 +656,14 @@ export function AuditLogs() {
     dateFilter,
     searchQuery,
   ]);
-
   const totalPages = Math.ceil(displayedLogs.length / logsPerPage) || 1;
   const startIdx = (currentPage - 1) * logsPerPage;
   const endIdx = Math.min(startIdx + logsPerPage, displayedLogs.length);
   const paginatedLogs = useMemo(() => {
     return displayedLogs.slice(startIdx, endIdx);
   }, [displayedLogs, startIdx, endIdx]);
-
   const handleViewLog = (log: AuditLogEntry) => setSelectedLog(log);
   const handleCloseModal = () => setSelectedLog(null);
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -789,10 +1064,19 @@ export function AuditLogs() {
 
       <AnimatePresence>
         {showFlags && flaggedCount > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              y: -10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
             className="flex items-center justify-between px-5 py-3 bg-[#FEF2F2] border-l-4 border-[#EF4444] rounded-xl"
           >
             <div className="flex items-center gap-3">
@@ -820,7 +1104,7 @@ export function AuditLogs() {
                 Review All Flags →
               </button>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -893,10 +1177,14 @@ export function AuditLogs() {
                 const isUserBlocked = blockedUsers.includes(log.user);
                 const isIpBlocked = blockedIPs.includes(log.ip);
                 return (
-                  <motion.tr
+                  <m.tr
                     key={log.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{
+                      opacity: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                    }}
                     className="group hover:bg-[#00B87C]/[0.08] transition-all cursor-pointer"
                     style={{
                       borderLeft:
@@ -992,7 +1280,7 @@ export function AuditLogs() {
                         {log.severity === "critical" ? "Review →" : "View →"}
                       </button>
                     </td>
-                  </motion.tr>
+                  </m.tr>
                 );
               })}
               {displayedLogs.length === 0 && (
@@ -1023,7 +1311,12 @@ export function AuditLogs() {
           >
             <ChevronLeft size={16} />
           </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+          {Array.from(
+            {
+              length: totalPages,
+            },
+            (_, i) => i + 1,
+          ).map((p) => (
             <button
               key={p}
               onClick={() => setCurrentPage(p)}
@@ -1047,18 +1340,40 @@ export function AuditLogs() {
       <AnimatePresence>
         {selectedLog && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={handleCloseModal}
             />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+              }}
               className="relative w-full max-w-[520px] bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1089,14 +1404,38 @@ export function AuditLogs() {
               <div className="px-6 py-5 space-y-5 max-h-[55vh] overflow-y-auto">
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { label: "Event ID", value: selectedLog.id.toUpperCase() },
-                    { label: "Timestamp", value: selectedLog.timestamp },
-                    { label: "User", value: selectedLog.user },
-                    { label: "User Role", value: selectedLog.userRole },
-                    { label: "IP Address", value: selectedLog.ip },
-                    { label: "Device/Browser", value: selectedLog.device },
-                    { label: "Action Type", value: selectedLog.action },
-                    { label: "Module", value: selectedLog.module },
+                    {
+                      label: "Event ID",
+                      value: selectedLog.id.toUpperCase(),
+                    },
+                    {
+                      label: "Timestamp",
+                      value: selectedLog.timestamp,
+                    },
+                    {
+                      label: "User",
+                      value: selectedLog.user,
+                    },
+                    {
+                      label: "User Role",
+                      value: selectedLog.userRole,
+                    },
+                    {
+                      label: "IP Address",
+                      value: selectedLog.ip,
+                    },
+                    {
+                      label: "Device/Browser",
+                      value: selectedLog.device,
+                    },
+                    {
+                      label: "Action Type",
+                      value: selectedLog.action,
+                    },
+                    {
+                      label: "Module",
+                      value: selectedLog.module,
+                    },
                     {
                       label: "Record Affected",
                       value: selectedLog.record.split(" —")[0],
@@ -1131,13 +1470,19 @@ export function AuditLogs() {
                         onClick={() => {
                           const updatedLogs = logs.map((l) =>
                             l.id === selectedLog.id
-                              ? { ...l, isFlagged: !l.isFlagged }
+                              ? {
+                                  ...l,
+                                  isFlagged: !l.isFlagged,
+                                }
                               : l,
                           );
                           setLogs(updatedLogs);
                           setSelectedLog((prev) =>
                             prev
-                              ? { ...prev, isFlagged: !prev.isFlagged }
+                              ? {
+                                  ...prev,
+                                  isFlagged: !prev.isFlagged,
+                                }
                               : null,
                           );
                           toast.success("Log updated.");
@@ -1216,7 +1561,7 @@ export function AuditLogs() {
                     )}
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1224,17 +1569,35 @@ export function AuditLogs() {
       <AnimatePresence>
         {showExportModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => setShowExportModal(false)}
             />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
               className="relative w-full max-w-[440px] bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1313,7 +1676,7 @@ export function AuditLogs() {
                   Export
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1321,17 +1684,35 @@ export function AuditLogs() {
       <AnimatePresence>
         {showAlertModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => setShowAlertModal(false)}
             />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
               className="relative w-full max-w-[460px] bg-card rounded-2xl shadow-2xl border border-border overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1393,7 +1774,7 @@ export function AuditLogs() {
                   Save Alert Rule
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1401,17 +1782,32 @@ export function AuditLogs() {
       <AnimatePresence>
         {showBlockModal && (
           <div className="fixed inset-0 z-[2100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-md"
               onClick={() => setShowBlockModal(false)}
             />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+              }}
               className="relative w-full max-w-sm bg-card rounded-2xl p-8 text-center shadow-2xl border border-border"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1453,7 +1849,7 @@ export function AuditLogs() {
                   <Ban size={14} /> Block IP
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

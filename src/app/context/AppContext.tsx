@@ -4,6 +4,7 @@ import React, {
   useState,
   ReactNode,
   useMemo,
+  useCallback,
 } from "react";
 import { employees as initialEmployees } from "../data/mockData";
 
@@ -50,12 +51,7 @@ export interface ScheduledInterview {
 }
 
 export type Stage =
-  | "Applied"
-  | "Screening"
-  | "Round 1"
-  | "Round 2"
-  | "Offer"
-  | "Hired";
+  "Applied" | "Screening" | "Round 1" | "Round 2" | "Offer" | "Hired";
 
 interface RecruitmentContextType {
   recruitmentPipeline: Record<Stage, Candidate[]>;
@@ -88,58 +84,67 @@ export const RecruitmentProvider: React.FC<{ children: ReactNode }> = ({
   const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [interviews, setInterviews] = useState<ScheduledInterview[]>([]);
 
-  const addCandidate = (stage: Stage, candidate: Candidate) => {
+  const addCandidate = useCallback((stage: Stage, candidate: Candidate) => {
     setPipeline((prev) => ({
       ...prev,
       [stage]: [...prev[stage], candidate],
     }));
-  };
+  }, []);
 
-  const deleteCandidate = (id: string, stage: Stage) => {
+  const deleteCandidate = useCallback((id: string, stage: Stage) => {
     setPipeline((prev) => ({
       ...prev,
       [stage]: prev[stage].filter((c) => c.id !== id),
     }));
-  };
+  }, []);
 
-  const moveCandidate = (id: string, fromStage: Stage, toStage: Stage) => {
-    setPipeline((prev) => {
-      const candidate = prev[fromStage].find((c) => c.id === id);
-      if (!candidate) return prev;
-      return {
+  const moveCandidate = useCallback(
+    (id: string, fromStage: Stage, toStage: Stage) => {
+      setPipeline((prev) => {
+        const candidate = prev[fromStage].find((c) => c.id === id);
+        if (!candidate) return prev;
+        return {
+          ...prev,
+          [fromStage]: prev[fromStage].filter((c) => c.id !== id),
+          [toStage]: [...prev[toStage], candidate],
+        };
+      });
+    },
+    [],
+  );
+
+  const addJob = useCallback(
+    (job: Omit<JobPosting, "id" | "postedAt" | "applicants">) => {
+      setJobs((prev) => [
         ...prev,
-        [fromStage]: prev[fromStage].filter((c) => c.id !== id),
-        [toStage]: [...prev[toStage], candidate],
-      };
-    });
-  };
+        {
+          ...job,
+          id: `J${Date.now()}`,
+          postedAt: new Date().toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+          applicants: 0,
+        },
+      ]);
+    },
+    [],
+  );
 
-  const addJob = (job: Omit<JobPosting, "id" | "postedAt" | "applicants">) => {
-    setJobs((prev) => [
-      ...prev,
-      {
-        ...job,
-        id: `J${Date.now()}`,
-        postedAt: new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        }),
-        applicants: 0,
-      },
-    ]);
-  };
-
-  const deleteJob = (id: string) => {
+  const deleteJob = useCallback((id: string) => {
     setJobs((prev) => prev.filter((j) => j.id !== id));
-  };
+  }, []);
 
-  const scheduleInterview = (iv: Omit<ScheduledInterview, "id">) => {
-    setInterviews((prev) => [...prev, { ...iv, id: `IV${Date.now()}` }]);
-  };
+  const scheduleInterview = useCallback(
+    (iv: Omit<ScheduledInterview, "id">) => {
+      setInterviews((prev) => [...prev, { ...iv, id: `IV${Date.now()}` }]);
+    },
+    [],
+  );
 
-  const cancelInterview = (id: string) => {
+  const cancelInterview = useCallback((id: string) => {
     setInterviews((prev) => prev.filter((iv) => iv.id !== id));
-  };
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -356,315 +361,343 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
     return list;
   });
 
-  const saveEmployees = (list: Employee[]) => {
+  const saveEmployees = useCallback((list: Employee[]) => {
     setEmployeesList(list);
     localStorage.setItem("viyan_employees:v1", JSON.stringify(list));
-  };
+  }, []);
 
-  const addOnboardingEntries = (
-    entries: Array<{
-      name: string;
-      role: string;
-      department: string;
-      manager: string;
-      joiningDate?: string;
-      email?: string;
-    }>,
-  ) => {
-    try {
-      const onboardingQueue = JSON.parse(
-        localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
-      );
-      const onboardingPhases = JSON.parse(
-        localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
-      );
-      const nowStr = new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-      const nowIso = new Date().toISOString().split("T")[0];
+  const addOnboardingEntries = useCallback(
+    (
+      entries: Array<{
+        name: string;
+        role: string;
+        department: string;
+        manager: string;
+        joiningDate?: string;
+        email?: string;
+      }>,
+    ) => {
+      try {
+        const onboardingQueue = JSON.parse(
+          localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
+        );
+        const onboardingPhases = JSON.parse(
+          localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
+        );
+        const nowStr = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+        const nowIso = new Date().toISOString().split("T")[0];
 
-      const newEntries = entries.map((entry, idx) => {
-        const initials = entry.name
-          .split(" ")
-          .map((w) => w[0] || "")
-          .join("")
-          .toUpperCase()
-          .slice(0, 2);
-        const onboardingId = `onb-${Date.now()}-${idx}-${Math.floor(Math.random() * 1000)}`;
+        const newEntries = entries.map((entry, idx) => {
+          const initials = entry.name
+            .split(" ")
+            .map((w) => w[0] || "")
+            .join("")
+            .toUpperCase()
+            .slice(0, 2);
+          const onboardingId = `onb-${Date.now()}-${idx}-${Math.floor(Math.random() * 1000)}`;
 
-        const defaultPhases = [
-          {
-            id: "p1",
-            name: "Pre-Joining",
-            status: "in-progress" as const,
-            date: nowStr,
-            tasks: [
-              {
-                id: "t1",
-                task: "Welcome email sent",
-                owner: "HR",
-                dueDate: "Day 1",
-                status: "pending" as const,
-                assignee: "HR Team",
-              },
-              {
-                id: "t2",
-                task: "Offer letter signed",
-                owner: "Employee",
-                dueDate: "Day 2",
-                status: "pending" as const,
-                assignee: entry.name,
-              },
-              {
-                id: "t3",
-                task: "Background verification completed",
-                owner: "HR",
-                dueDate: "Day 3",
-                status: "pending" as const,
-                assignee: "HR Team",
-              },
-            ],
-          },
-        ];
-        onboardingPhases[onboardingId] = defaultPhases;
+          const defaultPhases = [
+            {
+              id: "p1",
+              name: "Pre-Joining",
+              status: "in-progress" as const,
+              date: nowStr,
+              tasks: [
+                {
+                  id: "t1",
+                  task: "Send welcome email and company policies",
+                  owner: "HR",
+                  dueDate: "Day 1",
+                  status: "pending" as const,
+                  assignee: "HR Team",
+                },
+                {
+                  id: "t2",
+                  task: "Collect identification documents",
+                  owner: "Employee",
+                  dueDate: "Day 2",
+                  status: "pending" as const,
+                  assignee: "New Hire",
+                },
+                {
+                  id: "t3",
+                  task: "Background verification completed",
+                  owner: "HR",
+                  dueDate: "Day 3",
+                  status: "pending" as const,
+                  assignee: "HR Team",
+                },
+              ],
+            },
+          ];
+          onboardingPhases[onboardingId] = defaultPhases;
 
-        return {
-          id: onboardingId,
-          initials,
-          avatarColor: "#8B5CF6",
-          name: entry.name,
-          role: entry.role || "Software Engineer",
-          dept: entry.department || "Engineering",
-          deptColor: "#00B87C",
-          joiningDate: entry.joiningDate || nowIso,
-          progress: 0,
-          progressColor: "#00B87C",
-          status: "pre-joining" as const,
-          daysInOnboarding: 0,
-          expectedCompletion: "To be scheduled",
-          manager: entry.manager || "Arun Nair",
-          email:
-            entry.email ||
-            `${entry.name.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`,
-        };
-      });
+          return {
+            id: onboardingId,
+            initials,
+            avatarColor: "#8B5CF6",
+            name: entry.name,
+            role: entry.role || "Software Engineer",
+            dept: entry.department || "Engineering",
+            deptColor: "#00B87C",
+            joiningDate: entry.joiningDate || nowIso,
+            progress: 0,
+            progressColor: "#00B87C",
+            status: "pre-joining" as const,
+            daysInOnboarding: 0,
+            expectedCompletion: "To be scheduled",
+            manager: entry.manager || "Arun Nair",
+            email:
+              entry.email ||
+              `${entry.name.toLowerCase().replace(/\s+/g, ".")}@viyanhr.com`,
+          };
+        });
 
-      localStorage.setItem(
-        "viyan_onboarding_queue:v1",
-        JSON.stringify([...newEntries, ...onboardingQueue]),
-      );
-      localStorage.setItem(
-        "viyan_onboarding_phases:v1",
-        JSON.stringify(onboardingPhases),
-      );
+        localStorage.setItem(
+          "viyan_onboarding_queue:v1",
+          JSON.stringify([...newEntries, ...onboardingQueue]),
+        );
+        localStorage.setItem(
+          "viyan_onboarding_phases:v1",
+          JSON.stringify(onboardingPhases),
+        );
 
-      window.dispatchEvent(new Event("storage"));
-      window.dispatchEvent(new Event("viyan:onboarding-updated"));
-    } catch (e) {
-      console.error("Failed to append onboarding entries", e);
-    }
-  };
+        window.dispatchEvent(new Event("storage"));
+        window.dispatchEvent(new Event("viyan:onboarding-updated"));
+      } catch (e) {
+        console.error("Failed to append onboarding entries", e);
+      }
+    },
+    [],
+  );
 
-  const addEmployee = (emp: EmployeeInput) => {
-    const salaryVal = Number(emp.salary) || 0;
-    const gross = Math.round(salaryVal / 12);
-    const deductions = Math.round(gross * 0.12);
-    const netPay = gross - deductions;
-    const newEmp: Employee = {
-      ...emp,
-      salary: salaryVal,
-      grossSalary: gross,
-      deductions,
-      netPay,
-      id: `EMP${String(employeesList.length + 1).padStart(3, "0")}`,
-      avatar:
-        "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-      status: "Active",
-      phone: emp.phone || "+1 (555) 000-0000",
-      employmentType: emp.employmentType || "Full-time",
-      gender: emp.gender || "Male",
-      dob: emp.dob || "1995-01-01",
-      address: emp.address || "123 Street",
-      emergencyContact: emp.emergencyContact || "Contact - 123",
-      role: emp.role || "Employee",
-      location: emp.location || "Office",
-      manager: emp.manager || "Unassigned",
-      performance: 85,
-      notes: [],
-    };
-    saveEmployees([...employeesList, newEmp]);
-    addOnboardingEntries([
-      {
-        name: newEmp.name,
-        role: newEmp.designation || newEmp.role || "Staff",
-        department: newEmp.department || "Engineering",
-        manager: newEmp.manager || "Unassigned",
-        joiningDate: newEmp.joinDate || new Date().toISOString().split("T")[0],
-        email: newEmp.email,
-      },
-    ]);
-  };
-
-  const updateEmployee = (id: string, updatedFields: Partial<Employee>) => {
-    const newList = employeesList.map((e) => {
-      if (e.id !== id) return e;
-      const newSalary =
-        updatedFields.salary !== undefined
-          ? Number(updatedFields.salary)
-          : e.salary;
-      const gross = Math.round(newSalary / 12);
-      const deductions = Math.round(gross * 0.12);
-      const netPay = gross - deductions;
-      return {
-        ...e,
-        ...updatedFields,
-        salary: newSalary,
-        grossSalary: gross,
-        deductions,
-        netPay,
-      };
-    });
-    saveEmployees(newList);
-  };
-
-  const deleteEmployee = (id: string) => {
-    const newList = employeesList.filter((e) => e.id !== id);
-    saveEmployees(newList);
-  };
-
-  const promoteEmployee = (
-    id: string,
-    newDesignation: string,
-    newSalary: number,
-    effectiveDate: string,
-  ) => {
-    const newList = employeesList.map((e) => {
-      if (e.id !== id) return e;
-      const oldDesignation = e.designation;
-      const oldSalary = e.salary;
-      const promoHistory = e.promotions || [];
-      const newPromo = {
-        oldDesignation,
-        newDesignation,
-        oldSalary,
-        newSalary,
-        effectiveDate,
-      };
-      const gross = Math.round(newSalary / 12);
-      const deductions = Math.round(gross * 0.12);
-      const net = gross - deductions;
-      return {
-        ...e,
-        designation: newDesignation,
-        role: newDesignation,
-        salary: newSalary,
-        grossSalary: gross,
-        deductions,
-        netPay: net,
-        promotions: [...promoHistory, newPromo],
-      };
-    });
-    saveEmployees(newList);
-  };
-
-  const initiateTransfer = (id: string, type: string, newValue: string) => {
-    const newList = employeesList.map((e) => {
-      if (e.id !== id) return e;
-      const transfersHistory = e.transfers || [];
-      let oldValue = "";
-      if (type === "Department Transfer") oldValue = e.department;
-      else if (type === "Location Transfer") oldValue = e.location;
-      else if (type === "Manager Transfer") oldValue = e.manager;
-      else if (type === "Project Transfer") oldValue = "None";
-
-      const newTransfer = {
-        id: `TR${Date.now()}`,
-        type,
-        oldValue,
-        newValue,
-        status: "Pending" as const,
-        initiatedDate: new Date().toISOString().split("T")[0],
-      };
-      return {
-        ...e,
-        transfers: [...transfersHistory, newTransfer],
-      };
-    });
-    saveEmployees(newList);
-  };
-
-  const approveTransfer = (empId: string, transferId: string) => {
-    const newList = employeesList.map((e) => {
-      if (e.id !== empId) return e;
-      const transfersHistory = e.transfers || [];
-      const updatedFields: Partial<Employee> = {};
-      const updatedTransfers = transfersHistory.map((tr) => {
-        if (tr.id !== transferId) return tr;
-        if (tr.type === "Department Transfer")
-          updatedFields.department = tr.newValue;
-        else if (tr.type === "Location Transfer")
-          updatedFields.location = tr.newValue;
-        else if (tr.type === "Manager Transfer")
-          updatedFields.manager = tr.newValue;
-        return { ...tr, status: "Approved" as const };
-      });
-      return {
-        ...e,
-        ...updatedFields,
-        transfers: updatedTransfers,
-      };
-    });
-    saveEmployees(newList);
-  };
-
-  const rejectTransfer = (empId: string, transferId: string) => {
-    const newList = employeesList.map((e) => {
-      if (e.id !== empId) return e;
-      const transfersHistory = e.transfers || [];
-      const updatedTransfers = transfersHistory.map((tr) => {
-        if (tr.id !== transferId) return tr;
-        return { ...tr, status: "Rejected" as const };
-      });
-      return {
-        ...e,
-        transfers: updatedTransfers,
-      };
-    });
-    saveEmployees(newList);
-  };
-
-  const bulkImportEmployees = (emps: EmployeeInput[]) => {
-    let currentLength = employeesList.length;
-    const newEmps = emps.map((emp) => {
-      currentLength++;
-      const salaryVal = Number(emp.salary) || 50000;
+  const addEmployee = useCallback(
+    (emp: EmployeeInput) => {
+      const salaryVal = Number(emp.salary) || 0;
       const gross = Math.round(salaryVal / 12);
       const deductions = Math.round(gross * 0.12);
       const netPay = gross - deductions;
-      return {
+      const newEmp: Employee = {
         ...emp,
         salary: salaryVal,
         grossSalary: gross,
         deductions,
         netPay,
-        id: `EMP${String(currentLength).padStart(3, "0")}`,
+        id: `EMP${String(employeesList.length + 1).padStart(3, "0")}`,
         avatar:
           "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
-        status: emp.status || "Active",
+        status: "Active",
         phone: emp.phone || "+1 (555) 000-0000",
         employmentType: emp.employmentType || "Full-time",
         gender: emp.gender || "Male",
         dob: emp.dob || "1995-01-01",
         address: emp.address || "123 Street",
         emergencyContact: emp.emergencyContact || "Contact - 123",
-        performance: 80,
+        role: emp.role || "Employee",
+        location: emp.location || "Office",
+        manager: emp.manager || "Unassigned",
+        performance: 85,
         notes: [],
-      } as Employee;
-    });
-    saveEmployees([...employeesList, ...newEmps]);
-  };
+      };
+      saveEmployees([...employeesList, newEmp]);
+      addOnboardingEntries([
+        {
+          name: newEmp.name,
+          role: newEmp.designation || newEmp.role || "Staff",
+          department: newEmp.department || "Engineering",
+          manager: newEmp.manager || "Unassigned",
+          joiningDate:
+            newEmp.joinDate || new Date().toISOString().split("T")[0],
+          email: newEmp.email,
+        },
+      ]);
+    },
+    [employeesList, saveEmployees, addOnboardingEntries],
+  );
+
+  const updateEmployee = useCallback(
+    (id: string, updatedFields: Partial<Employee>) => {
+      const newList = employeesList.map((e) => {
+        if (e.id !== id) return e;
+        const newSalary =
+          updatedFields.salary !== undefined
+            ? Number(updatedFields.salary)
+            : e.salary;
+        const gross = Math.round(newSalary / 12);
+        const deductions = Math.round(gross * 0.12);
+        const netPay = gross - deductions;
+        return {
+          ...e,
+          ...updatedFields,
+          salary: newSalary,
+          grossSalary: gross,
+          deductions,
+          netPay,
+        };
+      });
+      saveEmployees(newList);
+    },
+    [employeesList, saveEmployees],
+  );
+
+  const deleteEmployee = useCallback(
+    (id: string) => {
+      const newList = employeesList.filter((e) => e.id !== id);
+      saveEmployees(newList);
+    },
+    [employeesList, saveEmployees],
+  );
+
+  const promoteEmployee = useCallback(
+    (
+      id: string,
+      newDesignation: string,
+      newSalary: number,
+      effectiveDate: string,
+    ) => {
+      const newList = employeesList.map((e) => {
+        if (e.id !== id) return e;
+        const oldDesignation = e.designation;
+        const oldSalary = e.salary;
+        const promoHistory = e.promotions || [];
+        const newPromo = {
+          oldDesignation,
+          newDesignation,
+          oldSalary,
+          newSalary,
+          effectiveDate,
+        };
+        const gross = Math.round(newSalary / 12);
+        const deductions = Math.round(gross * 0.12);
+        const net = gross - deductions;
+        return {
+          ...e,
+          designation: newDesignation,
+          role: newDesignation,
+          salary: newSalary,
+          grossSalary: gross,
+          deductions,
+          netPay: net,
+          promotions: [...promoHistory, newPromo],
+        };
+      });
+      saveEmployees(newList);
+    },
+    [employeesList, saveEmployees],
+  );
+
+  const initiateTransfer = useCallback(
+    (id: string, type: string, newValue: string) => {
+      const newList = employeesList.map((e) => {
+        if (e.id !== id) return e;
+        const transfersHistory = e.transfers || [];
+        let oldValue = "";
+        if (type === "Department Transfer") oldValue = e.department;
+        else if (type === "Location Transfer") oldValue = e.location;
+        else if (type === "Manager Transfer") oldValue = e.manager;
+        else if (type === "Project Transfer") oldValue = "None";
+
+        const newTransfer = {
+          id: `TR${Date.now()}`,
+          type,
+          oldValue,
+          newValue,
+          status: "Pending" as const,
+          initiatedDate: new Date().toISOString().split("T")[0],
+        };
+        return {
+          ...e,
+          transfers: [...transfersHistory, newTransfer],
+        };
+      });
+      saveEmployees(newList);
+    },
+    [employeesList, saveEmployees],
+  );
+
+  const approveTransfer = useCallback(
+    (empId: string, transferId: string) => {
+      const newList = employeesList.map((e) => {
+        if (e.id !== empId) return e;
+        const transfersHistory = e.transfers || [];
+        const updatedFields: Partial<Employee> = {};
+        const updatedTransfers = transfersHistory.map((tr) => {
+          if (tr.id !== transferId) return tr;
+          if (tr.type === "Department Transfer")
+            updatedFields.department = tr.newValue;
+          else if (tr.type === "Location Transfer")
+            updatedFields.location = tr.newValue;
+          else if (tr.type === "Manager Transfer")
+            updatedFields.manager = tr.newValue;
+          return { ...tr, status: "Approved" as const };
+        });
+        return {
+          ...e,
+          ...updatedFields,
+          transfers: updatedTransfers,
+        };
+      });
+      saveEmployees(newList);
+    },
+    [employeesList, saveEmployees],
+  );
+
+  const rejectTransfer = useCallback(
+    (empId: string, transferId: string) => {
+      const newList = employeesList.map((e) => {
+        if (e.id !== empId) return e;
+        const transfersHistory = e.transfers || [];
+        const updatedTransfers = transfersHistory.map((tr) => {
+          if (tr.id !== transferId) return tr;
+          return { ...tr, status: "Rejected" as const };
+        });
+        return {
+          ...e,
+          transfers: updatedTransfers,
+        };
+      });
+      saveEmployees(newList);
+    },
+    [employeesList, saveEmployees],
+  );
+
+  const bulkImportEmployees = useCallback(
+    (emps: EmployeeInput[]) => {
+      let currentLength = employeesList.length;
+      const newEmps = emps.map((emp) => {
+        currentLength++;
+        const salaryVal = Number(emp.salary) || 50000;
+        const gross = Math.round(salaryVal / 12);
+        const deductions = Math.round(gross * 0.12);
+        const netPay = gross - deductions;
+        return {
+          ...emp,
+          salary: salaryVal,
+          grossSalary: gross,
+          deductions,
+          netPay,
+          id: `EMP${String(currentLength).padStart(3, "0")}`,
+          avatar:
+            "https://images.unsplash.com/photo-1651684215020-f7a5b6610f23?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200",
+          status: emp.status || "Active",
+          phone: emp.phone || "+1 (555) 000-0000",
+          employmentType: emp.employmentType || "Full-time",
+          gender: emp.gender || "Male",
+          dob: emp.dob || "1995-01-01",
+          address: emp.address || "123 Street",
+          emergencyContact: emp.emergencyContact || "Contact - 123",
+          performance: 80,
+          notes: [],
+        } as Employee;
+      });
+      saveEmployees([...employeesList, ...newEmps]);
+    },
+    [employeesList, saveEmployees],
+  );
 
   const value = useMemo(
     () => ({

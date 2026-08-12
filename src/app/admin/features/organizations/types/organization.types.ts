@@ -9,7 +9,8 @@ export interface OrganizationsViewProps {
   onNavigate?: (view: string, targetId?: string) => void;
 }
 
-export type DrawerTab = "overview" | "users" | "billing" | "activity" | "settings";
+export type DrawerTab =
+  "overview" | "users" | "billing" | "activity" | "settings";
 
 export const REGIONS = [
   "North America",

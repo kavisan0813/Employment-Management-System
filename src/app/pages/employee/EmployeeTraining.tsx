@@ -19,32 +19,23 @@ import {
   Calendar,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types                                                           */
 /* ─────────────────────────────────────────────────────────────── */
+import * as m from "motion/react-m";
 type Stage =
-  | "Not Enrolled"
-  | "Enrolled"
-  | "In Progress"
-  | "Completed"
-  | "Overdue";
+  "Not Enrolled" | "Enrolled" | "In Progress" | "Completed" | "Overdue";
 type CourseCategory =
-  | "Technical"
-  | "Compliance"
-  | "Soft Skills"
-  | "Design"
-  | "Management";
+  "Technical" | "Compliance" | "Soft Skills" | "Design" | "Management";
 type Difficulty = "Beginner" | "Intermediate" | "Advanced";
-
 interface Lesson {
   id: number;
   title: string;
   duration: string;
   completed: boolean;
 }
-
 interface Course {
   id: number;
   title: string;
@@ -64,7 +55,6 @@ interface Course {
   lastAccessed?: string;
   lessons: Lesson[];
 }
-
 interface Certification {
   id: number;
   name: string;
@@ -141,7 +131,12 @@ const ALL_COURSES: Course[] = [
     dueDate: "May 15, 2026",
     lastAccessed: "5 days ago",
     lessons: [
-      { id: 1, title: "What is GDPR?", duration: "20:00", completed: true },
+      {
+        id: 1,
+        title: "What is GDPR?",
+        duration: "20:00",
+        completed: true,
+      },
       {
         id: 2,
         title: "Personal Data & Processing",
@@ -203,7 +198,12 @@ const ALL_COURSES: Course[] = [
     gradient: "from-cyan-400 to-blue-600",
     status: "Not Enrolled",
     lessons: [
-      { id: 1, title: "Cloud Basics", duration: "30:00", completed: false },
+      {
+        id: 1,
+        title: "Cloud Basics",
+        duration: "30:00",
+        completed: false,
+      },
     ],
   },
   {
@@ -263,7 +263,6 @@ const ALL_COURSES: Course[] = [
     ],
   },
 ];
-
 const INITIAL_CERTIFICATIONS: Certification[] = [
   {
     id: 1,
@@ -303,7 +302,6 @@ interface StatsCardProps {
   subValue: string;
   bg: string;
 }
-
 function StatsCard({
   icon: Icon,
   color,
@@ -320,7 +318,13 @@ function StatsCard({
         <Icon
           size={24}
           className={color.startsWith("#") ? "" : color}
-          style={color.startsWith("#") ? { color } : {}}
+          style={
+            color.startsWith("#")
+              ? {
+                  color,
+                }
+              : {}
+          }
         />
       </div>
       <div>
@@ -346,22 +350,39 @@ interface ModalProps {
   title: string;
   children: React.ReactNode;
 }
-
 function Modal({ isOpen, onClose, title, children }: ModalProps) {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-slate-900/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="bg-card w-full max-w-2xl rounded-[32px] border border-border shadow-2xl relative z-10 overflow-hidden"
       >
         <div className="px-8 py-6 border-b border-border flex items-center justify-between">
@@ -374,7 +395,7 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
           </button>
         </div>
         <div className="p-8 max-h-[80vh] overflow-y-auto">{children}</div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -392,7 +413,6 @@ export function EmployeeTraining() {
   const [showEnrollConfirm, setShowEnrollConfirm] = useState(false);
   const [showAddCertModal, setShowAddCertModal] = useState(false);
   const [activeCourseId, setActiveCourseId] = useState<number | null>(null);
-
   const activeCourse = useMemo(
     () => courses.find((c) => c.id === activeCourseId),
     [courses, activeCourseId],
@@ -417,7 +437,13 @@ export function EmployeeTraining() {
   const handleEnroll = (courseId: number) => {
     setCourses((prev) =>
       prev.map((c) =>
-        c.id === courseId ? { ...c, status: "In Progress", progress: 0 } : c,
+        c.id === courseId
+          ? {
+              ...c,
+              status: "In Progress",
+              progress: 0,
+            }
+          : c,
       ),
     );
     showToast(
@@ -428,12 +454,17 @@ export function EmployeeTraining() {
     setShowEnrollConfirm(false);
     setShowDetailModal(false);
   };
-
   const handleStartNow = (course: Course) => {
     if (course.status === "Not Enrolled") {
       setCourses((prev) =>
         prev.map((c) =>
-          c.id === course.id ? { ...c, status: "In Progress", progress: 0 } : c,
+          c.id === course.id
+            ? {
+                ...c,
+                status: "In Progress",
+                progress: 0,
+              }
+            : c,
         ),
       );
       showToast("Training Started", "success", `Launching ${course.title}...`);
@@ -441,13 +472,17 @@ export function EmployeeTraining() {
     setActiveCourseId(course.id);
     setView("learning");
   };
-
   const handleLessonToggle = (courseId: number, lessonId: number) => {
     setCourses((prev) =>
       prev.map((c) => {
         if (c.id !== courseId) return c;
         const newLessons = c.lessons.map((l) =>
-          l.id === lessonId ? { ...l, completed: !l.completed } : l,
+          l.id === lessonId
+            ? {
+                ...l,
+                completed: !l.completed,
+              }
+            : l,
         );
         const completedCount = newLessons.filter((l) => l.completed).length;
         const newProgress = Math.round(
@@ -462,7 +497,6 @@ export function EmployeeTraining() {
       }),
     );
   };
-
   const handleAddCert = (e: React.FormEvent) => {
     e.preventDefault();
     if (!certForm.name.trim() || !certForm.issuedBy.trim()) {
@@ -507,7 +541,6 @@ export function EmployeeTraining() {
     });
     setShowAddCertModal(false);
   };
-
   const handleDownloadCert = (certName: string, status: string) => {
     if (status === "Pending Verification") {
       showToast(
@@ -628,7 +661,9 @@ export function EmployeeTraining() {
                       <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
                         <div
                           className="h-full bg-primary transition-all duration-500"
-                          style={{ width: `${course.progress}%` }}
+                          style={{
+                            width: `${course.progress}%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -674,13 +709,7 @@ export function EmployeeTraining() {
             .map((item) => (
               <div
                 key={item.id}
-                className={`bg-card p-5 rounded-2xl border border-border shadow-sm flex items-center justify-between gap-4 border-l-[3px] ${
-                  item.status === "Overdue"
-                    ? "border-l-rose-500"
-                    : item.status === "Completed"
-                      ? "border-l-primary"
-                      : "border-l-amber-500"
-                } transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] group`}
+                className={`bg-card p-5 rounded-2xl border border-border shadow-sm flex items-center justify-between gap-4 border-l-[3px] ${item.status === "Overdue" ? "border-l-rose-500" : item.status === "Completed" ? "border-l-primary" : "border-l-amber-500"} transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] group`}
               >
                 <div className="flex items-center gap-4">
                   <div
@@ -789,7 +818,6 @@ export function EmployeeTraining() {
       </div>
     </div>
   );
-
   const renderCatalog = () => {
     const filteredCourses = courses.filter((c) => {
       const matchesSearch =
@@ -807,12 +835,10 @@ export function EmployeeTraining() {
       if (durationFilter === "Medium")
         matchesDuration = parseInt(c.duration) > 3 && parseInt(c.duration) <= 8;
       if (durationFilter === "Long") matchesDuration = parseInt(c.duration) > 8;
-
       return (
         matchesSearch && matchesCategory && matchesDifficulty && matchesDuration
       );
     });
-
     return (
       <div className="space-y-8 animate-in slide-in-from-right duration-500">
         <div className="flex items-center gap-4">
@@ -963,7 +989,6 @@ export function EmployeeTraining() {
       </div>
     );
   };
-
   const renderMyCourses = () => {
     return (
       <div className="space-y-8 animate-in slide-in-from-right duration-500">
@@ -1029,7 +1054,9 @@ export function EmployeeTraining() {
                         <div className="h-1.5 w-24 bg-secondary rounded-full overflow-hidden">
                           <div
                             className="h-full bg-primary"
-                            style={{ width: `${c.progress}%` }}
+                            style={{
+                              width: `${c.progress}%`,
+                            }}
                           />
                         </div>
                       </div>
@@ -1072,10 +1099,8 @@ export function EmployeeTraining() {
       </div>
     );
   };
-
   const renderLearning = () => {
     if (!activeCourse) return null;
-
     return (
       <div className="space-y-8 animate-in fade-in duration-500 pb-10">
         <div className="flex items-center justify-between">
@@ -1107,7 +1132,9 @@ export function EmployeeTraining() {
             <div className="w-40 h-2 bg-secondary rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary"
-                style={{ width: `${activeCourse.progress}%` }}
+                style={{
+                  width: `${activeCourse.progress}%`,
+                }}
               />
             </div>
           </div>
@@ -1166,11 +1193,7 @@ export function EmployeeTraining() {
                     onClick={() =>
                       handleLessonToggle(activeCourse.id, lesson.id)
                     }
-                    className={`p-4 rounded-2xl flex items-center justify-between gap-4 cursor-pointer transition-all ${
-                      lesson.completed
-                        ? "bg-emerald-500/5 hover:bg-emerald-500/10"
-                        : "hover:bg-secondary"
-                    }`}
+                    className={`p-4 rounded-2xl flex items-center justify-between gap-4 cursor-pointer transition-all ${lesson.completed ? "bg-emerald-500/5 hover:bg-emerald-500/10" : "hover:bg-secondary"}`}
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -1239,49 +1262,81 @@ export function EmployeeTraining() {
       </div>
     );
   };
-
   return (
     <div className="flex flex-col gap-8 w-full px-4 md:px-8 py-6 pb-20 overflow-hidden">
       <AnimatePresence mode="wait">
         {view === "dashboard" && (
-          <motion.div
+          <m.div
             key="dash"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
           >
             {renderDashboard()}
-          </motion.div>
+          </m.div>
         )}
         {view === "catalog" && (
-          <motion.div
+          <m.div
             key="cat"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            initial={{
+              opacity: 0,
+              x: 20,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+            }}
+            exit={{
+              opacity: 0,
+              x: -20,
+            }}
           >
             {renderCatalog()}
-          </motion.div>
+          </m.div>
         )}
         {view === "my-courses" && (
-          <motion.div
+          <m.div
             key="myc"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            initial={{
+              opacity: 0,
+              x: 20,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+            }}
+            exit={{
+              opacity: 0,
+              x: -20,
+            }}
           >
             {renderMyCourses()}
-          </motion.div>
+          </m.div>
         )}
         {view === "learning" && (
-          <motion.div
+          <m.div
             key="learn"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
           >
             {renderLearning()}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
@@ -1422,7 +1477,10 @@ export function EmployeeTraining() {
               type="text"
               value={certForm.name}
               onChange={(e) =>
-                setCertForm((f) => ({ ...f, name: e.target.value }))
+                setCertForm((f) => ({
+                  ...f,
+                  name: e.target.value,
+                }))
               }
               className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none focus:ring-2 focus:ring-primary/20"
               placeholder="e.g. Google Cloud Professional"
@@ -1438,7 +1496,10 @@ export function EmployeeTraining() {
                 type="text"
                 value={certForm.issuedBy}
                 onChange={(e) =>
-                  setCertForm((f) => ({ ...f, issuedBy: e.target.value }))
+                  setCertForm((f) => ({
+                    ...f,
+                    issuedBy: e.target.value,
+                  }))
                 }
                 className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none"
                 placeholder="e.g. Google"
@@ -1452,7 +1513,10 @@ export function EmployeeTraining() {
                 type="text"
                 value={certForm.credentialId}
                 onChange={(e) =>
-                  setCertForm((f) => ({ ...f, credentialId: e.target.value }))
+                  setCertForm((f) => ({
+                    ...f,
+                    credentialId: e.target.value,
+                  }))
                 }
                 className="w-full px-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none"
                 placeholder="Optional"
@@ -1474,7 +1538,10 @@ export function EmployeeTraining() {
                   type="date"
                   value={certForm.issueDate}
                   onChange={(e) =>
-                    setCertForm((f) => ({ ...f, issueDate: e.target.value }))
+                    setCertForm((f) => ({
+                      ...f,
+                      issueDate: e.target.value,
+                    }))
                   }
                   className="w-full pl-12 pr-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none"
                 />
@@ -1493,7 +1560,10 @@ export function EmployeeTraining() {
                   type="date"
                   value={certForm.expiryDate}
                   onChange={(e) =>
-                    setCertForm((f) => ({ ...f, expiryDate: e.target.value }))
+                    setCertForm((f) => ({
+                      ...f,
+                      expiryDate: e.target.value,
+                    }))
                   }
                   className="w-full pl-12 pr-5 py-3.5 rounded-2xl bg-secondary border-none font-bold outline-none"
                 />

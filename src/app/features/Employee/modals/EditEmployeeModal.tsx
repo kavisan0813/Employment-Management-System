@@ -251,9 +251,7 @@ export function EditEmployeeModal({
                     setForm({
                       ...form,
                       status: e.target.value as
-                        | "Active"
-                        | "On Leave"
-                        | "Inactive",
+                        "Active" | "On Leave" | "Inactive",
                     })
                   }
                 >

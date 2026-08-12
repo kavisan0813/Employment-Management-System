@@ -107,9 +107,7 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
                 general: {
                   ...p.general,
                   defaultEmployeeStatus: e.target.value as
-                    | "Active"
-                    | "Pending"
-                    | "Onboarding",
+                    "Active" | "Pending" | "Onboarding",
                 },
               }))
             }
@@ -140,7 +138,10 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
                   ...p,
                   general: {
                     ...p.general,
-                    sessionTimeout: (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)),
+                    sessionTimeout:
+                      e.target.value === "" || isNaN(Number(e.target.value))
+                        ? undefined
+                        : Number(e.target.value),
                   },
                 }))
               }
@@ -163,7 +164,10 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
                   ...p,
                   general: {
                     ...p.general,
-                    passwordExpiryDays: (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)),
+                    passwordExpiryDays:
+                      e.target.value === "" || isNaN(Number(e.target.value))
+                        ? undefined
+                        : Number(e.target.value),
                   },
                 }))
               }
@@ -187,7 +191,10 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
                   ...p,
                   general: {
                     ...p.general,
-                    maxLoginAttempts: (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)),
+                    maxLoginAttempts:
+                      e.target.value === "" || isNaN(Number(e.target.value))
+                        ? undefined
+                        : Number(e.target.value),
                   },
                 }))
               }
@@ -220,7 +227,10 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
                   ...p,
                   storage: {
                     ...p.storage,
-                    maxUploadSizeMb: (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)) || 0,
+                    maxUploadSizeMb:
+                      (e.target.value === "" || isNaN(Number(e.target.value))
+                        ? undefined
+                        : Number(e.target.value)) || 0,
                   },
                 }))
               }

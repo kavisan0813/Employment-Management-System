@@ -49,12 +49,14 @@ function ToggleRow({
       </div>
       <button
         onClick={() => onChange(!checked)}
-        className={`w-12 h-6 rounded-full p-0.5 transition-colors focus:outline-none flex-shrink-0 relative ${checked ? "bg-[#00B87C]" : "bg-secondary border border-border"
-          }`}
+        className={`w-12 h-6 rounded-full p-0.5 transition-colors focus:outline-none flex-shrink-0 relative ${
+          checked ? "bg-[#00B87C]" : "bg-secondary border border-border"
+        }`}
       >
         <div
-          className={`w-5 h-5 rounded-full bg-white shadow-sm transform transition-transform duration-200 ${checked ? "translate-x-6" : "translate-x-0"
-            }`}
+          className={`w-5 h-5 rounded-full bg-white shadow-sm transform transition-transform duration-200 ${
+            checked ? "translate-x-6" : "translate-x-0"
+          }`}
         />
       </button>
     </div>
@@ -150,7 +152,9 @@ export function FinanceSettings() {
         login(updatedUser);
 
         try {
-          const registeredRaw = localStorage.getItem("viyan_registered_users:v1");
+          const registeredRaw = localStorage.getItem(
+            "viyan_registered_users:v1",
+          );
           if (registeredRaw) {
             const users: user[] = JSON.parse(registeredRaw);
             const updatedUsers = users.map((u: user) => {
@@ -309,10 +313,11 @@ export function FinanceSettings() {
                   <li key={item.label}>
                     <button
                       onClick={() => setActiveTab(item.label as SettingsTab)}
-                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${isActive
-                        ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
-                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        }`}
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${
+                        isActive
+                          ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
+                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      }`}
                     >
                       <item.icon size={16} className="flex-shrink-0" />
                       {item.label}
@@ -336,10 +341,11 @@ export function FinanceSettings() {
                     <li key={item.label}>
                       <button
                         onClick={() => setActiveTab(item.label as SettingsTab)}
-                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${isActive
-                          ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
-                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                          }`}
+                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${
+                          isActive
+                            ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
+                            : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        }`}
                       >
                         <item.icon size={16} className="flex-shrink-0" />
                         {item.label}
@@ -366,10 +372,11 @@ export function FinanceSettings() {
                   <li key={item.label}>
                     <button
                       onClick={() => setActiveTab(item.label as SettingsTab)}
-                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${isActive
-                        ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
-                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        }`}
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[12px] font-black transition-all text-left ${
+                        isActive
+                          ? "bg-[#00B87C] text-white shadow-lg shadow-emerald-500/15"
+                          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      }`}
                     >
                       <item.icon size={16} className="flex-shrink-0" />
                       {item.label}
@@ -548,10 +555,11 @@ export function FinanceSettings() {
                   <button
                     key={t.id}
                     onClick={() => setTheme(t.id)}
-                    className={`relative flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all ${theme === t.id
-                      ? "border-[#00B87C] bg-emerald-500/5 text-[#00B87C]"
-                      : "border-border bg-card text-muted-foreground hover:bg-secondary"
-                      }`}
+                    className={`relative flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all ${
+                      theme === t.id
+                        ? "border-[#00B87C] bg-emerald-500/5 text-[#00B87C]"
+                        : "border-border bg-card text-muted-foreground hover:bg-secondary"
+                    }`}
                   >
                     {theme === t.id && (
                       <div className="absolute top-3 right-3 w-5 h-5 bg-[#00B87C] rounded-full flex items-center justify-center text-white">

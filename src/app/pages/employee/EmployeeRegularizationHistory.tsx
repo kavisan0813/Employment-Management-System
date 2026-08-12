@@ -10,9 +10,9 @@ import {
   FileText,
 } from "lucide-react";
 import { useNavigate } from "react-router";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { StatusBadge } from "../../components/workflow/StatusBadge";
-
+import * as m from "motion/react-m";
 interface RegularizationRequest {
   id: string;
   date: string;
@@ -26,7 +26,6 @@ interface RegularizationRequest {
   approvalDate?: string;
   rejectionReason?: string;
 }
-
 const MOCK_HISTORY: RegularizationRequest[] = [
   {
     id: "REG-001",
@@ -64,14 +63,12 @@ const MOCK_HISTORY: RegularizationRequest[] = [
     rejectionReason: "Insufficient proof provided",
   },
 ];
-
 export default function EmployeeRegularizationHistory() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [selectedRequest, setSelectedRequest] =
     useState<RegularizationRequest | null>(null);
-
   const filteredRequests = MOCK_HISTORY.filter((req) => {
     const matchesSearch =
       req.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -79,7 +76,6 @@ export default function EmployeeRegularizationHistory() {
     const matchesStatus = statusFilter === "All" || req.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
-
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-10">
       {/* ─── Header ─────────────────────────────────────────────── */}
@@ -140,7 +136,12 @@ export default function EmployeeRegularizationHistory() {
             color: "var(--foreground)",
             bg: "bg-card",
           },
-          { label: "Pending", value: "3", color: "#F59E0B", bg: "bg-card" },
+          {
+            label: "Pending",
+            value: "3",
+            color: "#F59E0B",
+            bg: "bg-card",
+          },
           {
             label: "Approved",
             value: "8",
@@ -160,7 +161,9 @@ export default function EmployeeRegularizationHistory() {
           >
             <p
               className="text-[32px] font-black mb-1"
-              style={{ color: card.color }}
+              style={{
+                color: card.color,
+              }}
             >
               {card.value}
             </p>
@@ -275,7 +278,6 @@ export default function EmployeeRegularizationHistory() {
     </div>
   );
 }
-
 function RequestDetailPopup({
   request,
   onClose,
@@ -285,17 +287,35 @@ function RequestDetailPopup({
 }) {
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-background/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden flex flex-col border border-border"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
@@ -427,7 +447,7 @@ function RequestDetailPopup({
             Close Details
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

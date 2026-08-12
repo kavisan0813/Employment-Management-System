@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo, useReducer, useCallback } from "react";
 import {
   Receipt,
   Plus,
@@ -340,14 +340,15 @@ function SummaryCard({
         </h3>
         {chip && (
           <span
-            className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${chipColor === "green"
+            className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${
+              chipColor === "green"
                 ? "bg-emerald-500/10 text-primary border-primary/20"
                 : chipColor === "amber"
                   ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
                   : chipColor === "purple"
                     ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
                     : "bg-sky-500/10 text-sky-600 border-sky-500/20"
-              }`}
+            }`}
           >
             {chip}
           </span>
@@ -426,28 +427,176 @@ const MONTH_DATE_MAP: Record<string, string> = {
 };
 
 export function FinanceMyExpenses() {
-  const [activeTab, setActiveTab] = useState<
-    "All" | "Pending" | "Approved" | "Rejected"
-  >("All");
-  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
-  const [selectedMonth, setSelectedMonth] = useState("All Months");
-  const [selectedStatus, setSelectedStatus] = useState("All Status");
-  const [showCatDrop, setShowCatDrop] = useState(false);
-  const [showMonthDrop, setShowMonthDrop] = useState(false);
-  const [showStatusDrop, setShowStatusDrop] = useState(false);
-  const [newExpenseDesc, setNewExpenseDesc] = useState("");
-  const [newExpenseCat, setNewExpenseCat] = useState("Travel");
-
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeTab: "All" as "All" | "Pending" | "Approved" | "Rejected",
+    selectedExpense: null as Expense | null,
+    showAddModal: false,
+    selectedCategory: "All Categories",
+    selectedMonth: "All Months",
+    selectedStatus: "All Status",
+    showCatDrop: false,
+    showMonthDrop: false,
+    showStatusDrop: false,
+    newExpenseDesc: "",
+    newExpenseCat: "Travel",
+    expenses: MOCK_EXPENSES as Expense[],
+    newExpenseTitle: "",
+    newExpenseAmount: "",
+    newExpenseDate: "",
+    newExpensePaymentMode: "Personal Card",
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    activeTab,
+    selectedExpense,
+    showAddModal,
+    selectedCategory,
+    selectedMonth,
+    selectedStatus,
+    showCatDrop,
+    showMonthDrop,
+    showStatusDrop,
+    newExpenseDesc,
+    newExpenseCat,
+    expenses,
+    newExpenseTitle,
+    newExpenseAmount,
+    newExpenseDate,
+    newExpensePaymentMode,
+  } = __state;
+  const setActiveTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeTab: typeof val === "function" ? val(prev.activeTab) : val,
+      })),
+    [],
+  );
+  const setSelectedExpense = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedExpense:
+          typeof val === "function" ? val(prev.selectedExpense) : val,
+      })),
+    [],
+  );
+  const setShowAddModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showAddModal: typeof val === "function" ? val(prev.showAddModal) : val,
+      })),
+    [],
+  );
+  const setSelectedCategory = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedCategory:
+          typeof val === "function" ? val(prev.selectedCategory) : val,
+      })),
+    [],
+  );
+  const setSelectedMonth = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedMonth:
+          typeof val === "function" ? val(prev.selectedMonth) : val,
+      })),
+    [],
+  );
+  const setSelectedStatus = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedStatus:
+          typeof val === "function" ? val(prev.selectedStatus) : val,
+      })),
+    [],
+  );
+  const setShowCatDrop = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showCatDrop: typeof val === "function" ? val(prev.showCatDrop) : val,
+      })),
+    [],
+  );
+  const setShowMonthDrop = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showMonthDrop:
+          typeof val === "function" ? val(prev.showMonthDrop) : val,
+      })),
+    [],
+  );
+  const setShowStatusDrop = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showStatusDrop:
+          typeof val === "function" ? val(prev.showStatusDrop) : val,
+      })),
+    [],
+  );
+  const setNewExpenseDesc = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newExpenseDesc:
+          typeof val === "function" ? val(prev.newExpenseDesc) : val,
+      })),
+    [],
+  );
+  const setNewExpenseCat = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newExpenseCat:
+          typeof val === "function" ? val(prev.newExpenseCat) : val,
+      })),
+    [],
+  );
+  const setExpenses = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        expenses: typeof val === "function" ? val(prev.expenses) : val,
+      })),
+    [],
+  );
+  const setNewExpenseTitle = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newExpenseTitle:
+          typeof val === "function" ? val(prev.newExpenseTitle) : val,
+      })),
+    [],
+  );
+  const setNewExpenseAmount = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newExpenseAmount:
+          typeof val === "function" ? val(prev.newExpenseAmount) : val,
+      })),
+    [],
+  );
+  const setNewExpenseDate = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newExpenseDate:
+          typeof val === "function" ? val(prev.newExpenseDate) : val,
+      })),
+    [],
+  );
+  const setNewExpensePaymentMode = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        newExpensePaymentMode:
+          typeof val === "function" ? val(prev.newExpensePaymentMode) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Controlled states for new expense form
-  const [expenses, setExpenses] = useState<Expense[]>(MOCK_EXPENSES);
-  const [newExpenseTitle, setNewExpenseTitle] = useState("");
-  const [newExpenseAmount, setNewExpenseAmount] = useState("");
-  const [newExpenseDate, setNewExpenseDate] = useState("");
-  const [newExpensePaymentMode, setNewExpensePaymentMode] =
-    useState("Personal Card");
-
   const categoryMap: Record<string, ExpenseCategory> = {
     Travel: "Travel",
     Food: "Food",
@@ -733,10 +882,11 @@ export function FinanceMyExpenses() {
                       tab as "All" | "Pending" | "Approved" | "Rejected",
                     )
                   }
-                  className={`py-4 text-[13px] font-black relative transition-all ${activeTab === tab
+                  className={`py-4 text-[13px] font-black relative transition-all ${
+                    activeTab === tab
                       ? "text-primary"
                       : "text-muted-foreground hover:text-foreground"
-                    }`}
+                  }`}
                 >
                   {tab}
                   {activeTab === tab && (
@@ -1037,12 +1187,13 @@ export function FinanceMyExpenses() {
                     />
                   )}
                   <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 border ${step.status === "completed"
+                    className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 border ${
+                      step.status === "completed"
                         ? "bg-primary text-white border-primary"
                         : step.status === "active"
                           ? "border-sky-500 bg-sky-500/10 animate-pulse"
                           : "border-border bg-secondary"
-                      }`}
+                    }`}
                   >
                     {step.status === "completed" && <CheckCircle2 size={12} />}
                   </div>
@@ -1116,10 +1267,11 @@ export function FinanceMyExpenses() {
                       <button
                         key={cat}
                         onClick={() => setNewExpenseCat(cat)}
-                        className={`px-4 py-2 rounded-xl text-[11px] font-black whitespace-nowrap transition-all border ${newExpenseCat === cat
+                        className={`px-4 py-2 rounded-xl text-[11px] font-black whitespace-nowrap transition-all border ${
+                          newExpenseCat === cat
                             ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
                             : "bg-card border-border text-foreground hover:border-primary/50"
-                          }`}
+                        }`}
                       >
                         {cat}
                       </button>

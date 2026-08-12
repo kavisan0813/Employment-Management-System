@@ -17,7 +17,8 @@
 import { P } from "./permissions";
 
 // ── Scope types ─────────────────────────────────────────────────
-export type ScopeType = "organization" | "branch" | "department" | "team" | "self";
+export type ScopeType =
+  "organization" | "branch" | "department" | "team" | "self";
 
 // ── Role assignment (mirrors user_role_assignments table) ───────
 export interface RoleAssignment {
@@ -564,9 +565,7 @@ export const ROLE_HIERARCHY: SystemRoleId[] = [
  * Resolve the effective permission set from a list of role assignments.
  * Takes the union of all permissions from all active role assignments.
  */
-export function resolvePermissions(
-  assignments: RoleAssignment[],
-): Set<string> {
+export function resolvePermissions(assignments: RoleAssignment[]): Set<string> {
   const permissions = new Set<string>();
 
   for (const assignment of assignments) {

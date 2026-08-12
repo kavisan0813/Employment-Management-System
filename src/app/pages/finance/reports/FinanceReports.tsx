@@ -1,4 +1,4 @@
-import { lazy, useState } from "react";
+import { lazy, useState, useReducer, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useAuth } from "../../../context/AuthContext";
 import {
@@ -28,73 +28,230 @@ import {
   Send,
   Mail,
 } from "lucide-react";
-const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
-const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
-const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
-const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
-const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-const LineChart = lazy(() => import("recharts").then(m => ({ default: m.LineChart })));
-const Line = lazy(() => import("recharts").then(m => ({ default: m.Line })));
-const Legend = lazy(() => import("recharts").then(m => ({ default: m.Legend })));
-
-import { motion, AnimatePresence } from "motion/react";
+const AreaChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.AreaChart,
+  })),
+);
+const Area = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Area,
+  })),
+);
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.XAxis,
+  })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.YAxis,
+  })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.CartesianGrid,
+  })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Tooltip,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const BarChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.BarChart,
+  })),
+);
+const Bar = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Bar,
+  })),
+);
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PieChart,
+  })),
+);
+const Pie = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Pie,
+  })),
+);
+const Cell = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Cell,
+  })),
+);
+const LineChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.LineChart,
+  })),
+);
+const Line = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Line,
+  })),
+);
+const Legend = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Legend,
+  })),
+);
+import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { FinanceCustomBuilder } from "../workspace/FinanceCustomBuilder";
 
 /* ─── Mock Data ─── */
+import * as m from "motion/react-m";
 const PAYROLL_TREND_DATA = [
-  { month: "May", cost: 24.2 },
-  { month: "Jun", cost: 25.1 },
-  { month: "Jul", cost: 24.8 },
-  { month: "Aug", cost: 26.3 },
-  { month: "Sep", cost: 25.9 },
-  { month: "Oct", cost: 27.4 },
-  { month: "Nov", cost: 26.8 },
-  { month: "Dec", cost: 28.1 },
-  { month: "Jan", cost: 27.9 },
-  { month: "Feb", cost: 28.5 },
-  { month: "Mar", cost: 29.2 },
-  { month: "Apr", cost: 28.4 },
+  {
+    month: "May",
+    cost: 24.2,
+  },
+  {
+    month: "Jun",
+    cost: 25.1,
+  },
+  {
+    month: "Jul",
+    cost: 24.8,
+  },
+  {
+    month: "Aug",
+    cost: 26.3,
+  },
+  {
+    month: "Sep",
+    cost: 25.9,
+  },
+  {
+    month: "Oct",
+    cost: 27.4,
+  },
+  {
+    month: "Nov",
+    cost: 26.8,
+  },
+  {
+    month: "Dec",
+    cost: 28.1,
+  },
+  {
+    month: "Jan",
+    cost: 27.9,
+  },
+  {
+    month: "Feb",
+    cost: 28.5,
+  },
+  {
+    month: "Mar",
+    cost: 29.2,
+  },
+  {
+    month: "Apr",
+    cost: 28.4,
+  },
 ];
-
 const DEPT_DIST_DATA = [
-  { name: "Engineering", value: 45, color: "#00B87C" },
-  { name: "Sales", value: 20, color: "#8B5CF6" },
-  { name: "Marketing", value: 15, color: "#3B82F6" },
-  { name: "Operations", value: 12, color: "#F59E0B" },
-  { name: "HR", value: 8, color: "#EF4444" },
+  {
+    name: "Engineering",
+    value: 45,
+    color: "#00B87C",
+  },
+  {
+    name: "Sales",
+    value: 20,
+    color: "#8B5CF6",
+  },
+  {
+    name: "Marketing",
+    value: 15,
+    color: "#3B82F6",
+  },
+  {
+    name: "Operations",
+    value: 12,
+    color: "#F59E0B",
+  },
+  {
+    name: "HR",
+    value: 8,
+    color: "#EF4444",
+  },
 ];
-
 const EXPENSE_CAT_DATA = [
-  { name: "Travel", value: 12400 },
-  { name: "Food", value: 8200 },
-  { name: "Software", value: 15600 },
-  { name: "Equipment", value: 4500 },
-  { name: "Marketing", value: 9800 },
+  {
+    name: "Travel",
+    value: 12400,
+  },
+  {
+    name: "Food",
+    value: 8200,
+  },
+  {
+    name: "Software",
+    value: 15600,
+  },
+  {
+    name: "Equipment",
+    value: 4500,
+  },
+  {
+    name: "Marketing",
+    value: 9800,
+  },
 ];
-
 const SALARY_BAND_DATA = [
-  { band: "0-5L", count: 240 },
-  { band: "5-10L", count: 480 },
-  { band: "10-15L", count: 320 },
-  { band: "15-25L", count: 140 },
-  { band: "25L+", count: 68 },
+  {
+    band: "0-5L",
+    count: 240,
+  },
+  {
+    band: "5-10L",
+    count: 480,
+  },
+  {
+    band: "10-15L",
+    count: 320,
+  },
+  {
+    band: "15-25L",
+    count: 140,
+  },
+  {
+    band: "25L+",
+    count: 68,
+  },
 ];
-
 const YOY_GROWTH_DATA = [
-  { month: "Jan", lastYear: 24.2, currentYear: 27.9 },
-  { month: "Feb", lastYear: 24.5, currentYear: 28.5 },
-  { month: "Mar", lastYear: 25.1, currentYear: 29.2 },
-  { month: "Apr", lastYear: 24.8, currentYear: 28.4 },
+  {
+    month: "Jan",
+    lastYear: 24.2,
+    currentYear: 27.9,
+  },
+  {
+    month: "Feb",
+    lastYear: 24.5,
+    currentYear: 28.5,
+  },
+  {
+    month: "Mar",
+    lastYear: 25.1,
+    currentYear: 29.2,
+  },
+  {
+    month: "Apr",
+    lastYear: 24.8,
+    currentYear: 28.4,
+  },
 ];
-
 type ReportTab =
   | "Dashboards"
   | "Payroll Reports"
@@ -103,7 +260,6 @@ type ReportTab =
   | "Asset Reports"
   | "Custom Builder"
   | "Report History";
-
 export interface ReportItem {
   id?: number | string;
   name: string;
@@ -113,76 +269,171 @@ export interface ReportItem {
   desc?: string;
   last?: string;
 }
-
 export function FinanceReports() {
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState<ReportTab>(
-    location.state?.activeTab || "Dashboards",
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    activeTab: location.state?.activeTab || ("Dashboards" as ReportTab),
+    showExportModal: false,
+    isExporting: false,
+    activeModal: null as string | null,
+    selectedReport: null as ReportItem | null,
+    reportsHistory: [
+      {
+        id: 1,
+        name: "April Payroll Summary",
+        category: "Payroll",
+        date: "Apr 6, 2026",
+        status: "Completed",
+      },
+      {
+        id: 2,
+        name: "Q1 Travel Expenses",
+        category: "Expense",
+        date: "Apr 5, 2026",
+        status: "Completed",
+      },
+      {
+        id: 3,
+        name: "FY25 Tax Deductions",
+        category: "Tax",
+        date: "Apr 4, 2026",
+        status: "Completed",
+      },
+      {
+        id: 4,
+        name: "Asset Depreciation Report",
+        category: "Asset",
+        date: "Apr 3, 2026",
+        status: "Failed",
+      },
+      {
+        id: 5,
+        name: "Employee Overtime Cost",
+        category: "Custom",
+        date: "Apr 2, 2026",
+        status: "Completed",
+      },
+    ] as ReportItem[],
+    dateFilter: "This Month",
+    deptFilter: "All Departments",
+    branchFilter: "All Branches",
+    categoryFilter: "All Categories",
+    refreshKey: 0,
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
   );
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
-
-  const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [selectedReport, setSelectedReport] = useState<ReportItem | null>(null);
-
-  const [reportsHistory, setReportsHistory] = useState<ReportItem[]>([
-    {
-      id: 1,
-      name: "April Payroll Summary",
-      category: "Payroll",
-      date: "Apr 6, 2026",
-      status: "Completed",
-    },
-    {
-      id: 2,
-      name: "Q1 Travel Expenses",
-      category: "Expense",
-      date: "Apr 5, 2026",
-      status: "Completed",
-    },
-    {
-      id: 3,
-      name: "FY25 Tax Deductions",
-      category: "Tax",
-      date: "Apr 4, 2026",
-      status: "Completed",
-    },
-    {
-      id: 4,
-      name: "Asset Depreciation Report",
-      category: "Asset",
-      date: "Apr 3, 2026",
-      status: "Failed",
-    },
-    {
-      id: 5,
-      name: "Employee Overtime Cost",
-      category: "Custom",
-      date: "Apr 2, 2026",
-      status: "Completed",
-    },
-  ]);
-
-  const [dateFilter, setDateFilter] = useState("This Month");
-  const [deptFilter, setDeptFilter] = useState("All Departments");
-  const [branchFilter, setBranchFilter] = useState("All Branches");
-  const [categoryFilter, setCategoryFilter] = useState("All Categories");
-
-  const [refreshKey, setRefreshKey] = useState(0);
-
+  const {
+    activeTab,
+    showExportModal,
+    isExporting,
+    activeModal,
+    selectedReport,
+    reportsHistory,
+    dateFilter,
+    deptFilter,
+    branchFilter,
+    categoryFilter,
+    refreshKey,
+  } = __state;
+  const setActiveTab = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeTab: typeof val === "function" ? val(prev.activeTab) : val,
+      })),
+    [],
+  );
+  const setShowExportModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        showExportModal:
+          typeof val === "function" ? val(prev.showExportModal) : val,
+      })),
+    [],
+  );
+  const setIsExporting = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isExporting: typeof val === "function" ? val(prev.isExporting) : val,
+      })),
+    [],
+  );
+  const setActiveModal = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activeModal: typeof val === "function" ? val(prev.activeModal) : val,
+      })),
+    [],
+  );
+  const setSelectedReport = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedReport:
+          typeof val === "function" ? val(prev.selectedReport) : val,
+      })),
+    [],
+  );
+  const setReportsHistory = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        reportsHistory:
+          typeof val === "function" ? val(prev.reportsHistory) : val,
+      })),
+    [],
+  );
+  const setDateFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        dateFilter: typeof val === "function" ? val(prev.dateFilter) : val,
+      })),
+    [],
+  );
+  const setDeptFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        deptFilter: typeof val === "function" ? val(prev.deptFilter) : val,
+      })),
+    [],
+  );
+  const setBranchFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        branchFilter: typeof val === "function" ? val(prev.branchFilter) : val,
+      })),
+    [],
+  );
+  const setCategoryFilter = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        categoryFilter:
+          typeof val === "function" ? val(prev.categoryFilter) : val,
+      })),
+    [],
+  );
+  const setRefreshKey = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        refreshKey: typeof val === "function" ? val(prev.refreshKey) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const handleFilterChange =
     (setter: (val: string) => void) =>
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setter(e.target.value);
       setRefreshKey((prev) => prev + 1);
     };
-
   const executeExport = () => {
     setIsExporting(true);
     setTimeout(() => {
       let headers: string;
       let csvContent: string;
-
       if (activeTab === "Dashboards") {
         headers = "Month,Payroll Cost (L),Last Year (L)\n";
         csvContent =
@@ -195,8 +446,9 @@ export function FinanceReports() {
         csvContent =
           headers + `Generated ${activeTab} Report,${activeTab},Ready\n`;
       }
-
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob([csvContent], {
+        type: "text/csv;charset=utf-8;",
+      });
       const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
@@ -208,13 +460,11 @@ export function FinanceReports() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
       setIsExporting(false);
       setShowExportModal(false);
       showToast(`${activeTab} report exported successfully.`, "success");
     }, 1500);
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -369,15 +619,11 @@ export function FinanceReports() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as ReportTab)}
-                className={`px-6 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap ${
-                  isActive
-                    ? "text-[#00B87C]"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`px-6 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap ${isActive ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
               >
                 {tab}
                 {isActive && (
-                  <motion.div
+                  <m.div
                     layoutId="activeTabReport"
                     className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#00B87C]"
                   />
@@ -390,12 +636,23 @@ export function FinanceReports() {
         {/* TAB CONTENT */}
         <div className="min-h-[600px]">
           <AnimatePresence mode="wait">
-            <motion.div
+            <m.div
               key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
+              initial={{
+                opacity: 0,
+                y: 10,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -10,
+              }}
+              transition={{
+                duration: 0.2,
+              }}
             >
               {activeTab === "Dashboards" && <DashboardsTab />}
               {activeTab === "Payroll Reports" && (
@@ -457,7 +714,7 @@ export function FinanceReports() {
                   setShowExportModal={setShowExportModal}
                 />
               )}
-            </motion.div>
+            </m.div>
           </AnimatePresence>
         </div>
       </div>
@@ -466,17 +723,35 @@ export function FinanceReports() {
       <AnimatePresence>
         {showExportModal && (
           <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => !isExporting && setShowExportModal(false)}
-            ></motion.div>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            ></m.div>
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[420px] rounded-[32px] overflow-hidden shadow-2xl"
             >
               <div className="p-8 pb-0 flex flex-col items-center text-center">
@@ -496,10 +771,17 @@ export function FinanceReports() {
                       Processing Data...
                     </p>
                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ x: "-100%" }}
-                        animate={{ x: "0%" }}
-                        transition={{ duration: 1.5, ease: "linear" }}
+                      <m.div
+                        initial={{
+                          x: "-100%",
+                        }}
+                        animate={{
+                          x: "0%",
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          ease: "linear",
+                        }}
                         className="h-full bg-[#00B87C] rounded-full w-full"
                       />
                     </div>
@@ -523,7 +805,7 @@ export function FinanceReports() {
                   {isExporting ? "Exporting..." : "Download CSV"}
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -570,7 +852,6 @@ function DashboardsTab() {
   const [period, setPeriod] = useState<"1Y" | "6M">("1Y");
   const chartData =
     period === "6M" ? PAYROLL_TREND_DATA.slice(-6) : PAYROLL_TREND_DATA;
-
   return (
     <div className="space-y-6">
       {/* Top Row: Payroll Cost & Dept Distribution */}
@@ -589,21 +870,13 @@ function DashboardsTab() {
             <div className="flex bg-muted/30 p-1 rounded-xl border border-border">
               <button
                 onClick={() => setPeriod("1Y")}
-                className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all ${
-                  period === "1Y"
-                    ? "bg-[#00B87C] text-white"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all ${period === "1Y" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"}`}
               >
                 1Y
               </button>
               <button
                 onClick={() => setPeriod("6M")}
-                className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all ${
-                  period === "6M"
-                    ? "bg-[#00B87C] text-white"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all ${period === "6M" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"}`}
               >
                 6M
               </button>
@@ -627,13 +900,21 @@ function DashboardsTab() {
                   dataKey="month"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fontWeight: 700, fill: "#94A3B8" }}
+                  tick={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    fill: "#94A3B8",
+                  }}
                   dy={10}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 11, fontWeight: 700, fill: "#94A3B8" }}
+                  tick={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    fill: "#94A3B8",
+                  }}
                   tickFormatter={(val) => `₹${val}L`}
                 />
                 <Tooltip
@@ -643,7 +924,10 @@ function DashboardsTab() {
                     borderRadius: "12px",
                     color: "white",
                   }}
-                  itemStyle={{ color: "#8B5CF6", fontWeight: "bold" }}
+                  itemStyle={{
+                    color: "#8B5CF6",
+                    fontWeight: "bold",
+                  }}
                 />
                 <Area
                   type="monotone"
@@ -711,11 +995,16 @@ function DashboardsTab() {
           </div>
           <div className="mt-6 space-y-3">
             {DEPT_DIST_DATA.map((item) => (
-              <div key={item.name} className="flex items-center justify-between">
+              <div
+                key={item.name}
+                className="flex items-center justify-between"
+              >
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: item.color }}
+                    style={{
+                      backgroundColor: item.color,
+                    }}
                   />
                   <span className="text-[12px] font-bold text-muted-foreground">
                     {item.name}
@@ -746,10 +1035,17 @@ function DashboardsTab() {
                 type="category"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fontWeight: 700 }}
+                tick={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                }}
                 width={70}
               />
-              <Tooltip cursor={{ fill: "transparent" }} />
+              <Tooltip
+                cursor={{
+                  fill: "transparent",
+                }}
+              />
               <Bar
                 dataKey="value"
                 fill="#3B82F6"
@@ -772,12 +1068,18 @@ function DashboardsTab() {
                 dataKey="band"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fontWeight: 700 }}
+                tick={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                }}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fontWeight: 700 }}
+                tick={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                }}
               />
               <Tooltip />
               <Bar
@@ -802,12 +1104,18 @@ function DashboardsTab() {
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fontWeight: 700 }}
+                tick={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                }}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 10, fontWeight: 700 }}
+                tick={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                }}
               />
               <Tooltip />
               <Legend
@@ -827,7 +1135,9 @@ function DashboardsTab() {
                 name="FY 25-26"
                 stroke="#00B87C"
                 strokeWidth={3}
-                dot={{ r: 4 }}
+                dot={{
+                  r: 4,
+                }}
               />
               <Line
                 type="monotone"
@@ -836,7 +1146,9 @@ function DashboardsTab() {
                 stroke="#94A3B8"
                 strokeWidth={2}
                 strokeDasharray="5 5"
-                dot={{ r: 3 }}
+                dot={{
+                  r: 3,
+                }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -845,7 +1157,6 @@ function DashboardsTab() {
     </div>
   );
 }
-
 function ReportCatalogTab({
   section,
   type,
@@ -975,9 +1286,7 @@ function ReportCatalogTab({
       },
     ],
   };
-
   const currentReports = reports[type];
-
   return (
     <div className="space-y-6">
       <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-4">
@@ -1008,7 +1317,6 @@ function AssetReportsTab({
 }) {
   const navigate = useNavigate();
   const { user } = useAuth();
-
   const assetReports = [
     ...(user?.role === "Finance"
       ? [
@@ -1063,7 +1371,6 @@ function AssetReportsTab({
       path: "#",
     },
   ];
-
   const getIcon = (iconName: string, size = 20) => {
     switch (iconName) {
       case "BarChart3":
@@ -1082,7 +1389,6 @@ function AssetReportsTab({
         return <FileText size={size} />;
     }
   };
-
   return (
     <div className="space-y-6">
       <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-4">
@@ -1090,9 +1396,11 @@ function AssetReportsTab({
       </h4>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {assetReports.map((report, i) => (
-          <motion.div
+          <m.div
             key={report.name}
-            whileHover={{ y: -4 }}
+            whileHover={{
+              y: -4,
+            }}
             className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex flex-col h-full group"
           >
             <div className="flex items-start justify-between mb-4">
@@ -1180,7 +1488,7 @@ function AssetReportsTab({
                 Generate <ChevronRight size={14} />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         ))}
       </div>
     </div>
@@ -1244,11 +1552,7 @@ function ReportHistoryTab({
                 </td>
                 <td className="py-4 px-4">
                   <span
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-                      report.status === "Completed"
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                        : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                    }`}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${report.status === "Completed" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"}`}
                   >
                     {report.status === "Completed" ? (
                       <CheckCircle2 size={12} />
@@ -1318,7 +1622,6 @@ function MiniKPICard({
     amber: "text-amber-500",
     gray: "text-slate-600",
   };
-
   return (
     <div
       onClick={onClick}
@@ -1335,7 +1638,6 @@ function MiniKPICard({
     </div>
   );
 }
-
 function FilterSelect({
   value,
   onChange,
@@ -1373,7 +1675,6 @@ function FilterSelect({
     </div>
   );
 }
-
 function ChartCard({
   title,
   children,
@@ -1395,7 +1696,6 @@ function ChartCard({
     </div>
   );
 }
-
 function ReportCard({
   name,
   desc,
@@ -1438,10 +1738,11 @@ function ReportCard({
       }
     }
   };
-
   return (
-    <motion.div
-      whileHover={{ y: -4 }}
+    <m.div
+      whileHover={{
+        y: -4,
+      }}
       className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex flex-col h-full group"
     >
       <div className="flex items-start justify-between mb-4">
@@ -1455,7 +1756,10 @@ function ReportCard({
           <button
             onClick={() => {
               if (setActiveModal && setSelectedReport) {
-                setSelectedReport({ name, category: "Report" });
+                setSelectedReport({
+                  name,
+                  category: "Report",
+                });
                 setActiveModal("ScheduleReport");
               }
             }}
@@ -1494,7 +1798,7 @@ function ReportCard({
           Generate <ChevronRight size={14} />
         </button>
       </div>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -1554,22 +1858,38 @@ function KPIModal({ type, onClose }: { type: string; onClose: () => void }) {
         };
     }
   };
-
   const content = getModalContent();
-
   return (
     <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
-      ></motion.div>
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+      ></m.div>
+      <m.div
+        initial={{
+          scale: 0.95,
+          opacity: 0,
+          y: 20,
+        }}
+        animate={{
+          scale: 1,
+          opacity: 1,
+          y: 0,
+        }}
+        exit={{
+          scale: 0.95,
+          opacity: 0,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[600px] rounded-[32px] overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
       >
         <div className="p-6 border-b border-border flex items-center justify-between">
@@ -1630,11 +1950,10 @@ function KPIModal({ type, onClose }: { type: string; onClose: () => void }) {
             Close
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
-
 function ViewReportModal({
   report,
   onClose,
@@ -1644,17 +1963,35 @@ function ViewReportModal({
 }) {
   return (
     <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
-      ></motion.div>
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+      ></m.div>
+      <m.div
+        initial={{
+          scale: 0.95,
+          opacity: 0,
+          y: 20,
+        }}
+        animate={{
+          scale: 1,
+          opacity: 1,
+          y: 0,
+        }}
+        exit={{
+          scale: 0.95,
+          opacity: 0,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[1000px] rounded-[32px] overflow-hidden shadow-2xl flex flex-col h-[90vh]"
       >
         <div className="p-6 border-b border-border flex flex-wrap items-center justify-between gap-4">
@@ -1778,11 +2115,10 @@ function ViewReportModal({
             </div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
-
 function ScheduleReportModal({
   report,
   onClose,
@@ -1792,17 +2128,35 @@ function ScheduleReportModal({
 }) {
   return (
     <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
-      ></motion.div>
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+      ></m.div>
+      <m.div
+        initial={{
+          scale: 0.95,
+          opacity: 0,
+          y: 20,
+        }}
+        animate={{
+          scale: 1,
+          opacity: 1,
+          y: 0,
+        }}
+        exit={{
+          scale: 0.95,
+          opacity: 0,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[480px] rounded-[32px] overflow-hidden shadow-2xl flex flex-col"
       >
         <div className="p-6 border-b border-border flex items-center justify-between">
@@ -1914,7 +2268,7 @@ function ScheduleReportModal({
             <Send size={16} /> Save Schedule
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

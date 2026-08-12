@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { motion } from "motion/react";
+import React, { useState, useRef } from "react";
 import {
   ArrowLeft,
   Check,
@@ -18,7 +17,7 @@ import { exitTypeChip, getClearanceIcon } from "../utils/chips";
 import type { OffboardingTemplate } from "../types/offboarding.types";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { useAuth } from "../../../context/AuthContext";
-
+import * as m from "motion/react-m";
 interface OffboardingDetailProps {
   exit: ExitEmployee;
   templates: OffboardingTemplate[];
@@ -35,10 +34,12 @@ interface OffboardingDetailProps {
     comments: string,
   ) => void;
 }
-
 const CLEARANCE_CONFIGS: Record<
   string,
-  { permission: string; checklist: string[] }
+  {
+    permission: string;
+    checklist: string[];
+  }
 > = {
   Manager: {
     permission: P.OFFBOARDING_CLEARANCE_MANAGER,
@@ -79,7 +80,6 @@ const CLEARANCE_CONFIGS: Record<
     ],
   },
 };
-
 export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
   exit,
   templates,
@@ -97,14 +97,12 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
   const canVerifyDocuments = usePermissionKey(P.OFFBOARDING_DOCUMENTS_VERIFY);
   const canManageFinance = usePermissionKey(P.OFFBOARDING_FINANCE_MANAGE);
   const canManageOffboarding = usePermissionKey(P.OFFBOARDING_MANAGE);
-
   const canOverrideClearances = usePermissionKey(P.OFFBOARDING_FULL);
   const canApproveManager = usePermissionKey(P.OFFBOARDING_CLEARANCE_MANAGER);
   const canApproveIT = usePermissionKey(P.OFFBOARDING_CLEARANCE_IT);
   const canApproveFinance = usePermissionKey(P.OFFBOARDING_CLEARANCE_FINANCE);
   const canApproveHR = usePermissionKey(P.OFFBOARDING_CLEARANCE_HR);
   const canApproveAdmin = usePermissionKey(P.OFFBOARDING_CLEARANCE_ADMIN);
-
   const clearanceApprovalByDepartment: Record<string, boolean> = {
     Manager: canApproveManager,
     IT: canApproveIT,
@@ -112,13 +110,11 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
     HR: canApproveHR,
     Admin: canApproveAdmin,
   };
-
   const [completedChecks, setCompletedChecks] = useState<
     Record<string, Record<string, boolean>>
   >({});
   const [deptComments, setDeptComments] = useState<Record<string, string>>({});
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
-
+  const selectedTemplate = useRef<string>("");
   const toggleCheck = (dept: string, item: string) => {
     setCompletedChecks((prev) => ({
       ...prev,
@@ -128,22 +124,31 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
       },
     }));
   };
-
   const handleApproveClick = (dept: string) => {
     const comment = deptComments[dept] || "";
     const approverName = user?.name || user?.role || "System Admin";
     onApproveClearance(dept, approverName, comment);
-    setDeptComments((prev) => ({ ...prev, [dept]: "" }));
+    setDeptComments((prev) => ({
+      ...prev,
+      [dept]: "",
+    }));
   };
-
   return (
     <div
       className="fixed inset-0 z-[2000] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.98,
+          y: 10,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
         className="w-full max-w-6xl max-h-[90vh] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
@@ -202,7 +207,9 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
               </svg>
               <span
                 className="text-[12px] font-black"
-                style={{ color: colors.text }}
+                style={{
+                  color: colors.text,
+                }}
               >
                 {exit.progress}%
               </span>
@@ -270,14 +277,15 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                       matching.length > 0
                         ? matching
                         : templates.filter((t) => t.status === "active");
-
                     return (
                       <div className="space-y-3">
                         <select
                           id="assign-offboarding-template-select"
                           className="w-full rounded-xl border border-border bg-background px-4 py-3 text-xs font-bold outline-none focus:border-[#00B87C] transition-all"
                           defaultValue=""
-                          onChange={(e) => setSelectedTemplate(e.target.value)}
+                          onChange={(e) =>
+                            (selectedTemplate.current = e.target.value)
+                          }
                         >
                           <option value="">Select template...</option>
                           {matching.length > 0 && (
@@ -311,7 +319,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
 
                         <button
                           onClick={() => {
-                            const tplId = selectedTemplate;
+                            const tplId = selectedTemplate.current;
                             if (!tplId) {
                               showToast(
                                 "Select Template",
@@ -345,13 +353,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                   <div key={item.label} className="flex gap-3">
                     <div className="flex flex-col items-center">
                       <div
-                        className={`w-5 h-5 rounded-full flex items-center justify-center border-2 shrink-0 ${
-                          item.status === "done"
-                            ? "bg-[#00B87C] border-[#00B87C]"
-                            : item.status === "active"
-                              ? "bg-[#CCFBF1] border-[#14B8A6]"
-                              : "bg-card border-border"
-                        }`}
+                        className={`w-5 h-5 rounded-full flex items-center justify-center border-2 shrink-0 ${item.status === "done" ? "bg-[#00B87C] border-[#00B87C]" : item.status === "active" ? "bg-[#CCFBF1] border-[#14B8A6]" : "bg-card border-border"}`}
                       >
                         {item.status === "done" ? (
                           <Check size={10} className="text-white" />
@@ -367,13 +369,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     </div>
                     <div className="pb-5">
                       <p
-                        className={`text-[12px] font-bold ${
-                          item.status === "done"
-                            ? "text-[#00B87C]"
-                            : item.status === "active"
-                              ? "text-[#14B8A6]"
-                              : "text-muted-foreground"
-                        }`}
+                        className={`text-[12px] font-bold ${item.status === "done" ? "text-[#00B87C]" : item.status === "active" ? "text-[#14B8A6]" : "text-muted-foreground"}`}
                       >
                         {item.label}
                       </p>
@@ -402,34 +398,34 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                       permission: CLEARANCE_CONFIGS[c.dept]?.permission || "",
                       checklist: clearanceChecklist,
                     };
-
                     const isCleared = c.status === "cleared";
                     const canApprove =
                       !isCleared &&
                       (canOverrideClearances ||
                         clearanceApprovalByDepartment[c.dept] === true);
-
                     const allChecked = config.checklist.every(
                       (item) => completedChecks[c.dept]?.[item] === true,
                     );
-
                     return (
                       <div
                         key={c.dept}
-                        className={`p-4 rounded-2xl border transition-all ${
-                          isCleared
-                            ? "border-[#00B87C]/20 bg-[#F0FDF4]/30 dark:bg-emerald-950/5"
-                            : "border-border/60 bg-muted/20"
-                        }`}
+                        className={`p-4 rounded-2xl border transition-all ${isCleared ? "border-[#00B87C]/20 bg-[#F0FDF4]/30 dark:bg-emerald-950/5" : "border-border/60 bg-muted/20"}`}
                       >
                         {/* Dept Header */}
                         <div className="flex items-center justify-between pb-3 border-b border-border/40 mb-3">
                           <div className="flex items-center gap-2.5">
                             <div
                               className="w-7 h-7 rounded-lg flex items-center justify-center"
-                              style={{ backgroundColor: c.bgColor }}
+                              style={{
+                                backgroundColor: c.bgColor,
+                              }}
                             >
-                              <IconComp size={14} style={{ color: c.color }} />
+                              <IconComp
+                                size={14}
+                                style={{
+                                  color: c.color,
+                                }}
+                              />
                             </div>
                             <div>
                               <p className="text-[13px] font-black text-foreground">
@@ -456,13 +452,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                             return (
                               <label
                                 key={item}
-                                className={`flex items-start gap-2.5 text-[11px] font-bold ${
-                                  isCleared
-                                    ? "text-muted-foreground"
-                                    : canApprove
-                                      ? "text-foreground cursor-pointer"
-                                      : "text-muted-foreground"
-                                }`}
+                                className={`flex items-start gap-2.5 text-[11px] font-bold ${isCleared ? "text-muted-foreground" : canApprove ? "text-foreground cursor-pointer" : "text-muted-foreground"}`}
                               >
                                 <input
                                   type="checkbox"
@@ -778,7 +768,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
             </div>
           </div>
         )}
-      </motion.div>
+      </m.div>
     </div>
   );
 };

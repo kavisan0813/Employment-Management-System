@@ -32,12 +32,13 @@ export default function EmployeeHeader({
   return (
     <div className="flex items-center justify-between mb-6">
       <div>
-        <h2 className="text-3xl font-black tracking-tight" style={{ color: "var(--foreground)" }}>
+        <h2
+          className="text-3xl font-black tracking-tight"
+          style={{ color: "var(--foreground)" }}
+        >
           {title}
         </h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          {subtitle}
-        </p>
+        <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
       </div>
 
       {canManage && (
@@ -45,7 +46,10 @@ export default function EmployeeHeader({
           <button
             onClick={onImport}
             className="flex items-center gap-2 px-5 py-3 rounded-2xl border font-semibold"
-            style={{ backgroundColor: "var(--secondary)", color: "var(--primary)" }}
+            style={{
+              backgroundColor: "var(--secondary)",
+              color: "var(--primary)",
+            }}
           >
             <Download size={18} style={{ transform: "rotate(180deg)" }} />
             Import Employees

@@ -19,8 +19,8 @@ import {
   MessageSquare,
   ChevronRight,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 interface AppraisalEmployee {
   id: string;
   name: string;
@@ -38,7 +38,6 @@ interface AppraisalEmployee {
   revisedSalary: number;
   status: "Pending" | "Approved" | "Rejected";
 }
-
 const MOCK_APPRAISALS: AppraisalEmployee[] = [
   {
     id: "EMP-001",
@@ -126,7 +125,6 @@ const MOCK_APPRAISALS: AppraisalEmployee[] = [
     status: "Approved",
   },
 ];
-
 export function FinanceIncrement() {
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState(location.state?.search || "");
@@ -150,7 +148,6 @@ export function FinanceIncrement() {
   const [rejectReason, setRejectReason] = useState("");
   const [showExportModal, setShowExportModal] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-
   const handleApprove = () => {
     if (approvingEmployee) {
       showToast(
@@ -161,7 +158,6 @@ export function FinanceIncrement() {
       setApprovingEmployee(null);
     }
   };
-
   const handleReject = () => {
     if (rejectingEmployee) {
       showToast(
@@ -173,11 +169,9 @@ export function FinanceIncrement() {
       setRejectReason("");
     }
   };
-
   const handleExport = () => {
     setShowExportModal(true);
   };
-
   const executeExport = () => {
     setIsExporting(true);
     // Simulate network delay
@@ -190,7 +184,9 @@ export function FinanceIncrement() {
           `${emp.id},"${emp.name}",${emp.department},${emp.currentSalary},${emp.recommendedIncrement},${emp.revisedSalary},${emp.status}`,
       );
       const csvContent = headers.concat(rows).join("\n");
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob([csvContent], {
+        type: "text/csv;charset=utf-8;",
+      });
       const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
@@ -199,7 +195,6 @@ export function FinanceIncrement() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
       setIsExporting(false);
       setShowExportModal(false);
       showToast(
@@ -209,7 +204,6 @@ export function FinanceIncrement() {
       );
     }, 1500);
   };
-
   const filteredAppraisals = MOCK_APPRAISALS.filter((emp) => {
     const matchesSearch =
       emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -234,7 +228,6 @@ export function FinanceIncrement() {
       matchesSearch && matchesDept && matchesIncrement && matchesPerformance
     );
   });
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
       {/* PAGE HEADER */}
@@ -444,11 +437,19 @@ export function FinanceIncrement() {
             </thead>
             <tbody className="divide-y divide-border">
               {filteredAppraisals.map((emp, i) => (
-                <motion.tr
+                <m.tr
                   key={emp.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
+                  initial={{
+                    opacity: 0,
+                    y: 10,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay: i * 0.05,
+                  }}
                   className="group hover:bg-muted/30 transition-all h-[72px] cursor-pointer"
                   onClick={() => setDetailedEmployee(emp)}
                 >
@@ -456,7 +457,9 @@ export function FinanceIncrement() {
                     <div className="flex items-center gap-3">
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold"
-                        style={{ backgroundColor: emp.avatarColor }}
+                        style={{
+                          backgroundColor: emp.avatarColor,
+                        }}
                       >
                         {emp.name
                           .split(" ")
@@ -473,13 +476,7 @@ export function FinanceIncrement() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-lg text-[11px] font-black ${
-                        emp.attendancePct >= 95
-                          ? "bg-emerald-500/10 text-emerald-600"
-                          : emp.attendancePct >= 90
-                            ? "bg-blue-500/10 text-blue-600"
-                            : "bg-rose-500/10 text-rose-600"
-                      }`}
+                      className={`px-2 py-1 rounded-lg text-[11px] font-black ${emp.attendancePct >= 95 ? "bg-emerald-500/10 text-emerald-600" : emp.attendancePct >= 90 ? "bg-blue-500/10 text-blue-600" : "bg-rose-500/10 text-rose-600"}`}
                     >
                       {emp.attendancePct}%
                     </span>
@@ -500,7 +497,9 @@ export function FinanceIncrement() {
                       <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                         <div
                           className="h-full bg-emerald-500 rounded-full"
-                          style={{ width: `${emp.performanceScore}%` }}
+                          style={{
+                            width: `${emp.performanceScore}%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -575,7 +574,7 @@ export function FinanceIncrement() {
                       )}
                     </div>
                   </td>
-                </motion.tr>
+                </m.tr>
               ))}
             </tbody>
           </table>
@@ -586,17 +585,35 @@ export function FinanceIncrement() {
       <AnimatePresence>
         {approvingEmployee && (
           <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setApprovingEmployee(null)}
-            ></motion.div>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            ></m.div>
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[460px] rounded-[32px] overflow-hidden shadow-2xl"
             >
               <div className="p-8 pb-0 flex flex-col items-center text-center">
@@ -611,7 +628,9 @@ export function FinanceIncrement() {
                 <div className="w-full mt-6 p-4 rounded-2xl bg-muted/30 border border-border flex items-center gap-4 text-left">
                   <div
                     className="w-12 h-12 rounded-full flex items-center justify-center text-white text-[12px] font-black"
-                    style={{ backgroundColor: approvingEmployee.avatarColor }}
+                    style={{
+                      backgroundColor: approvingEmployee.avatarColor,
+                    }}
                   >
                     {approvingEmployee.name
                       .split(" ")
@@ -729,7 +748,7 @@ export function FinanceIncrement() {
                   Confirm & Approve
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -738,17 +757,35 @@ export function FinanceIncrement() {
       <AnimatePresence>
         {rejectingEmployee && (
           <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setRejectingEmployee(null)}
-            ></motion.div>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            ></m.div>
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[460px] rounded-[32px] overflow-hidden shadow-2xl"
             >
               <div className="p-8 pb-0 flex flex-col items-center text-center">
@@ -799,7 +836,7 @@ export function FinanceIncrement() {
                   Reject
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -808,26 +845,46 @@ export function FinanceIncrement() {
       <AnimatePresence>
         {detailedEmployee && (
           <div className="fixed inset-0 z-[5000] flex justify-end">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              transition={{
+                duration: 0.3,
+              }}
               onClick={() => setDetailedEmployee(null)}
               className="absolute inset-0 bg-black/45 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            <m.div
+              initial={{
+                x: "100%",
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: "100%",
+              }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 200,
+              }}
               className="relative w-full max-w-[440px] bg-card h-full shadow-2xl border-l border-border flex flex-col"
             >
               <div className="p-6 border-b border-border flex items-center justify-between bg-muted/5">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center text-[14px] font-black text-white"
-                    style={{ backgroundColor: detailedEmployee.avatarColor }}
+                    style={{
+                      backgroundColor: detailedEmployee.avatarColor,
+                    }}
                   >
                     {detailedEmployee.name
                       .split(" ")
@@ -920,7 +977,7 @@ export function FinanceIncrement() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -929,17 +986,35 @@ export function FinanceIncrement() {
       <AnimatePresence>
         {showExportModal && (
           <div className="fixed inset-0 z-[2200] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => !isExporting && setShowExportModal(false)}
-            ></motion.div>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            ></m.div>
+            <m.div
+              initial={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                scale: 0.9,
+                opacity: 0,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[420px] rounded-[32px] overflow-hidden shadow-2xl"
             >
               <div className="p-8 pb-0 flex flex-col items-center text-center">
@@ -959,10 +1034,17 @@ export function FinanceIncrement() {
                       Generating File...
                     </p>
                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ x: "-100%" }}
-                        animate={{ x: "0%" }}
-                        transition={{ duration: 1.5, ease: "linear" }}
+                      <m.div
+                        initial={{
+                          x: "-100%",
+                        }}
+                        animate={{
+                          x: "0%",
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          ease: "linear",
+                        }}
                         className="h-full bg-[#00B87C] rounded-full w-full"
                       />
                     </div>
@@ -986,14 +1068,13 @@ export function FinanceIncrement() {
                   {isExporting ? "Exporting..." : "Download CSV"}
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
     </div>
   );
 }
-
 function KPICard({
   title,
   value,
@@ -1006,36 +1087,61 @@ function KPICard({
   icon: React.ElementType;
 }) {
   const colors = {
-    amber: { text: "#D97706", bg: "#FEF3C7", iconColor: "#D97706" },
-    green: { text: "#00B87C", bg: "#DCFCE7", iconColor: "#10B981" },
-    purple: { text: "#8B5CF6", bg: "#EDE9FE", iconColor: "#8B5CF6" },
-    dark: { text: "#111827", bg: "#F3F4F6", iconColor: "#64748B" },
+    amber: {
+      text: "#D97706",
+      bg: "#FEF3C7",
+      iconColor: "#D97706",
+    },
+    green: {
+      text: "#00B87C",
+      bg: "#DCFCE7",
+      iconColor: "#10B981",
+    },
+    purple: {
+      text: "#8B5CF6",
+      bg: "#EDE9FE",
+      iconColor: "#8B5CF6",
+    },
+    dark: {
+      text: "#111827",
+      bg: "#F3F4F6",
+      iconColor: "#64748B",
+    },
   };
-
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
+    <m.div
+      whileHover={{
+        y: -5,
+      }}
       className="p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group"
     >
       <div
         className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-        style={{ backgroundColor: colors[color].bg }}
+        style={{
+          backgroundColor: colors[color].bg,
+        }}
       >
-        <Icon size={20} style={{ color: colors[color].iconColor }} />
+        <Icon
+          size={20}
+          style={{
+            color: colors[color].iconColor,
+          }}
+        />
       </div>
       <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[1.5px] mb-1.5">
         {title}
       </p>
       <h3
         className="text-2xl font-black tracking-tighter"
-        style={{ color: colors[color].text }}
+        style={{
+          color: colors[color].text,
+        }}
       >
         {value}
       </h3>
-    </motion.div>
+    </m.div>
   );
 }
-
 function FilterSelect({
   label,
   options = ["Option 1", "Option 2"],
@@ -1050,7 +1156,6 @@ function FilterSelect({
   const [internalValue, setInternalValue] = useState<string | null>(null);
   const value = externalValue ?? internalValue ?? label;
   const onChange = externalOnChange ?? setInternalValue;
-
   return (
     <div className="relative group">
       <select
@@ -1072,14 +1177,12 @@ function FilterSelect({
     </div>
   );
 }
-
 function StatusChip({ status }: { status: AppraisalEmployee["status"] }) {
   const styles = {
     Approved: "bg-[#F0FDF4] text-[#00B87C] border-[#00B87C]/20",
     Pending: "bg-[#FFFBEB] text-[#D97706] border-[#FBBF24]/20",
     Rejected: "bg-[#FEF2F2] text-[#EF4444] border-[#EF4444]/20",
   };
-
   return (
     <span
       className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border flex items-center justify-center w-fit gap-1.5 ${styles[status]}`}

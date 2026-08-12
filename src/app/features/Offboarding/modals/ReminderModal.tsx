@@ -1,27 +1,30 @@
 import React, { useState } from "react";
-import { motion } from "motion/react";
 import { Send, Mail, X } from "lucide-react";
-
+import * as m from "motion/react-m";
 interface ReminderModalProps {
   exitName: string;
   onClose: () => void;
 }
-
 export const ReminderModal: React.FC<ReminderModalProps> = ({
   exitName,
   onClose,
 }) => {
   const [sent, setSent] = useState(false);
-
   if (sent) {
     return (
       <div
         className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+        <m.div
+          initial={{
+            opacity: 0,
+            scale: 0.95,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
           className="w-full max-w-sm bg-card rounded-[32px] p-8 text-center shadow-2xl border border-border"
           onClick={(e) => e.stopPropagation()}
         >
@@ -40,19 +43,24 @@ export const ReminderModal: React.FC<ReminderModalProps> = ({
           >
             Done
           </button>
-        </motion.div>
+        </m.div>
       </div>
     );
   }
-
   return (
     <div
       className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
         className="w-full max-w-md bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -121,7 +129,7 @@ export const ReminderModal: React.FC<ReminderModalProps> = ({
             <Send size={14} /> Send Reminder
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 };

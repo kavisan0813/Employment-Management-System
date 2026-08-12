@@ -25,12 +25,11 @@ import {
   EyeOff,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { useAuth } from "../../context/AuthContext";
 import { DocumentPreviewContent } from "./EmployeeDocuments";
-
+import * as m from "motion/react-m";
 const TABS = ["Personal Info", "Onboarding", "Documents", "Assets", "Expenses"];
-
 function ToggleItem({
   label,
   value,
@@ -47,38 +46,30 @@ function ToggleItem({
       </span>
       <button
         onClick={onToggle}
-        className={`w-11 h-6 rounded-full transition-all relative border-2 ${value
-          ? "bg-primary/10 border-primary"
-          : "bg-secondary/50 border-border"
-          }`}
+        className={`w-11 h-6 rounded-full transition-all relative border-2 ${value ? "bg-primary/10 border-primary" : "bg-secondary/50 border-border"}`}
       >
         <div
-          className={`absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full transition-all ${value ? "right-1 bg-primary" : "left-1 bg-muted-foreground/40"
-            }`}
+          className={`absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full transition-all ${value ? "right-1 bg-primary" : "left-1 bg-muted-foreground/40"}`}
         />
       </button>
     </div>
   );
 }
-
 export function EmployeeSelfProfile() {
   const { user, login } = useAuth();
   const [activeTab, setActiveTab] = useState("Personal Info");
   const [isEditing, setIsEditing] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-
   const [fullName, setFullName] = useState(() => user?.name || "Priya Sharma");
   const [email, setEmail] = useState(
     () => user?.email || "priya.sharma@gmail.com",
   );
-
   useEffect(() => {
     if (user) {
       setFullName(user.name);
       setEmail(user.email);
     }
   }, [user]);
-
   const avatarInitials =
     fullName
       .split(" ")
@@ -88,7 +79,6 @@ export function EmployeeSelfProfile() {
       .slice(0, 2) || "PS";
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
     if (user?.email) {
       const saved = localStorage.getItem(`viyan_avatar_${user.email}`);
@@ -97,7 +87,6 @@ export function EmployeeSelfProfile() {
       }
     }
   }, [user]);
-
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
@@ -118,7 +107,6 @@ export function EmployeeSelfProfile() {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-
   const handleSave = () => {
     if (user) {
       const updatedUser = {
@@ -134,7 +122,6 @@ export function EmployeeSelfProfile() {
             .slice(0, 2) || "PS",
       };
       login(updatedUser);
-
       try {
         const registeredRaw = localStorage.getItem("viyan_registered_users:v1");
         if (registeredRaw) {
@@ -169,7 +156,6 @@ export function EmployeeSelfProfile() {
         console.log(err);
       }
     }
-
     setIsEditing(false);
     showToast(
       "Profile Updated",
@@ -177,7 +163,6 @@ export function EmployeeSelfProfile() {
       "Your changes have been saved successfully.",
     );
   };
-
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20 text-foreground">
       <AnimatePresence>
@@ -397,10 +382,7 @@ export function EmployeeSelfProfile() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-8 py-3 rounded-[14px] text-[14px] transition-all whitespace-nowrap flex items-center gap-2 ${activeTab === tab
-              ? "bg-secondary text-primary font-black shadow-sm"
-              : "text-muted-foreground font-bold hover:text-foreground hover:bg-background"
-              }`}
+            className={`px-8 py-3 rounded-[14px] text-[14px] transition-all whitespace-nowrap flex items-center gap-2 ${activeTab === tab ? "bg-secondary text-primary font-black shadow-sm" : "text-muted-foreground font-bold hover:text-foreground hover:bg-background"}`}
           >
             {tab}
           </button>
@@ -410,12 +392,23 @@ export function EmployeeSelfProfile() {
       {/* ─── Tab Content ──────────────────────────────────────────── */}
       <div className="min-h-[400px]">
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
           >
             {activeTab === "Personal Info" && (
               <PersonalTab
@@ -469,15 +462,19 @@ export function EmployeeSelfProfile() {
                 </div>
               </div>
             )}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
       {/* ─── Save Bar (Editing Mode) ─────────────────────────────── */}
       {isEditing && (
-        <motion.div
-          initial={{ y: 100 }}
-          animate={{ y: 0 }}
+        <m.div
+          initial={{
+            y: 100,
+          }}
+          animate={{
+            y: 0,
+          }}
           className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-card/40 rounded-2xl border border-border shadow-2xl p-4 flex items-center gap-6 animate-in slide-in-from-bottom-10"
         >
           <p className="text-sm font-bold text-foreground px-4 border-r border-border">
@@ -497,7 +494,7 @@ export function EmployeeSelfProfile() {
               Save Changes
             </button>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </div>
   );
@@ -515,7 +512,6 @@ function Label({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
 interface InputFieldProps {
   label: string;
   value: string;
@@ -525,7 +521,6 @@ interface InputFieldProps {
   isTextarea?: boolean;
   onChange?: (val: string) => void;
 }
-
 function InputField({
   label,
   value,
@@ -540,7 +535,6 @@ function InputField({
   ) => {
     onChange?.(e.target.value);
   };
-
   return (
     <div className="flex flex-col gap-2">
       <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">
@@ -577,7 +571,6 @@ function InputField({
     </div>
   );
 }
-
 interface DropdownFieldProps {
   label: string;
   value: string;
@@ -585,7 +578,6 @@ interface DropdownFieldProps {
   disabled: boolean;
   onChange?: (val: string) => void;
 }
-
 function DropdownField({
   label,
   value,
@@ -596,7 +588,6 @@ function DropdownField({
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange?.(e.target.value);
   };
-
   return (
     <div className="flex flex-col gap-2">
       <label className="text-[11px] font-bold text-emerald-600 dark:text-emerald-500 uppercase tracking-wider ml-1">
@@ -630,7 +621,6 @@ function DropdownField({
     </div>
   );
 }
-
 function PersonalTab({
   isEditing,
   fullName,
@@ -758,9 +748,18 @@ function PersonalTab({
           <Label>LANGUAGES</Label>
           <div className="space-y-4">
             {[
-              { lang: "English", prof: "Native" },
-              { lang: "Hindi", prof: "Fluent" },
-              { lang: "Tamil", prof: "Conversational" },
+              {
+                lang: "English",
+                prof: "Native",
+              },
+              {
+                lang: "Hindi",
+                prof: "Fluent",
+              },
+              {
+                lang: "Tamil",
+                prof: "Conversational",
+              },
             ].map((l) => (
               <div
                 key={l.lang}
@@ -790,22 +789,53 @@ function PersonalTab({
     </div>
   );
 }
-
 export function EmploymentTab() {
   const fields = [
-    { label: "Employee ID", value: "#EMP-0142" },
-    { label: "Designation", value: "Senior Frontend Developer" },
-    { label: "Department", value: "Engineering" },
-    { label: "Manager", value: "Arjun Reddy" },
-    { label: "Employment Type", value: "Full-time" },
-    { label: "Work Mode", value: "Hybrid (Chennai)" },
-    { label: "Location", value: "Chennai, India" },
-    { label: "Joining Date", value: "15-03-2021" },
-    { label: "Probation End Date", value: "15-09-2021" },
-    { label: "Notice Period", value: "60 Days" },
-    { label: "Cost Center", value: "CC-TECH-04" },
+    {
+      label: "Employee ID",
+      value: "#EMP-0142",
+    },
+    {
+      label: "Designation",
+      value: "Senior Frontend Developer",
+    },
+    {
+      label: "Department",
+      value: "Engineering",
+    },
+    {
+      label: "Manager",
+      value: "Arjun Reddy",
+    },
+    {
+      label: "Employment Type",
+      value: "Full-time",
+    },
+    {
+      label: "Work Mode",
+      value: "Hybrid (Chennai)",
+    },
+    {
+      label: "Location",
+      value: "Chennai, India",
+    },
+    {
+      label: "Joining Date",
+      value: "15-03-2021",
+    },
+    {
+      label: "Probation End Date",
+      value: "15-09-2021",
+    },
+    {
+      label: "Notice Period",
+      value: "60 Days",
+    },
+    {
+      label: "Cost Center",
+      value: "CC-TECH-04",
+    },
   ];
-
   return (
     <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
       <div className="flex items-center gap-4 mb-10 p-5 bg-primary/10 rounded-2xl border border-primary/20">
@@ -833,7 +863,6 @@ export function EmploymentTab() {
     </div>
   );
 }
-
 function DocumentsTab() {
   const [viewingDoc, setViewingDoc] = useState<string | null>(null);
   const [replacingDoc, setReplacingDoc] = useState<string | null>(null);
@@ -841,7 +870,6 @@ function DocumentsTab() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const docs = [
     {
       name: "Aadhar Card",
@@ -880,13 +908,11 @@ function DocumentsTab() {
       color: "#6366F1",
     },
   ];
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFileToUpload(e.target.files[0]);
     }
   };
-
   useEffect(() => {
     if (!isUploading) return;
     const interval = setInterval(() => {
@@ -894,7 +920,6 @@ function DocumentsTab() {
     }, 200);
     return () => clearInterval(interval);
   }, [isUploading]);
-
   useEffect(() => {
     if (uploadProgress >= 100 && isUploading) {
       setIsUploading(false);
@@ -907,15 +932,12 @@ function DocumentsTab() {
       );
     }
   }, [uploadProgress, isUploading, replacingDoc]);
-
   const handleReplaceSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!fileToUpload) return;
-
     setIsUploading(true);
     setUploadProgress(0);
   };
-
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -926,15 +948,15 @@ function DocumentsTab() {
           >
             <div className="flex items-start justify-between mb-5">
               <div className="w-11 h-11 rounded-[10px] flex items-center justify-center bg-background group-hover:bg-primary/10 transition-colors shadow-inner">
-                <FileText size={22} style={{ color: doc.color }} />
+                <FileText
+                  size={22}
+                  style={{
+                    color: doc.color,
+                  }}
+                />
               </div>
               <span
-                className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${doc.status === "Verified"
-                  ? "bg-primary/10 text-primary border-primary/20"
-                  : doc.status === "Pending"
-                    ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                    : "bg-blue-500/10 text-blue-600 border-blue-500/20"
-                  }`}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${doc.status === "Verified" ? "bg-primary/10 text-primary border-primary/20" : doc.status === "Pending" ? "bg-amber-500/10 text-amber-600 border-amber-500/20" : "bg-blue-500/10 text-blue-600 border-blue-500/20"}`}
               >
                 {doc.status}
               </span>
@@ -1026,10 +1048,22 @@ function DocumentsTab() {
                 if (!isUploading) setReplacingDoc(null);
               }}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[460px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col"
             >
               <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
@@ -1107,7 +1141,9 @@ function DocumentsTab() {
                     <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
                       <div
                         className="h-full bg-primary transition-all duration-150"
-                        style={{ width: `${uploadProgress}%` }}
+                        style={{
+                          width: `${uploadProgress}%`,
+                        }}
                       />
                     </div>
                   </div>
@@ -1131,14 +1167,13 @@ function DocumentsTab() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
     </>
   );
 }
-
 export function EmergencyTab({ isEditing }: { isEditing: boolean }) {
   return (
     <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
@@ -1168,7 +1203,6 @@ export function EmergencyTab({ isEditing }: { isEditing: boolean }) {
     </div>
   );
 }
-
 export function SettingsTab() {
   const [preferences, setPreferences] = useState({
     email: true,
@@ -1179,17 +1213,14 @@ export function SettingsTab() {
     payslip: true,
     announcements: false,
   });
-
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
-
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showCurrentPw, setShowCurrentPw] = useState(false);
   const [showNewPw, setShowNewPw] = useState(false);
   const [showConfirmPw, setShowConfirmPw] = useState(false);
-
   const handlePasswordUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -1208,7 +1239,6 @@ export function SettingsTab() {
       );
       return;
     }
-
     setShowPasswordModal(false);
     setCurrentPassword("");
     setNewPassword("");
@@ -1219,7 +1249,6 @@ export function SettingsTab() {
       "Your account security credentials have been updated.",
     );
   };
-
   const handleDeactivateConfirm = () => {
     setShowDeactivateModal(false);
     showToast(
@@ -1228,13 +1257,12 @@ export function SettingsTab() {
       "Deactivation request has been sent to HR for verification.",
     );
   };
-
   const toggle = (key: keyof typeof preferences) => {
-    setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
+    setPreferences((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
-
-
-
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-8">
@@ -1356,10 +1384,22 @@ export function SettingsTab() {
               className="absolute inset-0 bg-background/40"
               onClick={() => setShowPasswordModal(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[440px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col p-8 bg-white dark:bg-card"
             >
               <button
@@ -1467,7 +1507,7 @@ export function SettingsTab() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1480,10 +1520,22 @@ export function SettingsTab() {
               className="absolute inset-0 bg-background/40"
               onClick={() => setShowDeactivateModal(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            <m.div
+              initial={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.95,
+                y: 20,
+              }}
               className="relative bg-card w-full max-w-[440px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col p-8 items-center text-center gap-6 bg-white dark:bg-card"
             >
               <button
@@ -1519,7 +1571,7 @@ export function SettingsTab() {
                   Deactivate
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -1531,7 +1583,6 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
   const [currentValue] = useState("+91 98765 43210");
   const [newValue, setNewValue] = useState("");
   const [reason, setReason] = useState("");
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     showToast(
@@ -1541,21 +1592,38 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
     );
     onClose();
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-background/40"
       />
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[550px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col max-h-[90vh]"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
@@ -1696,7 +1764,7 @@ function ProfileUpdateModal({ onClose }: { onClose: () => void }) {
             </div>
           </form>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

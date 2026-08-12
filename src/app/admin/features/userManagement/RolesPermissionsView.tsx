@@ -13,7 +13,8 @@ export default function RolesPermissionsView() {
             Roles & Permissions
           </h1>
           <p className="text-sm text-gray-500 mt-1 font-semibold">
-            Manage system-wide platform users and configure roles and permissions.
+            Manage system-wide platform users and configure roles and
+            permissions.
           </p>
         </div>
       </div>

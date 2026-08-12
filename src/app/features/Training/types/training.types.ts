@@ -1,4 +1,10 @@
-export type TrainingStatus = "Upcoming" | "Ongoing" | "Completed" | "Draft" | "Pending approval" | "Overdue";
+export type TrainingStatus =
+  | "Upcoming"
+  | "Ongoing"
+  | "Completed"
+  | "Draft"
+  | "Pending approval"
+  | "Overdue";
 
 export interface TrainingRecord {
   id: string;
@@ -12,4 +18,12 @@ export interface TrainingRecord {
   status: TrainingStatus;
 }
 
-export type TrainingView = "dashboard" | "trainings" | "calendar" | "my-training" | "library" | "reports" | "settings" | "details";
+export type TrainingView =
+  | "dashboard"
+  | "trainings"
+  | "calendar"
+  | "my-training"
+  | "library"
+  | "reports"
+  | "settings"
+  | "details";

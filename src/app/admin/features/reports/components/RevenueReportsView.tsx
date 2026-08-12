@@ -31,7 +31,7 @@ export function RevenueReportsView() {
     },
   ];
 
-/*   const countryRevenue = [
+  /*   const countryRevenue = [
     { country: "India", revenue: "₹8,00,000", pct: 80 },
     { country: "UAE", revenue: "₹1,00,000", pct: 10 },
     { country: "Singapore", revenue: "₹1,00,000", pct: 10 },
@@ -56,7 +56,6 @@ export function RevenueReportsView() {
             Monitor financial performance and outstanding invoices.
           </p>
         </div>
-        
       </div>
 
       <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
@@ -159,7 +158,7 @@ export function RevenueReportsView() {
 
         {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Country Revenue */}
-      {/*   <div className="border border-sky-100 rounded-xl p-5 bg-sky-50/20 space-y-3">
+        {/*   <div className="border border-sky-100 rounded-xl p-5 bg-sky-50/20 space-y-3">
           <h4 className="text-sm font-semibold text-sky-900 uppercase">
             Country Revenue
           </h4>
@@ -179,7 +178,7 @@ export function RevenueReportsView() {
         </div> */}
 
         {/* Invoices */}
-       {/*  <div className="border border-rose-100 rounded-xl p-5 bg-rose-50/20 space-y-3">
+        {/*  <div className="border border-rose-100 rounded-xl p-5 bg-rose-50/20 space-y-3">
           <h4 className="text-sm font-semibold text-rose-900 uppercase">
             Outstanding Invoices
           </h4>
@@ -212,7 +211,5 @@ export function RevenueReportsView() {
         </div> */}
       </div>
     </div>
-
-
   );
 }

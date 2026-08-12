@@ -16,8 +16,12 @@ interface EmployeeListProps {
 }
 
 export function EmployeeList({
-  filteredList, setSelectedId,
-  searchQuery, setSearchQuery, filterPill, setFilterPill,
+  filteredList,
+  setSelectedId,
+  searchQuery,
+  setSearchQuery,
+  filterPill,
+  setFilterPill,
 }: EmployeeListProps) {
   return (
     <div className="w-full bg-card border border-border rounded-2xl shadow-sm overflow-hidden h-[calc(100vh-340px)] flex flex-col transition-all duration-300">
@@ -32,7 +36,10 @@ export function EmployeeList({
         </div>
         <div className="relative mb-3 flex gap-4">
           <div className="relative flex-1">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search
+              size={14}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
             <input
               type="text"
               placeholder="Search new hires..."
@@ -42,11 +49,11 @@ export function EmployeeList({
             />
           </div>
           <div className="flex items-center gap-2">
-            {([
+            {[
               { key: "all" as const, label: "All" },
               { key: "week" as const, label: "This Week" },
               { key: "month" as const, label: "This Month" },
-            ]).map((p) => (
+            ].map((p) => (
               <button
                 key={p.key}
                 onClick={() => setFilterPill(p.key)}
@@ -62,12 +69,24 @@ export function EmployeeList({
         <table className="w-full text-left border-collapse table-fixed">
           <thead className="bg-muted/30 sticky top-0 z-10">
             <tr>
-              <th className="w-[25%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">Employee</th>
-              <th className="w-[15%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">Joining Date</th>
-              <th className="w-[15%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">Department</th>
-              <th className="w-[20%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">Designation</th>
-              <th className="w-[15%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">Reporting Manager</th>
-              <th className="w-[10%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border text-center">Status</th>
+              <th className="w-[25%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">
+                Employee
+              </th>
+              <th className="w-[15%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">
+                Joining Date
+              </th>
+              <th className="w-[15%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">
+                Department
+              </th>
+              <th className="w-[20%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">
+                Designation
+              </th>
+              <th className="w-[15%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border">
+                Reporting Manager
+              </th>
+              <th className="w-[10%] px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border text-center">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -86,24 +105,32 @@ export function EmployeeList({
                       {nh.initials}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[13px] font-bold text-foreground truncate group-hover:text-[#00B87C] transition-colors">{nh.name}</p>
+                      <p className="text-[13px] font-bold text-foreground truncate group-hover:text-[#00B87C] transition-colors">
+                        {nh.name}
+                      </p>
                     </div>
                   </div>
                 </td>
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-1.5 text-muted-foreground">
                     <Calendar size={12} className="shrink-0" />
-                    <span className="text-[12px] font-medium truncate">{formatDate(nh.joiningDate)}</span>
+                    <span className="text-[12px] font-medium truncate">
+                      {formatDate(nh.joiningDate)}
+                    </span>
                   </div>
                 </td>
                 <td className="px-5 py-3">
                   <DepartmentBadge dept={nh.dept} color={nh.deptColor} />
                 </td>
                 <td className="px-5 py-3">
-                  <p className="text-[12px] font-medium text-foreground truncate">{nh.role}</p>
+                  <p className="text-[12px] font-medium text-foreground truncate">
+                    {nh.role}
+                  </p>
                 </td>
                 <td className="px-5 py-3">
-                  <p className="text-[12px] font-medium text-muted-foreground truncate">{nh.manager}</p>
+                  <p className="text-[12px] font-medium text-muted-foreground truncate">
+                    {nh.manager}
+                  </p>
                 </td>
                 <td className="px-5 py-3 text-center">
                   <div className="flex items-center justify-center gap-2">
@@ -116,7 +143,9 @@ export function EmployeeList({
             {filteredList.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-5 py-12 text-center">
-                  <p className="text-[13px] text-muted-foreground">No employees found matching the criteria.</p>
+                  <p className="text-[13px] text-muted-foreground">
+                    No employees found matching the criteria.
+                  </p>
                 </td>
               </tr>
             )}

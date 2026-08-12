@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { motion } from "motion/react";
 import { LogOut, X, Search, Calendar, CheckCircle2 } from "lucide-react";
 import { ExitType } from "../types/offboarding.types";
 import { showToast } from "../../../components/workflow/ToastNotification";
 
 // Local Active Employees mockup for the modal list
+import * as m from "motion/react-m";
 const ACTIVE_EMPLOYEES = [
   {
     id: "ae1",
@@ -12,9 +12,24 @@ const ACTIVE_EMPLOYEES = [
     role: "Product Manager",
     dept: "Product",
   },
-  { id: "ae2", name: "Neha Sen", role: "Senior HR Specialist", dept: "HR" },
-  { id: "ae3", name: "Kunal Kapoor", role: "Data Engineer", dept: "Analytics" },
-  { id: "ae4", name: "Ananya Roy", role: "Content Writer", dept: "Marketing" },
+  {
+    id: "ae2",
+    name: "Neha Sen",
+    role: "Senior HR Specialist",
+    dept: "HR",
+  },
+  {
+    id: "ae3",
+    name: "Kunal Kapoor",
+    role: "Data Engineer",
+    dept: "Analytics",
+  },
+  {
+    id: "ae4",
+    name: "Ananya Roy",
+    role: "Content Writer",
+    dept: "Marketing",
+  },
   {
     id: "ae5",
     name: "Amit Goel",
@@ -22,7 +37,6 @@ const ACTIVE_EMPLOYEES = [
     dept: "IT",
   },
 ];
-
 interface InitiateExitModalProps {
   onClose: () => void;
   onInitiate: (
@@ -32,20 +46,17 @@ interface InitiateExitModalProps {
     noticeDays: number,
   ) => void;
 }
-
 export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
   onClose,
   onInitiate,
 }) => {
   const [exitType, setExitType] = useState<ExitType>("Resignation");
   const [step, setStep] = useState<"form" | "preview" | "success">("form");
-
   const [empName, setEmpName] = useState("");
   const [lwdDate, setLwdDate] = useState("");
   const [resDate, setResDate] = useState("2026-04-06");
   const [noticeDays, setNoticeDays] = useState(30);
   const [hrOwner, setHrOwner] = useState("");
-
   const exitTypes: ExitType[] = [
     "Resignation",
     "Retirement",
@@ -63,16 +74,21 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
     "Education",
     "Other",
   ];
-
   if (step === "success") {
     return (
       <div
         className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+        <m.div
+          initial={{
+            opacity: 0,
+            scale: 0.95,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
           className="w-full max-w-md bg-card rounded-[32px] p-10 text-center shadow-2xl border border-border"
           onClick={(e) => e.stopPropagation()}
         >
@@ -91,19 +107,26 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
           >
             Done
           </button>
-        </motion.div>
+        </m.div>
       </div>
     );
   }
-
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
         className="w-full max-w-[520px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -187,11 +210,7 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
                 <button
                   key={t}
                   onClick={() => setExitType(t)}
-                  className={`px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all border ${
-                    exitType === t
-                      ? "bg-[#00B87C] text-white border-[#00B87C]"
-                      : "bg-card text-muted-foreground border-border hover:border-[#00B87C]/30"
-                  }`}
+                  className={`px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all border ${exitType === t ? "bg-[#00B87C] text-white border-[#00B87C]" : "bg-card text-muted-foreground border-border hover:border-[#00B87C]/30"}`}
                 >
                   {t}
                 </button>
@@ -245,7 +264,13 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
             <input
               type="number"
               value={noticeDays}
-              onChange={(e) => setNoticeDays((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0)}
+              onChange={(e) =>
+                setNoticeDays(
+                  (e.target.value === "" || isNaN(parseInt(e.target.value))
+                    ? undefined
+                    : parseInt(e.target.value)) || 0,
+                )
+              }
               className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
             />
           </div>
@@ -311,7 +336,10 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
                   label: "Employee (confirmation email)",
                   defaultChecked: true,
                 },
-                { label: "Direct Manager", defaultChecked: true },
+                {
+                  label: "Direct Manager",
+                  defaultChecked: true,
+                },
                 {
                   label: "IT Team (access deactivation reminder)",
                   defaultChecked: true,
@@ -320,7 +348,10 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
                   label: "Finance (F&F settlement kickoff)",
                   defaultChecked: true,
                 },
-                { label: "All Department Heads", defaultChecked: false },
+                {
+                  label: "All Department Heads",
+                  defaultChecked: false,
+                },
               ].map((item) => (
                 <label
                   key={item.label}
@@ -374,7 +405,7 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
             </button>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 };

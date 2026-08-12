@@ -1,4 +1,4 @@
-import React, { lazy, useState, useMemo } from "react";
+import React, { lazy, useState, useMemo, useRef } from "react";
 import {
   Database,
   Plus,
@@ -11,22 +11,81 @@ import {
   Filter,
   Send,
 } from "lucide-react";
-const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
-const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
-const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
-const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
-const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-const LineChart = lazy(() => import("recharts").then(m => ({ default: m.LineChart })));
-const Line = lazy(() => import("recharts").then(m => ({ default: m.Line })));
-const Legend = lazy(() => import("recharts").then(m => ({ default: m.Legend })));
-
+const AreaChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.AreaChart,
+  })),
+);
+const Area = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Area,
+  })),
+);
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.XAxis,
+  })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.YAxis,
+  })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.CartesianGrid,
+  })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Tooltip,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const BarChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.BarChart,
+  })),
+);
+const Bar = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Bar,
+  })),
+);
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PieChart,
+  })),
+);
+const Pie = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Pie,
+  })),
+);
+const Cell = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Cell,
+  })),
+);
+const LineChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.LineChart,
+  })),
+);
+const Line = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Line,
+  })),
+);
+const Legend = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Legend,
+  })),
+);
 import { showToast } from "../../../components/workflow/ToastNotification";
 
 // Constants & Types
@@ -58,20 +117,17 @@ const CHART_COLORS = [
   "#EC4899",
   "#0EA5E9",
 ];
-
 export interface ReportData {
   name: string;
   category: string;
   dims: string[];
   meas: string[];
 }
-
 export interface FinanceCustomBuilderProps {
   onSaveReport: (reportData: ReportData) => void;
   onExportTriggered: () => void;
   onEmailTriggered: () => void;
 }
-
 export function FinanceCustomBuilder({
   onSaveReport,
   onExportTriggered,
@@ -97,7 +153,7 @@ export function FinanceCustomBuilder({
   });
 
   // State: Drag & Drop
-  const [draggedItem, setDraggedItem] = useState<{
+  const draggedItem = useRef<{
     type: "dim" | "meas";
     id: string;
   } | null>(null);
@@ -118,28 +174,29 @@ export function FinanceCustomBuilder({
       setIsGenerated(false);
     }
   };
-
   const handleAddMeas = (meas: string) => {
     if (!selectedMeas.includes(meas)) {
       setSelectedMeas([...selectedMeas, meas]);
-      setMeasAggregations((prev) => ({ ...prev, [meas]: "SUM" }));
+      setMeasAggregations((prev) => ({
+        ...prev,
+        [meas]: "SUM",
+      }));
       setIsGenerated(false);
     }
   };
-
   const handleRemoveDim = (dim: string) => {
     setSelectedDims(selectedDims.filter((d) => d !== dim));
     setIsGenerated(false);
   };
-
   const handleRemoveMeas = (meas: string) => {
     setSelectedMeas(selectedMeas.filter((m) => m !== meas));
-    const newAggs = { ...measAggregations };
+    const newAggs = {
+      ...measAggregations,
+    };
     delete newAggs[meas];
     setMeasAggregations(newAggs);
     setIsGenerated(false);
   };
-
   const handleGenerate = () => {
     if (selectedDims.length === 0 || selectedMeas.length === 0) {
       showToast(
@@ -156,7 +213,6 @@ export function FinanceCustomBuilder({
       "Your custom report has been generated successfully.",
     );
   };
-
   const handleSaveSubmit = () => {
     if (!saveName.trim()) {
       showToast("Validation Error", "error", "Please provide a report name.");
@@ -176,7 +232,6 @@ export function FinanceCustomBuilder({
     );
     setSaveName("");
   };
-
   const handleEmailSubmit = () => {
     setShowEmailModal(false);
     showToast(
@@ -192,13 +247,14 @@ export function FinanceCustomBuilder({
     type: "dim" | "meas",
     item: string,
   ) => {
-    setDraggedItem({ type, id: item });
+    draggedItem.current = {
+      type,
+      id: item,
+    };
   };
-
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
-
   const handleDrop = (
     e: React.DragEvent,
     type: "dim" | "meas",
@@ -206,28 +262,27 @@ export function FinanceCustomBuilder({
   ) => {
     e.preventDefault();
     if (
-      !draggedItem ||
-      draggedItem.type !== type ||
-      draggedItem.id === targetItem
+      !draggedItem.current ||
+      draggedItem.current.type !== type ||
+      draggedItem.current.id === targetItem
     )
       return;
-
     if (type === "dim") {
       const newList = [...selectedDims];
-      const fromIndex = newList.indexOf(draggedItem.id);
+      const fromIndex = newList.indexOf(draggedItem.current.id);
       const toIndex = newList.indexOf(targetItem);
       newList.splice(fromIndex, 1);
-      newList.splice(toIndex, 0, draggedItem.id);
+      newList.splice(toIndex, 0, draggedItem.current.id);
       setSelectedDims(newList);
     } else {
       const newList = [...selectedMeas];
-      const fromIndex = newList.indexOf(draggedItem.id);
+      const fromIndex = newList.indexOf(draggedItem.current.id);
       const toIndex = newList.indexOf(targetItem);
       newList.splice(fromIndex, 1);
-      newList.splice(toIndex, 0, draggedItem.id);
+      newList.splice(toIndex, 0, draggedItem.current.id);
       setSelectedMeas(newList);
     }
-    setDraggedItem(null);
+    draggedItem.current = null;
     setIsGenerated(false);
   };
 
@@ -244,7 +299,10 @@ export function FinanceCustomBuilder({
       "Operations",
     ];
     return bases.map((base, idx) => {
-      const obj: Record<string, string | number> = { id: idx, [groupBy]: base };
+      const obj: Record<string, string | number> = {
+        id: idx,
+        [groupBy]: base,
+      };
       // Add mock strings for dims
       selectedDims.forEach((dim) => {
         if (dim !== groupBy) obj[dim] = `${dim} ${idx + 1}`;
@@ -279,11 +337,7 @@ export function FinanceCustomBuilder({
   ) => (
     <div
       onClick={!isAdded ? onAdd : undefined}
-      className={`group flex items-center justify-between p-3 rounded-xl border transition-all ${
-        isAdded
-          ? `bg-${colorClass}-500/10 border-${colorClass}-500/30 text-foreground cursor-default`
-          : "bg-card border-border hover:border-primary/50 cursor-pointer"
-      }`}
+      className={`group flex items-center justify-between p-3 rounded-xl border transition-all ${isAdded ? `bg-${colorClass}-500/10 border-${colorClass}-500/30 text-foreground cursor-default` : "bg-card border-border hover:border-primary/50 cursor-pointer"}`}
     >
       <span className="text-[13px] font-bold text-foreground">{name}</span>
       {isAdded ? (
@@ -299,7 +353,6 @@ export function FinanceCustomBuilder({
       )}
     </div>
   );
-
   return (
     <div className="flex flex-col lg:flex-row gap-6 h-full min-h-[600px]">
       {/* Field Picker */}
@@ -318,6 +371,7 @@ export function FinanceCustomBuilder({
               {ALL_DIMENSIONS.map((dim) =>
                 renderFieldItem(
                   dim,
+
                   selectedDims.includes(dim),
                   () => handleAddDim(dim),
                   "blue",
@@ -549,11 +603,7 @@ export function FinanceCustomBuilder({
                   <button
                     key={tab}
                     onClick={() => setPreviewMode(tab)}
-                    className={`py-4 text-[13px] font-black uppercase tracking-widest relative ${
-                      previewMode === tab
-                        ? "text-primary"
-                        : "text-muted-foreground hover:text-foreground"
-                    } transition-colors`}
+                    className={`py-4 text-[13px] font-black uppercase tracking-widest relative ${previewMode === tab ? "text-primary" : "text-muted-foreground hover:text-foreground"} transition-colors`}
                   >
                     {tab} Preview
                     {previewMode === tab && (
@@ -676,18 +726,26 @@ export function FinanceCustomBuilder({
                         />
                         <XAxis
                           dataKey={groupBy}
-                          tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                          tick={{
+                            fill: "#9CA3AF",
+                            fontSize: 12,
+                          }}
                           axisLine={false}
                           tickLine={false}
                         />
                         <YAxis
-                          tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                          tick={{
+                            fill: "#9CA3AF",
+                            fontSize: 12,
+                          }}
                           axisLine={false}
                           tickLine={false}
                           tickFormatter={(v) => `₹${v / 1000}k`}
                         />
                         <Tooltip
-                          cursor={{ fill: "rgba(255,255,255,0.05)" }}
+                          cursor={{
+                            fill: "rgba(255,255,255,0.05)",
+                          }}
                           contentStyle={{
                             backgroundColor: "#052E28",
                             border: "1px solid rgba(255,255,255,0.1)",
@@ -722,12 +780,18 @@ export function FinanceCustomBuilder({
                         />
                         <XAxis
                           dataKey={groupBy}
-                          tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                          tick={{
+                            fill: "#9CA3AF",
+                            fontSize: 12,
+                          }}
                           axisLine={false}
                           tickLine={false}
                         />
                         <YAxis
-                          tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                          tick={{
+                            fill: "#9CA3AF",
+                            fontSize: 12,
+                          }}
                           axisLine={false}
                           tickLine={false}
                           tickFormatter={(v) => `₹${v / 1000}k`}
@@ -756,8 +820,13 @@ export function FinanceCustomBuilder({
                             dataKey={meas}
                             stroke={CHART_COLORS[idx % CHART_COLORS.length]}
                             strokeWidth={3}
-                            dot={{ r: 4, strokeWidth: 2 }}
-                            activeDot={{ r: 6 }}
+                            dot={{
+                              r: 4,
+                              strokeWidth: 2,
+                            }}
+                            activeDot={{
+                              r: 6,
+                            }}
                           />
                         ))}
                       </LineChart>
@@ -770,12 +839,18 @@ export function FinanceCustomBuilder({
                         />
                         <XAxis
                           dataKey={groupBy}
-                          tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                          tick={{
+                            fill: "#9CA3AF",
+                            fontSize: 12,
+                          }}
                           axisLine={false}
                           tickLine={false}
                         />
                         <YAxis
-                          tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                          tick={{
+                            fill: "#9CA3AF",
+                            fontSize: 12,
+                          }}
                           axisLine={false}
                           tickLine={false}
                           tickFormatter={(v) => `₹${v / 1000}k`}
@@ -871,14 +946,20 @@ export function FinanceCustomBuilder({
                           <>
                             <XAxis
                               type="number"
-                              tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                              tick={{
+                                fill: "#9CA3AF",
+                                fontSize: 12,
+                              }}
                               axisLine={false}
                               tickLine={false}
                             />
                             <YAxis
                               type="category"
                               dataKey={groupBy}
-                              tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                              tick={{
+                                fill: "#9CA3AF",
+                                fontSize: 12,
+                              }}
                               axisLine={false}
                               tickLine={false}
                             />
@@ -887,19 +968,27 @@ export function FinanceCustomBuilder({
                           <>
                             <XAxis
                               dataKey={groupBy}
-                              tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                              tick={{
+                                fill: "#9CA3AF",
+                                fontSize: 12,
+                              }}
                               axisLine={false}
                               tickLine={false}
                             />
                             <YAxis
-                              tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                              tick={{
+                                fill: "#9CA3AF",
+                                fontSize: 12,
+                              }}
                               axisLine={false}
                               tickLine={false}
                             />
                           </>
                         )}
                         <Tooltip
-                          cursor={{ fill: "rgba(255,255,255,0.05)" }}
+                          cursor={{
+                            fill: "rgba(255,255,255,0.05)",
+                          }}
                           contentStyle={{
                             backgroundColor: "#052E28",
                             border: "1px solid rgba(255,255,255,0.1)",

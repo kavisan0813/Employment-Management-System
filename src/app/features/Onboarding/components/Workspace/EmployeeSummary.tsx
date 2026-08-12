@@ -1,13 +1,11 @@
 import { Calendar, User, X } from "lucide-react";
-import { motion } from "motion/react";
 import type { NewHire } from "../../types/onboarding.types";
 import { formatDate } from "../../utils/helpers";
-
+import * as m from "motion/react-m";
 interface EmployeeSummaryProps {
   selected: NewHire;
   onClose?: () => void;
 }
-
 export function EmployeeSummary({ selected, onClose }: EmployeeSummaryProps) {
   return (
     <>
@@ -15,12 +13,16 @@ export function EmployeeSummary({ selected, onClose }: EmployeeSummaryProps) {
       <div className="px-6 py-5 border-b border-border flex flex-wrap items-center gap-4">
         <div
           className="w-14 h-14 rounded-full flex items-center justify-center text-white text-lg font-black shrink-0"
-          style={{ backgroundColor: selected.avatarColor }}
+          style={{
+            backgroundColor: selected.avatarColor,
+          }}
         >
           {selected.initials}
         </div>
         <div className="flex-1">
-          <h2 className="text-[20px] font-black text-foreground">{selected.name}</h2>
+          <h2 className="text-[20px] font-black text-foreground">
+            {selected.name}
+          </h2>
           <p className="text-[14px] font-bold text-[#00B87C]">
             {selected.role} — {selected.dept}
           </p>
@@ -52,15 +54,28 @@ export function EmployeeSummary({ selected, onClose }: EmployeeSummaryProps) {
       {/* Progress Bar */}
       <div className="px-6 py-3 border-b border-border flex items-center gap-4">
         <div className="flex-1 h-[6px] bg-muted/50 rounded-full overflow-hidden">
-          <motion.div
-            initial={{ x: "-100%" }}
-            animate={{ x: `-${100 - (selected.progress)}%` }}
-            transition={{ duration: 0.8 }}
+          <m.div
+            initial={{
+              x: "-100%",
+            }}
+            animate={{
+              x: `-${100 - selected.progress}%`,
+            }}
+            transition={{
+              duration: 0.8,
+            }}
             className="h-full rounded-full w-full"
-            style={{ backgroundColor: selected.progressColor }}
+            style={{
+              backgroundColor: selected.progressColor,
+            }}
           />
         </div>
-        <span className="text-[13px] font-black" style={{ color: selected.progressColor }}>
+        <span
+          className="text-[13px] font-black"
+          style={{
+            color: selected.progressColor,
+          }}
+        >
           {selected.progress}% Complete
         </span>
         <span className="text-[11px] font-bold text-muted-foreground">

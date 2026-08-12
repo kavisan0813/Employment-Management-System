@@ -140,22 +140,28 @@ export const PaymentService = {
       totalFailed: failed.reduce((sum, p) => sum + p.amount, 0),
       totalPending: pending.reduce((sum, p) => sum + p.amount, 0),
       totalRefunded: refunded.reduce((sum, p) => sum + p.amount, 0),
-      successRate: payments.length > 0 ? (success.length / payments.length) * 100 : 0,
+      successRate:
+        payments.length > 0 ? (success.length / payments.length) * 100 : 0,
     };
   },
 
   retryPayment(id: string): void {
     const payments = getStore().map((p) =>
       p.id === id
-        ? { ...p, status: "Pending" as const, failureReason: null, paymentDate: new Date().toISOString().slice(0, 10) }
-        : p
+        ? {
+            ...p,
+            status: "Pending" as const,
+            failureReason: null,
+            paymentDate: new Date().toISOString().slice(0, 10),
+          }
+        : p,
     );
     saveStore(payments);
   },
 
   issueRefund(id: string): void {
     const payments = getStore().map((p) =>
-      p.id === id ? { ...p, status: "Refunded" as const } : p
+      p.id === id ? { ...p, status: "Refunded" as const } : p,
     );
     saveStore(payments);
   },

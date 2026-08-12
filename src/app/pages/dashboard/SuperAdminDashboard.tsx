@@ -1,4 +1,4 @@
-import { lazy, useState, useEffect } from "react";
+import { lazy, useEffect, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router";
 import {
   Users,
@@ -19,29 +19,86 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
-const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
-const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-
-import { motion, AnimatePresence } from "motion/react";
+const AreaChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.AreaChart,
+  })),
+);
+const Area = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Area,
+  })),
+);
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.XAxis,
+  })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.YAxis,
+  })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.CartesianGrid,
+  })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Tooltip,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PieChart,
+  })),
+);
+const Pie = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Pie,
+  })),
+);
+const Cell = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Cell,
+  })),
+);
+import { AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
-
+import * as m from "motion/react-m";
 const HEADCOUNT_PERIOD_DATA = {
   "6M": {
     data: [
-      { month: "Oct", count: 1240 },
-      { month: "Nov", count: 1252 },
-      { month: "Dec", count: 1260 },
-      { month: "Jan", count: 1272 },
-      { month: "Feb", count: 1278 },
-      { month: "Mar", count: 1284 },
+      {
+        month: "Oct",
+        count: 1240,
+      },
+      {
+        month: "Nov",
+        count: 1252,
+      },
+      {
+        month: "Dec",
+        count: 1260,
+      },
+      {
+        month: "Jan",
+        count: 1272,
+      },
+      {
+        month: "Feb",
+        count: 1278,
+      },
+      {
+        month: "Mar",
+        count: 1284,
+      },
     ],
     growth: "+44 Employees",
     rate: "+3.5%",
@@ -51,18 +108,54 @@ const HEADCOUNT_PERIOD_DATA = {
   },
   "1Y": {
     data: [
-      { month: "Apr '25", count: 1150 },
-      { month: "May '25", count: 1170 },
-      { month: "Jun '25", count: 1185 },
-      { month: "Jul '25", count: 1200 },
-      { month: "Aug '25", count: 1210 },
-      { month: "Sep '25", count: 1225 },
-      { month: "Oct '25", count: 1240 },
-      { month: "Nov '25", count: 1252 },
-      { month: "Dec '25", count: 1260 },
-      { month: "Jan '26", count: 1272 },
-      { month: "Feb '26", count: 1278 },
-      { month: "Mar '26", count: 1284 },
+      {
+        month: "Apr '25",
+        count: 1150,
+      },
+      {
+        month: "May '25",
+        count: 1170,
+      },
+      {
+        month: "Jun '25",
+        count: 1185,
+      },
+      {
+        month: "Jul '25",
+        count: 1200,
+      },
+      {
+        month: "Aug '25",
+        count: 1210,
+      },
+      {
+        month: "Sep '25",
+        count: 1225,
+      },
+      {
+        month: "Oct '25",
+        count: 1240,
+      },
+      {
+        month: "Nov '25",
+        count: 1252,
+      },
+      {
+        month: "Dec '25",
+        count: 1260,
+      },
+      {
+        month: "Jan '26",
+        count: 1272,
+      },
+      {
+        month: "Feb '26",
+        count: 1278,
+      },
+      {
+        month: "Mar '26",
+        count: 1284,
+      },
     ],
     growth: "+134 Employees",
     rate: "+11.7%",
@@ -72,15 +165,42 @@ const HEADCOUNT_PERIOD_DATA = {
   },
   "2Y": {
     data: [
-      { month: "Q1 '24", count: 980 },
-      { month: "Q2 '24", count: 1020 },
-      { month: "Q3 '24", count: 1060 },
-      { month: "Q4 '24", count: 1110 },
-      { month: "Q1 '25", count: 1150 },
-      { month: "Q2 '25", count: 1185 },
-      { month: "Q3 '25", count: 1225 },
-      { month: "Q4 '25", count: 1260 },
-      { month: "Q1 '26", count: 1284 },
+      {
+        month: "Q1 '24",
+        count: 980,
+      },
+      {
+        month: "Q2 '24",
+        count: 1020,
+      },
+      {
+        month: "Q3 '24",
+        count: 1060,
+      },
+      {
+        month: "Q4 '24",
+        count: 1110,
+      },
+      {
+        month: "Q1 '25",
+        count: 1150,
+      },
+      {
+        month: "Q2 '25",
+        count: 1185,
+      },
+      {
+        month: "Q3 '25",
+        count: 1225,
+      },
+      {
+        month: "Q4 '25",
+        count: 1260,
+      },
+      {
+        month: "Q1 '26",
+        count: 1284,
+      },
     ],
     growth: "+304 Employees",
     rate: "+31.0%",
@@ -89,15 +209,33 @@ const HEADCOUNT_PERIOD_DATA = {
     desc: "Long-term scaling demonstrating 30%+ user expansion over 24 months.",
   },
 };
-
 const INITIAL_DEPT_DATA = [
-  { name: "Engineering", value: 450, color: "#8B5CF6" },
-  { name: "Sales", value: 320, color: "#10B981" },
-  { name: "Marketing", value: 180, color: "#F59E0B" },
-  { name: "Finance", value: 120, color: "#0EA5E9" },
-  { name: "HR", value: 114, color: "#EC4899" },
+  {
+    name: "Engineering",
+    value: 450,
+    color: "#8B5CF6",
+  },
+  {
+    name: "Sales",
+    value: 320,
+    color: "#10B981",
+  },
+  {
+    name: "Marketing",
+    value: 180,
+    color: "#F59E0B",
+  },
+  {
+    name: "Finance",
+    value: 120,
+    color: "#0EA5E9",
+  },
+  {
+    name: "HR",
+    value: 114,
+    color: "#EC4899",
+  },
 ];
-
 const INITIAL_PENDING_ACTIONS = [
   {
     icon: ShieldCheck,
@@ -135,7 +273,6 @@ const INITIAL_PENDING_ACTIONS = [
     bg: "rgba(14,165,233,0.1)",
   },
 ];
-
 const INITIAL_AUDIT_LOG = [
   {
     type: "Delete",
@@ -173,15 +310,33 @@ const INITIAL_AUDIT_LOG = [
     color: "#F59E0B",
   },
 ];
-
 const INITIAL_MODULE_USAGE = [
-  { label: "Dashboard", value: 98, color: "#00B87C" },
-  { label: "Attendance", value: 94, color: "#00B87C" },
-  { label: "Payroll", value: 86, color: "#8B5CF6" },
-  { label: "Leave", value: 82, color: "#F59E0B" },
-  { label: "Performance", value: 75, color: "#0EA5E9" },
+  {
+    label: "Dashboard",
+    value: 98,
+    color: "#00B87C",
+  },
+  {
+    label: "Attendance",
+    value: 94,
+    color: "#00B87C",
+  },
+  {
+    label: "Payroll",
+    value: 86,
+    color: "#8B5CF6",
+  },
+  {
+    label: "Leave",
+    value: 82,
+    color: "#F59E0B",
+  },
+  {
+    label: "Performance",
+    value: 75,
+    color: "#0EA5E9",
+  },
 ];
-
 const INITIAL_ROLE_DIST = [
   {
     role: "Super Admin",
@@ -219,7 +374,6 @@ const INITIAL_ROLE_DIST = [
     bg: "#F3F4F6",
   },
 ];
-
 interface RoleDistItem {
   role: string;
   count: number;
@@ -227,7 +381,6 @@ interface RoleDistItem {
   color: string;
   bg: string;
 }
-
 interface PendingActionItem {
   icon: React.ElementType;
   title: string;
@@ -235,61 +388,189 @@ interface PendingActionItem {
   color: string;
   bg: string;
 }
-
 export function SuperAdminDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const __initialState = {
+    totalEmployeesCount: 1284,
+    pendingActionsCount: 3,
+    headcountPeriod: "6M" as "6M" | "1Y" | "2Y",
+    pendingActionsList: INITIAL_PENDING_ACTIONS,
+    auditLogList: INITIAL_AUDIT_LOG,
+    roleDistList: INITIAL_ROLE_DIST,
+    isAddEmployeeOpen: false,
+    isPostAnnouncementOpen: false,
+    isManageRoleOpen: false,
+    selectedRoleToManage: null as RoleDistItem | null,
+    activePendingAction: null as PendingActionItem | null,
+    systemTaskType: null as "Backup" | "Scan" | null,
+    progressPercent: 0,
+    employeeForm: {
+      name: "",
+      email: "",
+      department: "Engineering",
+      designation: "",
+      salary: "",
+    },
+    announcementForm: {
+      title: "",
+      message: "",
+      urgency: "Normal",
+    },
+  };
+  const [__state, __updateState] = useReducer(
+    (prev: any, next: any) => ({
+      ...prev,
+      ...(typeof next === "function" ? next(prev) : next),
+    }),
+    __initialState,
+  );
+  const {
+    totalEmployeesCount,
+    pendingActionsCount,
+    headcountPeriod,
+    pendingActionsList,
+    auditLogList,
+    roleDistList,
+    isAddEmployeeOpen,
+    isPostAnnouncementOpen,
+    isManageRoleOpen,
+    selectedRoleToManage,
+    activePendingAction,
+    systemTaskType,
+    progressPercent,
+    employeeForm,
+    announcementForm,
+  } = __state;
+  const setTotalEmployeesCount = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        totalEmployeesCount:
+          typeof val === "function" ? val(prev.totalEmployeesCount) : val,
+      })),
+    [],
+  );
+  const setPendingActionsCount = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        pendingActionsCount:
+          typeof val === "function" ? val(prev.pendingActionsCount) : val,
+      })),
+    [],
+  );
+  const setHeadcountPeriod = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        headcountPeriod:
+          typeof val === "function" ? val(prev.headcountPeriod) : val,
+      })),
+    [],
+  );
+  const setPendingActionsList = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        pendingActionsList:
+          typeof val === "function" ? val(prev.pendingActionsList) : val,
+      })),
+    [],
+  );
+  const setAuditLogList = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        auditLogList: typeof val === "function" ? val(prev.auditLogList) : val,
+      })),
+    [],
+  );
+  const setRoleDistList = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        roleDistList: typeof val === "function" ? val(prev.roleDistList) : val,
+      })),
+    [],
+  );
+  const setIsAddEmployeeOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isAddEmployeeOpen:
+          typeof val === "function" ? val(prev.isAddEmployeeOpen) : val,
+      })),
+    [],
+  );
+  const setIsPostAnnouncementOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isPostAnnouncementOpen:
+          typeof val === "function" ? val(prev.isPostAnnouncementOpen) : val,
+      })),
+    [],
+  );
+  const setIsManageRoleOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isManageRoleOpen:
+          typeof val === "function" ? val(prev.isManageRoleOpen) : val,
+      })),
+    [],
+  );
+  const setSelectedRoleToManage = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedRoleToManage:
+          typeof val === "function" ? val(prev.selectedRoleToManage) : val,
+      })),
+    [],
+  );
+  const setActivePendingAction = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        activePendingAction:
+          typeof val === "function" ? val(prev.activePendingAction) : val,
+      })),
+    [],
+  );
+  const setSystemTaskType = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        systemTaskType:
+          typeof val === "function" ? val(prev.systemTaskType) : val,
+      })),
+    [],
+  );
+  const setProgressPercent = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        progressPercent:
+          typeof val === "function" ? val(prev.progressPercent) : val,
+      })),
+    [],
+  );
+  const setEmployeeForm = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        employeeForm: typeof val === "function" ? val(prev.employeeForm) : val,
+      })),
+    [],
+  );
+  const setAnnouncementForm = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        announcementForm:
+          typeof val === "function" ? val(prev.announcementForm) : val,
+      })),
+    [],
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // Reactive CRUD and Statistics state
-  const [totalEmployeesCount, setTotalEmployeesCount] = useState(1284);
-  const [pendingActionsCount, setPendingActionsCount] = useState(3);
-  const [headcountPeriod, setHeadcountPeriod] = useState<"6M" | "1Y" | "2Y">(
-    "6M",
-  );
-
-  const [pendingActionsList, setPendingActionsList] = useState(
-    INITIAL_PENDING_ACTIONS,
-  );
-  const [auditLogList, setAuditLogList] = useState(INITIAL_AUDIT_LOG);
-  const [roleDistList, setRoleDistList] = useState(INITIAL_ROLE_DIST);
-
   // Modals Visibility
-  const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
-  const [isPostAnnouncementOpen, setIsPostAnnouncementOpen] = useState(false);
-  const [isManageRoleOpen, setIsManageRoleOpen] = useState(false);
-  const [selectedRoleToManage, setSelectedRoleToManage] =
-    useState<RoleDistItem | null>(null);
-  const [activePendingAction, setActivePendingAction] =
-    useState<PendingActionItem | null>(null);
-
   // System actions (loading state)
-  const [systemTaskType, setSystemTaskType] = useState<
-    "Backup" | "Scan" | null
-  >(null);
-  const [progressPercent, setProgressPercent] = useState(0);
-
   // Forms
-  const [employeeForm, setEmployeeForm] = useState({
-    name: "",
-    email: "",
-    department: "Engineering",
-    designation: "",
-    salary: "",
-  });
-
-  const [announcementForm, setAnnouncementForm] = useState({
-    title: "",
-    message: "",
-    urgency: "Normal",
-  });
-
   // CRUD Handler: Add Employee
   const handleAddEmployeeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!employeeForm.name || !employeeForm.email) return;
-
     setTotalEmployeesCount((prev) => prev + 1);
-
     const newLog = {
       type: "Create",
       text: `New employee '${employeeForm.name}' (${employeeForm.designation || "Staff"}) created`,
@@ -298,16 +579,17 @@ export function SuperAdminDashboard() {
       color: "#0EA5E9",
     };
     setAuditLogList((prev) => [newLog, ...prev]);
-
     setRoleDistList((prev) =>
       prev.map((r) => {
         if (r.role === "Employee") {
-          return { ...r, count: r.count + 1 };
+          return {
+            ...r,
+            count: r.count + 1,
+          };
         }
         return r;
       }),
     );
-
     setEmployeeForm({
       name: "",
       email: "",
@@ -322,7 +604,6 @@ export function SuperAdminDashboard() {
   const handleManageRoleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedRoleToManage) return;
-
     setRoleDistList((prev) =>
       prev.map((r) => {
         if (r.role === selectedRoleToManage.role) {
@@ -335,7 +616,6 @@ export function SuperAdminDashboard() {
         return r;
       }),
     );
-
     const newLog = {
       type: "Update",
       text: `Role '${selectedRoleToManage.role}' settings modified`,
@@ -344,7 +624,6 @@ export function SuperAdminDashboard() {
       color: "#8B5CF6",
     };
     setAuditLogList((prev) => [newLog, ...prev]);
-
     setIsManageRoleOpen(false);
     setSelectedRoleToManage(null);
   };
@@ -353,7 +632,6 @@ export function SuperAdminDashboard() {
   const handleResolveAction = (title: string) => {
     setPendingActionsList((prev) => prev.filter((a) => a.title !== title));
     setPendingActionsCount((prev) => Math.max(0, prev - 1));
-
     const newLog = {
       type: "Approve",
       text: `Action '${title}' resolved/approved`,
@@ -369,7 +647,6 @@ export function SuperAdminDashboard() {
   const handlePostAnnouncementSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!announcementForm.title || !announcementForm.message) return;
-
     const newLog = {
       type: "Settings",
       text: `Announcement: '${announcementForm.title}' published`,
@@ -378,7 +655,6 @@ export function SuperAdminDashboard() {
       color: "#F59E0B",
     };
     setAuditLogList((prev) => [newLog, ...prev]);
-
     setAnnouncementForm({
       title: "",
       message: "",
@@ -386,7 +662,6 @@ export function SuperAdminDashboard() {
     });
     setIsPostAnnouncementOpen(false);
   };
-
   useEffect(() => {
     if (systemTaskType !== "Backup") return;
     const interval = setInterval(() => {
@@ -399,7 +674,6 @@ export function SuperAdminDashboard() {
     }, 150);
     return () => clearInterval(interval);
   }, [systemTaskType]);
-
   useEffect(() => {
     if (systemTaskType !== "Scan") return;
     const interval = setInterval(() => {
@@ -412,7 +686,6 @@ export function SuperAdminDashboard() {
     }, 200);
     return () => clearInterval(interval);
   }, [systemTaskType]);
-
   useEffect(() => {
     if (progressPercent < 100 || !systemTaskType) return;
     const currentTask = systemTaskType;
@@ -450,7 +723,6 @@ export function SuperAdminDashboard() {
     setSystemTaskType("Scan");
     setProgressPercent(0);
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6">
       {/* ═══ PAGE HEADER ═══ */}
@@ -563,18 +835,33 @@ export function SuperAdminDashboard() {
             bg: "#F3F4F6",
           },
         ].map((kpi, i) => (
-          <motion.div
+          <m.div
             key={kpi.label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: i * 0.05,
+            }}
             className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow cursor-pointer"
           >
             <div
               className="w-9 h-9 rounded-[10px] mb-3 flex items-center justify-center"
-              style={{ backgroundColor: kpi.bg }}
+              style={{
+                backgroundColor: kpi.bg,
+              }}
             >
-              <kpi.icon size={20} style={{ color: kpi.color }} />
+              <kpi.icon
+                size={20}
+                style={{
+                  color: kpi.color,
+                }}
+              />
             </div>
             <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
               {kpi.label}
@@ -583,7 +870,7 @@ export function SuperAdminDashboard() {
               {kpi.value}
             </p>
             <p className="text-[12px] text-[#6B7280]">{kpi.sub}</p>
-          </motion.div>
+          </m.div>
         ))}
       </div>
 
@@ -599,11 +886,7 @@ export function SuperAdminDashboard() {
                 <button
                   key={f}
                   onClick={() => setHeadcountPeriod(f)}
-                  className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest transition-all cursor-pointer ${
-                    f === headcountPeriod
-                      ? "bg-primary text-white shadow-sm shadow-[#00B87C]/20"
-                      : "bg-secondary text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest transition-all cursor-pointer ${f === headcountPeriod ? "bg-primary text-white shadow-sm shadow-[#00B87C]/20" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
                 >
                   {f}
                 </button>
@@ -666,13 +949,19 @@ export function SuperAdminDashboard() {
                     dataKey="month"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 10, fontWeight: 700 }}
+                    tick={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                    }}
                     dy={10}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 10, fontWeight: 700 }}
+                    tick={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                    }}
                   />
                   <Tooltip />
                   <Area
@@ -716,7 +1005,9 @@ export function SuperAdminDashboard() {
               <div key={dept.name} className="flex items-center gap-2">
                 <div
                   className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: dept.color }}
+                  style={{
+                    backgroundColor: dept.color,
+                  }}
                 />
                 <span className="text-[11px] font-bold text-muted-foreground truncate">
                   {dept.name}
@@ -752,11 +1043,15 @@ export function SuperAdminDashboard() {
                     <div className="flex items-center gap-3">
                       <div
                         className="w-10 h-10 rounded-xl flex items-center justify-center"
-                        style={{ backgroundColor: action.bg }}
+                        style={{
+                          backgroundColor: action.bg,
+                        }}
                       >
                         <action.icon
                           size={18}
-                          style={{ color: action.color }}
+                          style={{
+                            color: action.color,
+                          }}
                         />
                       </div>
                       <div>
@@ -765,7 +1060,9 @@ export function SuperAdminDashboard() {
                         </p>
                         <span
                           className="text-[10px] font-black uppercase tracking-widest"
-                          style={{ color: action.color }}
+                          style={{
+                            color: action.color,
+                          }}
                         >
                           {action.urgency} Priority
                         </span>
@@ -805,7 +1102,9 @@ export function SuperAdminDashboard() {
                 )}
                 <div
                   className="w-[11px] h-[11px] rounded-full mt-1.5 z-10 shrink-0 border-2 border-card"
-                  style={{ backgroundColor: log.color }}
+                  style={{
+                    backgroundColor: log.color,
+                  }}
                 />
                 <div className="overflow-hidden">
                   <p className="text-[13px] font-bold text-foreground leading-tight">
@@ -833,7 +1132,9 @@ export function SuperAdminDashboard() {
               {t("moduleUsage")}
             </h3>
             <span className="px-2 py-0.5 rounded bg-emerald-50 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
-              {t("mostUsedAttendance", { value: 94 })}
+              {t("mostUsedAttendance", {
+                value: 94,
+              })}
             </span>
           </div>
           <div className="space-y-6 flex-1">
@@ -844,12 +1145,21 @@ export function SuperAdminDashboard() {
                   <span>{mod.value}%</span>
                 </div>
                 <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ x: "-100%" }}
-                    animate={{ x: `-${100 - mod.value}%` }}
-                    transition={{ duration: 1, delay: i * 0.1 }}
+                  <m.div
+                    initial={{
+                      x: "-100%",
+                    }}
+                    animate={{
+                      x: `-${100 - mod.value}%`,
+                    }}
+                    transition={{
+                      duration: 1,
+                      delay: i * 0.1,
+                    }}
                     className="h-full rounded-full w-full"
-                    style={{ backgroundColor: mod.color }}
+                    style={{
+                      backgroundColor: mod.color,
+                    }}
                   />
                 </div>
               </div>
@@ -891,7 +1201,10 @@ export function SuperAdminDashboard() {
                     <td className="py-4">
                       <span
                         className="px-3 py-1 rounded-full text-[11px] font-black tracking-wider"
-                        style={{ color: role.color, backgroundColor: role.bg }}
+                        style={{
+                          color: role.color,
+                          backgroundColor: role.bg,
+                        }}
                       >
                         {role.role}
                       </span>
@@ -983,9 +1296,16 @@ export function SuperAdminDashboard() {
               >
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: action.bg }}
+                  style={{
+                    backgroundColor: action.bg,
+                  }}
                 >
-                  <action.icon size={22} style={{ color: action.color }} />
+                  <action.icon
+                    size={22}
+                    style={{
+                      color: action.color,
+                    }}
+                  />
                 </div>
                 <span className="text-[12px] font-bold text-foreground text-center leading-tight">
                   {action.label}
@@ -1001,17 +1321,32 @@ export function SuperAdminDashboard() {
         {/* ADD EMPLOYEE MODAL */}
         {isAddEmployeeOpen && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/55 backdrop-blur-sm"
               onClick={() => setIsAddEmployeeOpen(false)}
             />
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+            <m.div
+              initial={{
+                scale: 0.95,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.95,
+                opacity: 0,
+              }}
               className="relative bg-card w-full max-w-md rounded-3xl p-6 border border-border shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1042,7 +1377,10 @@ export function SuperAdminDashboard() {
                     className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-[13px] font-bold outline-none focus:border-primary transition-all text-foreground"
                     value={employeeForm.name}
                     onChange={(e) =>
-                      setEmployeeForm({ ...employeeForm, name: e.target.value })
+                      setEmployeeForm({
+                        ...employeeForm,
+                        name: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -1137,24 +1475,39 @@ export function SuperAdminDashboard() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
 
         {/* POST ANNOUNCEMENT MODAL */}
         {isPostAnnouncementOpen && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/55 backdrop-blur-sm"
               onClick={() => setIsPostAnnouncementOpen(false)}
             />
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+            <m.div
+              initial={{
+                scale: 0.95,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.95,
+                opacity: 0,
+              }}
               className="relative bg-card w-full max-w-md rounded-3xl p-6 border border-border shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1245,24 +1598,39 @@ export function SuperAdminDashboard() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
 
         {/* MANAGE ROLE MODAL */}
         {isManageRoleOpen && selectedRoleToManage && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/55 backdrop-blur-sm"
               onClick={() => setIsManageRoleOpen(false)}
             />
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+            <m.div
+              initial={{
+                scale: 0.95,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.95,
+                opacity: 0,
+              }}
               className="relative bg-card w-full max-w-sm rounded-3xl p-6 border border-border shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -1294,7 +1662,11 @@ export function SuperAdminDashboard() {
                     onChange={(e) =>
                       setSelectedRoleToManage({
                         ...selectedRoleToManage,
-                        count: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
+                        count:
+                          (e.target.value === "" ||
+                          isNaN(parseInt(e.target.value))
+                            ? undefined
+                            : parseInt(e.target.value)) || 0,
                       })
                     }
                   />
@@ -1333,34 +1705,53 @@ export function SuperAdminDashboard() {
                   </button>
                 </div>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
 
         {/* RESOLVE PENDING ACTION MODAL */}
         {activePendingAction && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
               className="absolute inset-0 bg-black/55 backdrop-blur-sm"
               onClick={() => setActivePendingAction(null)}
             />
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+            <m.div
+              initial={{
+                scale: 0.95,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.95,
+                opacity: 0,
+              }}
               className="relative bg-card w-full max-w-sm rounded-3xl p-6 border border-border shadow-2xl text-center overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <div
                 className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{ backgroundColor: activePendingAction.bg }}
+                style={{
+                  backgroundColor: activePendingAction.bg,
+                }}
               >
                 <activePendingAction.icon
                   size={28}
-                  style={{ color: activePendingAction.color }}
+                  style={{
+                    color: activePendingAction.color,
+                  }}
                 />
               </div>
               <h3 className="text-lg font-black text-foreground tracking-tight mb-2">
@@ -1374,7 +1765,11 @@ export function SuperAdminDashboard() {
               </p>
               <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-6">
                 Priority Level:{" "}
-                <span style={{ color: activePendingAction.color }}>
+                <span
+                  style={{
+                    color: activePendingAction.color,
+                  }}
+                >
                   {activePendingAction.urgency}
                 </span>
               </p>
@@ -1392,21 +1787,31 @@ export function SuperAdminDashboard() {
                   Resolve / Approve
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
 
         {/* SYSTEM TASK PROGRESS MODAL */}
         {systemTaskType && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+            <m.div
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
               className="absolute inset-0 bg-black/55 backdrop-blur-sm"
             />
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+            <m.div
+              initial={{
+                scale: 0.95,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
               className="relative bg-card w-full max-w-xs rounded-3xl p-6 border border-border shadow-2xl text-center overflow-hidden"
             >
               <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-4 animate-bounce">
@@ -1424,13 +1829,15 @@ export function SuperAdminDashboard() {
               <div className="w-full bg-secondary h-2.5 rounded-full overflow-hidden mb-3">
                 <div
                   className="bg-primary h-full rounded-full transition-all duration-150"
-                  style={{ width: `${progressPercent}%` }}
+                  style={{
+                    width: `${progressPercent}%`,
+                  }}
                 />
               </div>
               <span className="text-[12px] font-black text-primary">
                 {progressPercent}% Completed
               </span>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

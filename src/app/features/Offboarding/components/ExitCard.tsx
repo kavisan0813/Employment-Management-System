@@ -1,10 +1,9 @@
 import React from "react";
-import { motion } from "motion/react";
 import { ChevronRight, Check, Clock, X } from "lucide-react";
 import { ExitEmployee } from "../types/offboarding.types";
 import { progressColor } from "../utils/progress";
 import { exitTypeChip } from "../utils/chips";
-
+import * as m from "motion/react-m";
 interface ExitCardProps {
   exit: ExitEmployee;
   onViewDetail: () => void;
@@ -12,7 +11,6 @@ interface ExitCardProps {
   onComplete: () => void;
   onScheduleInterview: () => void;
 }
-
 export const ExitCard: React.FC<ExitCardProps> = ({
   exit,
   onViewDetail,
@@ -21,14 +19,17 @@ export const ExitCard: React.FC<ExitCardProps> = ({
 }) => {
   const colors = progressColor(exit.progress);
   const isOverdue = exit.lwd.includes("OVERDUE");
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`bg-card rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all border ${
-        isOverdue ? "border-[#EF4444]/50" : "border-border"
-      }`}
+    <m.div
+      initial={{
+        opacity: 0,
+        y: 10,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      className={`bg-card rounded-2xl p-5 shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all border ${isOverdue ? "border-[#EF4444]/50" : "border-border"}`}
     >
       {/* TOP ROW */}
       <div className="flex items-center justify-between mb-4">
@@ -82,7 +83,9 @@ export const ExitCard: React.FC<ExitCardProps> = ({
           </svg>
           <span
             className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold"
-            style={{ color: colors.text }}
+            style={{
+              color: colors.text,
+            }}
           >
             {exit.progress}%
           </span>
@@ -121,13 +124,7 @@ export const ExitCard: React.FC<ExitCardProps> = ({
                 >
                   <div className="flex flex-col items-center">
                     <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold border-2 transition-all ${
-                        step.done
-                          ? "bg-[#00B87C] border-[#00B87C] text-white"
-                          : isActiveStep
-                            ? "border-[#14B8A6] text-[#14B8A6] bg-[#CCFBF1]"
-                            : "border-border text-muted-foreground bg-card"
-                      }`}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold border-2 transition-all ${step.done ? "bg-[#00B87C] border-[#00B87C] text-white" : isActiveStep ? "border-[#14B8A6] text-[#14B8A6] bg-[#CCFBF1]" : "border-border text-muted-foreground bg-card"}`}
                     >
                       {step.done ? (
                         <Check size={12} />
@@ -138,22 +135,14 @@ export const ExitCard: React.FC<ExitCardProps> = ({
                       )}
                     </div>
                     <span
-                      className={`text-[8px] font-black uppercase tracking-wider mt-1 ${
-                        step.done
-                          ? "text-[#00B87C]"
-                          : isActiveStep
-                            ? "text-[#14B8A6]"
-                            : "text-muted-foreground"
-                      }`}
+                      className={`text-[8px] font-black uppercase tracking-wider mt-1 ${step.done ? "text-[#00B87C]" : isActiveStep ? "text-[#14B8A6]" : "text-muted-foreground"}`}
                     >
                       {step.label}
                     </span>
                   </div>
                   {idx < arr.length - 1 && (
                     <div
-                      className={`flex-1 h-[2px] mx-1 mt-[-16px] ${
-                        step.done ? "bg-[#00B87C]" : "bg-border"
-                      }`}
+                      className={`flex-1 h-[2px] mx-1 mt-[-16px] ${step.done ? "bg-[#00B87C]" : "bg-border"}`}
                     />
                   )}
                 </div>
@@ -205,6 +194,6 @@ export const ExitCard: React.FC<ExitCardProps> = ({
           </button>
         )}
       </div>
-    </motion.div>
+    </m.div>
   );
 };

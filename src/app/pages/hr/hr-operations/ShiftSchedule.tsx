@@ -23,17 +23,14 @@ import {
   MoreVertical as MoreIcon,
 } from "lucide-react";
 import { employees as globalEmployees } from "../../../data/mockData";
-
 interface Shift {
   type: "Morning" | "Evening" | "Night" | "Full Day";
   time: string;
   isOT?: boolean;
 }
-
 interface ShiftMap {
   [key: string]: Shift | null;
 }
-
 interface SwapItem {
   id: number;
   p1: string;
@@ -46,7 +43,6 @@ interface SwapItem {
   p2Color: string;
   shiftTypes: string;
 }
-
 interface ShiftTemplate {
   id: number;
   name: string;
@@ -57,24 +53,22 @@ interface ShiftTemplate {
   badge?: "Active" | "Most Used" | "Recently Applied";
   badgeColor: string;
   badgeBg: string;
-  weeklySchedule: { [key: string]: string };
+  weeklySchedule: {
+    [key: string]: string;
+  };
 }
-
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
 const getDateString = (date: Date) => {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 };
-
 export const ShiftSchedule: React.FC = () => {
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [showExportModal, setShowExportModal] = useState(false);
   const [view, setView] = useState<"Week" | "Month" | "Day">("Week");
   const [showAddModal, setShowAddModal] = useState(false);
-
   const [templates, setTemplates] = useState<ShiftTemplate[]>([
     {
       id: 1,
@@ -137,7 +131,6 @@ export const ShiftSchedule: React.FC = () => {
       },
     },
   ]);
-
   const [selectedTemplate, setSelectedTemplate] =
     useState<ShiftTemplate | null>(null);
   const [showCreateTemplate, setShowCreateTemplate] = useState(false);
@@ -147,7 +140,6 @@ export const ShiftSchedule: React.FC = () => {
     null,
   );
   const [renameValue, setRenameValue] = useState("");
-
   const [newTName, setNewTName] = useState("");
   const [newTDept, setNewTDept] = useState("Engineering");
   const [newTRotation, setNewTRotation] = useState("Weekly Rotation");
@@ -172,7 +164,6 @@ export const ShiftSchedule: React.FC = () => {
   >("replace");
   const [applyNotes, setApplyNotes] = useState("");
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-
   const [activeBrush, setActiveBrush] = useState<string | null>(null);
   const [currentDate, setCurrentDate] = useState<Date>(
     () => new Date(2026, 3, 6),
@@ -227,15 +218,16 @@ export const ShiftSchedule: React.FC = () => {
   const [modalShiftType, setModalShiftType] = useState("Morning");
   const [modalDate, setModalDate] = useState("2026-04-06");
   const [modalNotes, setModalNotes] = useState("");
-
   const dates = useMemo(() => {
     return days.map((_, i) => {
       const d = new Date(currentDate);
       d.setDate(currentDate.getDate() + i);
-      return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      return d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
     });
   }, [currentDate]);
-
   const weekDateStrings = useMemo(() => {
     return days.map((_, i) => {
       const d = new Date(currentDate);
@@ -260,7 +252,6 @@ export const ShiftSchedule: React.FC = () => {
       };
     });
   });
-
   const getShiftForDate = useCallback(
     (empName: string, dateStr: string) => {
       const emp = scheduleData.find((e) => e.name === empName);
@@ -278,7 +269,6 @@ export const ShiftSchedule: React.FC = () => {
       hash = Math.imul(hash ^ (hash >>> 13), 3266489909);
       hash = hash ^ (hash >>> 16);
       const rand = Math.abs(hash % 1000) / 1000;
-
       if (rand > 0.35) {
         const types = ["Morning", "Evening", "Night"];
         const type = types[Math.floor(rand * 3)];
@@ -297,7 +287,6 @@ export const ShiftSchedule: React.FC = () => {
     },
     [scheduleData],
   );
-
   const handleDrop = (empId: string, dateStr: string, shiftType: string) => {
     setScheduleData((prev) =>
       prev.map((emp) => {
@@ -308,7 +297,9 @@ export const ShiftSchedule: React.FC = () => {
             Night: "22:00 – 06:00",
             "Off Day": "Rest Day",
           };
-          const updatedShifts = { ...emp.shifts };
+          const updatedShifts = {
+            ...emp.shifts,
+          };
           if (shiftType === "Off Day") {
             updatedShifts[dateStr] = null;
           } else {
@@ -318,13 +309,15 @@ export const ShiftSchedule: React.FC = () => {
               isOT: false,
             };
           }
-          return { ...emp, shifts: updatedShifts };
+          return {
+            ...emp,
+            shifts: updatedShifts,
+          };
         }
         return emp;
       }),
     );
   };
-
   const handleAddShiftConfirm = () => {
     const emp = scheduleData.find((e) =>
       e.name.toLowerCase().includes(modalEmployeeName.toLowerCase()),
@@ -359,7 +352,6 @@ export const ShiftSchedule: React.FC = () => {
     setModalEmployeeName("");
     setModalNotes("");
   };
-
   const handlePrev = () => {
     setCurrentDate((prev) => {
       const d = new Date(prev);
@@ -373,7 +365,6 @@ export const ShiftSchedule: React.FC = () => {
       return d;
     });
   };
-
   const handleNext = () => {
     setCurrentDate((prev) => {
       const d = new Date(prev);
@@ -387,11 +378,9 @@ export const ShiftSchedule: React.FC = () => {
       return d;
     });
   };
-
   const handleToday = () => {
     setCurrentDate(new Date(2026, 3, 6));
   };
-
   const changeView = (v: "Week" | "Month" | "Day") => {
     setView(v);
     if (v === "Week") {
@@ -404,24 +393,20 @@ export const ShiftSchedule: React.FC = () => {
       });
     }
   };
-
   const departments = [
     "All Departments",
     ...new Set(globalEmployees.map((e) => e.department)),
   ];
-
   const filteredSchedule = useMemo(() => {
     if (selectedDept === "All Departments") return scheduleData;
     return scheduleData.filter((s) => s.dept === selectedDept);
   }, [selectedDept, scheduleData]);
-
   const handleExport = () => {
     setShowExportModal(true);
     setTimeout(() => {
       setShowExportModal(false);
     }, 1500);
   };
-
   const navLabel = useMemo(() => {
     if (view === "Week") {
       const startStr = currentDate.toLocaleDateString("en-US", {
@@ -451,15 +436,12 @@ export const ShiftSchedule: React.FC = () => {
       });
     }
   }, [currentDate, view]);
-
   const dayBreakdown = useMemo(() => {
     const morning: typeof filteredSchedule = [];
     const evening: typeof filteredSchedule = [];
     const night: typeof filteredSchedule = [];
     const off: typeof filteredSchedule = [];
-
     const dateStr = getDateString(currentDate);
-
     filteredSchedule.forEach((emp) => {
       const shift = getShiftForDate(emp.name, dateStr);
       if (!shift) {
@@ -474,10 +456,13 @@ export const ShiftSchedule: React.FC = () => {
         off.push(emp);
       }
     });
-
-    return { morning, evening, night, off };
+    return {
+      morning,
+      evening,
+      night,
+      off,
+    };
   }, [filteredSchedule, currentDate, getShiftForDate]);
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* Page Header */}
@@ -485,13 +470,17 @@ export const ShiftSchedule: React.FC = () => {
         <div>
           <h2
             className="text-2xl font-extrabold tracking-tight"
-            style={{ color: "var(--foreground)" }}
+            style={{
+              color: "var(--foreground)",
+            }}
           >
             Shift & Schedule Manager
           </h2>
           <p
             className="text-sm font-medium mt-1"
-            style={{ color: "var(--muted-foreground)" }}
+            style={{
+              color: "var(--muted-foreground)",
+            }}
           >
             Efficiently manage workforce rotations, overtime limits, and shift
             swap approvals.
@@ -501,7 +490,10 @@ export const ShiftSchedule: React.FC = () => {
           <button
             onClick={handleExport}
             className="px-4 py-2 text-sm font-bold rounded-xl border border-dashed transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800 active:scale-95"
-            style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
+            style={{
+              borderColor: "var(--border)",
+              color: "var(--foreground)",
+            }}
           >
             <div className="flex items-center gap-2">
               <Download size={16} />
@@ -511,7 +503,9 @@ export const ShiftSchedule: React.FC = () => {
           <button
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-white shadow-lg shadow-emerald-600/20 transition-all hover:opacity-90 hover:-translate-y-1 active:scale-95"
-            style={{ background: "linear-gradient(135deg, #059669, #0D9488)" }}
+            style={{
+              background: "linear-gradient(135deg, #059669, #0D9488)",
+            }}
           >
             <Plus size={18} strokeWidth={2.5} />
             <span className="font-bold">Add Shift</span>
@@ -625,19 +619,25 @@ export const ShiftSchedule: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div
           className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card group"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           <div className="flex items-start justify-between">
             <div>
               <p
                 className="text-xs font-bold uppercase tracking-wider mb-2"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 Total Employees
               </p>
               <p
                 className="text-3xl font-extrabold tracking-tight"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 248
               </p>
@@ -652,13 +652,17 @@ export const ShiftSchedule: React.FC = () => {
         </div>
         <div
           className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card group"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           <div className="flex items-start justify-between">
             <div>
               <p
                 className="text-xs font-bold uppercase tracking-wider mb-2"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 Target Coverage
               </p>
@@ -673,7 +677,9 @@ export const ShiftSchedule: React.FC = () => {
               <div className="w-28 h-1.5 bg-secondary rounded-full mt-3 overflow-hidden">
                 <div
                   className="h-full bg-emerald-500 rounded-full"
-                  style={{ width: "94.2%" }}
+                  style={{
+                    width: "94.2%",
+                  }}
                 ></div>
               </div>
             </div>
@@ -684,13 +690,17 @@ export const ShiftSchedule: React.FC = () => {
         </div>
         <div
           className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card group"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           <div className="flex items-start justify-between">
             <div>
               <p
                 className="text-xs font-bold uppercase tracking-wider mb-2"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 Total Overtime
               </p>
@@ -708,13 +718,17 @@ export const ShiftSchedule: React.FC = () => {
         </div>
         <div
           className="rounded-2xl p-5 border shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] bg-card group"
-          style={{ borderColor: "var(--border)" }}
+          style={{
+            borderColor: "var(--border)",
+          }}
         >
           <div className="flex items-start justify-between">
             <div>
               <p
                 className="text-xs font-bold uppercase tracking-wider mb-2"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 Pending Swaps
               </p>
@@ -724,9 +738,9 @@ export const ShiftSchedule: React.FC = () => {
               <button
                 className="text-[11px] font-semibold text-teal-700 hover:text-teal-500 hover:underline mt-2 inline-flex items-center gap-1 cursor-pointer transition-colors"
                 onClick={() =>
-                  document
-                    .getElementById("swaps-panel")
-                    ?.scrollIntoView({ behavior: "smooth" })
+                  document.getElementById("swaps-panel")?.scrollIntoView({
+                    behavior: "smooth",
+                  })
                 }
               >
                 Review Applications <ArrowLeftRight size={10} />
@@ -757,10 +771,26 @@ export const ShiftSchedule: React.FC = () => {
           <div className="h-8 w-[1px] bg-border mx-2"></div>
           <div className="flex gap-4">
             {[
-              { type: "Morning", color: "bg-[#00B87C]", label: "MOR" },
-              { type: "Evening", color: "bg-[#F59E0B]", label: "EVE" },
-              { type: "Night", color: "bg-[#7C3AED]", label: "NGT" },
-              { type: "Off Day", color: "bg-[#90A4AE]", label: "OFF" },
+              {
+                type: "Morning",
+                color: "bg-[#00B87C]",
+                label: "MOR",
+              },
+              {
+                type: "Evening",
+                color: "bg-[#F59E0B]",
+                label: "EVE",
+              },
+              {
+                type: "Night",
+                color: "bg-[#7C3AED]",
+                label: "NGT",
+              },
+              {
+                type: "Off Day",
+                color: "bg-[#90A4AE]",
+                label: "OFF",
+              },
             ].map((type) => (
               <div
                 key={type.type}
@@ -871,15 +901,7 @@ export const ShiftSchedule: React.FC = () => {
                     >
                       {shift ? (
                         <div
-                          className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group ${
-                            shift.type === "Morning"
-                              ? "bg-secondary text-primary border-l-4 border-l-primary"
-                              : shift.type === "Evening"
-                                ? "bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-l-4 border-l-[#F59E0B]"
-                                : shift.type === "Night"
-                                  ? "bg-violet-50 text-violet-700 border-l-4 border-l-violet-500"
-                                  : "bg-blue-50 text-blue-700 border-l-4 border-l-blue-500"
-                          }`}
+                          className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group ${shift.type === "Morning" ? "bg-secondary text-primary border-l-4 border-l-primary" : shift.type === "Evening" ? "bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-l-4 border-l-[#F59E0B]" : shift.type === "Night" ? "bg-violet-50 text-violet-700 border-l-4 border-l-violet-500" : "bg-blue-50 text-blue-700 border-l-4 border-l-blue-500"}`}
                         >
                           <div className="flex items-center justify-between mb-0.5">
                             <span className="text-[11px] font-semibold uppercase tracking-tight">
@@ -936,7 +958,6 @@ export const ShiftSchedule: React.FC = () => {
             month: "long",
             year: "numeric",
           });
-
           return (
             <div className="bg-card border border-border rounded-2xl p-6 shadow-sm mb-8 animate-in fade-in duration-300">
               <div className="flex items-center justify-between mb-6">
@@ -960,7 +981,9 @@ export const ShiftSchedule: React.FC = () => {
                 ))}
 
                 {/* Empty days offset */}
-                {Array.from({ length: startOffset }).map((_, idx) => (
+                {Array.from({
+                  length: startOffset,
+                }).map((_, idx) => (
                   <div
                     key={`empty-${idx}`}
                     className="min-h-[90px] p-2 bg-secondary/10 rounded-xl border border-dashed border-border/40 opacity-30"
@@ -968,79 +991,81 @@ export const ShiftSchedule: React.FC = () => {
                 ))}
 
                 {/* Month Days */}
-                {Array.from({ length: totalDays }, (_, i) => {
-                  const day = i + 1;
-                  const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                {Array.from(
+                  {
+                    length: totalDays,
+                  },
+                  (_, i) => {
+                    const day = i + 1;
+                    const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-                  // Aggregate shifts
-                  let morningCount = 0;
-                  let eveningCount = 0;
-                  let nightCount = 0;
-
-                  filteredSchedule.forEach((emp) => {
-                    const shift = getShiftForDate(emp.name, dStr);
-                    if (shift) {
-                      if (
-                        shift.type === "Morning" ||
-                        shift.type === "Full Day"
-                      ) {
-                        morningCount++;
-                      } else if (shift.type === "Evening") {
-                        eveningCount++;
-                      } else if (shift.type === "Night") {
-                        nightCount++;
+                    // Aggregate shifts
+                    let morningCount = 0;
+                    let eveningCount = 0;
+                    let nightCount = 0;
+                    filteredSchedule.forEach((emp) => {
+                      const shift = getShiftForDate(emp.name, dStr);
+                      if (shift) {
+                        if (
+                          shift.type === "Morning" ||
+                          shift.type === "Full Day"
+                        ) {
+                          morningCount++;
+                        } else if (shift.type === "Evening") {
+                          eveningCount++;
+                        } else if (shift.type === "Night") {
+                          nightCount++;
+                        }
                       }
-                    }
-                  });
-
-                  const isToday =
-                    new Date().toDateString() ===
-                    new Date(year, month, day).toDateString();
-                  const isSelected =
-                    currentDate.getDate() === day &&
-                    currentDate.getMonth() === month &&
-                    currentDate.getFullYear() === year;
-
-                  return (
-                    <div
-                      key={day}
-                      onClick={() => {
-                        const newDate = new Date(year, month, day);
-                        setCurrentDate(newDate);
-                        setView("Day");
-                      }}
-                      className={`min-h-[90px] p-3 bg-secondary/20 hover:bg-[#00B87C]/[0.04] rounded-xl border hover:border-primary/50 transition-all flex flex-col justify-between group cursor-pointer ${isSelected ? "border-primary/70 ring-1 ring-primary/20" : "border-border"}`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span
-                          className={`text-xs font-black group-hover:text-primary transition-colors ${isSelected ? "text-primary" : "text-foreground"}`}
-                        >
-                          {day}
-                        </span>
-                        {isToday && (
+                    });
+                    const isToday =
+                      new Date().toDateString() ===
+                      new Date(year, month, day).toDateString();
+                    const isSelected =
+                      currentDate.getDate() === day &&
+                      currentDate.getMonth() === month &&
+                      currentDate.getFullYear() === year;
+                    return (
+                      <div
+                        key={day}
+                        onClick={() => {
+                          const newDate = new Date(year, month, day);
+                          setCurrentDate(newDate);
+                          setView("Day");
+                        }}
+                        className={`min-h-[90px] p-3 bg-secondary/20 hover:bg-[#00B87C]/[0.04] rounded-xl border hover:border-primary/50 transition-all flex flex-col justify-between group cursor-pointer ${isSelected ? "border-primary/70 ring-1 ring-primary/20" : "border-border"}`}
+                      >
+                        <div className="flex justify-between items-center">
                           <span
-                            className="w-1.5 h-1.5 rounded-full bg-primary"
-                            title="Today"
-                          />
-                        )}
+                            className={`text-xs font-black group-hover:text-primary transition-colors ${isSelected ? "text-primary" : "text-foreground"}`}
+                          >
+                            {day}
+                          </span>
+                          {isToday && (
+                            <span
+                              className="w-1.5 h-1.5 rounded-full bg-primary"
+                              title="Today"
+                            />
+                          )}
+                        </div>
+                        <div className="space-y-1 mt-2">
+                          <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
+                            <span>{morningCount} MOR</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                            <span>{eveningCount} EVE</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#7C3AED]" />
+                            <span>{nightCount} NGT</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="space-y-1 mt-2">
-                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
-                          <span>{morningCount} MOR</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
-                          <span>{eveningCount} EVE</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-600 dark:text-slate-400">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#7C3AED]" />
-                          <span>{nightCount} NGT</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  },
+                )}
               </div>
             </div>
           );
@@ -1231,7 +1256,9 @@ export const ShiftSchedule: React.FC = () => {
               <ArrowLeftRight color="#00B87C" size={18} />
               <h3
                 className="text-lg font-bold"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 Shift Swap Requests
               </h3>
@@ -1256,13 +1283,17 @@ export const ShiftSchedule: React.FC = () => {
                     <div className="flex items-center -space-x-2">
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
-                        style={{ backgroundColor: swap.p1Color }}
+                        style={{
+                          backgroundColor: swap.p1Color,
+                        }}
                       >
                         {swap.p1Init}
                       </div>
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
-                        style={{ backgroundColor: swap.p2Color }}
+                        style={{
+                          backgroundColor: swap.p2Color,
+                        }}
                       >
                         {swap.p2Init}
                       </div>
@@ -1324,7 +1355,9 @@ export const ShiftSchedule: React.FC = () => {
               className="w-full py-2 text-xs font-bold text-primary hover:bg-secondary rounded-xl transition-colors active:scale-95"
               onClick={() =>
                 navigate("/reports", {
-                  state: { activeReport: "Shift Swap Report" },
+                  state: {
+                    activeReport: "Shift Swap Report",
+                  },
                 })
               }
             >
@@ -1343,7 +1376,9 @@ export const ShiftSchedule: React.FC = () => {
               <Clock color="#F59E0B" size={18} />
               <h3
                 className="text-lg font-bold"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 Overtime Monitoring
               </h3>
@@ -1402,7 +1437,9 @@ export const ShiftSchedule: React.FC = () => {
                   </div>
                   <span
                     className="text-xs font-black"
-                    style={{ color: item.color }}
+                    style={{
+                      color: item.color,
+                    }}
                   >
                     {item.hrs}h{" "}
                     <span className="text-[11px] font-medium text-muted-foreground ml-1">
@@ -1450,7 +1487,9 @@ export const ShiftSchedule: React.FC = () => {
                 setTimeout(() => {
                   setGeneratingReport(false);
                   navigate("/reports", {
-                    state: { activeReport: "Overtime Monitoring" },
+                    state: {
+                      activeReport: "Overtime Monitoring",
+                    },
                   });
                 }, 1500);
               }}
@@ -1574,7 +1613,11 @@ export const ShiftSchedule: React.FC = () => {
                     (shiftName) => {
                       const colorMap: Record<
                         string,
-                        { bg: string; text: string; dot: string }
+                        {
+                          bg: string;
+                          text: string;
+                          dot: string;
+                        }
                       > = {
                         Morning: {
                           bg: "bg-[#E6F4EA] dark:bg-emerald-900/20",
@@ -1609,7 +1652,9 @@ export const ShiftSchedule: React.FC = () => {
                         >
                           <span
                             className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: colors.dot }}
+                            style={{
+                              backgroundColor: colors.dot,
+                            }}
                           />
                           {shiftName}
                         </span>
@@ -1674,7 +1719,9 @@ export const ShiftSchedule: React.FC = () => {
       {advancedApplyTemplate && (
         <div
           className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
           onClick={() => setAdvancedApplyTemplate(null)}
         >
           {applyStep === "form" ? (
@@ -1983,9 +2030,8 @@ export const ShiftSchedule: React.FC = () => {
                   Preview Schedule
                 </button>
               </div>
-            </div>
+            </div> /* Step 2: Confirmation Popup */
           ) : (
-            /* Step 2: Confirmation Popup */
             <div
               className="w-full max-w-sm rounded-2xl bg-card shadow-xl border border-border p-6 text-center animate-in fade-in zoom-in-95"
               onClick={(e) => e.stopPropagation()}
@@ -2023,9 +2069,10 @@ export const ShiftSchedule: React.FC = () => {
                       Sat: 5,
                       Sun: 6,
                     };
-
                     setScheduleData((prev) =>
                       prev.map((emp) => {
+            /* Step 2: Confirmation Popup */
+
                         if (selectedEmps.includes(emp.id)) {
                           const newShifts = { ...emp.shifts };
                           const times: Record<string, string> = {
@@ -2034,7 +2081,6 @@ export const ShiftSchedule: React.FC = () => {
                             Night: "22:00 – 06:00",
                             "Full Day": "09:00 – 18:00",
                           };
-
                           Object.entries(weekly).forEach(([day, shiftType]) => {
                             const offset = dayIndexMap[day] ?? 0;
                             const d = new Date(currentDate);
@@ -2052,27 +2098,25 @@ export const ShiftSchedule: React.FC = () => {
                             ) {
                               return;
                             }
-
                             if (shiftType === "Off Day") {
                               newShifts[key] = null;
                             } else {
                               newShifts[key] = {
                                 type: shiftType as
-                                  | "Morning"
-                                  | "Evening"
-                                  | "Night"
-                                  | "Full Day",
+                                  "Morning" | "Evening" | "Night" | "Full Day",
                                 time: times[shiftType] || "09:00 – 18:00",
                                 isOT: false,
                               };
                             }
                           });
-                          return { ...emp, shifts: newShifts };
+                          return {
+                            ...emp,
+                            shifts: newShifts,
+                          };
                         }
                         return emp;
                       }),
                     );
-
                     setTemplates((prev) =>
                       prev.map((t) =>
                         t.id === advancedApplyTemplate.id
@@ -2084,7 +2128,6 @@ export const ShiftSchedule: React.FC = () => {
                           : t,
                       ),
                     );
-
                     setAdvancedApplyTemplate(null);
                     setShowSuccessToast(true);
                     setTimeout(() => setShowSuccessToast(false), 3000);
@@ -2112,7 +2155,9 @@ export const ShiftSchedule: React.FC = () => {
       {selectedTemplate && (
         <div
           className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
           onClick={() => setSelectedTemplate(null)}
         >
           <div
@@ -2177,7 +2222,9 @@ export const ShiftSchedule: React.FC = () => {
       {showCreateTemplate && (
         <div
           className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
           onClick={() => setShowCreateTemplate(false)}
         >
           <div
@@ -2335,7 +2382,9 @@ export const ShiftSchedule: React.FC = () => {
       {editTemplate && (
         <div
           className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
           onClick={() => setEditTemplate(null)}
         >
           <div
@@ -2366,7 +2415,10 @@ export const ShiftSchedule: React.FC = () => {
                   className="w-full px-4 py-2.5 text-sm bg-neutral-50 dark:bg-zinc-800/50 border border-border rounded-xl focus:ring-2 focus:ring-[#00B87C]/20 outline-none font-bold"
                   value={editTemplate.name}
                   onChange={(e) =>
-                    setEditTemplate({ ...editTemplate, name: e.target.value })
+                    setEditTemplate({
+                      ...editTemplate,
+                      name: e.target.value,
+                    })
                   }
                 />
               </div>
@@ -2494,7 +2546,9 @@ export const ShiftSchedule: React.FC = () => {
       {renameTemplate && (
         <div
           className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
           onClick={() => setRenameTemplate(null)}
         >
           <div
@@ -2526,7 +2580,10 @@ export const ShiftSchedule: React.FC = () => {
                   setTemplates((prev) =>
                     prev.map((t) =>
                       t.id === renameTemplate.id
-                        ? { ...t, name: renameValue }
+                        ? {
+                            ...t,
+                            name: renameValue,
+                          }
                         : t,
                     ),
                   );
@@ -2543,7 +2600,9 @@ export const ShiftSchedule: React.FC = () => {
       {showAddModal && (
         <div
           className="fixed inset-0 z-[2000] flex items-center justify-center p-4 transition-opacity"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
           onClick={() => setShowAddModal(false)}
         >
           <div
@@ -2567,7 +2626,9 @@ export const ShiftSchedule: React.FC = () => {
                 </div>
                 <h3
                   className="text-lg font-bold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Assign New Shift
                 </h3>
@@ -2575,7 +2636,9 @@ export const ShiftSchedule: React.FC = () => {
               <button
                 onClick={() => setShowAddModal(false)}
                 className="p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-zinc-800 transition-colors"
-                style={{ color: "var(--muted-foreground)" }}
+                style={{
+                  color: "var(--muted-foreground)",
+                }}
               >
                 <X size={18} />
               </button>
@@ -2584,7 +2647,9 @@ export const ShiftSchedule: React.FC = () => {
               <div className="space-y-1.5">
                 <label
                   className="block text-sm font-semibold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Select Employee
                 </label>
@@ -2610,7 +2675,9 @@ export const ShiftSchedule: React.FC = () => {
                 <div className="space-y-1.5">
                   <label
                     className="block text-sm font-semibold"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     Shift Type
                   </label>
@@ -2632,7 +2699,9 @@ export const ShiftSchedule: React.FC = () => {
                 <div className="space-y-1.5">
                   <label
                     className="block text-sm font-semibold"
-                    style={{ color: "var(--foreground)" }}
+                    style={{
+                      color: "var(--foreground)",
+                    }}
                   >
                     Department
                   </label>
@@ -2658,7 +2727,9 @@ export const ShiftSchedule: React.FC = () => {
               <div className="space-y-1.5">
                 <label
                   className="block text-sm font-semibold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Shift Date
                 </label>
@@ -2682,7 +2753,9 @@ export const ShiftSchedule: React.FC = () => {
               <div className="space-y-1.5">
                 <label
                   className="block text-sm font-semibold"
-                  style={{ color: "var(--foreground)" }}
+                  style={{
+                    color: "var(--foreground)",
+                  }}
                 >
                   Notes (Optional)
                 </label>
@@ -2709,7 +2782,9 @@ export const ShiftSchedule: React.FC = () => {
               <button
                 onClick={() => setShowAddModal(false)}
                 className="px-4 py-2 rounded-xl text-sm font-bold transition-colors hover:bg-neutral-100 dark:hover:bg-zinc-800"
-                style={{ color: "var(--foreground)" }}
+                style={{
+                  color: "var(--foreground)",
+                }}
               >
                 Cancel
               </button>
@@ -2746,7 +2821,9 @@ export const ShiftSchedule: React.FC = () => {
               <div className="flex flex-col items-center">
                 <div
                   className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white shadow-md"
-                  style={{ backgroundColor: selectedSwapDetails.p1Color }}
+                  style={{
+                    backgroundColor: selectedSwapDetails.p1Color,
+                  }}
                 >
                   {selectedSwapDetails.p1Init}
                 </div>
@@ -2762,7 +2839,9 @@ export const ShiftSchedule: React.FC = () => {
               <div className="flex flex-col items-center">
                 <div
                   className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white shadow-md"
-                  style={{ backgroundColor: selectedSwapDetails.p2Color }}
+                  style={{
+                    backgroundColor: selectedSwapDetails.p2Color,
+                  }}
                 >
                   {selectedSwapDetails.p2Init}
                 </div>

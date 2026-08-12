@@ -19,8 +19,8 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
-
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 interface TimelineEntry {
   id: string;
   type:
@@ -33,17 +33,19 @@ interface TimelineEntry {
   user: string;
   timestamp: string;
   comment?: string;
-  attachment?: { name: string; size: string; type: string };
+  attachment?: {
+    name: string;
+    size: string;
+    type: string;
+  };
   newStatus?: string;
 }
-
 interface Attachment {
   name: string;
   size: string;
   type: string;
   url?: string;
 }
-
 interface Ticket {
   id: string;
   subject: string;
@@ -61,9 +63,7 @@ interface Ticket {
   timeline: TimelineEntry[];
   attachments: Attachment[];
 }
-
 const TABS = ["My Tickets", "Knowledge Base"];
-
 const INITIAL_TICKETS: Ticket[] = [
   {
     id: "#TKT-0812",
@@ -96,7 +96,11 @@ const INITIAL_TICKETS: Ticket[] = [
       },
     ],
     attachments: [
-      { name: "React_Masters_Syllabus.pdf", size: "1.4 MB", type: "pdf" },
+      {
+        name: "React_Masters_Syllabus.pdf",
+        size: "1.4 MB",
+        type: "pdf",
+      },
     ],
   },
   {
@@ -164,27 +168,47 @@ const INITIAL_TICKETS: Ticket[] = [
     attachments: [],
   },
 ];
-
 const FAQ_CATEGORIES = [
-  { name: "Team Leave Approval Guidelines", icon: CalendarDays, count: 8 },
-  { name: "Appraisal Review Policies", icon: TrendingUp, count: 12 },
-  { name: "IT Hardware Allocation", icon: Monitor, count: 10 },
-  { name: "Budgeting & Expenses", icon: IndianRupee, count: 6 },
-  { name: "Employee Onboarding Flow", icon: UserPlus, count: 15 },
-  { name: "Timesheet & Overtime Rules", icon: FileSpreadsheet, count: 11 },
+  {
+    name: "Team Leave Approval Guidelines",
+    icon: CalendarDays,
+    count: 8,
+  },
+  {
+    name: "Appraisal Review Policies",
+    icon: TrendingUp,
+    count: 12,
+  },
+  {
+    name: "IT Hardware Allocation",
+    icon: Monitor,
+    count: 10,
+  },
+  {
+    name: "Budgeting & Expenses",
+    icon: IndianRupee,
+    count: 6,
+  },
+  {
+    name: "Employee Onboarding Flow",
+    icon: UserPlus,
+    count: 15,
+  },
+  {
+    name: "Timesheet & Overtime Rules",
+    icon: FileSpreadsheet,
+    count: 11,
+  },
 ];
-
 export function ManagerSupportTicket() {
   const [activeTab, setActiveTab] = useState("My Tickets");
   const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS);
   const [showNewTicketModal, setShowNewTicketModal] = useState(false);
   const [viewingTicket, setViewingTicket] = useState<Ticket | null>(null);
-
   const [ticketStatusTab, setTicketStatusTab] = useState("All Requests");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterPriority, setFilterPriority] = useState("All");
-
   const filteredTickets = useMemo(() => {
     return tickets.filter((t) => {
       const matchSearch =
@@ -202,14 +226,11 @@ export function ManagerSupportTicket() {
       return matchSearch && matchStatus && matchCategory && matchPriority;
     });
   }, [tickets, searchQuery, ticketStatusTab, filterCategory, filterPriority]);
-
   const handleAddTicket = (newTicket: Ticket) => {
     setTickets([newTicket, ...tickets]);
   };
-
   const handleAddComment = (ticketId: string, commentText: string) => {
     if (!commentText.trim()) return;
-
     const newEntry: TimelineEntry = {
       id: Math.random().toString(),
       type: "comment",
@@ -217,7 +238,6 @@ export function ManagerSupportTicket() {
       timestamp: new Date().toLocaleString(),
       comment: commentText,
     };
-
     setTickets((prev) =>
       prev.map((t) =>
         t.id === ticketId
@@ -228,7 +248,6 @@ export function ManagerSupportTicket() {
           : t,
       ),
     );
-
     if (viewingTicket?.id === ticketId) {
       setViewingTicket((prev) =>
         prev
@@ -239,17 +258,14 @@ export function ManagerSupportTicket() {
           : null,
       );
     }
-
     showToast("Comment Added", "success", "Your message has been posted.");
   };
-
   const openCount = tickets.filter((t) =>
     new Set(["Open", "In Progress"]).has(t.status),
   ).length;
   const resolvedCount = tickets.filter((t) =>
     new Set(["Resolved"]).has(t.status),
   ).length;
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-700 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent">
       {/* ─── Page Header ─────────────────────────────────────────── */}
@@ -332,11 +348,7 @@ export function ManagerSupportTicket() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 rounded-xl text-[13px] transition-all whitespace-nowrap uppercase tracking-wider ${
-              activeTab === tab
-                ? "bg-[#00B87C] text-white font-bold shadow-md shadow-emerald-500/20"
-                : "text-muted-foreground font-bold hover:bg-secondary"
-            }`}
+            className={`px-6 py-3 rounded-xl text-[13px] transition-all whitespace-nowrap uppercase tracking-wider ${activeTab === tab ? "bg-[#00B87C] text-white font-bold shadow-md shadow-emerald-500/20" : "text-muted-foreground font-bold hover:bg-secondary"}`}
           >
             {tab}
           </button>
@@ -346,12 +358,23 @@ export function ManagerSupportTicket() {
       {/* ─── Tab Content ──────────────────────────────────────────── */}
       <div className="min-h-[400px]">
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
           >
             {activeTab === "My Tickets" && (
               <MyTicketsTab
@@ -368,7 +391,7 @@ export function ManagerSupportTicket() {
               />
             )}
             {activeTab === "Knowledge Base" && <KnowledgeBaseTab />}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
@@ -419,7 +442,6 @@ function MyTicketsTab({
   onViewTicket: (t: Ticket) => void;
 }) {
   const tabs = ["All Requests", "Open", "In Progress", "Resolved"];
-
   return (
     <div className="space-y-4">
       {/* Filters Bar */}
@@ -429,11 +451,7 @@ function MyTicketsTab({
             <button
               key={tab}
               onClick={() => setTicketStatusTab(tab)}
-              className={`px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all whitespace-nowrap ${
-                ticketStatusTab === tab
-                  ? "bg-secondary text-foreground font-bold shadow-sm"
-                  : "text-muted-foreground hover:bg-secondary/50"
-              }`}
+              className={`px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all whitespace-nowrap ${ticketStatusTab === tab ? "bg-secondary text-foreground font-bold shadow-sm" : "text-muted-foreground hover:bg-secondary/50"}`}
             >
               {tab}
             </button>
@@ -611,7 +629,6 @@ function KnowledgeBaseTab() {
       a: "Appraisal reviews start 1 week prior to quarter closure. You will receive manager check-in prompts in your Notification Feed. Direct reports complete their self-appraisals first, followed by your manager L1 scores.",
     },
   ];
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* FAQ categories grid */}
@@ -687,11 +704,9 @@ function NewTicketModal({
   const [priority, setPriority] = useState("Medium");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject.trim() || !description.trim()) return;
-
     const newTicket: Ticket = {
       id: `#TKT-0${Math.floor(Math.random() * 900) + 100}`,
       subject,
@@ -738,7 +753,6 @@ function NewTicketModal({
           ]
         : [],
     };
-
     onAdd(newTicket);
     showToast(
       "Ticket Raised",
@@ -747,26 +761,42 @@ function NewTicketModal({
     );
     onClose();
   };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
     }
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/40 dark:bg-black/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden border border-border flex flex-col max-h-[90vh]"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
@@ -842,11 +872,7 @@ function NewTicketModal({
                     key={level}
                     type="button"
                     onClick={() => setPriority(level)}
-                    className={`py-3.5 rounded-2xl text-[13px] font-bold transition-all border-2 ${
-                      priority === level
-                        ? "bg-[#00B87C] text-white border-[#00B87C] shadow-lg shadow-emerald-500/20 scale-[1.02]"
-                        : "bg-[#F0FDF4]/50 dark:bg-emerald-500/5 text-slate-500 border-transparent hover:border-emerald-500/20"
-                    }`}
+                    className={`py-3.5 rounded-2xl text-[13px] font-bold transition-all border-2 ${priority === level ? "bg-[#00B87C] text-white border-[#00B87C] shadow-lg shadow-emerald-500/20 scale-[1.02]" : "bg-[#F0FDF4]/50 dark:bg-emerald-500/5 text-slate-500 border-transparent hover:border-emerald-500/20"}`}
                   >
                     {level}
                   </button>
@@ -896,7 +922,7 @@ function NewTicketModal({
             </button>
           </form>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -915,34 +941,50 @@ function TicketDetailModal({
 }) {
   const [comment, setComment] = useState("");
   const timelineEndRef = useRef<HTMLDivElement>(null);
-
   const handleSubmitComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!comment.trim()) return;
     onAddComment(ticket.id, comment);
     setComment("");
     setTimeout(() => {
-      timelineEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      timelineEndRef.current?.scrollIntoView({
+        behavior: "smooth",
+      });
     }, 100);
   };
-
   return (
     <div className="fixed inset-0 z-[4000] flex justify-end">
       {/* Backdrop */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-black/45 backdrop-blur-sm"
       />
 
       {/* Slide Drawer Container */}
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      <m.div
+        initial={{
+          x: "100%",
+        }}
+        animate={{
+          x: 0,
+        }}
+        exit={{
+          x: "100%",
+        }}
+        transition={{
+          type: "spring",
+          damping: 25,
+          stiffness: 200,
+        }}
         className="relative bg-card w-full max-w-[500px] h-full shadow-2xl border-l border-border flex flex-col overflow-y-auto custom-scrollbar z-50 p-8"
       >
         {/* Header close button */}
@@ -1120,7 +1162,7 @@ function TicketDetailModal({
             </button>
           </form>
         )}
-      </motion.div>
+      </m.div>
     </div>
   );
 }

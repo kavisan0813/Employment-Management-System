@@ -8,57 +8,172 @@ import {
   X,
   UserSearch,
 } from "lucide-react";
-const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
-const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
-const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
-const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
-const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
-const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
-const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
-const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
-const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
-const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
-const LineChart = lazy(() => import("recharts").then(m => ({ default: m.LineChart })));
-const Line = lazy(() => import("recharts").then(m => ({ default: m.Line })));
-
-import { motion } from "motion/react";
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.XAxis,
+  })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.YAxis,
+  })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.CartesianGrid,
+  })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Tooltip,
+  })),
+);
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.ResponsiveContainer,
+  })),
+);
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.PieChart,
+  })),
+);
+const Pie = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Pie,
+  })),
+);
+const Cell = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Cell,
+  })),
+);
+const BarChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.BarChart,
+  })),
+);
+const Bar = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Bar,
+  })),
+);
+const LineChart = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.LineChart,
+  })),
+);
+const Line = lazy(() =>
+  import("recharts").then((m) => ({
+    default: m.Line,
+  })),
+);
 import { lazy, useState } from "react";
 import { useNavigate } from "react-router";
 
 // ─── MOCK DATA ───────────────────────────────────
-
+import * as m from "motion/react-m";
 const ATTENDANCE_TREND_6M = [
-  { date: "Dec", rate: 91 },
-  { date: "Jan", rate: 90 },
-  { date: "Feb", rate: 94 },
-  { date: "Mar", rate: 89 },
-  { date: "Apr", rate: 93 },
-  { date: "May", rate: 91.6 },
+  {
+    date: "Dec",
+    rate: 91,
+  },
+  {
+    date: "Jan",
+    rate: 90,
+  },
+  {
+    date: "Feb",
+    rate: 94,
+  },
+  {
+    date: "Mar",
+    rate: 89,
+  },
+  {
+    date: "Apr",
+    rate: 93,
+  },
+  {
+    date: "May",
+    rate: 91.6,
+  },
 ];
-
 const ATTENDANCE_TREND_1Y = [
-  { date: "01 May", rate: 92 },
-  { date: "02 May", rate: 88 },
-  { date: "03 May", rate: 94 },
-  { date: "04 May", rate: 91 },
-  { date: "05 May", rate: 95 },
-  { date: "06 May", rate: 93 },
-  { date: "07 May", rate: 92 },
-  { date: "08 May", rate: 91 },
-  { date: "09 May", rate: 89 },
-  { date: "10 May", rate: 90 },
-  { date: "11 May", rate: 92 },
-  { date: "12 May", rate: 94 },
-  { date: "13 May", rate: 93 },
-  { date: "14 May", rate: 91.6 },
+  {
+    date: "01 May",
+    rate: 92,
+  },
+  {
+    date: "02 May",
+    rate: 88,
+  },
+  {
+    date: "03 May",
+    rate: 94,
+  },
+  {
+    date: "04 May",
+    rate: 91,
+  },
+  {
+    date: "05 May",
+    rate: 95,
+  },
+  {
+    date: "06 May",
+    rate: 93,
+  },
+  {
+    date: "07 May",
+    rate: 92,
+  },
+  {
+    date: "08 May",
+    rate: 91,
+  },
+  {
+    date: "09 May",
+    rate: 89,
+  },
+  {
+    date: "10 May",
+    rate: 90,
+  },
+  {
+    date: "11 May",
+    rate: 92,
+  },
+  {
+    date: "12 May",
+    rate: 94,
+  },
+  {
+    date: "13 May",
+    rate: 93,
+  },
+  {
+    date: "14 May",
+    rate: 91.6,
+  },
 ];
-
 const TEAM_COMPOSITION = [
-  { name: "Active", value: 10, color: "#00B87C" },
-  { name: "On Leave", value: 1, color: "#EF4444" },
-  { name: "WFH", value: 1, color: "#0EA5E9" },
+  {
+    name: "Active",
+    value: 10,
+    color: "#00B87C",
+  },
+  {
+    name: "On Leave",
+    value: 1,
+    color: "#EF4444",
+  },
+  {
+    name: "WFH",
+    value: 1,
+    color: "#0EA5E9",
+  },
 ];
-
 const TEAM_MEMBERS = [
   {
     name: "Priya Sharma",
@@ -101,7 +216,6 @@ const TEAM_MEMBERS = [
     shiftText: "#92400E",
   },
 ];
-
 const PENDING_APPROVALS = [
   {
     name: "Priya Sharma",
@@ -125,14 +239,28 @@ const PENDING_APPROVALS = [
     badge: "WFH",
   },
 ];
-
 const DEPT_PERFORMANCE = [
-  { metric: "Attendance", team: 92, company: 88 },
-  { metric: "Performance", team: 85, company: 80 },
-  { metric: "Goal Completion", team: 78, company: 75 },
-  { metric: "Training", team: 95, company: 90 },
+  {
+    metric: "Attendance",
+    team: 92,
+    company: 88,
+  },
+  {
+    metric: "Performance",
+    team: 85,
+    company: 80,
+  },
+  {
+    metric: "Goal Completion",
+    team: 78,
+    company: 75,
+  },
+  {
+    metric: "Training",
+    team: 95,
+    company: 90,
+  },
 ];
-
 const TEAM_TODAY = [
   {
     id: 1,
@@ -195,35 +323,28 @@ const TEAM_TODAY = [
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=12",
   },
 ];
-
 export function ManagerDashboard() {
   const [activeRange, setActiveRange] = useState("1Y");
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showAddShiftModal, setShowAddShiftModal] = useState(false);
   const navigate = useNavigate();
-
   const [selectedEmployee, setSelectedEmployee] = useState<
     (typeof TEAM_MEMBERS)[0] | null
   >(TEAM_MEMBERS[3]); // Default to Sanya Gupta
   const [pendingApprovals, setPendingApprovals] = useState(PENDING_APPROVALS);
   const [teamToday, setTeamToday] = useState(TEAM_TODAY);
-
   const presentTodayCount = teamToday.filter(
     (m) => m.status === "present" || m.status === "wfh",
   ).length;
   const totalTodayCount = teamToday.length;
-
   const chartData =
     activeRange === "6M" ? ATTENDANCE_TREND_6M : ATTENDANCE_TREND_1Y;
-
   const handleApproveApproval = (name: string) => {
     setPendingApprovals((prev) => prev.filter((a) => a.name !== name));
   };
-
   const handleRejectApproval = (name: string) => {
     setPendingApprovals((prev) => prev.filter((a) => a.name !== name));
   };
-
   const handleAddTeamMember = () => {
     const nextId = teamToday.length + 1;
     const statuses = ["present", "wfh", "leave"];
@@ -235,7 +356,6 @@ export function ManagerDashboard() {
     };
     setTeamToday([...teamToday, newMember]);
   };
-
   const handleAction = (label: string) => {
     if (label === "Approve Leaves") setShowApproveModal(true);
     else if (label === "Add Shift") setShowAddShiftModal(true);
@@ -243,7 +363,6 @@ export function ManagerDashboard() {
     else if (label === "Team Report") navigate("/reports");
     else if (label === "Expense Approvals") navigate("/expenses");
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6">
       {/* ═══ PAGE HEADER ═══ */}
@@ -347,13 +466,7 @@ export function ManagerDashboard() {
             </span>
             <div className="flex items-center gap-1.5">
               <div
-                className={`w-1.5 h-1.5 rounded-full ${
-                  selectedEmployee.status === "Present"
-                    ? "bg-[#00B87C]"
-                    : selectedEmployee.status === "WFH"
-                      ? "bg-[#0EA5E9]"
-                      : "bg-red-500 animate-pulse"
-                }`}
+                className={`w-1.5 h-1.5 rounded-full ${selectedEmployee.status === "Present" ? "bg-[#00B87C]" : selectedEmployee.status === "WFH" ? "bg-[#0EA5E9]" : "bg-red-500 animate-pulse"}`}
               />
               <span className="text-[11px] font-bold text-foreground">
                 {selectedEmployee.status}
@@ -409,19 +522,34 @@ export function ManagerDashboard() {
             isPositive: false,
           },
         ].map((kpi, i) => (
-          <motion.div
+          <m.div
             key={kpi.label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: i * 0.05,
+            }}
             className="bg-card p-5 rounded-[20px] border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all group cursor-pointer"
           >
             <div className="flex items-center justify-between mb-4">
               <div
                 className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
-                style={{ backgroundColor: kpi.bg }}
+                style={{
+                  backgroundColor: kpi.bg,
+                }}
               >
-                <Users size={20} style={{ color: kpi.color }} />
+                <Users
+                  size={20}
+                  style={{
+                    color: kpi.color,
+                  }}
+                />
               </div>
               {kpi.change && (
                 <div
@@ -438,7 +566,7 @@ export function ManagerDashboard() {
               {kpi.value}
             </p>
             <p className="text-[12px] text-[#6B7280]">{kpi.sub}</p>
-          </motion.div>
+          </m.div>
         ))}
       </div>
 
@@ -479,13 +607,21 @@ export function ManagerDashboard() {
                   dataKey="date"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fontWeight: 700, fill: "#94a3b8" }}
+                  tick={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    fill: "#94a3b8",
+                  }}
                   dy={10}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fontWeight: 700, fill: "#94a3b8" }}
+                  tick={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    fill: "#94a3b8",
+                  }}
                   domain={[80, 100]}
                   unit="%"
                 />
@@ -507,7 +643,10 @@ export function ManagerDashboard() {
                     strokeWidth: 2,
                     stroke: "#fff",
                   }}
-                  activeDot={{ r: 6, strokeWidth: 0 }}
+                  activeDot={{
+                    r: 6,
+                    strokeWidth: 0,
+                  }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -557,7 +696,9 @@ export function ManagerDashboard() {
                   <div className="flex items-center gap-2">
                     <div
                       className="w-2.5 h-2.5 rounded-full"
-                      style={{ backgroundColor: item.color }}
+                      style={{
+                        backgroundColor: item.color,
+                      }}
                     />
                     <span className="text-[12px] font-bold text-foreground">
                       {item.name}
@@ -649,13 +790,7 @@ export function ManagerDashboard() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1.5">
                         <div
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            emp.status === "Present"
-                              ? "bg-[#00B87C]"
-                              : emp.status === "WFH"
-                                ? "bg-[#0EA5E9]"
-                                : "bg-red-500 animate-pulse"
-                          }`}
+                          className={`w-1.5 h-1.5 rounded-full ${emp.status === "Present" ? "bg-[#00B87C]" : emp.status === "WFH" ? "bg-[#0EA5E9]" : "bg-red-500 animate-pulse"}`}
                         />
                         <span className="text-[11px] font-bold text-foreground">
                           {emp.status}
@@ -720,9 +855,16 @@ export function ManagerDashboard() {
               >
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: action.bg }}
+                  style={{
+                    backgroundColor: action.bg,
+                  }}
                 >
-                  <action.icon size={22} style={{ color: action.color }} />
+                  <action.icon
+                    size={22}
+                    style={{
+                      color: action.color,
+                    }}
+                  />
                 </div>
                 <span className="text-[12px] font-bold text-foreground text-center leading-tight">
                   {action.label}
@@ -736,9 +878,15 @@ export function ManagerDashboard() {
       {/* ═══ MODALS ═══ */}
       {showApproveModal && (
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              scale: 0.95,
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+            }}
             className="bg-card w-full max-w-lg rounded-3xl border border-border shadow-2xl overflow-hidden"
           >
             <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/20">
@@ -814,15 +962,21 @@ export function ManagerDashboard() {
                 Approve All
               </button>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       )}
 
       {showAddShiftModal && (
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <m.div
+            initial={{
+              opacity: 0,
+              scale: 0.95,
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+            }}
             className="bg-card w-full max-w-md rounded-3xl border border-border shadow-2xl overflow-hidden"
           >
             <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/20">
@@ -872,7 +1026,7 @@ export function ManagerDashboard() {
                 Assign Shift
               </button>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       )}
       {/* ═══ SECOND ROW — PERFORMANCE & Pending Approvals & Team Today's Attendance  ═══ */}
@@ -908,7 +1062,9 @@ export function ManagerDashboard() {
               <BarChart
                 data={DEPT_PERFORMANCE}
                 layout="vertical"
-                margin={{ left: 30 }}
+                margin={{
+                  left: 30,
+                }}
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
@@ -922,11 +1078,17 @@ export function ManagerDashboard() {
                   type="category"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fontWeight: 700, fill: "#64748b" }}
+                  tick={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    fill: "#64748b",
+                  }}
                   width={100}
                 />
                 <Tooltip
-                  cursor={{ fill: "rgba(0,0,0,0.02)" }}
+                  cursor={{
+                    fill: "rgba(0,0,0,0.02)",
+                  }}
                   contentStyle={{
                     borderRadius: "12px",
                     border: "none",
@@ -981,13 +1143,7 @@ export function ManagerDashboard() {
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span
-                          className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${
-                            item.badge === "Leave"
-                              ? "bg-amber-50 text-amber-600"
-                              : item.badge === "Expense"
-                                ? "bg-purple-50 text-purple-600"
-                                : "bg-blue-50 text-blue-600"
-                          }`}
+                          className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${item.badge === "Leave" ? "bg-amber-50 text-amber-600" : item.badge === "Expense" ? "bg-purple-50 text-purple-600" : "bg-blue-50 text-blue-600"}`}
                         >
                           {item.badge} Request
                         </span>
@@ -1041,13 +1197,7 @@ export function ManagerDashboard() {
                   className="flex flex-col items-center gap-2"
                 >
                   <div
-                    className={`relative w-12 h-12 rounded-full p-0.5 ${
-                      member.status === "present"
-                        ? "border-2 border-[#00B87C]"
-                        : member.status === "leave"
-                          ? "border-2 border-red-500"
-                          : "border-2 border-[#0EA5E9]"
-                    }`}
+                    className={`relative w-12 h-12 rounded-full p-0.5 ${member.status === "present" ? "border-2 border-[#00B87C]" : member.status === "leave" ? "border-2 border-red-500" : "border-2 border-[#0EA5E9]"}`}
                   >
                     <img
                       src={member.avatar}
@@ -1055,13 +1205,7 @@ export function ManagerDashboard() {
                       className="w-full h-full rounded-full bg-secondary object-cover"
                     />
                     <div
-                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-card ${
-                        member.status === "present"
-                          ? "bg-[#00B87C]"
-                          : member.status === "leave"
-                            ? "bg-red-500"
-                            : "bg-[#0EA5E9]"
-                      }`}
+                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-card ${member.status === "present" ? "bg-[#00B87C]" : member.status === "leave" ? "bg-red-500" : "bg-[#0EA5E9]"}`}
                     />
                   </div>
                 </div>

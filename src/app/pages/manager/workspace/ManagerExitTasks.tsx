@@ -11,12 +11,12 @@ import {
   User,
   Check,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 
 /* ─── Types ─── */
+import * as m from "motion/react-m";
 type ExitType = "Resignation" | "Termination" | "Retirement";
 type TaskStatus = "done" | "pending";
-
 interface ManagerTask {
   id: string;
   label: string;
@@ -26,7 +26,6 @@ interface ManagerTask {
   actionLabel?: string;
   actionType?: "link" | "btn" | "signoff";
 }
-
 interface ExitMember {
   id: string;
   name: string;
@@ -154,7 +153,6 @@ const EXIT_MEMBERS: ExitMember[] = [
     ],
   },
 ];
-
 const exitTypeChip = (type: ExitType) => {
   switch (type) {
     case "Resignation":
@@ -190,13 +188,11 @@ export function ManagerExitTasks() {
   const [ktPlans, setKtPlans] = useState<
     Record<string, Record<string, string>>
   >({});
-
   const totalTasks = members.reduce((s, m) => s + m.tasks.length, 0);
   const doneTasks = members.reduce(
     (s, m) => s + m.tasks.filter((t) => t.status === "done").length,
     0,
   );
-
   const handleToggleTask = (memberId: string, taskId: string) => {
     setMembers((prev) =>
       prev.map((m) => {
@@ -216,7 +212,6 @@ export function ManagerExitTasks() {
       }),
     );
   };
-
   const handleMarkDone = (memberId: string, taskId: string) => {
     setMembers((prev) =>
       prev.map((m) => {
@@ -228,7 +223,10 @@ export function ManagerExitTasks() {
               ? {
                   ...t,
                   status: "done" as TaskStatus,
-                  dueDate: `Done ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}`,
+                  dueDate: `Done ${new Date().toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}`,
                 }
               : t,
           ),
@@ -236,7 +234,6 @@ export function ManagerExitTasks() {
       }),
     );
   };
-
   return (
     <div className="p-8 max-w-[1200px] mx-auto min-h-screen">
       {/* PAGE HEADER */}
@@ -331,15 +328,13 @@ export function ManagerExitTasks() {
                       <div
                         key={task.id}
                         className="flex items-center gap-4 px-5 py-3 hover:bg-[#00B87C]/[0.08]/40 transition-colors cursor-pointer group"
-                        style={{ minHeight: "44px" }}
+                        style={{
+                          minHeight: "44px",
+                        }}
                       >
                         <button
                           onClick={() => handleToggleTask(member.id, task.id)}
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                            task.status === "done"
-                              ? "bg-[#00B87C] border-[#00B87C]"
-                              : "border-muted-foreground/40 hover:border-[#00B87C]"
-                          }`}
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${task.status === "done" ? "bg-[#00B87C] border-[#00B87C]" : "border-muted-foreground/40 hover:border-[#00B87C]"}`}
                         >
                           {task.status === "done" && (
                             <Check
@@ -361,13 +356,7 @@ export function ManagerExitTasks() {
                         </div>
                         <div className="flex items-center gap-3 shrink-0">
                           <span
-                            className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg ${
-                              task.status === "done"
-                                ? "text-[#00B87C] bg-[#DCFCE7]"
-                                : task.dueDate.startsWith("Due")
-                                  ? "text-amber-500 bg-[#FEF3C7]"
-                                  : "text-muted-foreground bg-muted"
-                            }`}
+                            className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-lg ${task.status === "done" ? "text-[#00B87C] bg-[#DCFCE7]" : task.dueDate.startsWith("Due") ? "text-amber-500 bg-[#FEF3C7]" : "text-muted-foreground bg-muted"}`}
                           >
                             {task.dueDate}
                           </span>
@@ -446,7 +435,9 @@ export function ManagerExitTasks() {
                     <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                       <div
                         className="h-full bg-[#00B87C] rounded-full transition-all duration-500"
-                        style={{ width: `${progress}%` }}
+                        style={{
+                          width: `${progress}%`,
+                        }}
                       />
                     </div>
                   </div>
@@ -472,7 +463,10 @@ export function ManagerExitTasks() {
                     t.actionType === "link" && t.label.startsWith("Create"),
                 )?.id;
               if (tid) {
-                setKtPlans((prev) => ({ ...prev, [mid]: formData }));
+                setKtPlans((prev) => ({
+                  ...prev,
+                  [mid]: formData,
+                }));
                 handleMarkDone(mid, tid);
               }
               setShowKTModal(null);
@@ -547,7 +541,6 @@ function KTModal({
     pendingTasks: initialData?.pendingTasks || "",
     handoverPerson: initialData?.handoverPerson || "",
   }));
-
   const handleDownload = () => {
     const content = [
       `Knowledge Transfer Plan — ${memberName}`,
@@ -567,8 +560,9 @@ function KTModal({
       "━━━ Handover Person ━━━",
       ktForm.handoverPerson || "N/A",
     ].join("\n");
-
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const blob = new Blob([content], {
+      type: "text/plain;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -578,7 +572,6 @@ function KTModal({
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
-
   const sections = [
     {
       key: "ongoingProjects",
@@ -606,16 +599,27 @@ function KTModal({
       placeholder: "Who will take over responsibilities after exit...",
     },
   ];
-
   return (
     <div
       className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="w-full max-w-[500px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -684,7 +688,7 @@ function KTModal({
             )}
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -704,10 +708,19 @@ function SignOffModal({
       className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+        }}
         className="w-full max-w-sm bg-card rounded-[32px] p-8 text-center shadow-2xl border border-border"
         onClick={(e) => e.stopPropagation()}
       >
@@ -738,7 +751,7 @@ function SignOffModal({
             <CheckCircle2 size={14} /> Sign Off
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -758,10 +771,22 @@ function WriteRecommendationModal({
       className="fixed inset-0 z-[2100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="w-full max-w-[500px] bg-card rounded-[32px] shadow-2xl border border-border overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -805,7 +830,7 @@ function WriteRecommendationModal({
             <Check size={14} /> Save Recommendation
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

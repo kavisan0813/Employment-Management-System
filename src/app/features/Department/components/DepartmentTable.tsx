@@ -1,8 +1,4 @@
-import {
-  Building2,
-  User,
-  TrendingUp,
-} from "lucide-react";
+import { Building2, User, TrendingUp } from "lucide-react";
 import { Department } from "../types/department.types";
 
 interface DepartmentTableProps {
@@ -81,10 +77,11 @@ export function DepartmentTable({
                 {/* Head */}
                 <td className="px-6 py-4">
                   <div
-                    className={`flex items-center gap-2 text-xs font-bold ${canManage
+                    className={`flex items-center gap-2 text-xs font-bold ${
+                      canManage
                         ? "cursor-pointer hover:text-primary transition-colors text-foreground"
                         : "text-foreground"
-                      }`}
+                    }`}
                     onClick={(e) => {
                       e.stopPropagation();
                       if (canManage) {
@@ -100,10 +97,11 @@ export function DepartmentTable({
                 {/* Status */}
                 <td className="px-6 py-4">
                   <span
-                    className={`px-2 py-0.5 text-[9px] font-black rounded-full border uppercase tracking-wider ${dept.status === "Active"
+                    className={`px-2 py-0.5 text-[9px] font-black rounded-full border uppercase tracking-wider ${
+                      dept.status === "Active"
                         ? "bg-[#E6F4EA] text-[#00B87C] border-[#00B87C]/20"
                         : "bg-slate-100 text-slate-400 border-border"
-                      }`}
+                    }`}
                   >
                     {dept.status}
                   </span>

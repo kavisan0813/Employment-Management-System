@@ -10,13 +10,13 @@ import {
   Paperclip,
 } from "lucide-react";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router";
 import { StatusBadge } from "../../components/workflow/StatusBadge";
 import { useAttendance } from "../../context/AttendanceContext";
 import { formatTime12Hour } from "../../context/attendance.utils";
 import { PunchCard } from "../../components/attendance/PunchCard";
-
+import * as m from "motion/react-m";
 interface RegularizationRequest {
   id: string;
   date: string;
@@ -30,18 +30,56 @@ interface RegularizationRequest {
   approvalDate?: string;
   rejectionReason?: string;
 }
-
 const ATTENDANCE_LOGS = [
-  { date: "01 Apr 2026", in: "08:52 AM", out: "06:05 PM", status: "Present" },
-  { date: "02 Apr 2026", in: "08:58 AM", out: "06:02 PM", status: "Present" },
-  { date: "03 Apr 2026", in: "09:15 AM", out: "06:10 PM", status: "Late" },
-  { date: "04 Apr 2026", in: "-", out: "-", status: "Weekend" },
-  { date: "05 Apr 2026", in: "-", out: "-", status: "Weekend" },
-  { date: "06 Apr 2026", in: "08:45 AM", out: "06:00 PM", status: "Present" },
-  { date: "07 Apr 2026", in: "-", out: "-", status: "Leave" },
-  { date: "08 Apr 2026", in: "09:02 AM", out: "06:15 PM", status: "Present" },
+  {
+    date: "01 Apr 2026",
+    in: "08:52 AM",
+    out: "06:05 PM",
+    status: "Present",
+  },
+  {
+    date: "02 Apr 2026",
+    in: "08:58 AM",
+    out: "06:02 PM",
+    status: "Present",
+  },
+  {
+    date: "03 Apr 2026",
+    in: "09:15 AM",
+    out: "06:10 PM",
+    status: "Late",
+  },
+  {
+    date: "04 Apr 2026",
+    in: "-",
+    out: "-",
+    status: "Weekend",
+  },
+  {
+    date: "05 Apr 2026",
+    in: "-",
+    out: "-",
+    status: "Weekend",
+  },
+  {
+    date: "06 Apr 2026",
+    in: "08:45 AM",
+    out: "06:00 PM",
+    status: "Present",
+  },
+  {
+    date: "07 Apr 2026",
+    in: "-",
+    out: "-",
+    status: "Leave",
+  },
+  {
+    date: "08 Apr 2026",
+    in: "09:02 AM",
+    out: "06:15 PM",
+    status: "Present",
+  },
 ];
-
 function RegularizationModal({
   isOpen,
   onClose,
@@ -61,10 +99,8 @@ function RegularizationModal({
     reason: "",
     manager: "Arjun Reddy",
   });
-
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   const [prevDefaultDate, setPrevDefaultDate] = useState(defaultDate);
-
   if (isOpen !== prevIsOpen || defaultDate !== prevDefaultDate) {
     setPrevIsOpen(isOpen);
     setPrevDefaultDate(defaultDate);
@@ -75,9 +111,7 @@ function RegularizationModal({
       }));
     }
   }
-
   if (!isOpen) return null;
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.date || !formData.type || !formData.reason) {
@@ -88,7 +122,6 @@ function RegularizationModal({
       );
       return;
     }
-
     if (
       (formData.type === "Missed Check-in" ||
         formData.type === "Full Day Correction") &&
@@ -101,7 +134,6 @@ function RegularizationModal({
       );
       return;
     }
-
     if (
       (formData.type === "Missed Check-out" ||
         formData.type === "Full Day Correction") &&
@@ -114,7 +146,6 @@ function RegularizationModal({
       );
       return;
     }
-
     const newReq: RegularizationRequest = {
       id: `REG-${Math.floor(Math.random() * 1000)}`,
       date: formData.date,
@@ -130,7 +161,6 @@ function RegularizationModal({
         year: "numeric",
       }),
     };
-
     onSubmit(newReq);
     showToast(
       "Request Submitted",
@@ -139,20 +169,37 @@ function RegularizationModal({
     );
     onClose();
   };
-
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-background/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[550px] rounded-[32px] shadow-2xl overflow-hidden flex flex-col border border-border"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-white dark:bg-card">
@@ -191,7 +238,10 @@ function RegularizationModal({
                 required
                 value={formData.date}
                 onChange={(e) =>
-                  setFormData({ ...formData, date: e.target.value })
+                  setFormData({
+                    ...formData,
+                    date: e.target.value,
+                  })
                 }
                 className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all shadow-inner"
               />
@@ -204,7 +254,10 @@ function RegularizationModal({
                 required
                 value={formData.type}
                 onChange={(e) =>
-                  setFormData({ ...formData, type: e.target.value })
+                  setFormData({
+                    ...formData,
+                    type: e.target.value,
+                  })
                 }
                 className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all shadow-inner"
               >
@@ -231,7 +284,10 @@ function RegularizationModal({
                 type="time"
                 value={formData.checkIn}
                 onChange={(e) =>
-                  setFormData({ ...formData, checkIn: e.target.value })
+                  setFormData({
+                    ...formData,
+                    checkIn: e.target.value,
+                  })
                 }
                 className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all shadow-inner"
               />
@@ -244,7 +300,10 @@ function RegularizationModal({
                 type="time"
                 value={formData.checkOut}
                 onChange={(e) =>
-                  setFormData({ ...formData, checkOut: e.target.value })
+                  setFormData({
+                    ...formData,
+                    checkOut: e.target.value,
+                  })
                 }
                 className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all shadow-inner"
               />
@@ -259,7 +318,10 @@ function RegularizationModal({
               required
               value={formData.manager}
               onChange={(e) =>
-                setFormData({ ...formData, manager: e.target.value })
+                setFormData({
+                  ...formData,
+                  manager: e.target.value,
+                })
               }
               className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-2xl px-5 py-3.5 text-[14px] font-bold text-foreground focus:outline-none focus:border-primary transition-all shadow-inner"
             >
@@ -277,7 +339,10 @@ function RegularizationModal({
               placeholder="Explain why you need this regularization..."
               value={formData.reason}
               onChange={(e) =>
-                setFormData({ ...formData, reason: e.target.value })
+                setFormData({
+                  ...formData,
+                  reason: e.target.value,
+                })
               }
               className="w-full bg-[#F0FDF4]/50 dark:bg-emerald-500/5 border border-emerald-500/10 rounded-3xl px-6 py-4 text-[14px] font-medium text-foreground placeholder:text-slate-400 focus:outline-none focus:border-primary transition-all shadow-inner h-28 resize-none"
             />
@@ -314,11 +379,10 @@ function RegularizationModal({
             </button>
           </div>
         </form>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
-
 function RequestDetailPopup({
   request,
   onClose,
@@ -328,17 +392,35 @@ function RequestDetailPopup({
 }) {
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      <m.div
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
         onClick={onClose}
         className="absolute inset-0 bg-background/40"
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <m.div
+        initial={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          y: 0,
+        }}
+        exit={{
+          opacity: 0,
+          scale: 0.95,
+          y: 20,
+        }}
         className="relative bg-card w-full max-w-[500px] rounded-[32px] shadow-2xl overflow-hidden flex flex-col border border-border"
       >
         <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
@@ -469,11 +551,10 @@ function RequestDetailPopup({
             Close Details
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
-
 const MONTH_NAMES = [
   "January",
   "February",
@@ -488,9 +569,7 @@ const MONTH_NAMES = [
   "November",
   "December",
 ];
-
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 export function EmployeeAttendance() {
   const navigate = useNavigate();
   const { todayRecord } = useAttendance();
@@ -524,16 +603,13 @@ export function EmployeeAttendance() {
       approvalDate: "13 Apr 2026",
     },
   ]);
-
   const [logs, setLogs] = useState(ATTENDANCE_LOGS);
   const [selectedDay, setSelectedDay] = useState<number | null>(6); // Default to April 6 (Today)
   const [regDefaultDate, setRegDefaultDate] = useState("");
-
   const mergedLogs = useMemo(() => {
     const todayStr = "06 Apr 2026";
     const updated = [...logs];
     const todayIdx = updated.findIndex((l) => l.date === todayStr);
-
     if (todayRecord?.punchIn) {
       const todayLog = {
         date: todayStr,
@@ -558,7 +634,6 @@ export function EmployeeAttendance() {
   const calendarDays = [];
   for (let i = 0; i < firstDayOfMonth; i++) calendarDays.push(null);
   for (let i = 1; i <= daysInMonth; i++) calendarDays.push(i);
-
   const convertInputToDisplayDate = (inputDate: string): string => {
     if (!inputDate) return "";
     const parts = inputDate.split("-");
@@ -569,13 +644,11 @@ export function EmployeeAttendance() {
     const monthShort = MONTH_NAMES[monthIdx]?.substring(0, 3) || "";
     return `${day} ${monthShort} ${year}`;
   };
-
   const getLogForDay = useMemo(() => {
     return (day: number) => {
       const dayStr = day < 10 ? `0${day}` : `${day}`;
       const monthStr = MONTH_NAMES[selectedMonth].substring(0, 3);
       const dateStr = `${dayStr} ${monthStr} ${selectedYear}`;
-
       const found = logs.find((l) => l.date === dateStr);
       if (found) return found;
 
@@ -583,12 +656,22 @@ export function EmployeeAttendance() {
       const dayOfWeek = (firstDayOfMonth + day - 1) % 7;
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
       if (isWeekend) {
-        return { date: dateStr, in: "-", out: "-", status: "Weekend" };
+        return {
+          date: dateStr,
+          in: "-",
+          out: "-",
+          status: "Weekend",
+        };
       }
 
       // Hardcoded leave for day 7
       if (day === 7) {
-        return { date: dateStr, in: "-", out: "-", status: "Leave" };
+        return {
+          date: dateStr,
+          in: "-",
+          out: "-",
+          status: "Leave",
+        };
       }
 
       // Past weekdays (day < today (6)) with no logs default to Present
@@ -602,15 +685,18 @@ export function EmployeeAttendance() {
       }
 
       // Future/today with no log
-      return { date: dateStr, in: "-", out: "-", status: "-" };
+      return {
+        date: dateStr,
+        in: "-",
+        out: "-",
+        status: "-",
+      };
     };
   }, [logs, selectedMonth, selectedYear, firstDayOfMonth]);
-
   const selectedDayLog = useMemo(() => {
     if (selectedDay === null) return null;
     return getLogForDay(selectedDay);
   }, [selectedDay, getLogForDay]);
-
   const handleApplyRegularization = () => {
     if (selectedDay) {
       const dayPadded = String(selectedDay).padStart(2, "0");
@@ -622,10 +708,8 @@ export function EmployeeAttendance() {
     }
     setIsRegModalOpen(true);
   };
-
   const handleSubmitRegularization = (newReq: RegularizationRequest) => {
     setRequests([newReq, ...requests]);
-
     const displayDate = convertInputToDisplayDate(newReq.date);
     let statusText = "Present";
     if (newReq.type === "Work From Home") statusText = "WFH";
@@ -637,7 +721,6 @@ export function EmployeeAttendance() {
     ) {
       statusText = "Present"; // Regularized/approved correction represents presence
     }
-
     setLogs((prevLogs) => {
       const existingIdx = prevLogs.findIndex((l) => l.date === displayDate);
       const newLog = {
@@ -646,7 +729,6 @@ export function EmployeeAttendance() {
         out: newReq.checkOut,
         status: statusText,
       };
-
       if (existingIdx > -1) {
         const updated = [...prevLogs];
         updated[existingIdx] = newLog;
@@ -661,7 +743,6 @@ export function EmployeeAttendance() {
       }
     });
   };
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-8 animate-in fade-in duration-700">
       {/* ─── Top Bar ─────────────────────────────────────────────── */}
@@ -730,7 +811,9 @@ export function EmployeeAttendance() {
           >
             <p
               className="text-[28px] font-bold mb-1"
-              style={{ color: card.color }}
+              style={{
+                color: card.color,
+              }}
             >
               {card.value}
             </p>
@@ -755,15 +838,29 @@ export function EmployeeAttendance() {
               </h3>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                 {[
-                  { label: "Present", color: "var(--primary)" },
-                  { label: "Absent", color: "var(--destructive)" },
-                  { label: "Leave", color: "#F59E0B" },
-                  { label: "Weekend", color: "var(--muted-foreground)" },
+                  {
+                    label: "Present",
+                    color: "var(--primary)",
+                  },
+                  {
+                    label: "Absent",
+                    color: "var(--destructive)",
+                  },
+                  {
+                    label: "Leave",
+                    color: "#F59E0B",
+                  },
+                  {
+                    label: "Weekend",
+                    color: "var(--muted-foreground)",
+                  },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2">
                     <div
                       className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: item.color }}
+                      style={{
+                        backgroundColor: item.color,
+                      }}
                     />
                     <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
                       {item.label}
@@ -788,17 +885,14 @@ export function EmployeeAttendance() {
               {calendarDays.map((day, i) => {
                 if (day === null)
                   return <div key={`empty-${i}`} className="aspect-square" />;
-
                 const log = getLogForDay(day);
                 const status = log.status;
                 const isToday = day === 6;
                 const isSelected = selectedDay === day;
-
                 let cellStyle =
                   "bg-background border-border hover:border-primary/40";
                 let textStyle = "text-foreground";
                 let dotStyle = "bg-transparent";
-
                 if (isToday) {
                   cellStyle =
                     "bg-primary text-white shadow-xl shadow-primary/30 border-primary hover:bg-primary/95";
@@ -835,11 +929,9 @@ export function EmployeeAttendance() {
                   textStyle = "text-rose-600 dark:text-rose-400 font-bold";
                   dotStyle = "bg-rose-500";
                 }
-
                 const selectedRing = isSelected
                   ? "ring-2 ring-primary ring-offset-2 dark:ring-offset-zinc-950 scale-105 z-10 shadow-md"
                   : "";
-
                 return (
                   <button
                     key={day}
@@ -873,7 +965,11 @@ export function EmployeeAttendance() {
                 value: "06:04 PM",
                 color: "text-muted-foreground",
               },
-              { label: "Punctuality", value: "96%", color: "text-primary" },
+              {
+                label: "Punctuality",
+                value: "96%",
+                color: "text-primary",
+              },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -928,21 +1024,7 @@ export function EmployeeAttendance() {
                     </div>
                   </div>
                   <span
-                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${
-                      selectedDayLog.status === "Present" ||
-                      selectedDayLog.status === "WFH" ||
-                      selectedDayLog.status === "On-site"
-                        ? "bg-emerald-500/10 text-primary border border-emerald-500/20"
-                        : selectedDayLog.status === "Late"
-                          ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                          : selectedDayLog.status === "Leave"
-                            ? "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
-                            : selectedDayLog.status === "Weekend"
-                              ? "bg-secondary text-muted-foreground border border-border"
-                              : selectedDayLog.status === "Absent"
-                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                                : "bg-secondary text-muted-foreground/40 border border-border"
-                    }`}
+                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${selectedDayLog.status === "Present" || selectedDayLog.status === "WFH" || selectedDayLog.status === "On-site" ? "bg-emerald-500/10 text-primary border border-emerald-500/20" : selectedDayLog.status === "Late" ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" : selectedDayLog.status === "Leave" ? "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20" : selectedDayLog.status === "Weekend" ? "bg-secondary text-muted-foreground border border-border" : selectedDayLog.status === "Absent" ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" : "bg-secondary text-muted-foreground/40 border border-border"}`}
                   >
                     {selectedDayLog.status === "-"
                       ? "No Record"
@@ -1038,11 +1120,7 @@ export function EmployeeAttendance() {
                       <tr
                         key={log.date}
                         onClick={() => setSelectedDay(logDay)}
-                        className={`h-14 hover:bg-secondary transition-colors group cursor-pointer ${
-                          isSelectedRow
-                            ? "bg-primary/5 hover:bg-primary/10 border-l-[3px] border-l-primary"
-                            : ""
-                        }`}
+                        className={`h-14 hover:bg-secondary transition-colors group cursor-pointer ${isSelectedRow ? "bg-primary/5 hover:bg-primary/10 border-l-[3px] border-l-primary" : ""}`}
                       >
                         <td className="px-6 text-[13px] font-black text-slate-800 dark:text-slate-100">
                           {log.date}
@@ -1055,21 +1133,7 @@ export function EmployeeAttendance() {
                         </td>
                         <td className="px-6">
                           <span
-                            className={`text-[12px] font-black ${
-                              log.status === "Present" ||
-                              log.status === "WFH" ||
-                              log.status === "On-site"
-                                ? "text-primary"
-                                : log.status === "Late"
-                                  ? "text-amber-500"
-                                  : log.status === "Leave"
-                                    ? "text-indigo-400"
-                                    : log.status === "Weekend"
-                                      ? "text-muted-foreground/50"
-                                      : log.status === "Absent"
-                                        ? "text-rose-500"
-                                        : "text-muted-foreground/30"
-                            }`}
+                            className={`text-[12px] font-black ${log.status === "Present" || log.status === "WFH" || log.status === "On-site" ? "text-primary" : log.status === "Late" ? "text-amber-500" : log.status === "Leave" ? "text-indigo-400" : log.status === "Weekend" ? "text-muted-foreground/50" : log.status === "Absent" ? "text-rose-500" : "text-muted-foreground/30"}`}
                           >
                             {log.status}
                           </span>

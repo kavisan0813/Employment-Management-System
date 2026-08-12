@@ -19,7 +19,12 @@ const SEED_INVOICES: Invoice[] = [
     totalAmount: 59400,
     currency: "USD",
     lineItems: [
-      { description: "Enterprise Plan - Annual", quantity: 1, unitPrice: 54000, total: 54000 },
+      {
+        description: "Enterprise Plan - Annual",
+        quantity: 1,
+        unitPrice: 54000,
+        total: 54000,
+      },
     ],
     issuedDate: "2026-01-15",
     dueDate: "2026-02-15",
@@ -38,7 +43,12 @@ const SEED_INVOICES: Invoice[] = [
     totalAmount: 1320,
     currency: "EUR",
     lineItems: [
-      { description: "Growth Plan - Monthly", quantity: 1, unitPrice: 1200, total: 1200 },
+      {
+        description: "Growth Plan - Monthly",
+        quantity: 1,
+        unitPrice: 1200,
+        total: 1200,
+      },
     ],
     issuedDate: "2026-06-10",
     dueDate: "2026-07-10",
@@ -57,7 +67,12 @@ const SEED_INVOICES: Invoice[] = [
     totalAmount: 935,
     currency: "GBP",
     lineItems: [
-      { description: "Growth Plan - Monthly", quantity: 1, unitPrice: 850, total: 850 },
+      {
+        description: "Growth Plan - Monthly",
+        quantity: 1,
+        unitPrice: 850,
+        total: 850,
+      },
     ],
     issuedDate: "2026-05-01",
     dueDate: "2026-06-01",
@@ -76,7 +91,12 @@ const SEED_INVOICES: Invoice[] = [
     totalAmount: 4950,
     currency: "USD",
     lineItems: [
-      { description: "Enterprise Plan - Monthly", quantity: 1, unitPrice: 4500, total: 4500 },
+      {
+        description: "Enterprise Plan - Monthly",
+        quantity: 1,
+        unitPrice: 4500,
+        total: 4500,
+      },
     ],
     issuedDate: "2026-06-01",
     dueDate: "2026-07-01",
@@ -95,7 +115,12 @@ const SEED_INVOICES: Invoice[] = [
     totalAmount: 528000,
     currency: "USD",
     lineItems: [
-      { description: "Enterprise Plan - Annual", quantity: 1, unitPrice: 480000, total: 480000 },
+      {
+        description: "Enterprise Plan - Annual",
+        quantity: 1,
+        unitPrice: 480000,
+        total: 480000,
+      },
     ],
     issuedDate: "2026-09-01",
     dueDate: "2026-10-01",
@@ -114,7 +139,12 @@ const SEED_INVOICES: Invoice[] = [
     totalAmount: 3850,
     currency: "USD",
     lineItems: [
-      { description: "Enterprise Plan - Monthly", quantity: 1, unitPrice: 3500, total: 3500 },
+      {
+        description: "Enterprise Plan - Monthly",
+        quantity: 1,
+        unitPrice: 3500,
+        total: 3500,
+      },
     ],
     issuedDate: "2026-05-15",
     dueDate: "2026-06-15",
@@ -157,36 +187,52 @@ export const InvoiceService = {
     const invoices = getStore();
     return {
       totalInvoiced: invoices.reduce((sum, inv) => sum + inv.totalAmount, 0),
-      totalPaid: invoices.filter((i) => i.status === "Paid").reduce((sum, inv) => sum + inv.totalAmount, 0),
-      totalOverdue: invoices.filter((i) => i.status === "Overdue").reduce((sum, inv) => sum + inv.totalAmount, 0),
-      totalPending: invoices.filter((i) => i.status === "Pending").reduce((sum, inv) => sum + inv.totalAmount, 0),
+      totalPaid: invoices
+        .filter((i) => i.status === "Paid")
+        .reduce((sum, inv) => sum + inv.totalAmount, 0),
+      totalOverdue: invoices
+        .filter((i) => i.status === "Overdue")
+        .reduce((sum, inv) => sum + inv.totalAmount, 0),
+      totalPending: invoices
+        .filter((i) => i.status === "Pending")
+        .reduce((sum, inv) => sum + inv.totalAmount, 0),
     };
   },
 
   markAsPaid(id: string, method: string): void {
     const invoices = getStore().map((inv) =>
       inv.id === id
-        ? { ...inv, status: "Paid" as const, paidDate: new Date().toISOString().slice(0, 10), paymentMethod: method }
-        : inv
+        ? {
+            ...inv,
+            status: "Paid" as const,
+            paidDate: new Date().toISOString().slice(0, 10),
+            paymentMethod: method,
+          }
+        : inv,
     );
     saveStore(invoices);
   },
 
   markAsOverdue(id: string): void {
     const invoices = getStore().map((inv) =>
-      inv.id === id ? { ...inv, status: "Overdue" as const } : inv
+      inv.id === id ? { ...inv, status: "Overdue" as const } : inv,
     );
     saveStore(invoices);
   },
 
   issueRefund(id: string): void {
     const invoices = getStore().map((inv) =>
-      inv.id === id ? { ...inv, status: "Refunded" as const } : inv
+      inv.id === id ? { ...inv, status: "Refunded" as const } : inv,
     );
     saveStore(invoices);
   },
 
-  generateInvoice(orgId: string, subId: string, amount: number, description: string): Invoice {
+  generateInvoice(
+    orgId: string,
+    subId: string,
+    amount: number,
+    description: string,
+  ): Invoice {
     const invoices = getStore();
     const orgs = db.organizations.get();
     const org = orgs.find((o) => o.id === orgId);
@@ -202,9 +248,13 @@ export const InvoiceService = {
       tax,
       totalAmount: amount + tax,
       currency: "USD",
-      lineItems: [{ description, quantity: 1, unitPrice: amount, total: amount }],
+      lineItems: [
+        { description, quantity: 1, unitPrice: amount, total: amount },
+      ],
       issuedDate: new Date().toISOString().slice(0, 10),
-      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(0, 10),
       paidDate: null,
       paymentMethod: null,
     };

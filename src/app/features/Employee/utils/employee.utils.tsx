@@ -1,6 +1,19 @@
-export const departments = ['All Departments', 'Engineering', 'Marketing', 'Design', 'Finance', 'HR', 'Product', 'Sales', 'Operations'];
+export const departments = [
+  "All Departments",
+  "Engineering",
+  "Marketing",
+  "Design",
+  "Finance",
+  "HR",
+  "Product",
+  "Sales",
+  "Operations",
+];
 
-export const statusConfig: Record<string, { color: string; bg: string; dot?: string }> = {
+export const statusConfig: Record<
+  string,
+  { color: string; bg: string; dot?: string }
+> = {
   Active: { color: "#10B981", bg: "#10B98115", dot: "#10B981" },
   Inactive: { color: "#EF4444", bg: "#EF444415", dot: "#EF4444" },
   "On Leave": { color: "#F59E0B", bg: "#F59E0B15", dot: "#F59E0B" },
