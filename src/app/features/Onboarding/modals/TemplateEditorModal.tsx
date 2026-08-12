@@ -641,7 +641,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                           <select
                             value={customDocSize}
                             onChange={(e) =>
-                              setCustomDocSize(Number(e.target.value))
+                              setCustomDocSize((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))
                             }
                             className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs font-bold outline-none"
                           >
@@ -847,7 +847,7 @@ export function TemplateEditorModal(props: TemplateEditorModalProps) {
                               type="number"
                               value={customTaskDue}
                               onChange={(e) =>
-                                setCustomTaskDue(Number(e.target.value))
+                                setCustomTaskDue((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))
                               }
                               min={1}
                               className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold outline-none focus:border-[#00B87C]"

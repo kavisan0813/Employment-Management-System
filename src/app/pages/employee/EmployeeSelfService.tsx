@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import {
   Calendar,
   FileText,
@@ -19,7 +19,10 @@ import {
 import { useNavigate } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { ResponsiveContainer, AreaChart, Area } from "recharts";
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+
 
 const BookOpen = (props: React.SVGProps<SVGSVGElement>) => (
   <svg

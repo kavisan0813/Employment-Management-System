@@ -466,17 +466,19 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
           isDefault: false,
           color: "#8B5CF6",
         };
-        setRolesList([...rolesList, newRole]);
+        setRolesList((prev) => [...prev, newRole]);
 
-        const newPerms = { ...permissions };
-        Object.keys(roleForm.permissions).forEach((modId) => {
-          if (!newPerms[modId]) newPerms[modId] = {};
-          newPerms[modId] = {
-            ...newPerms[modId],
-            [newRole.id]: roleForm.permissions[modId],
-          };
+        setPermissions((prevPerms) => {
+          const newPerms = { ...prevPerms };
+          Object.keys(roleForm.permissions).forEach((modId) => {
+            if (!newPerms[modId]) newPerms[modId] = {};
+            newPerms[modId] = {
+              ...newPerms[modId],
+              [newRole.id]: roleForm.permissions[modId],
+            };
+          });
+          return newPerms;
         });
-        setPermissions(newPerms);
 
         setIsSubmitting(false);
         showToast("Role created successfully", "success");
@@ -2153,7 +2155,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
 
 export type SettingsContextType = ReturnType<typeof useSettingsProviderValue>;
 
-const SettingsContext = createContext<SettingsContextType | null>(null);
+export const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export function useSettingsContext() {
   const ctx = useContext(SettingsContext);

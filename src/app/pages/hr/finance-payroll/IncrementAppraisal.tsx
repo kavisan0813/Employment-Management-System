@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { lazy, useState, useRef, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router";
 import {
@@ -27,18 +27,17 @@ import {
   RefreshCw,
   Info,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  ScatterChart,
-  Scatter,
-  Cell,
-} from "recharts";
+const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
+const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const ScatterChart = lazy(() => import("recharts").then(m => ({ default: m.ScatterChart })));
+const Scatter = lazy(() => import("recharts").then(m => ({ default: m.Scatter })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+
 import { employees } from "../../../data/mockData";
 
 // ─── Types ────────────────────────────────────────────────

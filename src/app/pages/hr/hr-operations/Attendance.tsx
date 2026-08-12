@@ -1487,7 +1487,7 @@ function AdminAttendance() {
           <div className="flex items-center gap-2">
             <select
               value={selectedMonth}
-              onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+              onChange={(e) => setSelectedMonth((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
               className="flex-1 h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               style={{
                 borderColor: "var(--border)",
@@ -1502,7 +1502,7 @@ function AdminAttendance() {
             </select>
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              onChange={(e) => setSelectedYear((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
               className="w-20 h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
               style={{
                 borderColor: "var(--border)",

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useAuth } from "../../../context/AuthContext";
 import {
@@ -28,23 +28,22 @@ import {
   Send,
   Mail,
 } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-  Legend,
-} from "recharts";
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
+const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
+const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
+const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+const LineChart = lazy(() => import("recharts").then(m => ({ default: m.LineChart })));
+const Line = lazy(() => import("recharts").then(m => ({ default: m.Line })));
+const Legend = lazy(() => import("recharts").then(m => ({ default: m.Legend })));
+
 import { motion, AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { FinanceCustomBuilder } from "../workspace/FinanceCustomBuilder";
@@ -532,14 +531,14 @@ export function FinanceReports() {
       {/* OTHER MODALS */}
       <AnimatePresence>
         {activeModal &&
-          [
+          new Set([
             "EmployeeCost",
             "DepartmentCost",
             "TaxLiabilities",
             "AssetValue",
             "PendingExpenses",
             "NetDisbursement",
-          ].includes(activeModal) && (
+          ]).has(activeModal) && (
             <KPIModal type={activeModal} onClose={() => setActiveModal(null)} />
           )}
         {activeModal === "ViewReport" && selectedReport && (

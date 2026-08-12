@@ -278,13 +278,13 @@ export function useOnboarding() {
       if (
         event instanceof StorageEvent &&
         event.key &&
-        ![
+        !new Set([
           "viyan_onboarding_queue:v1",
           "viyan_onboarding_phases:v1",
           "viyan_onboarding_documents:v1",
           "viyan_onboarding_templates:v1",
           "viyan_departments",
-        ].includes(event.key)
+        ]).has(event.key)
       )
         return;
       setNewHires(readStore<NewHire[]>("viyan_onboarding_queue:v1", []));

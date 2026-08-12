@@ -1008,6 +1008,7 @@ function MessageModal({
               value={msg}
               onChange={(e) => setMsg(e.target.value)}
               onKeyDown={(e) => {
+                if (e.nativeEvent.isComposing) return;
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleSend();

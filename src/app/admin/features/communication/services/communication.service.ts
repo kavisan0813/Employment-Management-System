@@ -432,7 +432,8 @@ export const communicationService = {
     if (!matches) return { valid: true, invalidVars: [] };
 
     const usedVars = matches.map((m) => m.replace(/{{|}}/g, "").trim());
-    const invalidVars = usedVars.filter((v) => !allowedVariables.includes(v));
+    const allowedVariablesSet = new Set(allowedVariables);
+    const invalidVars = usedVars.filter((v) => !allowedVariablesSet.has(v));
 
     return {
       valid: invalidVars.length === 0,

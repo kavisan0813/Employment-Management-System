@@ -43,16 +43,15 @@ export function RequestsTab({
   const update = (
     id: string,
     change: (request: ResignationRequest) => ResignationRequest,
-  ) =>
-    setRequests((items) => {
-      const next = items.map((request) =>
-        request.id === id ? change(request) : request,
-      );
-      onCountChange?.(
-        next.filter((request) => request.status.startsWith("pending")).length,
-      );
-      return next;
-    });
+  ) => {
+    const next = requests.map((request) =>
+      request.id === id ? change(request) : request,
+    );
+    setRequests(next);
+    onCountChange?.(
+      next.filter((request) => request.status.startsWith("pending")).length,
+    );
+  };
 
   const approve = (
     id: string,

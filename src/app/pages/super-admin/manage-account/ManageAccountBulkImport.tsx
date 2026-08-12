@@ -32,7 +32,7 @@ export function ManageAccountBulkImport() {
       "salary",
       "joindate",
     ];
-    const hasRequired = expectedHeaders.every((h) => header.includes(h));
+    const hasRequired = (() => { const headerSet = new Set(header); return expectedHeaders.every((h) => headerSet.has(h)); })();
     if (!hasRequired) {
       setError(
         "CSV headers must include: name, email, department, designation, salary, joindate",

@@ -43,7 +43,7 @@ export function FeatureRequests({
 
       <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {featureRequests
+          {[...featureRequests]
             .sort((a, b) => b.votes - a.votes)
             .map((fr) => (
               <div

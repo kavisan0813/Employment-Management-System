@@ -854,7 +854,7 @@ export function LeaveManagement() {
   const handleExport = () => {
     const dataToExport =
       selectedIds.length > 0
-        ? requests.filter((r) => selectedIds.includes(r.id))
+        ? (() => { const selectedIdsSet = new Set(selectedIds); return requests.filter((r) => selectedIdsSet.has(r.id)); })()
         : requests;
 
     if (exportFormat === "PDF") {

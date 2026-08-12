@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useMemo,
+} from "react";
 import { employees as initialEmployees } from "../data/mockData";
 
 export interface Candidate {
@@ -135,21 +141,35 @@ export const RecruitmentProvider: React.FC<{ children: ReactNode }> = ({
     setInterviews((prev) => prev.filter((iv) => iv.id !== id));
   };
 
+  const value = useMemo(
+    () => ({
+      recruitmentPipeline: pipeline,
+      addCandidate,
+      deleteCandidate,
+      moveCandidate,
+      jobs,
+      addJob,
+      deleteJob,
+      interviews,
+      scheduleInterview,
+      cancelInterview,
+    }),
+    [
+      pipeline,
+      addCandidate,
+      deleteCandidate,
+      moveCandidate,
+      jobs,
+      addJob,
+      deleteJob,
+      interviews,
+      scheduleInterview,
+      cancelInterview,
+    ],
+  );
+
   return (
-    <RecruitmentContext.Provider
-      value={{
-        recruitmentPipeline: pipeline,
-        addCandidate,
-        deleteCandidate,
-        moveCandidate,
-        jobs,
-        addJob,
-        deleteJob,
-        interviews,
-        scheduleInterview,
-        cancelInterview,
-      }}
-    >
+    <RecruitmentContext.Provider value={value}>
       {children}
     </RecruitmentContext.Provider>
   );
@@ -646,20 +666,33 @@ export const EmployeesProvider: React.FC<{ children: ReactNode }> = ({
     saveEmployees([...employeesList, ...newEmps]);
   };
 
+  const value = useMemo(
+    () => ({
+      employeesList,
+      addEmployee,
+      updateEmployee,
+      deleteEmployee,
+      promoteEmployee,
+      initiateTransfer,
+      approveTransfer,
+      rejectTransfer,
+      bulkImportEmployees,
+    }),
+    [
+      employeesList,
+      addEmployee,
+      updateEmployee,
+      deleteEmployee,
+      promoteEmployee,
+      initiateTransfer,
+      approveTransfer,
+      rejectTransfer,
+      bulkImportEmployees,
+    ],
+  );
+
   return (
-    <EmployeesContext.Provider
-      value={{
-        employeesList,
-        addEmployee,
-        updateEmployee,
-        deleteEmployee,
-        promoteEmployee,
-        initiateTransfer,
-        approveTransfer,
-        rejectTransfer,
-        bulkImportEmployees,
-      }}
-    >
+    <EmployeesContext.Provider value={value}>
       {children}
     </EmployeesContext.Provider>
   );

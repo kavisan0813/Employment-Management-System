@@ -244,10 +244,10 @@ export function ManagerSupportTicket() {
   };
 
   const openCount = tickets.filter((t) =>
-    ["Open", "In Progress"].includes(t.status),
+    new Set(["Open", "In Progress"]).has(t.status),
   ).length;
   const resolvedCount = tickets.filter((t) =>
-    ["Resolved"].includes(t.status),
+    new Set(["Resolved"]).has(t.status),
   ).length;
 
   return (

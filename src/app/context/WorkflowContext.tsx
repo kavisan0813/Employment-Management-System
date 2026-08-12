@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useMemo } from "react";
 
 interface WorkflowCounts {
   total: number;
@@ -28,8 +28,13 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
     setCounts((prev) => ({ ...prev, ...newCounts }));
   };
 
+  const value = useMemo(
+    () => ({ counts, updateCounts }),
+    [counts, updateCounts],
+  );
+
   return (
-    <WorkflowContext.Provider value={{ counts, updateCounts }}>
+    <WorkflowContext.Provider value={value}>
       {children}
     </WorkflowContext.Provider>
   );

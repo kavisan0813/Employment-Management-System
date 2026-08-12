@@ -283,6 +283,7 @@ export function UserProfile() {
   };
 
   const handleAddSkill = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing) return;
     if (e.key === "Enter" && newSkill.trim()) {
       setActiveSkills([...activeSkills, newSkill.trim()]);
       setNewSkill("");

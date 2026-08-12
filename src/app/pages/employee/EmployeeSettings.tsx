@@ -530,7 +530,7 @@ function PrivacySettings({ onModal }: { onModal: (m: string | null) => void }) {
     loginActivity: true,
   });
   const toggle = (key: keyof typeof toggles) => {
-    if (["salaryManager", "salaryFinance", "loginActivity"].includes(key))
+    if (new Set(["salaryManager", "salaryFinance", "loginActivity"]).has(key))
       return;
     setToggles({ ...toggles, [key]: !toggles[key] });
     showToast("Privacy Updated", "success", "Privacy setting updated.");
@@ -1088,7 +1088,7 @@ function AppearanceSettings() {
           max="18"
           step="2"
           value={fontSize}
-          onChange={(e) => setFontSize(Number(e.target.value))}
+          onChange={(e) => setFontSize((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
           className="w-full h-2 rounded-full appearance-none cursor-pointer accent-primary"
           style={{ backgroundColor: "var(--border)" }}
         />

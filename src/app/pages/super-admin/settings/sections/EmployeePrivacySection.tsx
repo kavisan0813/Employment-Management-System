@@ -25,7 +25,7 @@ export function EmployeePrivacySection({
     loginActivity: true,
   });
   const toggle = (key: keyof typeof toggles) => {
-    if (["salaryManager", "salaryFinance", "loginActivity"].includes(key))
+    if (new Set(["salaryManager", "salaryFinance", "loginActivity"]).has(key))
       return;
     setToggles({ ...toggles, [key]: !toggles[key] });
     showToast("Privacy Updated", "success", "Privacy setting updated.");

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useMemo } from "react";
 import type { RoleAssignment } from "../shared/permission-engine/roles";
 import { UserRole } from "./auth.config";
 export type { UserRole };
@@ -66,13 +66,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return true;
   };
 
-  return (
-    <AuthContext.Provider
-      value={{ user, isLoggedIn: !!user, login, logout, hasAccess }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({ user, isLoggedIn: !!user, login, logout, hasAccess }),
+    [user, login, logout, hasAccess],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

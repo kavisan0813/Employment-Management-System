@@ -560,7 +560,7 @@ export function ManagerLeaveApprovals() {
             {Array.from({ length: 30 }).map((_, i) => {
               const date = i + 1;
               const isToday = date === 15;
-              const hasLeave = [6, 7, 8, 9, 10, 25].includes(date);
+              const hasLeave = new Set([6, 7, 8, 9, 10, 25]).has(date);
 
               return (
                 <div

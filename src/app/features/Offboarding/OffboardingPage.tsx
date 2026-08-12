@@ -276,14 +276,43 @@ export function OffboardingPage() {
         editingTemplate={editingTemplate}
         templates={templates}
         departments={(() => {
-          const depts = JSON.parse(
-            localStorage.getItem("viyan_departments") || "[]",
-          )
-            .map((d: { name?: string }) => d.name || "")
-            .filter(Boolean);
-          return depts.length > 0
-            ? depts
-            : ["Engineering", "HR", "Finance", "Sales", "Marketing", "Support"];
+          try {
+            const parsed = JSON.parse(
+              localStorage.getItem("viyan_departments") || "[]",
+            );
+            if (!Array.isArray(parsed)) {
+              return [
+                "Engineering",
+                "HR",
+                "Finance",
+                "Sales",
+                "Marketing",
+                "Support",
+              ];
+            }
+            const depts = parsed
+              .map((d: { name?: string }) => d?.name || "")
+              .filter(Boolean);
+            return depts.length > 0
+              ? depts
+              : [
+                  "Engineering",
+                  "HR",
+                  "Finance",
+                  "Sales",
+                  "Marketing",
+                  "Support",
+                ];
+          } catch {
+            return [
+              "Engineering",
+              "HR",
+              "Finance",
+              "Sales",
+              "Marketing",
+              "Support",
+            ];
+          }
         })()}
         saveTemplate={saveTemplate}
       />

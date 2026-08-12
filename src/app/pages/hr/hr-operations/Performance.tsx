@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { lazy, useState, useMemo } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import {
   TrendingUp,
@@ -24,20 +24,19 @@ import {
   X,
   AlertTriangle,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-} from "recharts";
+const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
+const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
+const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+
 import { employees, departments } from "../../../data/mockData";
 import { toast, Toaster } from "sonner";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -1565,7 +1564,7 @@ export function Performance() {
                               value={formAttendanceScore}
                               onChange={(e) =>
                                 setFormAttendanceScore(
-                                  parseInt(e.target.value) || 0,
+                                  (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
                                 )
                               }
                               className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"
@@ -1592,7 +1591,7 @@ export function Performance() {
                               value={formPerformanceScore}
                               onChange={(e) =>
                                 setFormPerformanceScore(
-                                  parseInt(e.target.value) || 0,
+                                  (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
                                 )
                               }
                               className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"

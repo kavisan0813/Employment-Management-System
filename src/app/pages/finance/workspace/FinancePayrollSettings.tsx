@@ -2420,7 +2420,7 @@ function SalaryComponentForm({
         <input
           type="number"
           value={order}
-          onChange={(e) => setOrder(parseInt(e.target.value))}
+          onChange={(e) => setOrder((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2484,7 +2484,7 @@ function SalaryGradeForm({
         <input
           type="number"
           value={minSalary}
-          onChange={(e) => setMinSalary(parseInt(e.target.value))}
+          onChange={(e) => setMinSalary((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2496,7 +2496,7 @@ function SalaryGradeForm({
         <input
           type="number"
           value={maxSalary}
-          onChange={(e) => setMaxSalary(parseInt(e.target.value))}
+          onChange={(e) => setMaxSalary((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2554,7 +2554,7 @@ function TaxSlabForm({
         <input
           type="number"
           value={fromAmt}
-          onChange={(e) => setFromAmt(parseInt(e.target.value))}
+          onChange={(e) => setFromAmt((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2566,7 +2566,7 @@ function TaxSlabForm({
         <input
           type="number"
           value={toAmt}
-          onChange={(e) => setToAmt(parseInt(e.target.value))}
+          onChange={(e) => setToAmt((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2578,7 +2578,7 @@ function TaxSlabForm({
         <input
           type="number"
           value={rate}
-          onChange={(e) => setRate(parseInt(e.target.value))}
+          onChange={(e) => setRate((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2642,7 +2642,7 @@ function ProfessionalTaxForm({
         <input
           type="number"
           value={minSalary}
-          onChange={(e) => setMinSalary(parseInt(e.target.value))}
+          onChange={(e) => setMinSalary((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2654,7 +2654,7 @@ function ProfessionalTaxForm({
         <input
           type="number"
           value={maxSalary}
-          onChange={(e) => setMaxSalary(parseInt(e.target.value))}
+          onChange={(e) => setMaxSalary((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -2666,7 +2666,7 @@ function ProfessionalTaxForm({
         <input
           type="number"
           value={amount}
-          onChange={(e) => setAmount(parseInt(e.target.value))}
+          onChange={(e) => setAmount((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
@@ -3475,7 +3475,7 @@ export function SalaryStructureModal({
 
   // Custom change handlers for controlled cascades
   const handleCtcChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(0, Number(e.target.value) || 0);
+    const val = Math.max(0, (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)) || 0);
     setValue("ctc", val);
     const derivedGross = Math.round(val / 12);
     setValue("gross", derivedGross);
@@ -3486,7 +3486,7 @@ export function SalaryStructureModal({
   };
 
   const handleGrossChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(0, Number(e.target.value) || 0);
+    const val = Math.max(0, (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)) || 0);
     setValue("gross", val);
     const derivedBasic = Math.round(val * 0.4);
     setValue("basic", derivedBasic);
@@ -3495,7 +3495,7 @@ export function SalaryStructureModal({
   };
 
   const handleBasicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Math.max(0, Number(e.target.value) || 0);
+    const val = Math.max(0, (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)) || 0);
     setValue("basic", val);
     const derivedHra = Math.round(val * 0.5);
     setValue("hra", derivedHra);

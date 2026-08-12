@@ -20,7 +20,7 @@ export function Analytics() {
           {Array.from({ length: 28 }, (_, i) => (
             <span
               key={i}
-              className={`rounded-lg py-2 ${[9, 17, 24].includes(i) ? "bg-primary text-white font-bold" : "hover:bg-muted"}`}
+              className={`rounded-lg py-2 ${new Set([9, 17, 24]).has(i) ? "bg-primary text-white font-bold" : "hover:bg-muted"}`}
             >
               {i + 1}
             </span>

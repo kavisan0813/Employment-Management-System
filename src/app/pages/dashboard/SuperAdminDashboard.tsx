@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { lazy, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
   Users,
@@ -19,18 +19,17 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
+const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 
@@ -1295,7 +1294,7 @@ export function SuperAdminDashboard() {
                     onChange={(e) =>
                       setSelectedRoleToManage({
                         ...selectedRoleToManage,
-                        count: parseInt(e.target.value) || 0,
+                        count: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
                       })
                     }
                   />

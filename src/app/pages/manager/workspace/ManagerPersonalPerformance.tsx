@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import {
   TrendingUp,
   ChevronRight,
@@ -9,15 +9,14 @@ import {
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import {
-  Radar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
+const Radar = lazy(() => import("recharts").then(m => ({ default: m.Radar })));
+const RadarChart = lazy(() => import("recharts").then(m => ({ default: m.RadarChart })));
+const PolarGrid = lazy(() => import("recharts").then(m => ({ default: m.PolarGrid })));
+const PolarAngleAxis = lazy(() => import("recharts").then(m => ({ default: m.PolarAngleAxis })));
+const PolarRadiusAxis = lazy(() => import("recharts").then(m => ({ default: m.PolarRadiusAxis })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const Legend = lazy(() => import("recharts").then(m => ({ default: m.Legend })));
+
 import { showToast } from "../../../components/workflow/ToastNotification";
 
 type PerformanceTab = "My Goals" | "Self Review" | "Feedback" | "History";

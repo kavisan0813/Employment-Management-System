@@ -941,7 +941,7 @@ function CheckInGoalModal({
               min="0"
               max="100"
               value={progress}
-              onChange={(e) => setProgress(parseInt(e.target.value))}
+              onChange={(e) => setProgress((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
               className="w-full accent-primary"
             />
           </div>

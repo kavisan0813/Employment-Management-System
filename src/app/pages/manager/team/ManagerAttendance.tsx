@@ -139,6 +139,7 @@ export function ManagerAttendance() {
   const [showRegularizeDropdown, setShowRegularizeDropdown] = useState(false);
   const [regularizeFilter, setRegularizeFilter] = useState("All");
   const [attendanceData, setAttendanceData] = useState(TEAM_ATTENDANCE_DATA);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   // Sync Priya's real-time punch state to the table view
   useEffect(() => {
@@ -649,9 +650,6 @@ export function ManagerAttendance() {
         const avgAbsent = (totalAbsent / memberCount).toFixed(1);
         const avgLeave = (totalLeave / memberCount).toFixed(1);
 
-        const [selectedDay, setSelectedDay] = React.useState<number | null>(
-          null,
-        );
         const selectedData = selectedDay ? dayData(selectedDay) : [];
 
         return (

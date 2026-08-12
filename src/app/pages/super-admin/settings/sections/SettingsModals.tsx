@@ -733,7 +733,7 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setLeaveTypeForm({
                       ...leaveTypeForm,
-                      days: parseInt(e.target.value),
+                      days: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)),
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -823,7 +823,7 @@ export function SettingsModals() {
                     onChange={(e) =>
                       setLeaveTypeForm({
                         ...leaveTypeForm,
-                        maxCarryForward: parseInt(e.target.value),
+                        maxCarryForward: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)),
                       })
                     }
                     className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -935,7 +935,7 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setLeaveTypeForm({
                       ...leaveTypeForm,
-                      minNoticePeriod: parseInt(e.target.value),
+                      minNoticePeriod: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)),
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -965,7 +965,7 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setLeaveTypeForm({
                       ...leaveTypeForm,
-                      maxConsecutiveLeave: parseInt(e.target.value),
+                      maxConsecutiveLeave: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)),
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -2381,7 +2381,7 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setScheduleForm({
                       ...scheduleForm,
-                      breakDuration: parseInt(e.target.value) || 0,
+                      breakDuration: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
@@ -2528,7 +2528,7 @@ export function SettingsModals() {
                   onChange={(e) =>
                     setScheduleForm({
                       ...scheduleForm,
-                      graceTime: parseInt(e.target.value) || 0,
+                      graceTime: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
                     })
                   }
                   className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"

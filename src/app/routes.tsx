@@ -4,6 +4,7 @@ import {
   Navigate,
   useNavigate,
   useRouteError,
+  Link,
 } from "react-router";
 import { Layout } from "./components/Layout";
 import { Login } from "./pages/shared/Login";
@@ -635,8 +636,8 @@ function AccessDenied() {
         does not have permission to view this page. Please contact your
         administrator if you believe this is a mistake.
       </p>
-      <a
-        href="/"
+      <Link
+        to="/"
         className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-white text-sm font-bold transition-all hover:scale-105 active:scale-95"
         style={{
           background: "linear-gradient(135deg, #10B981, #059669)",
@@ -644,7 +645,7 @@ function AccessDenied() {
         }}
       >
         Return to Dashboard
-      </a>
+      </Link>
     </div>
   );
 }

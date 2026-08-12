@@ -159,7 +159,10 @@ export function FinanceExpenses() {
     setTimeout(() => {
       const expensesToExport =
         exportMode === "selected"
-          ? expenses.filter((exp) => selectedRows.includes(exp.id))
+          ? (() => {
+            const selectedRowsSet = new Set(selectedRows);
+            return expenses.filter((exp) => selectedRowsSet.has(exp.id));
+          })()
           : expenses;
 
       const headers = [

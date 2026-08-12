@@ -267,7 +267,8 @@ export function ManageAccountAddUser() {
     addEmployee(newEmp);
 
     try {
-      const savedUsers = localStorage.getItem("viyan_registered_users:v1") || "[]";
+      const savedUsers =
+        localStorage.getItem("viyan_registered_users:v1") || "[]";
       const usersList = JSON.parse(savedUsers);
       const newPlatformUser = {
         id: `user-${Date.now()}`,
@@ -344,12 +345,13 @@ export function ManageAccountAddUser() {
             return (
               <div key={item.s} className="flex flex-col items-center gap-2">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${done
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
+                    done
                       ? "bg-[var(--primary)] border-[var(--primary)] text-white"
                       : active
                         ? "bg-white border-[var(--primary)] text-[var(--primary)] shadow-md shadow-emerald-200"
                         : "bg-white border-slate-200 text-slate-400"
-                    }`}
+                  }`}
                 >
                   {done ? <Check size={16} strokeWidth={3} /> : item.s}
                 </div>
@@ -380,16 +382,18 @@ export function ManageAccountAddUser() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
               <div
                 onClick={() => setForm((f) => ({ ...f, entryType: "single" }))}
-                className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 flex flex-col items-start ${form.entryType === "single"
+                className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 flex flex-col items-start ${
+                  form.entryType === "single"
                     ? "border-[var(--primary)] bg-emerald-50/20"
                     : "border-slate-200 hover:border-slate-300"
-                  }`}
+                }`}
               >
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${form.entryType === "single"
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
+                    form.entryType === "single"
                       ? "bg-emerald-100 text-[var(--primary)]"
                       : "bg-slate-100 text-slate-500"
-                    }`}
+                  }`}
                 >
                   <User size={24} />
                 </div>
@@ -595,10 +599,11 @@ export function ManageAccountAddUser() {
                   <button
                     key={tabItem.id}
                     onClick={() => setActiveTab(tabItem.id)}
-                    className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between shrink-0 md:shrink ${isActive
+                    className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between shrink-0 md:shrink ${
+                      isActive
                         ? "bg-white text-[var(--primary)] shadow-md shadow-slate-100 border border-slate-100"
                         : "text-slate-500 hover:bg-slate-100/50"
-                      }`}
+                    }`}
                   >
                     <span>{tabItem.label}</span>
                     {hasErr && (
@@ -1399,6 +1404,7 @@ export function ManageAccountAddUser() {
               }
               autoFocus
               onKeyDown={(e) => {
+                if (e.nativeEvent.isComposing) return;
                 if (e.key === "Enter") handleAddNewValSubmit();
               }}
             />

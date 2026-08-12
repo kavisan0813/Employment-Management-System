@@ -157,19 +157,18 @@ export function FinanceSupport() {
       comment: replyText,
     };
 
-    setTickets((prevTickets) =>
-      prevTickets.map((t) => {
-        if (t.id === ticketId) {
-          const updatedTicket = {
-            ...t,
-            timeline: [...t.timeline, newComment],
-          };
-          setSelectedTicket(updatedTicket);
-          return updatedTicket;
-        }
-        return t;
-      }),
-    );
+    const nextTickets = tickets.map((t) => {
+      if (t.id === ticketId) {
+        const updatedTicket = {
+          ...t,
+          timeline: [...t.timeline, newComment],
+        };
+        setSelectedTicket(updatedTicket);
+        return updatedTicket;
+      }
+      return t;
+    });
+    setTickets(nextTickets);
     showToast(
       "Reply Sent",
       "success",
@@ -930,6 +929,7 @@ function TicketDetailsModal({
             rows={1}
             style={{ height: "40px" }}
             onKeyDown={(e) => {
+              if (e.nativeEvent.isComposing) return;
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSubmit(e);

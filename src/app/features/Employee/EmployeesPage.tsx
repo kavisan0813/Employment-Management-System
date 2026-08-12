@@ -249,8 +249,8 @@ export function Employees() {
     return Array.from(new Set(scopedEmployees.map((e) => e.employmentType)));
   }, [scopedEmployees]);
 
-  // Filtering Logic
   const filtered = useMemo(() => {
+    const selectedTypesSet = new Set(selectedTypes);
     return (scopedEmployees || []).filter((emp) => {
       const matchSearch =
         debouncedSearch.trim() === "" ||
@@ -279,8 +279,7 @@ export function Employees() {
         emp.location === selectedLocation;
 
       const matchType =
-        selectedTypes.length === 0 ||
-        selectedTypes.includes(emp.employmentType);
+        selectedTypes.length === 0 || selectedTypesSet.has(emp.employmentType);
 
       return (
         matchSearch &&

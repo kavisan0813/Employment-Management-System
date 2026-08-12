@@ -451,6 +451,18 @@ export function FinanceOnboarding() {
     showToast("Preview", "info", "Payslip preview generated");
   };
 
+  function setAccount(arg0: number): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function setUan(arg0: number): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function setEsic(arg0: number): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-20 flex flex-col gap-6 animate-in fade-in duration-300 min-h-screen bg-[#F0FDF4]/30 dark:bg-transparent relative">
       {/* ── Page Header ─────────────────────────────────────── */}
@@ -887,35 +899,36 @@ export function FinanceOnboarding() {
                         {doneList.length} completed{" "}
                         {doneList.length === 1 ? "task" : "tasks"}
                       </button>
-                      <AnimatePresence>
-                        {expanded && (
-                          <motion.div
-                            initial={{ scaleY: 0, opacity: 0 }}
-                            animate={{ scaleY: 1, opacity: 1 }}
-                            exit={{ scaleY: 0, opacity: 0 }}
-                            className="overflow-hidden origin-top"
-                          >
-                            <div className="space-y-1 mt-2">
-                              {doneList.map((task) => (
-                                <div
-                                  key={task.id}
-                                  className="flex items-center gap-2.5 py-1.5 pl-1"
-                                >
-                                  <Check size={11} className="text-[#00B87C]" />
-                                  <span className="text-[12px] font-medium text-[#00B87C]">
-                                    {task.label}
-                                  </span>
-                                  <span className="text-[11px] text-muted-foreground ml-auto">
-                                    {task.doneDate}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
                     </div>
                   )}
+                  <AnimatePresence>
+                    {doneList.length > 0 && expanded && (
+                      <motion.div
+                        key={`completed-tasks-${hire.id}`}
+                        initial={{ scaleY: 0, opacity: 0 }}
+                        animate={{ scaleY: 1, opacity: 1 }}
+                        exit={{ scaleY: 0, opacity: 0 }}
+                        className="overflow-hidden origin-top"
+                      >
+                        <div className="space-y-1 mt-2">
+                          {doneList.map((task) => (
+                            <div
+                              key={task.id}
+                              className="flex items-center gap-2.5 py-1.5 pl-1"
+                            >
+                              <Check size={11} className="text-[#00B87C]" />
+                              <span className="text-[12px] font-medium text-[#00B87C]">
+                                {task.label}
+                              </span>
+                              <span className="text-[11px] text-muted-foreground ml-auto">
+                                {task.doneDate}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             );
@@ -1158,7 +1171,13 @@ export function FinanceOnboarding() {
                     </label>
                     <input
                       value={accountNumber}
-                      onChange={(e) => setAccountNumber(e.target.value)}
+                      onChange={(e) =>
+                        setAccount(
+                          e.target.value === "" || isNaN(Number(e.target.value))
+                            ? undefined
+                            : Number(e.target.value),
+                        )
+                      }
                       placeholder="Enter account number"
                       className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all"
                     />
@@ -1304,7 +1323,14 @@ export function FinanceOnboarding() {
                         </label>
                         <input
                           value={uanNumber}
-                          onChange={(e) => setUanNumber(e.target.value)}
+                          onChange={(e) =>
+                            setUan(
+                              e.target.value === "" ||
+                                isNaN(Number(e.target.value))
+                                ? undefined
+                                : Number(e.target.value),
+                            )
+                          }
                           placeholder="Universal Account Number"
                           className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all"
                         />
@@ -1371,7 +1397,14 @@ export function FinanceOnboarding() {
                         </label>
                         <input
                           value={esicNumber}
-                          onChange={(e) => setEsicNumber(e.target.value)}
+                          onChange={(e) =>
+                            setEsic(
+                              e.target.value === "" ||
+                                isNaN(Number(e.target.value))
+                                ? undefined
+                                : Number(e.target.value),
+                            )
+                          }
                           className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-[13px] font-bold text-foreground outline-none focus:border-[#00B87C] transition-all"
                         />
                       </div>

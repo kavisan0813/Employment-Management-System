@@ -222,10 +222,10 @@ export function EmployeeSupport() {
   };
 
   const openCount = tickets.filter((t) =>
-    ["Open", "In Progress", "Waiting for Employee"].includes(t.status),
+    new Set(["Open", "In Progress", "Waiting for Employee"]).has(t.status),
   ).length;
   const resolvedCount = tickets.filter((t) =>
-    ["Resolved", "Closed"].includes(t.status),
+    new Set(["Resolved", "Closed"]).has(t.status),
   ).length;
 
   return (
