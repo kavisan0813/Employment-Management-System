@@ -283,15 +283,14 @@ function SummaryCard({
           </p>
           {chip && (
             <span
-              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${
-                chipColor === "green"
+              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border ${chipColor === "green"
                   ? "bg-emerald-500/10 text-primary border-primary/20"
                   : chipColor === "amber"
                     ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
                     : chipColor === "purple"
                       ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
                       : "bg-teal-500/10 text-teal-600 border-teal-500/20"
-              }`}
+                }`}
             >
               {chip}
             </span>
@@ -428,11 +427,10 @@ export function EmployeePerformance() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`py-4 text-[14px] font-black relative transition-all ${
-              activeTab === tab
+            className={`py-4 text-[14px] font-black relative transition-all ${activeTab === tab
                 ? "text-primary"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             {tab}
             {activeTab === tab && (
@@ -473,13 +471,12 @@ export function EmployeePerformance() {
                   >
                     <div className="flex items-center gap-5">
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          goal.priority === "High"
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center ${goal.priority === "High"
                             ? "bg-rose-500/10 text-rose-500"
                             : goal.priority === "Medium"
                               ? "bg-amber-500/10 text-amber-600"
                               : "bg-emerald-500/10 text-primary"
-                        }`}
+                          }`}
                       >
                         <Target size={20} />
                       </div>
@@ -749,11 +746,10 @@ export function EmployeePerformance() {
                   Priority
                 </h4>
                 <span
-                  className={`px-3 py-1 rounded-lg text-[11px] font-black border ${
-                    selectedGoalDetail.priority === "High"
+                  className={`px-3 py-1 rounded-lg text-[11px] font-black border ${selectedGoalDetail.priority === "High"
                       ? "bg-rose-500/10 text-rose-500 border-rose-500/20"
                       : "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                  }`}
+                    }`}
                 >
                   {selectedGoalDetail.priority}
                 </span>
@@ -1383,13 +1379,12 @@ export function EmployeePerformance() {
               {showGoalTimeline.timeline.map((entry) => (
                 <div key={entry.id} className="relative pl-12">
                   <div
-                    className={`absolute left-0 top-0 w-10 h-10 rounded-full border-4 border-card flex items-center justify-center z-10 ${
-                      entry.type === "Created"
+                    className={`absolute left-0 top-0 w-10 h-10 rounded-full border-4 border-card flex items-center justify-center z-10 ${entry.type === "Created"
                         ? "bg-emerald-500/10 text-primary"
                         : entry.type === "Completed"
                           ? "bg-purple-500/10 text-purple-500"
                           : "bg-blue-500/10 text-blue-500"
-                    }`}
+                      }`}
                   >
                     {entry.type === "Created" ? (
                       <Target size={14} />

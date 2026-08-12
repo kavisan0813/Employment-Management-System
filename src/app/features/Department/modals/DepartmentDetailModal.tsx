@@ -124,24 +124,24 @@ export function DepartmentDetailModal({
       onClick={handleClose}
     >
       <div
-        className={`w-full sm:w-[520px] md:w-[620px] max-w-[92vw] h-full bg-[#F8FAFC] dark:bg-[#021B17] rounded-none sm:rounded-l-[24px] shadow-2xl flex flex-col transition-all duration-250 ease-out overflow-hidden border-l border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] ${drawerClass}`}
+        className={`w-full sm:w-[400px] md:w-[450px] max-w-[92vw] h-full bg-[#F8FAFC] dark:bg-[#021B17] rounded-none sm:rounded-l-[24px] shadow-2xl flex flex-col transition-all duration-250 ease-out overflow-hidden border-l border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] ${drawerClass}`}
         style={{ fontFamily: "'Inter', sans-serif" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="flex items-start justify-between p-[24px] border-b border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] flex-shrink-0 bg-[#F8FAFC] dark:bg-[#021B17] sticky top-0 z-20">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-[18px] flex items-center justify-center bg-[#FFFFFF] dark:bg-[#082A24] text-[#00B87C] dark:text-[#00C48C] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] shadow-sm">
-              <Building2 size={28} />
+        <div className="flex items-start justify-between p-[16px] px-[20px] flex-shrink-0 bg-[#F8FAFC] dark:bg-[#021B17] sticky top-0 z-20">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-[12px] flex items-center justify-center bg-[#FFFFFF] dark:bg-[#082A24] text-[#00B87C] dark:text-[#00C48C] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] shadow-sm">
+              <Building2 size={20} />
             </div>
             <div>
-              <h3 className="text-[36px] font-[700] text-[#111827] dark:text-[#FFFFFF] leading-tight flex items-center gap-3">
+              <h3 className="text-[22px] font-[700] text-[#111827] dark:text-[#FFFFFF] leading-tight flex items-center gap-2">
                 {dept.name}
-                <span className="text-[13px] font-[600] text-[#6B7280] dark:text-[#9DB7AF] bg-[#FFFFFF] dark:bg-[#082A24] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] px-3 py-1 rounded-full uppercase tracking-wider">
+                <span className="text-[11px] font-[600] text-[#6B7280] dark:text-[#9DB7AF] bg-[#FFFFFF] dark:bg-[#082A24] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                   {dept.code}
                 </span>
               </h3>
-              <p className="text-[16px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mt-1">
+              <p className="text-[14px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mt-1">
                 Department Intelligence Summary
               </p>
             </div>
@@ -155,88 +155,88 @@ export function DepartmentDetailModal({
         </div>
 
         {/* BODY */}
-        <div className="flex-1 overflow-y-auto p-[24px] space-y-[20px] bg-[#F8FAFC] dark:bg-[#021B17] custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-[16px] px-[20px] space-y-[12px] bg-[#F8FAFC] dark:bg-[#021B17] custom-scrollbar">
 
           {/* SECTION 1: KPI Cards */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="flex items-center gap-2">
-                <Users size={16} className="text-[#00B87C] dark:text-[#00C48C]" />
-                <span className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF]">STAFF</span>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="h-[80px] p-[12px] rounded-[12px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center gap-1.5">
+                <Users size={12} className="text-[#00B87C] dark:text-[#00C48C]" />
+                <span className="text-[11px] font-[600] text-[#6B7280] dark:text-[#9DB7AF]">STAFF</span>
               </div>
-              <div className="text-[36px] font-[700] text-[#111827] dark:text-[#FFFFFF] leading-none">
+              <div className="text-[24px] font-[700] text-[#111827] dark:text-[#FFFFFF] leading-none">
                 {dept.employees}
               </div>
             </div>
 
-            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#00B87C]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-[#00B87C] dark:text-[#00C48C]" />
-                <span className="text-[13px] font-[500] text-[#00B87C] dark:text-[#9DB7AF]">ACTIVE</span>
+            <div className="h-[80px] p-[12px] rounded-[12px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#00B87C]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 size={12} className="text-[#00B87C] dark:text-[#00C48C]" />
+                <span className="text-[11px] font-[600] text-[#00B87C] dark:text-[#9DB7AF]">ACTIVE</span>
               </div>
-              <div className="text-[36px] font-[700] text-[#00B87C] dark:text-[#00C48C] leading-none">
+              <div className="text-[24px] font-[700] text-[#00B87C] dark:text-[#00C48C] leading-none">
                 {dept.activeEmployees}
               </div>
             </div>
 
-            <div className="h-[110px] p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#EF4444]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-              <div className="flex items-center gap-2">
-                <Calendar size={16} className="text-[#EF4444]" />
-                <span className="text-[13px] font-[500] text-[#EF4444] dark:text-[#9DB7AF]">ON LEAVE</span>
+            <div className="h-[80px] p-[12px] rounded-[12px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#EF4444]/5 dark:bg-[#082A24] hover:-translate-y-[2px] hover:shadow-md transition-all flex flex-col justify-between group animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+              <div className="flex items-center gap-1.5">
+                <Calendar size={12} className="text-[#EF4444]" />
+                <span className="text-[11px] font-[600] text-[#EF4444] dark:text-[#9DB7AF]">ON LEAVE</span>
               </div>
-              <div className="text-[36px] font-[700] text-[#EF4444] leading-none">
+              <div className="text-[24px] font-[700] text-[#EF4444] leading-none">
                 {dept.onLeaveEmployees}
               </div>
             </div>
           </div>
 
           {/* SECTION 2: Department Information */}
-          <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-            <h4 className="text-[15px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF] mb-5 tracking-wider">Department Information</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
+          <div className="p-[12px] rounded-[12px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+            <h4 className="text-[11px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF] mb-3 tracking-wider">Department Information</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-5">
               <div>
-                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Department Head</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#00B87C]/10 dark:bg-[#00C48C]/20 flex items-center justify-center text-[#00B87C] dark:text-[#00C48C] text-[14px] font-[700]">
+                <p className="text-[11px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Department Head</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-[#00B87C]/10 dark:bg-[#00C48C]/20 flex items-center justify-center text-[#00B87C] dark:text-[#00C48C] text-[11px] font-[700]">
                     {dept.head?.charAt(0) || "U"}
                   </div>
-                  <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.head}</p>
+                  <p className="text-[13px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.head}</p>
                 </div>
               </div>
               <div>
-                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Parent Department</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                    <Network size={16} />
+                <p className="text-[11px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Parent Department</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <Network size={12} />
                   </div>
-                  <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.parentDepartment || "None"}</p>
+                  <p className="text-[13px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.parentDepartment || "None"}</p>
                 </div>
               </div>
               <div>
-                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Created Date</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                    <Calendar size={16} />
+                <p className="text-[11px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Created Date</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                    <Calendar size={12} />
                   </div>
-                  <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.createdDate || "N/A"}</p>
+                  <p className="text-[13px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.createdDate || "N/A"}</p>
                 </div>
               </div>
               <div>
-                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Last Updated</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-600 dark:text-orange-400">
-                    <Clock size={16} />
+                <p className="text-[11px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Last Updated</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-600 dark:text-orange-400">
+                    <Clock size={12} />
                   </div>
-                  <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.lastUpdated || "N/A"}</p>
+                  <p className="text-[13px] font-[600] text-[#111827] dark:text-[#FFFFFF]">{dept.lastUpdated || "N/A"}</p>
                 </div>
               </div>
-              <div className="sm:col-span-2 mt-2">
-                <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-2">Description</p>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-500/10 flex items-center justify-center text-slate-600 dark:text-slate-400 flex-shrink-0 mt-0.5">
-                    <AlignLeft size={16} />
+              <div className="sm:col-span-2">
+                <p className="text-[11px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] mb-1">Description</p>
+                <div className="flex items-start gap-2">
+                  <div className="w-6 h-6 rounded-full bg-slate-500/10 flex items-center justify-center text-slate-600 dark:text-slate-400 flex-shrink-0 mt-0.5">
+                    <AlignLeft size={12} />
                   </div>
-                  <p className="text-[14px] text-[#111827] dark:text-[#FFFFFF] leading-relaxed">
+                  <p className="text-[12px] text-[#111827] dark:text-[#FFFFFF] leading-relaxed">
                     {dept.description || "Core technology development and infrastructure scaling."}
                   </p>
                 </div>
@@ -246,32 +246,24 @@ export function DepartmentDetailModal({
 
           {/* SECTION 3: Budget Summary */}
           {showFinance && (
-            <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-              <h4 className="text-[15px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF]">Budget Used</h4>
-
-              <div className="mb-5">
-                <div className="flex justify-between items-end mb-3">
-                  <div>
-                    <p className="text-[28px] font-[700] text-[#111827] dark:text-[#FFFFFF] leading-none">{budgetUsedRaw}</p>
-                  </div>
-                </div>
-              </div>
-
+            <div className="p-[12px] rounded-[12px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+              <h4 className="text-[11px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF] mb-1.5 tracking-wider">Budget Used</h4>
+              <p className="text-[20px] font-[700] text-[#111827] dark:text-[#FFFFFF] leading-none">{budgetUsedRaw}</p>
             </div>
           )}
 
           {/* SECTION 6: Team Distribution */}
-          <div className="p-[18px] rounded-[18px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-700">
-            <div className="flex items-center justify-between mb-5">
-              <h4 className="text-[15px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF] flex items-center gap-2 tracking-wider">
+          <div className="p-[12px] rounded-[12px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#0B2E27] hover:-translate-y-[2px] hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-4 duration-500 delay-700">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-[11px] font-[700] uppercase text-[#111827] dark:text-[#FFFFFF] flex items-center gap-2 tracking-wider">
                 Team Distribution
-                <span className="bg-[#F3F4F6] dark:bg-[#021B17] text-[#6B7280] dark:text-[#9DB7AF] px-2 py-0.5 rounded-full text-[12px] font-[600] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)]">
+                <span className="bg-[#F3F4F6] dark:bg-[#021B17] text-[#6B7280] dark:text-[#9DB7AF] px-1.5 py-0.5 rounded-full text-[10px] font-[600] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)]">
                   {teams.length}
                 </span>
               </h4>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-2">
               {teams.map((team) => (
                 <div
                   key={team.name}
@@ -279,34 +271,24 @@ export function DepartmentDetailModal({
                     handleClose();
                     navigate(`/employees?department=${encodeURIComponent(dept.name)}&team=${encodeURIComponent(team.name)}`);
                   }}
-                  className="flex items-center justify-between p-4 rounded-[16px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#F8FAFC] dark:bg-[#021B17] hover:border-[#00B87C]/30 hover:shadow-sm hover:-translate-y-0.5 transition-all cursor-pointer group"
+                  className="flex items-center justify-between p-2.5 rounded-[10px] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#F8FAFC] dark:bg-[#021B17] hover:border-[#00B87C]/30 hover:shadow-sm hover:-translate-y-0.5 transition-all cursor-pointer group"
                 >
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#FFFFFF] dark:bg-[#082A24] text-[#00B87C] dark:text-[#00C48C] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] group-hover:scale-105 transition-transform shadow-sm">
-                      <team.icon size={20} />
+                  <div className="flex items-center gap-2.5 flex-1">
+                    <div className="w-8 h-8 rounded-[8px] flex items-center justify-center bg-[#FFFFFF] dark:bg-[#082A24] text-[#00B87C] dark:text-[#00C48C] border border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] group-hover:scale-105 transition-transform shadow-sm">
+                      <team.icon size={14} />
                     </div>
                     <div>
-                      <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF] group-hover:text-[#00B87C] dark:group-hover:text-[#00C48C] transition-colors">
+                      <p className="text-[13px] font-[600] text-[#111827] dark:text-[#FFFFFF] transition-colors">
                         {team.name}
                       </p>
-                      <p className="text-[14px] text-[#6B7280] dark:text-[#9DB7AF] font-[500] mt-0.5">
+                      <p className="text-[11px] text-[#6B7280] dark:text-[#9DB7AF] font-[500] mt-0.5">
                         Lead: <span className="text-[#111827] dark:text-[#FFFFFF] font-[600]">{team.lead}</span>
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-6">
-                    {team.count > 0 && (
-                      <div className="text-right">
-                        <p className="text-[18px] font-[600] text-[#111827] dark:text-[#FFFFFF]">
-                          {team.count}
-                        </p>
-                        <p className="text-[13px] font-[500] text-[#6B7280] dark:text-[#9DB7AF] uppercase tracking-wider">
-                          Staff
-                        </p>
-                      </div>
-                    )}
-                    <ChevronRight size={20} className="text-[#6B7280] dark:text-[#9DB7AF] group-hover:text-[#00B87C] dark:group-hover:text-[#00C48C] group-hover:translate-x-1 transition-all" />
+                  <div className="flex items-center gap-3">
+                    <ChevronRight size={14} className="text-[#6B7280] dark:text-[#9DB7AF] group-hover:text-[#111827] dark:group-hover:text-[#FFFFFF] transition-colors" />
                   </div>
                 </div>
               ))}
@@ -314,18 +296,18 @@ export function DepartmentDetailModal({
           </div>
 
           {/* Bottom spacing to ensure scroll doesn't get cut off by footer completely */}
-          <div className="h-4"></div>
+          <div className="h-2"></div>
         </div>
 
         {/* FOOTER */}
-        <div className="p-[24px] border-t border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#082A24] flex justify-end gap-3 flex-shrink-0 z-20 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)]">
+        <div className="p-[16px] px-[20px] border-t border-[#E5E7EB] dark:border-[rgba(255,255,255,0.06)] bg-[#FFFFFF] dark:bg-[#082A24] flex justify-end gap-2 flex-shrink-0 z-20 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)]">
           {canDelete && (
             <button
               onClick={() => {
                 handleClose();
                 onDelete(dept);
               }}
-              className="px-5 py-2.5 rounded-[12px] text-[14px] font-[600] text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-transparent hover:border-[#EF4444]/30 transition-all"
+              className="px-4 py-2 rounded-[10px] text-[13px] font-[600] text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-transparent hover:border-[#EF4444]/30 transition-all"
             >
               Delete
             </button>
@@ -337,7 +319,7 @@ export function DepartmentDetailModal({
                   handleClose();
                   onToggleStatus(dept);
                 }}
-                className={`px-5 py-2.5 rounded-[12px] text-[14px] font-[600] transition-all border ${dept.status === "Active"
+                className={`px-4 py-2 rounded-[10px] text-[13px] font-[600] transition-all border ${dept.status === "Active"
                   ? "text-[#F5A623] bg-[#F5A623]/10 border-[#F5A623]/20 hover:bg-[#F5A623]/20"
                   : "text-[#00B87C] dark:text-[#00C48C] bg-[#00B87C]/10 dark:bg-[#00C48C]/10 border-[#00B87C]/20 dark:border-[#00C48C]/20 hover:bg-[#00B87C]/20 dark:hover:bg-[#00C48C]/20"
                   }`}
@@ -349,7 +331,7 @@ export function DepartmentDetailModal({
                   handleClose();
                   onEdit(dept);
                 }}
-                className="px-6 py-2.5 rounded-[12px] text-[14px] font-[600] text-[#FFFFFF] dark:text-[#021B17] bg-[#00B87C] dark:bg-[#00C48C] hover:bg-[#00a36d] dark:hover:bg-[#00b37f] shadow-[0_4px_14px_rgba(0,184,124,0.3)] dark:shadow-[0_4px_14px_rgba(0,196,140,0.3)] transition-all"
+                className="px-5 py-2 rounded-[10px] text-[13px] font-[600] text-[#FFFFFF] dark:text-[#021B17] bg-[#00B87C] dark:bg-[#00C48C] hover:bg-[#00a36d] dark:hover:bg-[#00b37f] shadow-[0_4px_14px_rgba(0,184,124,0.3)] dark:shadow-[0_4px_14px_rgba(0,196,140,0.3)] transition-all"
               >
                 Edit Department
               </button>
