@@ -833,10 +833,6 @@ export function LeaveManagement() {
     });
   };
 
-  if (user?.role === "Employee") {
-    return <EmployeeLeaves />;
-  }
-
   // Advanced Filter States
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [filters, setFilters] = useState({
@@ -851,10 +847,14 @@ export function LeaveManagement() {
   // Bulk Action States
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  if (user?.role === "Employee") {
+    return <EmployeeLeaves />;
+  }
+
   const handleExport = () => {
     const dataToExport =
       selectedIds.length > 0
-        ? requests.filter((r) => selectedIds.includes(r.id))
+        ? (() => { const selectedIdsSet = new Set(selectedIds); return requests.filter((r) => selectedIdsSet.has(r.id)); })()
         : requests;
 
     if (exportFormat === "PDF") {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { lazy, useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   ArrowLeft,
@@ -27,15 +27,14 @@ import { performanceData } from "../../data/mockData";
 import { useEmployees } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
 import { P, usePermissions, ROLE_IDS } from "../../shared/permission-engine";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+const LineChart = lazy(() => import("recharts").then(m => ({ default: m.LineChart })));
+const Line = lazy(() => import("recharts").then(m => ({ default: m.Line })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+
 
 const tabs = [
   "Personal",
@@ -214,7 +213,7 @@ export function EmployeeProfile() {
   const currentEmp = useMemo(() => {
     if (!employeesList || !user) return null;
     return employeesList.find(
-      (e) => e.email.toLowerCase() === user.email.toLowerCase()
+      (e) => e.email.toLowerCase() === user.email.toLowerCase(),
     );
   }, [employeesList, user]);
 
@@ -237,7 +236,7 @@ export function EmployeeProfile() {
     if (isSelf) return tabs;
 
     const hasManagerRole = roleAssignments.some(
-      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive
+      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive,
     );
 
     // Manager role doesn't get Payroll/Documents
@@ -265,7 +264,7 @@ export function EmployeeProfile() {
 
   const canViewSalary = useMemo(() => {
     const hasManagerRole = roleAssignments.some(
-      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive
+      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive,
     );
     if (hasManagerRole) return false;
 
@@ -279,27 +278,39 @@ export function EmployeeProfile() {
 
   const canEdit = useMemo(() => {
     if (isSelf) return true;
-    if (hasPermissionKey(P.EMPLOYEES_MANAGE) || hasPermissionKey(P.EMPLOYEES_FULL)) return true;
+    if (
+      hasPermissionKey(P.EMPLOYEES_MANAGE) ||
+      hasPermissionKey(P.EMPLOYEES_FULL)
+    )
+      return true;
 
     // Check if the current user is a Manager
     const hasManagerRole = roleAssignments.some(
-      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive
+      (a) => a.roleId === ROLE_IDS.DEPT_MANAGER && a.isActive,
     );
     if (hasManagerRole) return true;
 
     if (scope === "department") {
       const dept = currentEmp?.department || "";
-      return !!(dept && employee.department.toLowerCase() === dept.toLowerCase());
+      return !!(
+        dept && employee.department.toLowerCase() === dept.toLowerCase()
+      );
     }
     if (scope === "team") {
       const team = currentEmp?.team || "";
-      return !!(team && employee.team && employee.team.toLowerCase() === team.toLowerCase());
+      return !!(
+        team &&
+        employee.team &&
+        employee.team.toLowerCase() === team.toLowerCase()
+      );
     }
     return false;
   }, [isSelf, scope, currentEmp, employee, hasPermissionKey, roleAssignments]);
 
   const canManageActions = useMemo(() => {
-    return hasPermissionKey(P.EMPLOYEES_MANAGE) || hasPermissionKey(P.EMPLOYEES_FULL);
+    return (
+      hasPermissionKey(P.EMPLOYEES_MANAGE) || hasPermissionKey(P.EMPLOYEES_FULL)
+    );
   }, [hasPermissionKey]);
 
   const [activeTab, setActiveTab] = useState("employment");
@@ -573,7 +584,11 @@ NexHR Management
                     className="p-2.5 rounded-xl transition-colors hover:scale-105 bg-secondary text-primary"
                     title="Schedule Meet"
                     onClick={() =>
-                      window.open("https://calendar.google.com", "_blank", "noopener,noreferrer")
+                      window.open(
+                        "https://calendar.google.com",
+                        "_blank",
+                        "noopener,noreferrer",
+                      )
                     }
                   >
                     <CalendarIcon size={18} />
@@ -609,7 +624,9 @@ NexHR Management
                       </button>
                     </>
                   )}
-                  {(canManageActions || scope === "department" || scope === "team") && (
+                  {(canManageActions ||
+                    scope === "department" ||
+                    scope === "team") && (
                     <div className="relative">
                       <button
                         className="p-2.5 rounded-xl transition-colors hover:scale-105 bg-background text-muted-foreground border border-border"
@@ -661,7 +678,9 @@ NexHR Management
                                 onMouseDown={(e) => {
                                   e.preventDefault();
                                   setIsMoreMenuOpen(false);
-                                  updateEmployee(employee.id, { status: "Inactive" });
+                                  updateEmployee(employee.id, {
+                                    status: "Inactive",
+                                  });
                                 }}
                               >
                                 Deactivate Account
@@ -682,7 +701,11 @@ NexHR Management
                   </p>
                   <p className="text-xl font-black text-foreground">4.2 yrs</p>
                 </div>
-                {(isSelf || hasPermissionKey(P.ATTENDANCE_VIEW) || hasPermissionKey(P.ATTENDANCE_MANAGE) || scope === "department" || scope === "team") && (
+                {(isSelf ||
+                  hasPermissionKey(P.ATTENDANCE_VIEW) ||
+                  hasPermissionKey(P.ATTENDANCE_MANAGE) ||
+                  scope === "department" ||
+                  scope === "team") && (
                   <>
                     <div className="w-px h-10 bg-border"></div>
                     <div>
@@ -693,7 +716,10 @@ NexHR Management
                     </div>
                   </>
                 )}
-                {(isSelf || hasPermissionKey(P.PERFORMANCE_VIEW) || scope === "department" || scope === "team") && (
+                {(isSelf ||
+                  hasPermissionKey(P.PERFORMANCE_VIEW) ||
+                  scope === "department" ||
+                  scope === "team") && (
                   <>
                     <div className="w-px h-10 bg-border"></div>
                     <div>
@@ -961,12 +987,13 @@ NexHR Management
                           </p>
                         </div>
                         <span
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold ${tr.status === "Approved"
-                            ? "bg-primary/10 text-primary border border-primary/20"
-                            : tr.status === "Rejected"
-                              ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                              : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                            }`}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                            tr.status === "Approved"
+                              ? "bg-primary/10 text-primary border border-primary/20"
+                              : tr.status === "Rejected"
+                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                                : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                          }`}
                         >
                           {tr.status}
                         </span>
@@ -1013,7 +1040,7 @@ NexHR Management
                   Documents
                 </h3>
                 <div className="space-y-4">
-                  {docs.map((doc, i) => (
+                  {docs.map((doc) => (
                     <div
                       key={doc.name}
                       className="flex items-center justify-between p-4 rounded-xl transition-all hover:shadow-sm bg-background border border-border"
@@ -1260,7 +1287,7 @@ NexHR Management
                     },
                   ].map((t) => (
                     <div
-                      key={t.id}
+                      key={t.name}
                       className="flex items-center justify-between p-4 rounded-xl border border-border bg-background"
                     >
                       <div>
@@ -1477,7 +1504,7 @@ NexHR Management
               Key Documents
             </h3>
             <div className="space-y-3">
-              {docs.map((doc, i) => (
+              {docs.map((doc) => (
                 <div
                   key={doc.name}
                   className="flex items-center justify-between p-3 rounded-xl transition-colors hover:bg-primary/10 bg-background border border-border"

@@ -157,19 +157,18 @@ export function FinanceSupport() {
       comment: replyText,
     };
 
-    setTickets((prevTickets) =>
-      prevTickets.map((t) => {
-        if (t.id === ticketId) {
-          const updatedTicket = {
-            ...t,
-            timeline: [...t.timeline, newComment],
-          };
-          setSelectedTicket(updatedTicket);
-          return updatedTicket;
-        }
-        return t;
-      }),
-    );
+    const nextTickets = tickets.map((t) => {
+      if (t.id === ticketId) {
+        const updatedTicket = {
+          ...t,
+          timeline: [...t.timeline, newComment],
+        };
+        setSelectedTicket(updatedTicket);
+        return updatedTicket;
+      }
+      return t;
+    });
+    setTickets(nextTickets);
     showToast(
       "Reply Sent",
       "success",
@@ -790,7 +789,7 @@ function TicketDetailsModal({
                 Attachments
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {ticket.attachments.map((att, idx) => (
+                {ticket.attachments.map((att) => (
                   <div
                     key={att.name}
                     className="flex items-center gap-2 p-3 bg-secondary/30 border border-border rounded-xl"
@@ -930,6 +929,7 @@ function TicketDetailsModal({
             rows={1}
             style={{ height: "40px" }}
             onKeyDown={(e) => {
+              if (e.nativeEvent.isComposing) return;
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSubmit(e);

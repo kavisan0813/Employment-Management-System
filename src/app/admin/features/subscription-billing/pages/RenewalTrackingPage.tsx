@@ -78,7 +78,7 @@ export function RenewalTrackingPage() {
             <span className="text-[10px] uppercase font-semibold text-gray-400">Show next</span>
             <select
               value={daysAhead}
-              onChange={(e) => setDaysAhead(Number(e.target.value))}
+              onChange={(e) => setDaysAhead((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
               className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-800 font-medium focus:border-indigo-400 focus:ring-1 focus:ring-indigo-100 outline-none cursor-pointer"
             >
               <option value={7}>7 days</option>

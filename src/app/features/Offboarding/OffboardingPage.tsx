@@ -20,8 +20,12 @@ export function OffboardingPage() {
   const [activeTab, setActiveTab] = useState<TabType>("Active");
   const [requestsCount, setRequestsCount] = useState(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem("viyan_resignation_requests:v1") || "[]");
-      return stored.filter((r: any) => r.status?.startsWith("pending")).length;
+      const stored = JSON.parse(
+        localStorage.getItem("viyan_resignation_requests:v1") || "[]",
+      );
+      return stored.filter((r: { status?: string }) =>
+        r.status?.startsWith("pending"),
+      ).length;
     } catch {
       return 0;
     }
@@ -62,8 +66,12 @@ export function OffboardingPage() {
     handleAssignTemplate,
   } = useOffboarding();
 
-  const currentExit = showDetail ? exits.find((e) => e.id === showDetail) : null;
-  const completeExit = showComplete ? exits.find((e) => e.id === showComplete) : null;
+  const currentExit = showDetail
+    ? exits.find((e) => e.id === showDetail)
+    : null;
+  const completeExit = showComplete
+    ? exits.find((e) => e.id === showComplete)
+    : null;
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-8 animate-in fade-in duration-500">
@@ -113,7 +121,9 @@ export function OffboardingPage() {
             />
           )}
 
-          {activeTab === "Requests" && <RequestsTab onCountChange={setRequestsCount} />}
+          {activeTab === "Requests" && (
+            <RequestsTab onCountChange={setRequestsCount} />
+          )}
 
           {activeTab === "Active" && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -197,7 +207,9 @@ export function OffboardingPage() {
         <OffboardingDetail
           exit={currentExit}
           templates={templates}
-          onAssignTemplate={(tplId) => handleAssignTemplate(currentExit.id, tplId)}
+          onAssignTemplate={(tplId) =>
+            handleAssignTemplate(currentExit.id, tplId)
+          }
           onClose={() => setShowDetail(null)}
           onVerifyDocument={handleVerifyDocument}
           onGenerateDoc={(doc) => handleGenerateDoc(currentExit.id, doc)}
@@ -237,24 +249,25 @@ export function OffboardingPage() {
       )}
 
       {/* EXIT INTERVIEW MODAL */}
-      {showSchedule && (() => {
-        const emp = exits.find((e) => e.id === showSchedule.id);
-        if (!emp) return null;
-        if (showSchedule.type === "interview") {
-          return (
-            <ExitInterviewModal
-              employeeName={emp.name}
-              interviewDone={emp.interviewDone}
-              onClose={() => setShowSchedule(null)}
-              onComplete={() => {
-                handleCompleteInterview(emp.id);
-                setShowSchedule(null);
-              }}
-            />
-          );
-        }
-        return null;
-      })()}
+      {showSchedule &&
+        (() => {
+          const emp = exits.find((e) => e.id === showSchedule.id);
+          if (!emp) return null;
+          if (showSchedule.type === "interview") {
+            return (
+              <ExitInterviewModal
+                employeeName={emp.name}
+                interviewDone={emp.interviewDone}
+                onClose={() => setShowSchedule(null)}
+                onComplete={() => {
+                  handleCompleteInterview(emp.id);
+                  setShowSchedule(null);
+                }}
+              />
+            );
+          }
+          return null;
+        })()}
 
       {/* OFFBOARDING TEMPLATE EDITOR MODAL */}
       <OffboardingTemplateEditorModal
@@ -263,8 +276,43 @@ export function OffboardingPage() {
         editingTemplate={editingTemplate}
         templates={templates}
         departments={(() => {
-          const depts = JSON.parse(localStorage.getItem("viyan_departments") || "[]").map((d: any) => d.name || "").filter(Boolean);
-          return depts.length > 0 ? depts : ["Engineering", "HR", "Finance", "Sales", "Marketing", "Support"];
+          try {
+            const parsed = JSON.parse(
+              localStorage.getItem("viyan_departments") || "[]",
+            );
+            if (!Array.isArray(parsed)) {
+              return [
+                "Engineering",
+                "HR",
+                "Finance",
+                "Sales",
+                "Marketing",
+                "Support",
+              ];
+            }
+            const depts = parsed
+              .map((d: { name?: string }) => d?.name || "")
+              .filter(Boolean);
+            return depts.length > 0
+              ? depts
+              : [
+                  "Engineering",
+                  "HR",
+                  "Finance",
+                  "Sales",
+                  "Marketing",
+                  "Support",
+                ];
+          } catch {
+            return [
+              "Engineering",
+              "HR",
+              "Finance",
+              "Sales",
+              "Marketing",
+              "Support",
+            ];
+          }
         })()}
         saveTemplate={saveTemplate}
       />

@@ -1,8 +1,6 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function NotificationRulesSection() {
   const {
@@ -149,10 +147,7 @@ export function NotificationRulesSection() {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
-        <ChevronRight
-          size={12}
-          style={{ color: "var(--muted-foreground)" }}
-        />
+        <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
         <span style={{ color: "#00B87C" }}>Notification Rules</span>
       </div>
 
@@ -198,7 +193,7 @@ export function NotificationRulesSection() {
       {/* Section: NOTIFICATION PREFERENCES */}
       <SectionTitle title="Notification Preferences" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        {cards.map((c, idx) => (
+        {cards.map((c) => (
           <div
             key={c.title}
             className="p-4 rounded-xl flex flex-col justify-between"
@@ -399,8 +394,11 @@ export function NotificationRulesSection() {
               state: notifyQuiet,
               setter: setNotifyQuiet,
             },
-          ].map((row, idx) => (
-            <div key={row.label} className="flex justify-between items-center py-2">
+          ].map((row) => (
+            <div
+              key={row.label}
+              className="flex justify-between items-center py-2"
+            >
               <p
                 style={{
                   fontSize: "14px",

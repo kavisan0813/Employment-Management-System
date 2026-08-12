@@ -832,7 +832,7 @@ function GoalDetailsModal({
               max="100"
               step="5"
               value={prog}
-              onChange={(e) => setProg(Number(e.target.value))}
+              onChange={(e) => setProg((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
               className="w-full accent-[#00B87C] bg-muted h-2 rounded-lg cursor-pointer appearance-none animate-none"
             />
             <div className="flex gap-2 justify-end pt-2">

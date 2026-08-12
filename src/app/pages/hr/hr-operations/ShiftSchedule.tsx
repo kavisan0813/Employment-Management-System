@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router";
 import {
   ChevronLeft,
@@ -261,39 +261,42 @@ export const ShiftSchedule: React.FC = () => {
     });
   });
 
-  const getShiftForDate = (empName: string, dateStr: string) => {
-    const emp = scheduleData.find((e) => e.name === empName);
-    if (emp && emp.shifts[dateStr] !== undefined) {
-      return emp.shifts[dateStr];
-    }
+  const getShiftForDate = useCallback(
+    (empName: string, dateStr: string) => {
+      const emp = scheduleData.find((e) => e.name === empName);
+      if (emp && emp.shifts[dateStr] !== undefined) {
+        return emp.shifts[dateStr];
+      }
 
-    // Deterministic non-correlated mixed hash fallback
-    const seed = `${empName}_${dateStr}`;
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-      hash = (hash * 33) ^ seed.charCodeAt(i);
-    }
-    hash = Math.imul(hash ^ (hash >>> 16), 2246822507);
-    hash = Math.imul(hash ^ (hash >>> 13), 3266489909);
-    hash = hash ^ (hash >>> 16);
-    const rand = Math.abs(hash % 1000) / 1000;
+      // Deterministic non-correlated mixed hash fallback
+      const seed = `${empName}_${dateStr}`;
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        hash = (hash * 33) ^ seed.charCodeAt(i);
+      }
+      hash = Math.imul(hash ^ (hash >>> 16), 2246822507);
+      hash = Math.imul(hash ^ (hash >>> 13), 3266489909);
+      hash = hash ^ (hash >>> 16);
+      const rand = Math.abs(hash % 1000) / 1000;
 
-    if (rand > 0.35) {
-      const types = ["Morning", "Evening", "Night"];
-      const type = types[Math.floor(rand * 3)];
-      const times: Record<string, string> = {
-        Morning: "06:00 – 14:00",
-        Evening: "14:00 – 22:00",
-        Night: "22:00 – 06:00",
-      };
-      return {
-        type: type as "Morning" | "Evening" | "Night" | "Full Day",
-        time: times[type],
-        isOT: rand > 0.82,
-      };
-    }
-    return null; // Off Day
-  };
+      if (rand > 0.35) {
+        const types = ["Morning", "Evening", "Night"];
+        const type = types[Math.floor(rand * 3)];
+        const times: Record<string, string> = {
+          Morning: "06:00 – 14:00",
+          Evening: "14:00 – 22:00",
+          Night: "22:00 – 06:00",
+        };
+        return {
+          type: type as "Morning" | "Evening" | "Night" | "Full Day",
+          time: times[type],
+          isOT: rand > 0.82,
+        };
+      }
+      return null; // Off Day
+    },
+    [scheduleData],
+  );
 
   const handleDrop = (empId: string, dateStr: string, shiftType: string) => {
     setScheduleData((prev) =>
@@ -473,7 +476,7 @@ export const ShiftSchedule: React.FC = () => {
     });
 
     return { morning, evening, night, off };
-  }, [filteredSchedule, currentDate, scheduleData]);
+  }, [filteredSchedule, currentDate, getShiftForDate]);
 
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
@@ -868,14 +871,15 @@ export const ShiftSchedule: React.FC = () => {
                     >
                       {shift ? (
                         <div
-                          className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group ${shift.type === "Morning"
+                          className={`flex-1 rounded-xl p-2 flex flex-col justify-center text-left transition-all hover:scale-[1.02] cursor-pointer shadow-sm relative group ${
+                            shift.type === "Morning"
                               ? "bg-secondary text-primary border-l-4 border-l-primary"
                               : shift.type === "Evening"
                                 ? "bg-[rgba(245,158,11,0.1)] text-[#F59E0B] border-l-4 border-l-[#F59E0B]"
                                 : shift.type === "Night"
                                   ? "bg-violet-50 text-violet-700 border-l-4 border-l-violet-500"
                                   : "bg-blue-50 text-blue-700 border-l-4 border-l-blue-500"
-                            }`}
+                          }`}
                         >
                           <div className="flex items-center justify-between mb-0.5">
                             <span className="text-[11px] font-semibold uppercase tracking-tight">
@@ -1654,7 +1658,7 @@ export const ShiftSchedule: React.FC = () => {
                       (e) =>
                         tmpl.department === "All Departments" ||
                         e.department.toLowerCase() ===
-                        tmpl.department.toLowerCase(),
+                          tmpl.department.toLowerCase(),
                     )
                     .map((e) => e.id);
                   setSelectedEmps(emps);
@@ -1751,7 +1755,7 @@ export const ShiftSchedule: React.FC = () => {
                               (emp) =>
                                 e.target.value === "All Departments" ||
                                 emp.department.toLowerCase() ===
-                                e.target.value.toLowerCase(),
+                                  e.target.value.toLowerCase(),
                             )
                             .map((emp) => emp.id);
                           setSelectedEmps(emps);
@@ -1785,7 +1789,7 @@ export const ShiftSchedule: React.FC = () => {
                                 (emp) =>
                                   applyDept === "All Departments" ||
                                   emp.department.toLowerCase() ===
-                                  applyDept.toLowerCase(),
+                                    applyDept.toLowerCase(),
                               )
                               .map((emp) => emp.id);
                             setSelectedEmps(
@@ -1796,12 +1800,12 @@ export const ShiftSchedule: React.FC = () => {
                           }}
                         >
                           {selectedEmps.length ===
-                            globalEmployees.filter(
-                              (emp) =>
-                                applyDept === "All Departments" ||
-                                emp.department.toLowerCase() ===
+                          globalEmployees.filter(
+                            (emp) =>
+                              applyDept === "All Departments" ||
+                              emp.department.toLowerCase() ===
                                 applyDept.toLowerCase(),
-                            ).length
+                          ).length
                             ? "Deselect All"
                             : "Select All"}
                         </button>
@@ -1812,7 +1816,7 @@ export const ShiftSchedule: React.FC = () => {
                             (emp) =>
                               applyDept === "All Departments" ||
                               emp.department.toLowerCase() ===
-                              applyDept.toLowerCase(),
+                                applyDept.toLowerCase(),
                           )
                           .map((emp) => (
                             <label
@@ -2073,10 +2077,10 @@ export const ShiftSchedule: React.FC = () => {
                       prev.map((t) =>
                         t.id === advancedApplyTemplate.id
                           ? {
-                            ...t,
-                            employeesCount: selectedEmps.length,
-                            lastApplied: "Apr 27",
-                          }
+                              ...t,
+                              employeesCount: selectedEmps.length,
+                              lastApplied: "Apr 27",
+                            }
                           : t,
                       ),
                     );

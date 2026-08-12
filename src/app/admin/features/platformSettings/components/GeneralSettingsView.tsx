@@ -140,7 +140,7 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
                   ...p,
                   general: {
                     ...p.general,
-                    sessionTimeout: Number(e.target.value),
+                    sessionTimeout: (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)),
                   },
                 }))
               }
@@ -163,7 +163,7 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
                   ...p,
                   general: {
                     ...p.general,
-                    passwordExpiryDays: Number(e.target.value),
+                    passwordExpiryDays: (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)),
                   },
                 }))
               }
@@ -187,7 +187,7 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
                   ...p,
                   general: {
                     ...p.general,
-                    maxLoginAttempts: Number(e.target.value),
+                    maxLoginAttempts: (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)),
                   },
                 }))
               }
@@ -220,7 +220,7 @@ export function GeneralSettingsView({ config, setConfig }: Props) {
                   ...p,
                   storage: {
                     ...p.storage,
-                    maxUploadSizeMb: Number(e.target.value) || 0,
+                    maxUploadSizeMb: (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)) || 0,
                   },
                 }))
               }

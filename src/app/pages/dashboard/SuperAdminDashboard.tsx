@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { lazy, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import {
   Users,
@@ -19,18 +19,17 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
+const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 
@@ -422,19 +421,19 @@ export function SuperAdminDashboard() {
       const newLog =
         currentTask === "Backup"
           ? {
-            type: "Settings",
-            text: "Full database backup completed successfully",
-            user: "System",
-            time: "Just now",
-            color: "#64748B",
-          }
+              type: "Settings",
+              text: "Full database backup completed successfully",
+              user: "System",
+              time: "Just now",
+              color: "#64748B",
+            }
           : {
-            type: "Settings",
-            text: "Vulnerability security scan completed - 0 threats found",
-            user: "Security",
-            time: "Just now",
-            color: "#EF4444",
-          };
+              type: "Settings",
+              text: "Vulnerability security scan completed - 0 threats found",
+              user: "Security",
+              time: "Just now",
+              color: "#EF4444",
+            };
       setAuditLogList((prevLog) => [newLog, ...prevLog]);
     }, 300);
     return () => clearTimeout(timeout);
@@ -600,10 +599,11 @@ export function SuperAdminDashboard() {
                 <button
                   key={f}
                   onClick={() => setHeadcountPeriod(f)}
-                  className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest transition-all cursor-pointer ${f === headcountPeriod
-                    ? "bg-primary text-white shadow-sm shadow-[#00B87C]/20"
-                    : "bg-secondary text-muted-foreground hover:text-foreground"
-                    }`}
+                  className={`px-3 py-1 rounded-full text-[11px] font-black tracking-widest transition-all cursor-pointer ${
+                    f === headcountPeriod
+                      ? "bg-primary text-white shadow-sm shadow-[#00B87C]/20"
+                      : "bg-secondary text-muted-foreground hover:text-foreground"
+                  }`}
                 >
                   {f}
                 </button>
@@ -743,7 +743,7 @@ export function SuperAdminDashboard() {
                   All actions resolved!
                 </div>
               ) : (
-                pendingActionsList.map((action, i) => (
+                pendingActionsList.map((action) => (
                   <div
                     key={action.title}
                     onClick={() => setActivePendingAction(action)}
@@ -846,7 +846,7 @@ export function SuperAdminDashboard() {
                 <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                   <motion.div
                     initial={{ x: "-100%" }}
-                    animate={{ x: `-${100 - (mod.value)}%` }}
+                    animate={{ x: `-${100 - mod.value}%` }}
                     transition={{ duration: 1, delay: i * 0.1 }}
                     className="h-full rounded-full w-full"
                     style={{ backgroundColor: mod.color }}
@@ -883,7 +883,7 @@ export function SuperAdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {roleDistList.map((role, i) => (
+                {roleDistList.map((role) => (
                   <tr
                     key={role.status}
                     className="hover:bg-secondary/30 transition-colors"
@@ -975,7 +975,7 @@ export function SuperAdminDashboard() {
                 bg: "#FEE2E2",
                 action: triggerSecurityScan,
               },
-            ].map((action, i) => (
+            ].map((action) => (
               <button
                 key={action.label}
                 onClick={action.action}
@@ -1294,7 +1294,7 @@ export function SuperAdminDashboard() {
                     onChange={(e) =>
                       setSelectedRoleToManage({
                         ...selectedRoleToManage,
-                        count: parseInt(e.target.value) || 0,
+                        count: (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
                       })
                     }
                   />

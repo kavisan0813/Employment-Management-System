@@ -34,6 +34,7 @@ export interface NewHire {
   completedForms?: string[];
   /** IDs of company documents the employee has acknowledged/signed. */
   acknowledgedDocs?: string[];
+  personalDetailsVerified?: boolean;
 }
 
 export type TaskStatus = "done" | "pending" | "overdue" | "in-progress";
@@ -75,6 +76,8 @@ export interface DocumentItem {
   allowedTypes?: string[];
   needVerification?: boolean;
   visibleToEmployee?: boolean;
+  verificationStatus?: "verified" | "rejected" | "pending";
+  issuedByOrg?: boolean;
   /** Identifies the onboarding record this document belongs to. */
   employeeId?: string;
 }
@@ -132,7 +135,13 @@ export interface Template {
     autoVisibleToEmployee?: boolean;
   }>;
   forms?: Array<{ id: string; name: string; required: boolean }>;
-  training?: Array<{ id: string; name: string; required: boolean }>;
+  training?: Array<{
+    id: string;
+    name: string;
+    required: boolean;
+    type?: string;
+    duration?: string;
+  }>;
   policies?: Array<{ id: string; name: string; required: boolean }>;
 }
 

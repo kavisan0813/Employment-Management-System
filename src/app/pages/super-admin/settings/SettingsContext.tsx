@@ -261,6 +261,7 @@ const permissionGroups = [
 ];
 
 export interface DepartmentRecord {
+  id?: React.Key;
   code: string;
   name: string;
   head: string;
@@ -290,7 +291,7 @@ export interface LocationRecord {
 }
 
 export interface WorkScheduleRecord {
-  id: Key;
+  id?: React.Key;
   name: string;
   code: string;
   type: "General" | "Shift" | "Flexible" | "Rotational" | "Part Time";
@@ -339,7 +340,7 @@ export interface LeaveTypeRecord {
 }
 
 export interface UserManagementRecord {
-  id: Key;
+  id?: React.Key;
   name: string;
   email: string;
   initials: string;
@@ -352,6 +353,7 @@ export interface UserManagementRecord {
 }
 
 export interface SalaryComponent {
+  id?: React.Key;
   name: string;
   type: "Earning" | "Deduction";
   amountType: "Percentage" | "Fixed";
@@ -464,17 +466,19 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
           isDefault: false,
           color: "#8B5CF6",
         };
-        setRolesList([...rolesList, newRole]);
+        setRolesList((prev) => [...prev, newRole]);
 
-        const newPerms = { ...permissions };
-        Object.keys(roleForm.permissions).forEach((modId) => {
-          if (!newPerms[modId]) newPerms[modId] = {};
-          newPerms[modId] = {
-            ...newPerms[modId],
-            [newRole.id]: roleForm.permissions[modId],
-          };
+        setPermissions((prevPerms) => {
+          const newPerms = { ...prevPerms };
+          Object.keys(roleForm.permissions).forEach((modId) => {
+            if (!newPerms[modId]) newPerms[modId] = {};
+            newPerms[modId] = {
+              ...newPerms[modId],
+              [newRole.id]: roleForm.permissions[modId],
+            };
+          });
+          return newPerms;
         });
-        setPermissions(newPerms);
 
         setIsSubmitting(false);
         showToast("Role created successfully", "success");
@@ -490,10 +494,10 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
       const updatedList = rolesList.map((r) =>
         r.id === selectedRoleForEdit.id
           ? {
-            ...r,
-            name: roleForm.name,
-            modified: new Date().toISOString().split("T")[0],
-          }
+              ...r,
+              name: roleForm.name,
+              modified: new Date().toISOString().split("T")[0],
+            }
           : r,
       );
       setRolesList(updatedList);
@@ -1653,7 +1657,6 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     "192.168.1.0/24\n10.0.0.0/8",
   );
 
-
   const toggleCell = (modId: string, roleId: string) => {
     setPermissions((prev) => {
       const current = prev[modId][roleId];
@@ -2152,7 +2155,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
 
 export type SettingsContextType = ReturnType<typeof useSettingsProviderValue>;
 
-const SettingsContext = createContext<SettingsContextType | null>(null);
+export const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export function useSettingsContext() {
   const ctx = useContext(SettingsContext);

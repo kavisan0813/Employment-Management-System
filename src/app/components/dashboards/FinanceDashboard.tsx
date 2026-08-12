@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { lazy, useState, useEffect, useCallback, useReducer } from "react";
 import { useNavigate } from "react-router";
 import {
   IndianRupee,
@@ -20,18 +20,17 @@ import {
   FileText,
   ArrowRight,
 } from "lucide-react";
-import {
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-} from "recharts";
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
+const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
+const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
+
 import { motion, AnimatePresence } from "motion/react";
 
 /* ═══════════════════════════════════════════════════════
@@ -395,12 +394,59 @@ export function FinanceDashboard() {
   const [payrollDone, setPayrollDone] = useState(false);
 
   // Form 16 wizard
-  const [form16Step, setForm16Step] = useState(1);
-  const [form16FY, setForm16FY] = useState("FY 2025-26");
-  const [form16Scope, setForm16Scope] = useState("All");
-  const [form16Progress, setForm16Progress] = useState(0);
-  const [form16Generating, setForm16Generating] = useState(false);
-  const [form16Done, setForm16Done] = useState(false);
+  type Form16State = {
+    step: number;
+    fy: string;
+    scope: string;
+    progress: number;
+    generating: boolean;
+    done: boolean;
+  };
+  type Form16Action =
+    | { type: "setStep"; payload: number }
+    | { type: "setFY"; payload: string }
+    | { type: "setScope"; payload: string }
+    | { type: "setProgress"; payload: number | ((p: number) => number) }
+    | { type: "startGenerating" }
+    | { type: "finishGenerating" }
+    | { type: "reset" };
+
+  const [form16, dispatchForm16] = useReducer(
+    (state: Form16State, action: Form16Action): Form16State => {
+      switch (action.type) {
+        case "setStep":
+          return { ...state, step: action.payload };
+        case "setFY":
+          return { ...state, fy: action.payload };
+        case "setScope":
+          return { ...state, scope: action.payload };
+        case "setProgress":
+          return {
+            ...state,
+            progress:
+              typeof action.payload === "function"
+                ? action.payload(state.progress)
+                : action.payload,
+          };
+        case "startGenerating":
+          return { ...state, generating: true, progress: 0 };
+        case "finishGenerating":
+          return { ...state, generating: false, done: true };
+        case "reset":
+          return { ...state, step: 1, done: false, progress: 0 };
+        default:
+          return state;
+      }
+    },
+    {
+      step: 1,
+      fy: "FY 2025-26",
+      scope: "All",
+      progress: 0,
+      generating: false,
+      done: false,
+    },
+  );
 
   // Step modal content
   const [stepInfo, setStepInfo] = useState({ title: "", content: "" });
@@ -462,27 +508,28 @@ export function FinanceDashboard() {
   };
 
   useEffect(() => {
-    if (!form16Generating) return;
+    if (!form16.generating) return;
     const interval = setInterval(() => {
-      setForm16Progress((p) => {
-        const next = Math.min(p + 10, 100);
-        return next;
+      dispatchForm16({
+        type: "setProgress",
+        payload: (p: number) => {
+          const next = Math.min(p + 10, 100);
+          return next;
+        },
       });
     }, 200);
     return () => clearInterval(interval);
-  }, [form16Generating]);
+  }, [form16.generating]);
 
   useEffect(() => {
-    if (form16Progress >= 100 && form16Generating) {
-      setForm16Generating(false);
-      setForm16Done(true);
+    if (form16.progress >= 100 && form16.generating) {
+      dispatchForm16({ type: "finishGenerating" });
     }
-  }, [form16Progress, form16Generating]);
+  }, [form16.progress, form16.generating]);
 
   // Form 16 generate
   const handleForm16Generate = () => {
-    setForm16Generating(true);
-    setForm16Progress(0);
+    dispatchForm16({ type: "startGenerating" });
   };
 
   const openStepModal = (label: string, status: string) => {
@@ -871,12 +918,13 @@ export function FinanceDashboard() {
                   className="flex flex-col items-center gap-3 relative z-10 group"
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${step.status === "Done"
-                      ? "bg-[#00B87C] border-[#00B87C] text-white"
-                      : step.status === "Active"
-                        ? "bg-card border-[#3B82F6] text-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse"
-                        : "bg-card border-border text-muted-foreground"
-                      } group-hover:scale-110`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
+                      step.status === "Done"
+                        ? "bg-[#00B87C] border-[#00B87C] text-white"
+                        : step.status === "Active"
+                          ? "bg-card border-[#3B82F6] text-[#3B82F6] shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-pulse"
+                          : "bg-card border-border text-muted-foreground"
+                    } group-hover:scale-110`}
                   >
                     {step.status === "Done" ? (
                       <Check size={16} strokeWidth={3} />
@@ -887,12 +935,13 @@ export function FinanceDashboard() {
                     )}
                   </div>
                   <span
-                    className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[70px] ${step.status === "Done"
-                      ? "text-[#00B87C]"
-                      : step.status === "Active"
-                        ? "text-[#3B82F6]"
-                        : "text-muted-foreground"
-                      }`}
+                    className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[70px] ${
+                      step.status === "Done"
+                        ? "text-[#00B87C]"
+                        : step.status === "Active"
+                          ? "text-[#3B82F6]"
+                          : "text-muted-foreground"
+                    }`}
                   >
                     {step.label}
                   </span>
@@ -943,12 +992,14 @@ export function FinanceDashboard() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   <AnimatePresence>
-                    {expenses.map((exp) => (
+                    {(() => {
+                    const fadingRowsSet = new Set(fadingRows);
+                    return expenses.map((exp) => (
                       <motion.tr
                         key={exp.id}
                         layout
                         animate={{
-                          opacity: fadingRows.includes(exp.id) ? 0 : 1,
+                          opacity: fadingRowsSet.has(exp.id) ? 0 : 1,
                           y: fadingRows.includes(exp.id) ? -10 : 0,
                           backgroundColor:
                             exp.status === "Approved"
@@ -1047,7 +1098,8 @@ export function FinanceDashboard() {
                           )}
                         </td>
                       </motion.tr>
-                    ))}
+                    ));
+                  })()}
                   </AnimatePresence>
                 </tbody>
               </table>
@@ -1082,12 +1134,13 @@ export function FinanceDashboard() {
                     <div className="absolute left-[21px] top-10 w-[2px] h-8 bg-border group-hover:bg-primary/20 transition-colors" />
                   )}
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center z-10 shrink-0 border-4 border-card ${item.status === "Done"
-                      ? "bg-[#00B87C]"
-                      : item.status === "Active"
-                        ? "bg-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.3)]"
-                        : "bg-secondary border-border"
-                      }`}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center z-10 shrink-0 border-4 border-card ${
+                      item.status === "Done"
+                        ? "bg-[#00B87C]"
+                        : item.status === "Active"
+                          ? "bg-[#3B82F6] shadow-[0_0_10px_rgba(59,130,246,0.3)]"
+                          : "bg-secondary border-border"
+                    }`}
                   >
                     {item.status === "Done" && (
                       <Check size={12} className="text-white" />
@@ -1134,7 +1187,9 @@ export function FinanceDashboard() {
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <motion.div
                       initial={{ x: "-100%" }}
-                      animate={{ x: `-${100 - ((item.value / item.total) * 100)}%` }}
+                      animate={{
+                        x: `-${100 - (item.value / item.total) * 100}%`,
+                      }}
                       transition={{ duration: 1, delay: i * 0.1 }}
                       className="h-full rounded-full w-full"
                       style={{ backgroundColor: item.color }}
@@ -1196,9 +1251,7 @@ export function FinanceDashboard() {
                   color: "#EF4444",
                   bg: "#FEE2E2",
                   action: () => {
-                    setForm16Step(1);
-                    setForm16Done(false);
-                    setForm16Progress(0);
+                    dispatchForm16({ type: "reset" });
                     openModal("form16");
                   },
                 },
@@ -1417,12 +1470,13 @@ export function FinanceDashboard() {
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center gap-2">
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black transition-all ${payrollStep > s
-                    ? "bg-[#00B87C] text-white"
-                    : payrollStep === s
+                  className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black transition-all ${
+                    payrollStep > s
                       ? "bg-[#00B87C] text-white"
-                      : "bg-secondary text-muted-foreground"
-                    }`}
+                      : payrollStep === s
+                        ? "bg-[#00B87C] text-white"
+                        : "bg-secondary text-muted-foreground"
+                  }`}
                 >
                   {payrollStep > s ? <Check size={12} /> : s}
                 </div>
@@ -2274,9 +2328,7 @@ export function FinanceDashboard() {
         open={modals.form16}
         onClose={() => {
           closeModal("form16");
-          setForm16Step(1);
-          setForm16Done(false);
-          setForm16Progress(0);
+          dispatchForm16({ type: "reset" });
         }}
         maxWidth="500px"
       >
@@ -2288,9 +2340,7 @@ export function FinanceDashboard() {
             <button
               onClick={() => {
                 closeModal("form16");
-                setForm16Step(1);
-                setForm16Done(false);
-                setForm16Progress(0);
+                dispatchForm16({ type: "reset" });
               }}
               className="p-2 rounded-xl hover:bg-muted transition-colors text-muted-foreground"
             >
@@ -2302,20 +2352,20 @@ export function FinanceDashboard() {
             {[1, 2, 3, 4].map((s) => (
               <div key={s} className="flex items-center gap-2">
                 <div
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${form16Step > s || form16Done ? "bg-[#00B87C] text-white" : form16Step === s ? "bg-[#EF4444] text-white" : "bg-secondary text-muted-foreground"}`}
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${form16.step > s || form16.done ? "bg-[#00B87C] text-white" : form16.step === s ? "bg-[#EF4444] text-white" : "bg-secondary text-muted-foreground"}`}
                 >
-                  {form16Step > s || form16Done ? <Check size={10} /> : s}
+                  {form16.step > s || form16.done ? <Check size={10} /> : s}
                 </div>
                 {s < 4 && (
                   <div
-                    className={`h-[2px] w-8 rounded-full transition-all ${form16Step > s ? "bg-[#00B87C]" : "bg-border"}`}
+                    className={`h-[2px] w-8 rounded-full transition-all ${form16.step > s ? "bg-[#00B87C]" : "bg-border"}`}
                   />
                 )}
               </div>
             ))}
           </div>
 
-          {form16Step === 1 && (
+          {form16.step === 1 && (
             <div className="space-y-4">
               <p className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
                 Step 1: Select Financial Year
@@ -2323,14 +2373,14 @@ export function FinanceDashboard() {
               {["FY 2024-25", "FY 2025-26"].map((fy) => (
                 <button
                   key={fy}
-                  onClick={() => setForm16FY(fy)}
-                  className={`w-full py-3 rounded-xl border font-bold text-[14px] transition-all ${form16FY === fy ? "border-[#EF4444] bg-red-50 dark:bg-red-500/10 text-[#EF4444]" : "border-border text-foreground hover:bg-muted"}`}
+                  onClick={() => dispatchForm16({ type: "setFY", payload: fy })}
+                  className={`w-full py-3 rounded-xl border font-bold text-[14px] transition-all ${form16.fy === fy ? "border-[#EF4444] bg-red-50 dark:bg-red-500/10 text-[#EF4444]" : "border-border text-foreground hover:bg-muted"}`}
                 >
                   {fy}
                 </button>
               ))}
               <button
-                onClick={() => setForm16Step(2)}
+                onClick={() => dispatchForm16({ type: "setStep", payload: 2 })}
                 className="w-full py-3 rounded-xl bg-[#EF4444] text-white font-bold text-[13px] hover:bg-red-600 transition-colors"
               >
                 Next →
@@ -2338,7 +2388,7 @@ export function FinanceDashboard() {
             </div>
           )}
 
-          {form16Step === 2 && (
+          {form16.step === 2 && (
             <div className="space-y-4">
               <p className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
                 Step 2: Select Employees
@@ -2346,21 +2396,27 @@ export function FinanceDashboard() {
               {["All Employees", "By Department", "Individual"].map((opt) => (
                 <button
                   key={opt}
-                  onClick={() => setForm16Scope(opt)}
-                  className={`w-full py-3 rounded-xl border font-bold text-[14px] transition-all ${form16Scope === opt ? "border-[#EF4444] bg-red-50 dark:bg-red-500/10 text-[#EF4444]" : "border-border text-foreground hover:bg-muted"}`}
+                  onClick={() =>
+                    dispatchForm16({ type: "setScope", payload: opt })
+                  }
+                  className={`w-full py-3 rounded-xl border font-bold text-[14px] transition-all ${form16.scope === opt ? "border-[#EF4444] bg-red-50 dark:bg-red-500/10 text-[#EF4444]" : "border-border text-foreground hover:bg-muted"}`}
                 >
                   {opt} {opt === "All Employees" && "(1,284)"}
                 </button>
               ))}
               <div className="flex gap-3">
                 <button
-                  onClick={() => setForm16Step(1)}
+                  onClick={() =>
+                    dispatchForm16({ type: "setStep", payload: 1 })
+                  }
                   className="flex-1 py-3 rounded-xl border border-border text-foreground font-bold text-[13px] hover:bg-muted transition-colors"
                 >
                   ← Back
                 </button>
                 <button
-                  onClick={() => setForm16Step(3)}
+                  onClick={() =>
+                    dispatchForm16({ type: "setStep", payload: 3 })
+                  }
                   className="flex-1 py-3 rounded-xl bg-[#EF4444] text-white font-bold text-[13px] hover:bg-red-600 transition-colors"
                 >
                   Next →
@@ -2369,14 +2425,14 @@ export function FinanceDashboard() {
             </div>
           )}
 
-          {form16Step === 3 && (
+          {form16.step === 3 && (
             <div className="space-y-4">
               <p className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
                 Step 3: Preview Sample Form 16
               </p>
               <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-2 text-[12px]">
                 <p className="font-black text-foreground">
-                  FORM 16 — {form16FY}
+                  FORM 16 — {form16.fy}
                 </p>
                 <p className="text-muted-foreground">Name: Sarah Johnson</p>
                 <p className="text-muted-foreground">
@@ -2401,13 +2457,17 @@ export function FinanceDashboard() {
               </div>
               <div className="flex gap-3">
                 <button
-                  onClick={() => setForm16Step(2)}
+                  onClick={() =>
+                    dispatchForm16({ type: "setStep", payload: 2 })
+                  }
                   className="flex-1 py-3 rounded-xl border border-border text-foreground font-bold text-[13px] hover:bg-muted transition-colors"
                 >
                   ← Back
                 </button>
                 <button
-                  onClick={() => setForm16Step(4)}
+                  onClick={() =>
+                    dispatchForm16({ type: "setStep", payload: 4 })
+                  }
                   className="flex-1 py-3 rounded-xl bg-[#EF4444] text-white font-bold text-[13px] hover:bg-red-600 transition-colors"
                 >
                   Generate All →
@@ -2416,25 +2476,25 @@ export function FinanceDashboard() {
             </div>
           )}
 
-          {form16Step === 4 && (
+          {form16.step === 4 && (
             <div className="space-y-4">
               <p className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
                 Step 4: Generate
               </p>
-              {!form16Done ? (
+              {!form16.done ? (
                 <>
-                  {form16Generating ? (
+                  {form16.generating ? (
                     <div className="space-y-3">
                       <div className="h-3 w-full bg-secondary rounded-full overflow-hidden">
                         <motion.div
                           className="h-full bg-[#EF4444] rounded-full w-full"
-                          animate={{ x: `-${100 - (form16Progress)}%` }}
+                          animate={{ x: `-${100 - form16.progress}%` }}
                           transition={{ duration: 0.2 }}
                         />
                       </div>
                       <p className="text-[12px] text-muted-foreground text-center">
                         Generating Form 16 for 1,284 employees...{" "}
-                        {form16Progress}%
+                        {form16.progress}%
                       </p>
                     </div>
                   ) : (
@@ -2442,27 +2502,29 @@ export function FinanceDashboard() {
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">FY</span>
                         <span className="font-bold text-foreground">
-                          {form16FY}
+                          {form16.fy}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Scope</span>
                         <span className="font-bold text-foreground">
-                          {form16Scope}
+                          {form16.scope}
                         </span>
                       </div>
                     </div>
                   )}
                   <div className="flex gap-3">
-                    {!form16Generating && (
+                    {!form16.generating && (
                       <button
-                        onClick={() => setForm16Step(3)}
+                        onClick={() =>
+                          dispatchForm16({ type: "setStep", payload: 3 })
+                        }
                         className="flex-1 py-3 rounded-xl border border-border text-foreground font-bold text-[13px] hover:bg-muted transition-colors"
                       >
                         ← Back
                       </button>
                     )}
-                    {!form16Generating && (
+                    {!form16.generating && (
                       <button
                         onClick={handleForm16Generate}
                         className="flex-1 py-3 rounded-xl bg-[#EF4444] text-white font-bold text-[13px] hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
@@ -2490,9 +2552,7 @@ export function FinanceDashboard() {
                         "Form 16 ZIP downloaded successfully.",
                       );
                       closeModal("form16");
-                      setForm16Step(1);
-                      setForm16Done(false);
-                      setForm16Progress(0);
+                      dispatchForm16({ type: "reset" });
                     }}
                     className="w-full py-3 rounded-xl bg-[#EF4444] text-white font-bold text-[13px] hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
                   >

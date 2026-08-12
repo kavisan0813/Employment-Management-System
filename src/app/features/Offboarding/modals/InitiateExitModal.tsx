@@ -245,7 +245,7 @@ export const InitiateExitModal: React.FC<InitiateExitModalProps> = ({
             <input
               type="number"
               value={noticeDays}
-              onChange={(e) => setNoticeDays(parseInt(e.target.value) || 0)}
+              onChange={(e) => setNoticeDays((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0)}
               className="w-full px-4 py-3 rounded-xl border border-border bg-background text-[13px] font-bold outline-none focus:ring-2 focus:ring-[#00B87C]/20 transition-all"
             />
           </div>

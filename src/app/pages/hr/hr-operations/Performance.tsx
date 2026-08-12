@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { lazy, useState, useMemo } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import {
   TrendingUp,
@@ -24,20 +24,19 @@ import {
   X,
   AlertTriangle,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-} from "recharts";
+const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
+const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
+const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+
 import { employees, departments } from "../../../data/mockData";
 import { toast, Toaster } from "sonner";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -795,7 +794,7 @@ export function Performance() {
 
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {stats.map((s, i) => (
+        {stats.map((s) => (
           <div
             key={s.label}
             className="bg-card p-5 rounded-2xl border border-border shadow-sm flex flex-col justify-between group hover:border-emerald-200 transition-all"
@@ -1434,7 +1433,7 @@ export function Performance() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {distributionData.map((entry, index) => (
+                  {distributionData.map((entry) => (
                     <Cell key={`cell-${entry.color}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -1442,7 +1441,7 @@ export function Performance() {
             </ResponsiveContainer>
           </div>
           <div className="flex flex-wrap justify-center gap-4 mt-2">
-            {distributionData.map((d, i) => (
+            {distributionData.map((d) => (
               <div key={d.name} className="flex items-center gap-1.5">
                 <div
                   className="w-2 h-2 rounded-full"
@@ -1565,7 +1564,7 @@ export function Performance() {
                               value={formAttendanceScore}
                               onChange={(e) =>
                                 setFormAttendanceScore(
-                                  parseInt(e.target.value) || 0,
+                                  (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
                                 )
                               }
                               className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"
@@ -1592,7 +1591,7 @@ export function Performance() {
                               value={formPerformanceScore}
                               onChange={(e) =>
                                 setFormPerformanceScore(
-                                  parseInt(e.target.value) || 0,
+                                  (e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)) || 0,
                                 )
                               }
                               className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"

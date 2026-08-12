@@ -86,7 +86,7 @@ export function CurrencySettingsView({
               <select
                 value={config.currency.decimalPlaces}
                 onChange={(e) =>
-                  updateCurrency("decimalPlaces", Number(e.target.value))
+                  updateCurrency("decimalPlaces", (e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))
                 }
                 className={inputClass}
               >

@@ -129,7 +129,7 @@ export function PayrollSettingsSection() {
             color: "#8B5CF6",
             bg: "rgba(139, 92, 246, 0.1)",
           },
-        ].map((card, idx) => (
+        ].map((card) => (
           <div
             key={card.label}
             className="p-4 rounded-2xl flex items-center justify-between shadow-sm"
@@ -212,7 +212,7 @@ export function PayrollSettingsSection() {
             </tr>
           </thead>
           <tbody>
-            {salaryComponentsList.map((c: SalaryComponent, idx: number) => (
+            {salaryComponentsList.map((c: SalaryComponent) => (
               <tr
                 key={c.id}
                 style={{

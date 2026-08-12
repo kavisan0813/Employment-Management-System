@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import {
   Calendar,
   FileText,
@@ -19,7 +19,10 @@ import {
 import { useNavigate } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import { showToast } from "../../components/workflow/ToastNotification";
-import { ResponsiveContainer, AreaChart, Area } from "recharts";
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+
 
 const BookOpen = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -468,7 +471,7 @@ export function EmployeeSelfService() {
             <div className="grid grid-cols-2 gap-3">
               {QUICK_ACTIONS.map((action, i) => (
                 <button
-                  key={action.id}
+                  key={action.label}
                   onClick={() => handleQuickAction(action.route)}
                   onMouseEnter={() => setHoveredAction(i)}
                   onMouseLeave={() => setHoveredAction(null)}
@@ -516,7 +519,7 @@ export function EmployeeSelfService() {
             </div>
 
             <div className="space-y-4">
-              {ANNOUNCEMENTS.map((ann, i) => (
+              {ANNOUNCEMENTS.map((ann) => (
                 <div
                   key={ann.title}
                   className={`pl-3 border-l-[3px] py-1 ${

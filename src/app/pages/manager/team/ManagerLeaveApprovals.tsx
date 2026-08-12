@@ -454,8 +454,11 @@ export function ManagerLeaveApprovals() {
 
                     {/* Policy Checks Row */}
                     <div className="flex flex-wrap items-center gap-3 mb-6">
-                      {req.checks.map((check, idx) => (
-                        <div key={check.text} className="flex items-center gap-1.5">
+                      {req.checks.map((check) => (
+                        <div
+                          key={check.text}
+                          className="flex items-center gap-1.5"
+                        >
                           {check.type === "success" && (
                             <CheckCircle2
                               size={14}
@@ -557,7 +560,7 @@ export function ManagerLeaveApprovals() {
             {Array.from({ length: 30 }).map((_, i) => {
               const date = i + 1;
               const isToday = date === 15;
-              const hasLeave = [6, 7, 8, 9, 10, 25].includes(date);
+              const hasLeave = new Set([6, 7, 8, 9, 10, 25]).has(date);
 
               return (
                 <div

@@ -581,9 +581,7 @@ export function EmployeeExit() {
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [assignedExit, setAssignedExit] = useState<ExitEmployee | null>(null);
   const [uploadTaskId, setUploadTaskId] = useState<string | null>(null);
-  const [, setUploadDocumentName] = useState(
-    "Clearance_Doc_1.pdf",
-  );
+  const [, setUploadDocumentName] = useState("Clearance_Doc_1.pdf");
 
   useEffect(() => {
     localStorage.setItem("viyan_employee_exit_tasks:v1", JSON.stringify(tasks));
@@ -638,7 +636,7 @@ export function EmployeeExit() {
         try {
           const requests = JSON.parse(saved);
           const priyaReq = requests.find(
-            (r: any) => r.employeeName === employeeName,
+            (r: { employeeName: string }) => r.employeeName === employeeName,
           );
           if (priyaReq) {
             setWorkflowStatus(priyaReq.status);
@@ -750,7 +748,7 @@ export function EmployeeExit() {
     }
 
     const priyaIndex = requests.findIndex(
-      (r: any) => r.employeeName === employeeName,
+      (r: { employeeName: string }) => r.employeeName === employeeName,
     );
     const newRequest = {
       id: `req-${Date.now()}`,
@@ -786,7 +784,7 @@ export function EmployeeExit() {
       <div className="w-full px-4 md:px-8 py-6 pb-20">
         <ResignationForm
           onSubmit={handleResignationSubmit}
-          onCancel={() => { }}
+          onCancel={() => {}}
         />
       </div>
     );

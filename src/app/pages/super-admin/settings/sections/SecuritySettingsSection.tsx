@@ -128,8 +128,11 @@ export function SecuritySettingsSection() {
             state: secSsoOnly,
             setter: setSecSsoOnly,
           },
-        ].map((row, idx) => (
-          <div key={row.label} className="flex justify-between items-center py-2">
+        ].map((row) => (
+          <div
+            key={row.label}
+            className="flex justify-between items-center py-2"
+          >
             <div>
               <p
                 style={{
@@ -223,7 +226,7 @@ export function SecuritySettingsSection() {
               state: secPwForceChange,
               setter: setSecPwForceChange,
             },
-          ].map((f, idx) => (
+          ].map((f) => (
             <label
               key={f.label}
               className="flex items-center gap-3 cursor-pointer select-none"
@@ -404,7 +407,7 @@ export function SecuritySettingsSection() {
             max="120"
             step="5"
             value={secIdleTimeout}
-            onChange={(e) => setSecIdleTimeout(Number(e.target.value))}
+            onChange={(e) => setSecIdleTimeout((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
             className="w-full cursor-pointer"
             style={{ accentColor: "#00B87C" }}
           />
@@ -431,8 +434,11 @@ export function SecuritySettingsSection() {
             state: secAlertSuspicious,
             setter: setSecAlertSuspicious,
           },
-        ].map((row, idx) => (
-          <div key={row.label} className="flex justify-between items-center py-2">
+        ].map((row) => (
+          <div
+            key={row.label}
+            className="flex justify-between items-center py-2"
+          >
             <div>
               <p
                 style={{

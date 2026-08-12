@@ -14,9 +14,13 @@ interface TemplatesProps {
 }
 
 export function Templates({
-  showTemplateMenu, setShowTemplateMenu,
-  setEditingTemplate, setShowTemplateEditor,
-  handleDuplicateTemplate, handleDeleteTemplate, templates,
+  showTemplateMenu,
+  setShowTemplateMenu,
+  setEditingTemplate,
+  setShowTemplateEditor,
+  handleDuplicateTemplate,
+  handleDeleteTemplate,
+  templates,
 }: TemplatesProps) {
   return (
     <motion.div
@@ -31,7 +35,10 @@ export function Templates({
           Onboarding Templates
         </h3>
         <button
-          onClick={() => { setShowTemplateEditor(true); setEditingTemplate(null); }}
+          onClick={() => {
+            setShowTemplateEditor(true);
+            setEditingTemplate(null);
+          }}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all shadow-md"
         >
           + Create Template
@@ -39,72 +46,107 @@ export function Templates({
       </div>
       {templates.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center">
-          <h4 className="font-bold text-foreground mb-1">No Onboarding Templates Found</h4>
-          <p className="text-sm text-muted-foreground mb-5">Create your first onboarding template to begin assigning onboarding workflows to employees.</p>
+          <h4 className="font-bold text-foreground mb-1">
+            No Onboarding Templates Found
+          </h4>
+          <p className="text-sm text-muted-foreground mb-5">
+            Create your first onboarding template to begin assigning onboarding
+            workflows to employees.
+          </p>
           <button
-            onClick={() => { setShowTemplateEditor(true); setEditingTemplate(null); }}
+            onClick={() => {
+              setShowTemplateEditor(true);
+              setEditingTemplate(null);
+            }}
             className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-md mx-auto"
           >
             Create Template
           </button>
         </div>
-      ) : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {templates.map((tpl) => (
-          <div
-            key={tpl.id}
-            className="relative p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
-          >
-            <div className="flex items-start justify-between mb-3">
-              <h4 className="text-[14px] font-bold text-foreground">{tpl.name}</h4>
-              <div className="relative">
-                <button
-                  onClick={() => setShowTemplateMenu(showTemplateMenu === tpl.id ? null : tpl.id)}
-                  className="p-1 hover:bg-muted rounded-lg transition-all"
-                >
-                  <MoreVertical size={16} className="text-muted-foreground" />
-                </button>
-                {showTemplateMenu === tpl.id && (
-                  <div className="absolute right-0 top-8 w-40 bg-card border border-border rounded-xl shadow-xl z-20 overflow-hidden">
-                    {[
-                      { icon: Edit3, label: "Edit", action: () => { setEditingTemplate(tpl.id); setShowTemplateEditor(true); setShowTemplateMenu(null); } },
-                      { icon: Copy, label: "Duplicate", action: () => handleDuplicateTemplate(tpl.id) },
-                      { icon: Trash2, label: "Delete", action: () => handleDeleteTemplate(tpl.id) },
-                    ].map((item) => (
-                      <button
-                        key={item.label}
-                        onClick={item.action}
-                        className="w-full text-left px-4 py-2.5 text-[12px] font-bold text-foreground hover:bg-muted flex items-center gap-2 transition-all"
-                      >
-                        <item.icon size={14} />
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-3 mb-3 text-[11px] font-bold text-muted-foreground">
-              <span>{tpl.phases} phases</span>
-              <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-              <span>{tpl.tasks} tasks</span>
-              <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-              <span>Avg {tpl.avgDays}</span>
-            </div>
-            <div className="mb-3">
-              <DepartmentBadge dept={tpl.dept} color={tpl.deptColor} />
-            </div>
-            <p className="text-[11px] font-bold text-muted-foreground mb-4">
-              Used for {tpl.usageCount} employees
-            </p>
-            <button
-              onClick={() => { setEditingTemplate(tpl.id); setShowTemplateEditor(true); }}
-              className="w-full py-2 rounded-xl border border-border text-[11px] font-black text-foreground uppercase tracking-widest hover:bg-muted/50 transition-all"
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {templates.map((tpl) => (
+            <div
+              key={tpl.id}
+              className="relative p-5 bg-card border border-border rounded-2xl shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all"
             >
-              Edit Template
-            </button>
-          </div>
-        ))}
-      </div>}
+              <div className="flex items-start justify-between mb-3">
+                <h4 className="text-[14px] font-bold text-foreground">
+                  {tpl.name}
+                </h4>
+                <div className="relative">
+                  <button
+                    onClick={() =>
+                      setShowTemplateMenu(
+                        showTemplateMenu === tpl.id ? null : tpl.id,
+                      )
+                    }
+                    className="p-1 hover:bg-muted rounded-lg transition-all"
+                  >
+                    <MoreVertical size={16} className="text-muted-foreground" />
+                  </button>
+                  {showTemplateMenu === tpl.id && (
+                    <div className="absolute right-0 top-8 w-40 bg-card border border-border rounded-xl shadow-xl z-20 overflow-hidden">
+                      {[
+                        {
+                          icon: Edit3,
+                          label: "Edit",
+                          action: () => {
+                            setEditingTemplate(tpl.id);
+                            setShowTemplateEditor(true);
+                            setShowTemplateMenu(null);
+                          },
+                        },
+                        {
+                          icon: Copy,
+                          label: "Duplicate",
+                          action: () => handleDuplicateTemplate(tpl.id),
+                        },
+                        {
+                          icon: Trash2,
+                          label: "Delete",
+                          action: () => handleDeleteTemplate(tpl.id),
+                        },
+                      ].map((item) => (
+                        <button
+                          key={item.label}
+                          onClick={item.action}
+                          className="w-full text-left px-4 py-2.5 text-[12px] font-bold text-foreground hover:bg-muted flex items-center gap-2 transition-all"
+                        >
+                          <item.icon size={14} />
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-3 mb-3 text-[11px] font-bold text-muted-foreground">
+                <span>{tpl.phases} phases</span>
+                <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+                <span>{tpl.tasks} tasks</span>
+                <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
+                <span>Avg {tpl.avgDays}</span>
+              </div>
+              <div className="mb-3">
+                <DepartmentBadge dept={tpl.dept} color={tpl.deptColor} />
+              </div>
+              <p className="text-[11px] font-bold text-muted-foreground mb-4">
+                Used for {tpl.usageCount} employees
+              </p>
+              <button
+                onClick={() => {
+                  setEditingTemplate(tpl.id);
+                  setShowTemplateEditor(true);
+                }}
+                className="w-full py-2 rounded-xl border border-border text-[11px] font-black text-foreground uppercase tracking-widest hover:bg-muted/50 transition-all"
+              >
+                Edit Template
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 }

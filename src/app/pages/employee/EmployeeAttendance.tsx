@@ -538,7 +538,9 @@ export function EmployeeAttendance() {
       const todayLog = {
         date: todayStr,
         in: formatTime12Hour(todayRecord.punchIn),
-        out: todayRecord.punchOut ? formatTime12Hour(todayRecord.punchOut) : "-",
+        out: todayRecord.punchOut
+          ? formatTime12Hour(todayRecord.punchOut)
+          : "-",
         status: todayRecord.status || "Present",
       };
       if (todayIdx > -1) {
@@ -926,20 +928,21 @@ export function EmployeeAttendance() {
                     </div>
                   </div>
                   <span
-                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${selectedDayLog.status === "Present" ||
+                    className={`text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full ${
+                      selectedDayLog.status === "Present" ||
                       selectedDayLog.status === "WFH" ||
                       selectedDayLog.status === "On-site"
-                      ? "bg-emerald-500/10 text-primary border border-emerald-500/20"
-                      : selectedDayLog.status === "Late"
-                        ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                        : selectedDayLog.status === "Leave"
-                          ? "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
-                          : selectedDayLog.status === "Weekend"
-                            ? "bg-secondary text-muted-foreground border border-border"
-                            : selectedDayLog.status === "Absent"
-                              ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                              : "bg-secondary text-muted-foreground/40 border border-border"
-                      }`}
+                        ? "bg-emerald-500/10 text-primary border border-emerald-500/20"
+                        : selectedDayLog.status === "Late"
+                          ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                          : selectedDayLog.status === "Leave"
+                            ? "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
+                            : selectedDayLog.status === "Weekend"
+                              ? "bg-secondary text-muted-foreground border border-border"
+                              : selectedDayLog.status === "Absent"
+                                ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                                : "bg-secondary text-muted-foreground/40 border border-border"
+                    }`}
                   >
                     {selectedDayLog.status === "-"
                       ? "No Record"
@@ -970,9 +973,9 @@ export function EmployeeAttendance() {
                     </p>
                     <p className="text-[13px] font-black text-primary">
                       {selectedDayLog.status === "Present" ||
-                        selectedDayLog.status === "Late" ||
-                        selectedDayLog.status === "WFH" ||
-                        selectedDayLog.status === "On-site"
+                      selectedDayLog.status === "Late" ||
+                      selectedDayLog.status === "WFH" ||
+                      selectedDayLog.status === "On-site"
                         ? "9h 00m"
                         : "-"}
                     </p>
@@ -982,30 +985,30 @@ export function EmployeeAttendance() {
                 {(selectedDayLog.status === "Absent" ||
                   selectedDayLog.status === "Late" ||
                   selectedDayLog.status === "-") && (
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/10">
-                      <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">
-                        {selectedDayLog.status === "Absent" ||
-                          selectedDayLog.status === "-"
-                          ? "Missed logging this day? Submit a regularization request."
-                          : "Late punch-in? Correct details with manager approval."}
-                      </span>
-                      <button
-                        onClick={() => {
-                          const dayPadded = String(selectedDay).padStart(2, "0");
-                          const monthPadded = String(selectedMonth + 1).padStart(
-                            2,
-                            "0",
-                          );
-                          const dateStr = `${selectedYear}-${monthPadded}-${dayPadded}`;
-                          setRegDefaultDate(dateStr);
-                          setIsRegModalOpen(true);
-                        }}
-                        className="whitespace-nowrap px-4 py-1.5 bg-amber-500 text-white rounded-lg text-[11px] font-black uppercase tracking-wider hover:bg-amber-600 active:scale-95 transition-all shadow-md shadow-amber-500/20"
-                      >
-                        Regularize
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/10">
+                    <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">
+                      {selectedDayLog.status === "Absent" ||
+                      selectedDayLog.status === "-"
+                        ? "Missed logging this day? Submit a regularization request."
+                        : "Late punch-in? Correct details with manager approval."}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const dayPadded = String(selectedDay).padStart(2, "0");
+                        const monthPadded = String(selectedMonth + 1).padStart(
+                          2,
+                          "0",
+                        );
+                        const dateStr = `${selectedYear}-${monthPadded}-${dayPadded}`;
+                        setRegDefaultDate(dateStr);
+                        setIsRegModalOpen(true);
+                      }}
+                      className="whitespace-nowrap px-4 py-1.5 bg-amber-500 text-white rounded-lg text-[11px] font-black uppercase tracking-wider hover:bg-amber-600 active:scale-95 transition-all shadow-md shadow-amber-500/20"
+                    >
+                      Regularize
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1035,10 +1038,11 @@ export function EmployeeAttendance() {
                       <tr
                         key={log.date}
                         onClick={() => setSelectedDay(logDay)}
-                        className={`h-14 hover:bg-secondary transition-colors group cursor-pointer ${isSelectedRow
-                          ? "bg-primary/5 hover:bg-primary/10 border-l-[3px] border-l-primary"
-                          : ""
-                          }`}
+                        className={`h-14 hover:bg-secondary transition-colors group cursor-pointer ${
+                          isSelectedRow
+                            ? "bg-primary/5 hover:bg-primary/10 border-l-[3px] border-l-primary"
+                            : ""
+                        }`}
                       >
                         <td className="px-6 text-[13px] font-black text-slate-800 dark:text-slate-100">
                           {log.date}
@@ -1051,20 +1055,21 @@ export function EmployeeAttendance() {
                         </td>
                         <td className="px-6">
                           <span
-                            className={`text-[12px] font-black ${log.status === "Present" ||
+                            className={`text-[12px] font-black ${
+                              log.status === "Present" ||
                               log.status === "WFH" ||
                               log.status === "On-site"
-                              ? "text-primary"
-                              : log.status === "Late"
-                                ? "text-amber-500"
-                                : log.status === "Leave"
-                                  ? "text-indigo-400"
-                                  : log.status === "Weekend"
-                                    ? "text-muted-foreground/50"
-                                    : log.status === "Absent"
-                                      ? "text-rose-500"
-                                      : "text-muted-foreground/30"
-                              }`}
+                                ? "text-primary"
+                                : log.status === "Late"
+                                  ? "text-amber-500"
+                                  : log.status === "Leave"
+                                    ? "text-indigo-400"
+                                    : log.status === "Weekend"
+                                      ? "text-muted-foreground/50"
+                                      : log.status === "Absent"
+                                        ? "text-rose-500"
+                                        : "text-muted-foreground/30"
+                            }`}
                           >
                             {log.status}
                           </span>

@@ -291,7 +291,10 @@ export function WebhooksSection() {
             setter: setWebhookLogs,
           },
         ].map((row) => (
-          <div key={row.label} className="flex justify-between items-center py-2">
+          <div
+            key={row.label}
+            className="flex justify-between items-center py-2"
+          >
             <p
               style={{
                 fontSize: "14px",

@@ -201,7 +201,7 @@ export function useDashboard() {
         } else {
           at_risk_companies_count++;
         }
-      } else if (["Expired", "Suspended", "Inactive"].includes(o.status)) {
+      } else if (new Set(["Expired", "Suspended", "Inactive"]).has(o.status)) {
         inactive_companies_count++;
       }
 

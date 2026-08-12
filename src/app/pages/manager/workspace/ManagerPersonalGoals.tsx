@@ -1,4 +1,4 @@
-import { useState, forwardRef, useEffect } from "react";
+import { useState, forwardRef } from "react";
 import {
   Target,
   Plus,
@@ -218,8 +218,8 @@ export function ManagerPersonalGoals() {
         const avgProgress =
           totalGoals > 0
             ? Math.round(
-              goals.reduce((acc, g) => acc + g.progress, 0) / totalGoals,
-            )
+                goals.reduce((acc, g) => acc + g.progress, 0) / totalGoals,
+              )
             : 0;
         return (
           <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
@@ -237,7 +237,7 @@ export function ManagerPersonalGoals() {
             <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
               <motion.div
                 initial={{ x: "-100%" }}
-                animate={{ x: `-${100 - (avgProgress)}%` }}
+                animate={{ x: `-${100 - avgProgress}%` }}
                 className="h-full bg-[#00B87C] rounded-full w-full"
               />
             </div>
@@ -261,10 +261,11 @@ export function ManagerPersonalGoals() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-4 text-[12px] font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${activeTab === tab
-                ? "text-[#00B87C]"
-                : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`pb-4 text-[12px] font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${
+                activeTab === tab
+                  ? "text-[#00B87C]"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {tab}
               {activeTab === tab && (
@@ -340,11 +341,11 @@ export function ManagerPersonalGoals() {
             prev.map((g) =>
               g.id === selectedGoalForCheckIn?.id
                 ? {
-                  ...g,
-                  progress,
-                  status,
-                  lastUpdated: "Today",
-                }
+                    ...g,
+                    progress,
+                    status,
+                    lastUpdated: "Today",
+                  }
                 : g,
             ),
           );
@@ -398,10 +399,11 @@ export function ManagerPersonalGoals() {
                     Priority
                   </span>
                   <span
-                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${selectedGoalForDetails.priority === "High"
-                      ? "bg-rose-500/10 text-rose-500 border-rose-200"
-                      : "bg-amber-500/10 text-amber-500 border-amber-200"
-                      }`}
+                    className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded border ${
+                      selectedGoalForDetails.priority === "High"
+                        ? "bg-rose-500/10 text-rose-500 border-rose-200"
+                        : "bg-amber-500/10 text-amber-500 border-amber-200"
+                    }`}
                   >
                     {selectedGoalForDetails.priority}
                   </span>
@@ -599,7 +601,7 @@ const GoalItem = forwardRef<HTMLDivElement, GoalItemProps>(
           <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
             <motion.div
               initial={{ x: "-100%" }}
-              animate={{ x: `-${100 - (goal.progress)}%` }}
+              animate={{ x: `-${100 - goal.progress}%` }}
               className="h-full bg-[#00B87C] rounded-full w-full"
             />
           </div>
@@ -674,7 +676,9 @@ function AddGoalModal({
   const [kr, setKr] = useState("");
   const [description, setDescription] = useState("");
 
-  const [prevEditingGoal, setPrevEditingGoal] = useState<Goal | null>(editingGoal);
+  const [prevEditingGoal, setPrevEditingGoal] = useState<Goal | null>(
+    editingGoal,
+  );
   const [prevIsOpen, setPrevIsOpen] = useState<boolean>(isOpen);
 
   if (editingGoal !== prevEditingGoal || isOpen !== prevIsOpen) {
@@ -775,10 +779,11 @@ function AddGoalModal({
                       key={cat}
                       type="button"
                       onClick={() => setCategory(cat as Category)}
-                      className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all ${isActive
-                        ? "bg-[#00B87C] text-white border-[#00B87C]"
-                        : "border-border hover:border-[#00B87C] text-foreground bg-transparent"
-                        }`}
+                      className={`px-4 py-2 rounded-xl border text-[11px] font-bold uppercase tracking-wider transition-all ${
+                        isActive
+                          ? "bg-[#00B87C] text-white border-[#00B87C]"
+                          : "border-border hover:border-[#00B87C] text-foreground bg-transparent"
+                      }`}
                     >
                       {cat}
                     </button>
@@ -893,7 +898,9 @@ function CheckInGoalModal({
   onSave: (progress: number, status: GoalStatus) => void;
 }) {
   const [progress, setProgress] = useState(goal ? goal.progress : 0);
-  const [status, setStatus] = useState<GoalStatus>(goal ? goal.status : "In Progress");
+  const [status, setStatus] = useState<GoalStatus>(
+    goal ? goal.status : "In Progress",
+  );
   const [checkInComment, setCheckInComment] = useState("");
 
   if (!isOpen || !goal) return null;
@@ -934,7 +941,7 @@ function CheckInGoalModal({
               min="0"
               max="100"
               value={progress}
-              onChange={(e) => setProgress(parseInt(e.target.value))}
+              onChange={(e) => setProgress((e.target.value === "" || isNaN(parseInt(e.target.value)) ? undefined : parseInt(e.target.value)))}
               className="w-full accent-primary"
             />
           </div>
@@ -945,7 +952,7 @@ function CheckInGoalModal({
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as GoalStatus)}
-              className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none appearance-none cursor-pointer focus:border-[#00B87C] bg-card text-foreground dark:bg-zinc-900"
+              className="w-full h-11 px-4 rounded-xl border bg-transparent text-[13px] font-bold outline-none appearance-none cursor-pointer focus:border-[#00B87C] text-foreground dark:bg-zinc-900"
             >
               <option value="In Progress">In Progress</option>
               <option value="Completed">Completed</option>

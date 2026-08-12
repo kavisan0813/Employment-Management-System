@@ -150,9 +150,12 @@ export function useRolesPermissions() {
     analytics: true,
   });
 
-  const [permissions, setPermissions] = useState<Record<string, Record<string, string>>>(initialPermissions);
+  const [permissions, setPermissions] =
+    useState<Record<string, Record<string, string>>>(initialPermissions);
   const [rolesList, setRolesList] = useState(rolesData);
-  const [selectedRoleForEdit, setSelectedRoleForEdit] = useState<(typeof rolesData)[0] | null>(null);
+  const [selectedRoleForEdit, setSelectedRoleForEdit] = useState<
+    (typeof rolesData)[0] | null
+  >(null);
   const [roleForm, setRoleForm] = useState({
     name: "",
     description: "",
@@ -170,7 +173,7 @@ export function useRolesPermissions() {
       status: "Active",
       permissions: Object.keys(initialPermissions).reduce(
         (acc, modId) => ({ ...acc, [modId]: "no" }),
-        {}
+        {},
       ),
     });
     setActiveModal("create_role");
@@ -187,7 +190,7 @@ export function useRolesPermissions() {
           ...acc,
           [modId]: permissions[modId][role.id] || "no",
         }),
-        {}
+        {},
       ),
     });
     setActiveModal("edit_role");
@@ -201,7 +204,7 @@ export function useRolesPermissions() {
     const duplicate = rolesList.find(
       (r) =>
         r.name.toLowerCase() === roleForm.name.toLowerCase() &&
-        (!selectedRoleForEdit || r.id !== selectedRoleForEdit.id)
+        (!selectedRoleForEdit || r.id !== selectedRoleForEdit.id),
     );
     if (duplicate) {
       showToast("A role with this name already exists", "error");
@@ -222,17 +225,19 @@ export function useRolesPermissions() {
           isDefault: false,
           color: "#8B5CF6",
         };
-        setRolesList([...rolesList, newRole]);
-        
-        const newPerms = { ...permissions };
-        Object.keys(roleForm.permissions).forEach((modId) => {
-          newPerms[modId] = {
-            ...newPerms[modId],
-            [newRole.id]: roleForm.permissions[modId],
-          };
+        setRolesList((prev) => [...prev, newRole]);
+
+        setPermissions((prevPerms) => {
+          const newPerms = { ...prevPerms };
+          Object.keys(roleForm.permissions).forEach((modId) => {
+            newPerms[modId] = {
+              ...newPerms[modId],
+              [newRole.id]: roleForm.permissions[modId],
+            };
+          });
+          return newPerms;
         });
-        setPermissions(newPerms);
-        
+
         setIsSubmitting(false);
         setActiveModal(null);
         showToast("Role created successfully", "success");
@@ -247,9 +252,13 @@ export function useRolesPermissions() {
       setRolesList((prev) =>
         prev.map((r) =>
           r.id === selectedRoleForEdit.id
-            ? { ...r, name: roleForm.name, modified: new Date().toISOString().split("T")[0] }
-            : r
-        )
+            ? {
+                ...r,
+                name: roleForm.name,
+                modified: new Date().toISOString().split("T")[0],
+              }
+            : r,
+        ),
       );
 
       const newPerms = { ...permissions };
@@ -270,11 +279,7 @@ export function useRolesPermissions() {
   const toggleCell = (modId: string, roleId: string) => {
     const currentState = permissions[modId]?.[roleId] || "no";
     const nextState =
-      currentState === "no"
-        ? "view"
-        : currentState === "view"
-          ? "full"
-          : "no";
+      currentState === "no" ? "view" : currentState === "view" ? "full" : "no";
 
     setPermissions((prev) => ({
       ...prev,

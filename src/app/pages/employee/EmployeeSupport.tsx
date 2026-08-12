@@ -222,10 +222,10 @@ export function EmployeeSupport() {
   };
 
   const openCount = tickets.filter((t) =>
-    ["Open", "In Progress", "Waiting for Employee"].includes(t.status),
+    new Set(["Open", "In Progress", "Waiting for Employee"]).has(t.status),
   ).length;
   const resolvedCount = tickets.filter((t) =>
-    ["Resolved", "Closed"].includes(t.status),
+    new Set(["Resolved", "Closed"]).has(t.status),
   ).length;
 
   return (
@@ -522,7 +522,7 @@ function MyTicketsTab({
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {tickets.map((row, i) => (
+                {tickets.map((row) => (
                   <tr
                     key={row.id}
                     className="hover:bg-secondary/50 transition-colors group cursor-pointer"
@@ -1727,7 +1727,7 @@ function KnowledgeBaseTab() {
 
       {/* Categories Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {FAQ_CATEGORIES.map((category, i) => (
+        {FAQ_CATEGORIES.map((category) => (
           <div
             key={category.name}
             onClick={() => setSelectedCategory(category)}

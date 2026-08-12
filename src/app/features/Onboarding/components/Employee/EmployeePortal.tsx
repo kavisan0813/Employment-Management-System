@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import {
-  Sprout,
-  Calendar,
-  Clock,
-  Video,
-  BookOpen,
-} from "lucide-react";
+import { Sprout, Calendar, Clock, Video, BookOpen } from "lucide-react";
 import { useAuth } from "../../../../context/AuthContext";
+import type {
+  NewHire,
+  DocumentItem,
+  Template,
+  OnboardingPhase,
+  TaskStatus,
+  DocumentStatus,
+} from "../../types/onboarding.types";
 import { Progress } from "./Progress";
 import { PersonalInformation } from "./PersonalInformation";
 import { showToast } from "../../../../components/workflow/ToastNotification";
@@ -26,9 +28,11 @@ export function EmployeePortal() {
     user?.role === "Employee" ? "Team Member" : user?.role || "Team Member";
 
   // Track onboarding queue state reactively
-  const [queue, setQueue] = useState<any[]>(() => {
+  const [queue, setQueue] = useState<NewHire[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem("viyan_onboarding_queue:v1") || "[]");
+      return JSON.parse(
+        localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
+      );
     } catch {
       return [];
     }
@@ -60,7 +64,7 @@ export function EmployeePortal() {
         ...empty,
         ...JSON.parse(
           localStorage.getItem(`viyan_candidate_profile_${user?.email}:v1`) ||
-          "{}",
+            "{}",
         ).taskState,
       };
     } catch {
@@ -73,9 +77,9 @@ export function EmployeePortal() {
     useState<AssignedTabKey>("candidate-process");
 
   // Load phases and documents if template is assigned
-  const [phases, setPhases] = useState<any[]>([]);
-  const [documents, setDocuments] = useState<any[]>([]);
-  const [templates, setTemplates] = useState<any[]>([]);
+  const [phases, setPhases] = useState<OnboardingPhase[]>([]);
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
 
   useEffect(() => {
     const syncData = () => {
@@ -98,7 +102,7 @@ export function EmployeePortal() {
             localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
           );
           setDocuments(
-            allDocs.filter((d: any) =>
+            allDocs.filter((d: DocumentItem) =>
               d.id.startsWith(`doc-${currentHire.id}-`),
             ),
           );
@@ -129,8 +133,8 @@ export function EmployeePortal() {
 
   // Recalculation logic for template-assigned candidate progress
   const updateProgress = (
-    nextPhases: any[],
-    nextDocs: any[],
+    nextPhases: OnboardingPhase[],
+    nextDocs: DocumentItem[],
     nextProfileChecks?: Record<string, boolean>,
     nextCompletedPolicies?: string[],
     nextCompletedTraining?: string[],
@@ -142,7 +146,8 @@ export function EmployeePortal() {
     const finalPolicies = nextCompletedPolicies || hire.completedPolicies || [];
     const finalTraining = nextCompletedTraining || hire.completedTraining || [];
     const finalForms = nextCompletedForms || hire.completedForms || [];
-    const finalAcknowledged = nextAcknowledgedDocs || hire.acknowledgedDocs || [];
+    const finalAcknowledged =
+      nextAcknowledgedDocs || hire.acknowledgedDocs || [];
 
     // 1. Candidate profile checklist (4 items)
     const profileCompleted = [
@@ -165,7 +170,9 @@ export function EmployeePortal() {
     const compDocs = nextDocs.filter((d) => d.issuedByOrg);
 
     const reqCompleted = reqDocs.filter((d) => d.status === "uploaded").length;
-    const compCompleted = compDocs.filter((d) => finalAcknowledged.includes(d.id)).length;
+    const compCompleted = compDocs.filter((d) =>
+      finalAcknowledged.includes(d.id),
+    ).length;
 
     const docCompleted = reqCompleted + compCompleted;
     const docTotal = nextDocs.length;
@@ -206,17 +213,17 @@ export function EmployeePortal() {
     const latestQueue = JSON.parse(
       localStorage.getItem("viyan_onboarding_queue:v1") || "[]",
     );
-    const updatedQueue = latestQueue.map((q: any) =>
+    const updatedQueue = latestQueue.map((q: NewHire) =>
       q.id === hire.id
         ? {
-          ...q,
-          completedPolicies: finalPolicies,
-          completedTraining: finalTraining,
-          completedForms: finalForms,
-          acknowledgedDocs: finalAcknowledged,
-          progress: nextPercent,
-          status: nextPercent === 100 ? "completed" : "on-track",
-        }
+            ...q,
+            completedPolicies: finalPolicies,
+            completedTraining: finalTraining,
+            completedForms: finalForms,
+            acknowledgedDocs: finalAcknowledged,
+            progress: nextPercent,
+            status: nextPercent === 100 ? "completed" : "on-track",
+          }
         : q,
     );
     setQueue(updatedQueue);
@@ -248,9 +255,14 @@ export function EmployeePortal() {
   const handleToggleAssignedTask = (taskId: string) => {
     const nextPhases = phases.map((phase) => ({
       ...phase,
-      tasks: phase.tasks.map((task: any) =>
+      tasks: phase.tasks.map((task: OnboardingPhase["tasks"][number]) =>
         task.id === taskId
-          ? { ...task, status: task.status === "done" ? "pending" : "done" }
+          ? {
+              ...task,
+              status: (task.status === "done"
+                ? "pending"
+                : "done") as TaskStatus,
+            }
           : task,
       ),
     }));
@@ -260,7 +272,10 @@ export function EmployeePortal() {
       localStorage.getItem("viyan_onboarding_phases:v1") || "{}",
     );
     allPhases[hire.id] = nextPhases;
-    localStorage.setItem("viyan_onboarding_phases:v1", JSON.stringify(allPhases));
+    localStorage.setItem(
+      "viyan_onboarding_phases:v1",
+      JSON.stringify(allPhases),
+    );
 
     updateProgress(nextPhases, documents);
   };
@@ -268,7 +283,11 @@ export function EmployeePortal() {
   const handleAssignedDocUpload = (docId: string) => {
     const nextDocs = documents.map((doc) =>
       doc.id === docId
-        ? { ...doc, status: "uploaded", verificationStatus: "pending" }
+        ? {
+            ...doc,
+            status: "uploaded" as DocumentStatus,
+            verificationStatus: "pending" as const,
+          }
         : doc,
     );
     setDocuments(nextDocs);
@@ -276,7 +295,7 @@ export function EmployeePortal() {
     const allDocs = JSON.parse(
       localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
     );
-    const updatedAllDocs = allDocs.map((d: any) => {
+    const updatedAllDocs = allDocs.map((d: DocumentItem) => {
       const match = nextDocs.find((nd) => nd.id === d.id);
       return match ? match : d;
     });
@@ -298,7 +317,14 @@ export function EmployeePortal() {
     if (completed.includes(courseId)) return;
 
     const nextCompleted = [...completed, courseId];
-    updateProgress(phases, documents, undefined, undefined, nextCompleted, undefined);
+    updateProgress(
+      phases,
+      documents,
+      undefined,
+      undefined,
+      nextCompleted,
+      undefined,
+    );
     showToast(
       "Training Completed",
       "success",
@@ -311,7 +337,15 @@ export function EmployeePortal() {
     if (completed.includes(docId)) return;
 
     const nextCompleted = [...completed, docId];
-    updateProgress(phases, documents, undefined, undefined, undefined, undefined, nextCompleted);
+    updateProgress(
+      phases,
+      documents,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      nextCompleted,
+    );
     showToast(
       "Document Acknowledged",
       "success",
@@ -385,7 +419,7 @@ export function EmployeePortal() {
       );
     }
     localStorage.setItem(
-      "viyan_candidate_activity_logs",
+      "viyan_candidate_activity_logs:v1",
       JSON.stringify([
         {
           action: "Candidate process completed",
@@ -393,7 +427,7 @@ export function EmployeePortal() {
           at: new Date().toISOString(),
         },
         ...JSON.parse(
-          localStorage.getItem("viyan_candidate_activity_logs") || "[]",
+          localStorage.getItem("viyan_candidate_activity_logs:v1") || "[]",
         ),
       ]),
     );
@@ -467,10 +501,11 @@ export function EmployeePortal() {
             <button
               key={tab.key}
               onClick={() => setActiveSubTab(tab.key)}
-              className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${activeSubTab === tab.key
-                ? "border-[#00B87C] text-[#00B87C]"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
+              className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${
+                activeSubTab === tab.key
+                  ? "border-[#00B87C] text-[#00B87C]"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
             >
               {tab.label}
             </button>
@@ -615,10 +650,11 @@ export function EmployeePortal() {
           <button
             key={tab.key}
             onClick={() => setActiveAssignedSubTab(tab.key)}
-            className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${activeAssignedSubTab === tab.key
-              ? "border-[#00B87C] text-[#00B87C]"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
+            className={`px-4 py-3.5 text-[12px] font-black uppercase tracking-wider border-b-2 transition-all relative whitespace-nowrap cursor-pointer ${
+              activeAssignedSubTab === tab.key
+                ? "border-[#00B87C] text-[#00B87C]"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
           >
             {tab.label}
           </button>
@@ -650,8 +686,6 @@ export function EmployeePortal() {
           </div>
         )}
 
-
-
         {/* SUBTAB 2: REQUIRED FILES */}
         {activeAssignedSubTab === "documents" && (
           <div className="bg-card border border-border rounded-3xl p-6 space-y-6 shadow-sm">
@@ -664,60 +698,69 @@ export function EmployeePortal() {
               </p>
             </div>
             <div className="divide-y divide-border">
-              {documents.filter((d) => !d.issuedByOrg).map((doc) => (
-                <div
-                  key={doc.id}
-                  className="py-4 flex items-center justify-between flex-wrap gap-4 first:pt-0 last:pb-0"
-                >
-                  <div>
-                    <strong className="text-xs text-foreground block">
-                      {doc.name}
-                    </strong>
-                    <span className="text-[10px] text-muted-foreground font-semibold uppercase">
-                      Mandatory: {doc.mandatory ? "Yes" : "No"} · Max Size:{" "}
-                      {doc.maxSize || "10MB"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${doc.status === "uploaded"
-                        ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
-                        : "bg-muted text-muted-foreground"
+              {documents
+                .filter((d) => !d.issuedByOrg)
+                .map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="py-4 flex items-center justify-between flex-wrap gap-4 first:pt-0 last:pb-0"
+                  >
+                    <div>
+                      <strong className="text-xs text-foreground block">
+                        {doc.name}
+                      </strong>
+                      <span className="text-[10px] text-muted-foreground font-semibold uppercase">
+                        Mandatory: {doc.mandatory ? "Yes" : "No"} · Max Size:{" "}
+                        {doc.maxSize || "10MB"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                          doc.status === "uploaded"
+                            ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
+                            : "bg-muted text-muted-foreground"
                         }`}
-                    >
-                      {doc.status === "uploaded"
-                        ? `${doc.verificationStatus || "uploaded"}`
-                        : "pending"}
-                    </span>
-                    {doc.status !== "uploaded" ? (
-                      doc.issuedByOrg ? (
-                        <span className="text-xs text-amber-500 font-bold">
-                          Awaiting Company Upload
-                        </span>
+                      >
+                        {doc.status === "uploaded"
+                          ? `${doc.verificationStatus || "uploaded"}`
+                          : "pending"}
+                      </span>
+                      {doc.status !== "uploaded" ? (
+                        doc.issuedByOrg ? (
+                          <span className="text-xs text-amber-500 font-bold">
+                            Awaiting Company Upload
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleAssignedDocUpload(doc.id)}
+                            className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer"
+                          >
+                            Upload file
+                          </button>
+                        )
                       ) : (
-                        <button
-                          onClick={() => handleAssignedDocUpload(doc.id)}
-                          className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer"
-                        >
-                          Upload file
-                        </button>
-                      )
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => showToast("Viewing File", "info", `Opening ${doc.name}...`)}
-                          className="px-3 py-1.5 rounded-lg bg-neutral-100 text-muted-foreground hover:bg-neutral-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-[11px] font-semibold transition-all cursor-pointer"
-                        >
-                          View File
-                        </button>
-                        <span className="text-xs text-muted-foreground font-bold">
-                          Done ✓
-                        </span>
-                      </div>
-                    )}
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() =>
+                              showToast(
+                                "Viewing File",
+                                "info",
+                                `Opening ${doc.name}...`,
+                              )
+                            }
+                            className="px-3 py-1.5 rounded-lg bg-neutral-100 text-muted-foreground hover:bg-neutral-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-[11px] font-semibold transition-all cursor-pointer"
+                          >
+                            View File
+                          </button>
+                          <span className="text-xs text-muted-foreground font-bold">
+                            Done ✓
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
               {documents.filter((d) => !d.issuedByOrg).length === 0 && (
                 <p className="text-xs text-muted-foreground italic text-center py-6">
                   No required document uploads configured.
@@ -735,56 +778,69 @@ export function EmployeePortal() {
                 Company Documents & Agreements
               </h4>
               <p className="text-xs text-muted-foreground font-semibold mt-0.5">
-                Please view, download, and digitally sign/acknowledge organization-issued documents
+                Please view, download, and digitally sign/acknowledge
+                organization-issued documents
               </p>
             </div>
             <div className="divide-y divide-border">
-              {documents.filter((d) => d.issuedByOrg).map((doc) => {
-                const acknowledged = (hire.acknowledgedDocs || []).includes(doc.id);
-                return (
-                  <div
-                    key={doc.id}
-                    className="py-4 flex items-center justify-between flex-wrap gap-4 first:pt-0 last:pb-0"
-                  >
-                    <div>
-                      <strong className="text-xs text-foreground block">
-                        {doc.name}
-                      </strong>
-                      <span className="text-[10px] text-muted-foreground font-semibold uppercase">
-                        Published by: {doc.uploadedBy || "HR Department"} · Date: {doc.date}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${acknowledged
-                          ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
-                          : "bg-muted text-muted-foreground"
-                          }`}
-                      >
-                        {acknowledged ? "complete" : "pending"}
-                      </span>
-                      <button
-                        onClick={() => showToast("Viewing File", "info", `Opening ${doc.name}...`)}
-                        className="px-3 py-1.5 rounded-lg bg-neutral-100 text-muted-foreground hover:bg-neutral-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-[11px] font-semibold transition-all cursor-pointer"
-                      >
-                        View File
-                      </button>
-                      {acknowledged ? (
-                        <span className="text-xs text-[#00B87C] font-bold block">
-                          Complete ✓
+              {documents
+                .filter((d) => d.issuedByOrg)
+                .map((doc) => {
+                  const acknowledged = (hire.acknowledgedDocs || []).includes(
+                    doc.id,
+                  );
+                  return (
+                    <div
+                      key={doc.id}
+                      className="py-4 flex items-center justify-between flex-wrap gap-4 first:pt-0 last:pb-0"
+                    >
+                      <div>
+                        <strong className="text-xs text-foreground block">
+                          {doc.name}
+                        </strong>
+                        <span className="text-[10px] text-muted-foreground font-semibold uppercase">
+                          Published by: {doc.uploadedBy || "HR Department"} ·
+                          Date: {doc.date}
                         </span>
-                      ) : (
-                        <button
-                          onClick={() => handleDocAcknowledge(doc.id)}
-                          className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer"
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                            acknowledged
+                              ? "bg-emerald-50 text-[#00B87C] border border-[#00B87C]/15"
+                              : "bg-muted text-muted-foreground"
+                          }`}
                         >
-                          Sign & Acknowledge
+                          {acknowledged ? "complete" : "pending"}
+                        </span>
+                        <button
+                          onClick={() =>
+                            showToast(
+                              "Viewing File",
+                              "info",
+                              `Opening ${doc.name}...`,
+                            )
+                          }
+                          className="px-3 py-1.5 rounded-lg bg-neutral-100 text-muted-foreground hover:bg-neutral-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-[11px] font-semibold transition-all cursor-pointer"
+                        >
+                          View File
                         </button>
-                      )}
+                        {acknowledged ? (
+                          <span className="text-xs text-[#00B87C] font-bold block">
+                            Complete ✓
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleDocAcknowledge(doc.id)}
+                            className="px-4 py-1.5 rounded-lg bg-[#00B87C] text-white text-[11px] font-semibold uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer"
+                          >
+                            Sign & Acknowledge
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
               {documents.filter((d) => d.issuedByOrg).length === 0 && (
                 <p className="text-xs text-muted-foreground italic text-center py-6">
                   No company-issued documents are available yet.
@@ -793,7 +849,6 @@ export function EmployeePortal() {
             </div>
           </div>
         )}
-
 
         {/* SUBTAB 4: ORIENTATION/TRAINING */}
         {activeAssignedSubTab === "training" && (
@@ -807,43 +862,45 @@ export function EmployeePortal() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(matchedTemplate?.training || []).map((course: any) => {
-                const complete = (hire.completedTraining || []).includes(
-                  course.id,
-                );
-                return (
-                  <div
-                    key={course.id}
-                    className="p-5 border rounded-2xl bg-muted/10 space-y-4 flex flex-col justify-between"
-                  >
-                    <div>
-                      {course.type === "Video" ? (
-                        <Video className="text-[#0EA5E9] mb-2" size={24} />
+              {(matchedTemplate?.training || []).map(
+                (course: NonNullable<Template["training"]>[number]) => {
+                  const complete = (hire.completedTraining || []).includes(
+                    course.id,
+                  );
+                  return (
+                    <div
+                      key={course.id}
+                      className="p-5 border rounded-2xl bg-muted/10 space-y-4 flex flex-col justify-between"
+                    >
+                      <div>
+                        {course.type === "Video" ? (
+                          <Video className="text-[#0EA5E9] mb-2" size={24} />
+                        ) : (
+                          <BookOpen className="text-[#8B5CF6] mb-2" size={24} />
+                        )}
+                        <strong className="text-xs text-foreground block">
+                          {course.name}
+                        </strong>
+                        <span className="px-2 py-0.5 text-[9px] font-black uppercase bg-muted text-muted-foreground rounded inline-block mt-1">
+                          {course.type} ({course.duration || "10 mins"})
+                        </span>
+                      </div>
+                      {complete ? (
+                        <span className="text-xs text-emerald-600 font-bold block">
+                          ✓ Completed
+                        </span>
                       ) : (
-                        <BookOpen className="text-[#8B5CF6] mb-2" size={24} />
+                        <button
+                          onClick={() => handleTrainingComplete(course.id)}
+                          className="py-2 w-full text-center bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider rounded-xl hover:opacity-90 transition-all cursor-pointer"
+                        >
+                          Mark as Complete
+                        </button>
                       )}
-                      <strong className="text-xs text-foreground block">
-                        {course.name}
-                      </strong>
-                      <span className="px-2 py-0.5 text-[9px] font-black uppercase bg-muted text-muted-foreground rounded inline-block mt-1">
-                        {course.type} ({course.duration || "10 mins"})
-                      </span>
                     </div>
-                    {complete ? (
-                      <span className="text-xs text-emerald-600 font-bold block">
-                        ✓ Completed
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => handleTrainingComplete(course.id)}
-                        className="py-2 w-full text-center bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider rounded-xl hover:opacity-90 transition-all cursor-pointer"
-                      >
-                        Mark as Complete
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                },
+              )}
               {(matchedTemplate?.training || []).length === 0 && (
                 <p className="text-xs text-muted-foreground italic text-center py-6 col-span-2">
                   No orientation or training configured.

@@ -46,8 +46,12 @@ export function OffboardingTemplates({
 
       {templates.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center">
-          <h4 className="font-bold text-foreground mb-1">No Offboarding Templates Found</h4>
-          <p className="text-sm text-muted-foreground mb-5">Create your first offboarding template.</p>
+          <h4 className="font-bold text-foreground mb-1">
+            No Offboarding Templates Found
+          </h4>
+          <p className="text-sm text-muted-foreground mb-5">
+            Create your first offboarding template.
+          </p>
           <button
             onClick={() => {
               setShowTemplateEditor(true);
@@ -68,15 +72,26 @@ export function OffboardingTemplates({
               <div>
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h4 className="text-[14px] font-bold text-foreground">{tpl.name}</h4>
-                    <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">Code: {tpl.code}</p>
+                    <h4 className="text-[14px] font-bold text-foreground">
+                      {tpl.name}
+                    </h4>
+                    <p className="text-[10px] text-muted-foreground font-semibold mt-0.5">
+                      Code: {tpl.code}
+                    </p>
                   </div>
                   <div className="relative">
                     <button
-                      onClick={() => setShowTemplateMenu(showTemplateMenu === tpl.id ? null : tpl.id)}
+                      onClick={() =>
+                        setShowTemplateMenu(
+                          showTemplateMenu === tpl.id ? null : tpl.id,
+                        )
+                      }
                       className="p-1 hover:bg-muted rounded-lg transition-all"
                     >
-                      <MoreVertical size={16} className="text-muted-foreground" />
+                      <MoreVertical
+                        size={16}
+                        className="text-muted-foreground"
+                      />
                     </button>
                     {showTemplateMenu === tpl.id && (
                       <div className="absolute right-0 top-8 w-40 bg-card border border-border rounded-xl shadow-xl z-20 overflow-hidden">

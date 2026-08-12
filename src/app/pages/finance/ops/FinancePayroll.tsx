@@ -385,7 +385,7 @@ export function FinancePayroll() {
             { label: "Calculation", name: "Calculation" },
             { label: "Approval", name: "Approval" },
             { label: "Disbursement", name: "Disbursement" },
-          ].map((step, i) => {
+          ].map((step) => {
             const stepStatus = (() => {
               if (!activeRun) {
                 if (
@@ -1098,7 +1098,10 @@ export function FinancePayroll() {
                             setRefreshKey((prev) => prev + 1);
                             showToast("Payroll approved successfully.");
                           } else {
-                            showToast(res.error, "error");
+                            showToast(
+                              "error" in res ? res.error : "Unknown error",
+                              "error",
+                            );
                           }
                         } else if (activeRun.status === "approved") {
                           const res = payrollService.disbursePayRun(
@@ -1109,7 +1112,10 @@ export function FinancePayroll() {
                             showToast("Payroll disbursed successfully.");
                             handleExport("Bank Transfer Format");
                           } else {
-                            showToast(res.error, "error");
+                            showToast(
+                              "error" in res ? res.error : "Unknown error",
+                              "error",
+                            );
                           }
                         }
                       } else {

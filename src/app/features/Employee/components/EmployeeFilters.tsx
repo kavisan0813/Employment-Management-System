@@ -103,7 +103,6 @@ export default function EmployeeFilters({
   uniqueTypes,
   searchInputRef,
 }: EmployeeFiltersProps) {
-
   return (
     <div
       className="sticky top-0 z-20 rounded-2xl p-4 mb-6 shadow-sm"
@@ -324,32 +323,35 @@ export default function EmployeeFilters({
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {uniqueTypes.map((t) => (
-                      <label
-                        key={t}
-                        className="flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors"
-                        style={{ color: "var(--foreground)" }}
-                        onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor =
-                          "var(--background)")
-                        }
-                        onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor =
-                          "transparent")
-                        }
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedTypes.includes(t)}
-                          onChange={() => {
-                            toggleType(t);
-                          }}
-                          className="rounded focus:ring-emerald-500"
-                          style={{ accentColor: "var(--primary)" }}
-                        />
-                        <span style={{ fontSize: "13px" }}>{t}</span>
-                      </label>
-                    ))}
+                    {(() => {
+                      const selectedTypesSet = new Set(selectedTypes);
+                      return uniqueTypes.map((t) => (
+                        <label
+                          key={t}
+                          className="flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors"
+                          style={{ color: "var(--foreground)" }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "var(--background)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "transparent")
+                          }
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedTypesSet.has(t)}
+                            onChange={() => {
+                              toggleType(t);
+                            }}
+                            className="rounded focus:ring-emerald-500"
+                            style={{ accentColor: "var(--primary)" }}
+                          />
+                          <span style={{ fontSize: "13px" }}>{t}</span>
+                        </label>
+                      ));
+                    })()}
                   </div>
                 </>
               )}
@@ -378,17 +380,17 @@ export default function EmployeeFilters({
                   style={{
                     backgroundColor:
                       selectedStatus === s ||
-                        (s === "All" && selectedStatus === "All Status")
+                      (s === "All" && selectedStatus === "All Status")
                         ? "var(--card)"
                         : "transparent",
                     color:
                       selectedStatus === s ||
-                        (s === "All" && selectedStatus === "All Status")
+                      (s === "All" && selectedStatus === "All Status")
                         ? "var(--foreground)"
                         : "var(--muted-foreground)",
                     boxShadow:
                       selectedStatus === s ||
-                        (s === "All" && selectedStatus === "All Status")
+                      (s === "All" && selectedStatus === "All Status")
                         ? "0 2px 4px rgba(0,0,0,0.05)"
                         : "none",
                   }}

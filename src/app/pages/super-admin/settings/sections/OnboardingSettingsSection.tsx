@@ -1,8 +1,6 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import {
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export function OnboardingSettingsSection() {
   const {
@@ -257,7 +255,7 @@ export function OnboardingSettingsSection() {
               due: "-1",
               req: false,
             },
-          ].map((t, idx) => (
+          ].map((t) => (
             <div
               key={t.name}
               className="flex items-center justify-between gap-4 h-[40px] text-[13px] py-1"

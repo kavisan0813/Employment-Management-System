@@ -404,21 +404,35 @@ export function AttendanceProvider({
     };
   };
 
+  const value = useMemo(
+    () => ({
+      records,
+      todayRecord,
+      derivedState,
+      isOnBreak,
+      handlePunchIn,
+      handlePunchOut,
+      handleStartBreak,
+      handleEndBreak,
+      handleResetPunch,
+      getPunchStateForEmail,
+    }),
+    [
+      records,
+      todayRecord,
+      derivedState,
+      isOnBreak,
+      handlePunchIn,
+      handlePunchOut,
+      handleStartBreak,
+      handleEndBreak,
+      handleResetPunch,
+      getPunchStateForEmail,
+    ],
+  );
+
   return (
-    <AttendanceContext.Provider
-      value={{
-        records,
-        todayRecord,
-        derivedState,
-        isOnBreak,
-        handlePunchIn,
-        handlePunchOut,
-        handleStartBreak,
-        handleEndBreak,
-        handleResetPunch,
-        getPunchStateForEmail,
-      }}
-    >
+    <AttendanceContext.Provider value={value}>
       {children}
     </AttendanceContext.Provider>
   );

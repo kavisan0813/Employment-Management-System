@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   Users,
@@ -11,18 +11,17 @@ import {
   Search,
   X,
 } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
+const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+
 import { motion, AnimatePresence } from "motion/react";
 
 interface Toast {
@@ -149,6 +148,7 @@ export function HRDashboard() {
   };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing) return;
     if (e.key === "Enter" && searchQuery.trim()) {
       navigate(`/employees?search=${encodeURIComponent(searchQuery.trim())}`);
     }
@@ -425,7 +425,10 @@ export function HRDashboard() {
           </div>
           <div className="mt-8 space-y-3">
             {DEPT_DIST.map((dept) => (
-              <div key={dept.name} className="flex items-center justify-between">
+              <div
+                key={dept.name}
+                className="flex items-center justify-between"
+              >
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2.5 h-2.5 rounded-full"
@@ -584,7 +587,7 @@ export function HRDashboard() {
                   <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                     <motion.div
                       initial={{ x: "-100%" }}
-                      animate={{ x: `-${100 - (dept.value)}%` }}
+                      animate={{ x: `-${100 - dept.value}%` }}
                       transition={{ duration: 1, delay: i * 0.1 }}
                       className="h-full rounded-full bg-emerald-500 w-full"
                     />

@@ -1,24 +1,23 @@
-import { useState, useRef } from "react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell,
-  PieChart,
-  Pie,
-  RadarChart,
-  Radar,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Line,
-} from "recharts";
+import { lazy, useState, useRef } from "react";
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
+const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+const PieChart = lazy(() => import("recharts").then(m => ({ default: m.PieChart })));
+const Pie = lazy(() => import("recharts").then(m => ({ default: m.Pie })));
+const RadarChart = lazy(() => import("recharts").then(m => ({ default: m.RadarChart })));
+const Radar = lazy(() => import("recharts").then(m => ({ default: m.Radar })));
+const PolarGrid = lazy(() => import("recharts").then(m => ({ default: m.PolarGrid })));
+const PolarAngleAxis = lazy(() => import("recharts").then(m => ({ default: m.PolarAngleAxis })));
+const PolarRadiusAxis = lazy(() => import("recharts").then(m => ({ default: m.PolarRadiusAxis })));
+const Line = lazy(() => import("recharts").then(m => ({ default: m.Line })));
+
 import {
   Users,
   TrendingUp,
@@ -464,7 +463,7 @@ function ChartTip({ active, payload, label }: Record<string, unknown>) {
         {String(label)}
       </div>
       {(payload as Array<{ name: string; value: number; color?: string }>).map(
-        (p, i) => (
+        (p) => (
           <div key={p.name} style={{ color: p.color || "white" }}>
             {p.name}: <strong>{p.value}</strong>
           </div>
@@ -1796,7 +1795,7 @@ export function ManagerReports() {
                   paddingAngle={3}
                   dataKey="value"
                 >
-                  {meta.leaveDist.map((e, i) => (
+                  {meta.leaveDist.map((e) => (
                     <Cell key={e.color} fill={e.color} />
                   ))}
                 </Pie>
@@ -2041,7 +2040,7 @@ export function ManagerReports() {
                   maxBarSize={28}
                   name="Workload %"
                 >
-                  {TEAM.map((m, i) => (
+                  {TEAM.map((m) => (
                     <Cell
                       key={m.workload}
                       fill={

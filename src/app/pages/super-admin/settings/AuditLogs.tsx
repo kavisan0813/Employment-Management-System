@@ -1101,7 +1101,7 @@ export function AuditLogs() {
                       label: "Record Affected",
                       value: selectedLog.record.split(" —")[0],
                     },
-                  ].map((f, i) => (
+                  ].map((f) => (
                     <div key={f.label}>
                       <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">
                         {f.label}

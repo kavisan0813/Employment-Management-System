@@ -59,14 +59,51 @@ export function BroadcastAnnouncementsTab({
   );
 
   // Form State
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [targetType, setTargetType] = useState<TargetType>("all");
-  const [targetCriteria, setTargetCriteria] = useState<string>(""); // e.g. "basic,enterprise"
-  const [channels, setChannels] = useState<AnnouncementChannel[]>(["in_app"]);
-  const [urgency, setUrgency] = useState<AnnouncementUrgency>("normal");
-  const [scheduledAt, setScheduledAt] = useState<string | null>(null);
-  const [recurrence, setRecurrence] = useState<RecurrenceType | null>(null);
+  const initialFormState = {
+    title: "",
+    body: "",
+    targetType: "all" as TargetType,
+    targetCriteria: "",
+    channels: ["in_app"] as AnnouncementChannel[],
+    urgency: "normal" as AnnouncementUrgency,
+    scheduledAt: null as string | null,
+    recurrence: null as RecurrenceType | null,
+    pendingAnnouncementId: null as string | null,
+  };
+
+  type FormState = typeof initialFormState;
+  type FormAction =
+    | { type: "setField"; field: keyof FormState; value: unknown }
+    | { type: "reset" }
+    | { type: "duplicate"; payload: Partial<FormState> };
+
+  const [formState, dispatchForm] = React.useReducer(
+    (state: FormState, action: FormAction): FormState => {
+      switch (action.type) {
+        case "setField":
+          return { ...state, [action.field]: action.value };
+        case "reset":
+          return initialFormState;
+        case "duplicate":
+          return { ...initialFormState, ...action.payload };
+        default:
+          return state;
+      }
+    },
+    initialFormState,
+  );
+
+  const {
+    title,
+    body,
+    targetType,
+    targetCriteria,
+    channels,
+    urgency,
+    scheduledAt,
+    recurrence,
+    pendingAnnouncementId,
+  } = formState;
 
   // Estimation state
   const [estimates, setEstimates] = useState<{
@@ -76,32 +113,27 @@ export function BroadcastAnnouncementsTab({
   } | null>(null);
   const [isEstimating, setIsEstimating] = useState(false);
 
-  // Pending created announcement for sending
-  const [pendingAnnouncementId, setPendingAnnouncementId] = useState<
-    string | null
-  >(null);
-
   // Test send state
   const [testContact, setTestContact] = useState("");
   const [isSendingTest, setIsSendingTest] = useState(false);
 
   const resetForm = () => {
-    setTitle("");
-    setBody("");
-    setTargetType("all");
-    setTargetCriteria("");
-    setChannels(["in_app"]);
-    setUrgency("normal");
-    setScheduledAt(null);
-    setRecurrence(null);
-    setPendingAnnouncementId(null);
+    dispatchForm({ type: "reset" });
   };
 
   const handleChannelToggle = (ch: AnnouncementChannel) => {
     if (channels.includes(ch)) {
-      setChannels(channels.filter((c) => c !== ch));
+      dispatchForm({
+        type: "setField",
+        field: "channels",
+        value: channels.filter((c) => c !== ch),
+      });
     } else {
-      setChannels([...channels, ch]);
+      dispatchForm({
+        type: "setField",
+        field: "channels",
+        value: [...channels, ch],
+      });
     }
   };
 
@@ -117,7 +149,11 @@ export function BroadcastAnnouncementsTab({
         scheduledAt,
         recurrence,
       );
-      setPendingAnnouncementId(ann.announcement_id);
+      dispatchForm({
+        type: "setField",
+        field: "pendingAnnouncementId",
+        value: ann.announcement_id,
+      });
       setIsCreateOpen(false);
       setSmsWarningOpen(false);
       setIsPreviewOpen(true);
@@ -226,19 +262,26 @@ export function BroadcastAnnouncementsTab({
   };
 
   const handleDuplicate = (ann: Announcement) => {
-    resetForm();
-    setTitle(ann.title + " (Copy)");
-    setBody(ann.message_body);
-    setTargetType(ann.target_type);
+    let parsedCriteria = "";
     try {
       const parsed = JSON.parse(ann.target_criteria);
-      setTargetCriteria(Array.isArray(parsed) ? parsed.join(",") : "");
+      parsedCriteria = Array.isArray(parsed) ? parsed.join(",") : "";
     } catch (e) {
-      setTargetCriteria("");
       console.log(e);
     }
-    setChannels(ann.channels);
-    setUrgency(ann.urgency);
+
+    dispatchForm({
+      type: "duplicate",
+      payload: {
+        title: ann.title + " (Copy)",
+        body: ann.message_body,
+        targetType: ann.target_type,
+        targetCriteria: parsedCriteria,
+        channels: ann.channels,
+        urgency: ann.urgency,
+      },
+    });
+
     setIsCreateOpen(true);
   };
 
@@ -517,7 +560,13 @@ export function BroadcastAnnouncementsTab({
                   type="text"
                   maxLength={100}
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) =>
+                    dispatchForm({
+                      type: "setField",
+                      field: "title",
+                      value: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                   placeholder="Announcement Title"
                 />
@@ -531,7 +580,13 @@ export function BroadcastAnnouncementsTab({
                   required
                   rows={5}
                   value={body}
-                  onChange={(e) => setBody(e.target.value)}
+                  onChange={(e) =>
+                    dispatchForm({
+                      type: "setField",
+                      field: "body",
+                      value: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-sm"
                   placeholder="<p>HTML rich text content...</p>"
                 />
@@ -547,7 +602,13 @@ export function BroadcastAnnouncementsTab({
                       <input
                         type="radio"
                         checked={targetType === "all"}
-                        onChange={() => setTargetType("all")}
+                        onChange={() =>
+                          dispatchForm({
+                            type: "setField",
+                            field: "targetType",
+                            value: "all",
+                          })
+                        }
                       />{" "}
                       <span className="text-sm">All Organizations</span>
                     </label>
@@ -555,7 +616,13 @@ export function BroadcastAnnouncementsTab({
                       <input
                         type="radio"
                         checked={targetType === "plan_based"}
-                        onChange={() => setTargetType("plan_based")}
+                        onChange={() =>
+                          dispatchForm({
+                            type: "setField",
+                            field: "targetType",
+                            value: "plan_based",
+                          })
+                        }
                       />{" "}
                       <span className="text-sm">By Plan</span>
                     </label>
@@ -563,7 +630,13 @@ export function BroadcastAnnouncementsTab({
                       <input
                         type="radio"
                         checked={targetType === "specific_orgs"}
-                        onChange={() => setTargetType("specific_orgs")}
+                        onChange={() =>
+                          dispatchForm({
+                            type: "setField",
+                            field: "targetType",
+                            value: "specific_orgs",
+                          })
+                        }
                       />{" "}
                       <span className="text-sm">Specific Organizations</span>
                     </label>
@@ -571,7 +644,13 @@ export function BroadcastAnnouncementsTab({
                       <input
                         type="radio"
                         checked={targetType === "role_based"}
-                        onChange={() => setTargetType("role_based")}
+                        onChange={() =>
+                          dispatchForm({
+                            type: "setField",
+                            field: "targetType",
+                            value: "role_based",
+                          })
+                        }
                       />{" "}
                       <span className="text-sm">By Role</span>
                     </label>
@@ -579,18 +658,24 @@ export function BroadcastAnnouncementsTab({
                   {(targetType === "plan_based" ||
                     targetType === "specific_orgs" ||
                     targetType === "role_based") && (
-                      <input
-                        type="text"
-                        value={targetCriteria}
-                        onChange={(e) => setTargetCriteria(e.target.value)}
-                        placeholder={
-                          targetType === "plan_based"
-                            ? "e.g. enterprise,pro"
-                            : "e.g. org_id_1,org_id_2"
-                        }
-                        className="mt-3 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none"
-                      />
-                    )}
+                    <input
+                      type="text"
+                      value={targetCriteria}
+                      onChange={(e) =>
+                        dispatchForm({
+                          type: "setField",
+                          field: "targetCriteria",
+                          value: e.target.value,
+                        })
+                      }
+                      placeholder={
+                        targetType === "plan_based"
+                          ? "e.g. enterprise,pro"
+                          : "e.g. org_id_1,org_id_2"
+                      }
+                      className="mt-3 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none"
+                    />
+                  )}
                 </div>
 
                 <div>
@@ -648,7 +733,11 @@ export function BroadcastAnnouncementsTab({
                   <select
                     value={urgency}
                     onChange={(e) =>
-                      setUrgency(e.target.value as AnnouncementUrgency)
+                      dispatchForm({
+                        type: "setField",
+                        field: "urgency",
+                        value: e.target.value as AnnouncementUrgency,
+                      })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none"
                   >
@@ -664,7 +753,13 @@ export function BroadcastAnnouncementsTab({
                     <input
                       type="datetime-local"
                       value={scheduledAt || ""}
-                      onChange={(e) => setScheduledAt(e.target.value)}
+                      onChange={(e) =>
+                        dispatchForm({
+                          type: "setField",
+                          field: "scheduledAt",
+                          value: e.target.value,
+                        })
+                      }
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none"
                     />
                   </div>

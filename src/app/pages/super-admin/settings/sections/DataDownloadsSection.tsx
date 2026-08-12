@@ -110,7 +110,7 @@ export function DataDownloadsSection({
 
       <Label>DOWNLOAD MY DATA</Label>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {cards.map((card, i) => {
+        {cards.map((card) => {
           const Icon = card.icon;
           return (
             <div

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import {
-  Circle,
-  CheckCircle2,
-} from "lucide-react";
+import { Circle, CheckCircle2 } from "lucide-react";
 import { showToast } from "../../../../components/workflow/ToastNotification";
+import type {
+  NewHire,
+  DocumentItem,
+  Template,
+} from "../../types/onboarding.types";
 
 interface CandidateProcessProps {
   employeeId: string;
@@ -15,13 +17,13 @@ export function CandidateProcess({
   employeeId,
   employeeName,
 }: CandidateProcessProps) {
-  const [queue, setQueue] = useState<any[]>(() =>
+  const [queue, setQueue] = useState<NewHire[]>(() =>
     JSON.parse(localStorage.getItem("viyan_onboarding_queue:v1") || "[]"),
   );
-  const [docs, setDocs] = useState<any[]>(() =>
+  const [docs, setDocs] = useState<DocumentItem[]>(() =>
     JSON.parse(localStorage.getItem("viyan_onboarding_documents:v1") || "[]"),
   );
-  const [templates, setTemplates] = useState<any[]>(() =>
+  const [templates, setTemplates] = useState<Template[]>(() =>
     JSON.parse(localStorage.getItem("viyan_onboarding_templates:v1") || "[]"),
   );
 
@@ -31,10 +33,14 @@ export function CandidateProcess({
         JSON.parse(localStorage.getItem("viyan_onboarding_queue:v1") || "[]"),
       );
       setDocs(
-        JSON.parse(localStorage.getItem("viyan_onboarding_documents:v1") || "[]"),
+        JSON.parse(
+          localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
+        ),
       );
       setTemplates(
-        JSON.parse(localStorage.getItem("viyan_onboarding_templates:v1") || "[]"),
+        JSON.parse(
+          localStorage.getItem("viyan_onboarding_templates:v1") || "[]",
+        ),
       );
     };
     window.addEventListener("viyan:onboarding-updated", sync);
@@ -75,10 +81,7 @@ export function CandidateProcess({
   );
 
   // HR verification actions
-  const handleVerifySection = (
-    section: "personal",
-    verified: boolean,
-  ) => {
+  const handleVerifySection = (section: "personal", verified: boolean) => {
     const updatedQueue = queue.map((nh) => {
       if (nh.id !== employeeId) return nh;
       return { ...nh, personalDetailsVerified: verified };
@@ -96,17 +99,15 @@ export function CandidateProcess({
     window.dispatchEvent(new Event("viyan:onboarding-updated"));
   };
 
-
-
   // HR/Admin requests the employee to re-upload a document (re-opens it).
   const handleRequestReupload = (docId: string) => {
     const updatedDocs = docs.map((d) =>
       d.id === docId
         ? {
-          ...d,
-          status: "pending" as const,
-          verificationStatus: undefined,
-        }
+            ...d,
+            status: "pending" as const,
+            verificationStatus: undefined,
+          }
         : d,
     );
     setDocs(updatedDocs);
@@ -128,8 +129,7 @@ export function CandidateProcess({
     (d) => d.status === "uploaded",
   ).length;
 
-  const totalTasks =
-    personalItems.length + employeeDocs.length;
+  const totalTasks = personalItems.length + employeeDocs.length;
   const completedTasks = allPersonalDone + allDocsUploaded;
   const progressPct =
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
@@ -201,10 +201,11 @@ export function CandidateProcess({
               {personalItems.map((item) => (
                 <div
                   key={item.id}
-                  className={`flex items-center justify-between p-3 rounded-xl border ${item.completed
-                    ? "bg-muted/30 border-border"
-                    : "bg-card border-border border-dashed opacity-60"
-                    }`}
+                  className={`flex items-center justify-between p-3 rounded-xl border ${
+                    item.completed
+                      ? "bg-muted/30 border-border"
+                      : "bg-card border-border border-dashed opacity-60"
+                  }`}
                 >
                   <span className="text-[12px] font-bold text-foreground">
                     {item.label}
@@ -218,8 +219,6 @@ export function CandidateProcess({
               ))}
             </div>
           </div>
-
-
         </div>
 
         {/* DOCUMENTS & UPLOADS SECTION */}

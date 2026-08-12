@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   Users,
   Search,
@@ -273,46 +273,49 @@ export function ManagerTeamDirectory() {
     setSearch("");
   };
 
-  const applyFilters = (list: Colleague[]) => {
-    return list.filter((c) => {
-      const matchesSearch =
-        search === "" ||
-        c.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.id.toLowerCase().includes(search.toLowerCase()) ||
-        c.department.toLowerCase().includes(search.toLowerCase()) ||
-        c.designation.toLowerCase().includes(search.toLowerCase()) ||
-        c.email.toLowerCase().includes(search.toLowerCase());
+  const applyFilters = useCallback(
+    (list: Colleague[]) => {
+      return list.filter((c) => {
+        const matchesSearch =
+          search === "" ||
+          c.name.toLowerCase().includes(search.toLowerCase()) ||
+          c.id.toLowerCase().includes(search.toLowerCase()) ||
+          c.department.toLowerCase().includes(search.toLowerCase()) ||
+          c.designation.toLowerCase().includes(search.toLowerCase()) ||
+          c.email.toLowerCase().includes(search.toLowerCase());
 
-      const matchesDept =
-        filters.department === "All Departments" ||
-        c.department === filters.department;
-      const matchesLocation =
-        filters.location === "All Locations" ||
-        c.location.includes(filters.location);
-      const matchesStatus =
-        filters.status === "All Status" || c.status === filters.status;
-      const matchesAvail =
-        filters.availability === "All Availability" ||
-        c.availability === filters.availability;
+        const matchesDept =
+          filters.department === "All Departments" ||
+          c.department === filters.department;
+        const matchesLocation =
+          filters.location === "All Locations" ||
+          c.location.includes(filters.location);
+        const matchesStatus =
+          filters.status === "All Status" || c.status === filters.status;
+        const matchesAvail =
+          filters.availability === "All Availability" ||
+          c.availability === filters.availability;
 
-      return (
-        matchesSearch &&
-        matchesDept &&
-        matchesLocation &&
-        matchesStatus &&
-        matchesAvail
-      );
-    });
-  };
+        return (
+          matchesSearch &&
+          matchesDept &&
+          matchesLocation &&
+          matchesStatus &&
+          matchesAvail
+        );
+      });
+    },
+    [search, filters],
+  );
 
   const directReports = useMemo(
     () => applyFilters(COLLEAGUES_DATA.filter((c) => c.isDirectReport)),
-    [search, filters],
+    [applyFilters],
   );
 
   const otherEmployees = useMemo(
     () => applyFilters(COLLEAGUES_DATA.filter((c) => !c.isDirectReport)),
-    [search, filters],
+    [applyFilters],
   );
 
   const hasActiveFilters =
@@ -423,19 +426,21 @@ export function ManagerTeamDirectory() {
           <div className="flex items-center p-1 bg-card border border-border rounded-xl shadow-sm">
             <button
               onClick={() => setView("grid")}
-              className={`p-2 rounded-lg transition-all ${view === "grid"
+              className={`p-2 rounded-lg transition-all ${
+                view === "grid"
                   ? "bg-emerald-500/10 text-[#00B87C]"
                   : "text-muted-foreground hover:text-foreground"
-                }`}
+              }`}
             >
               <LayoutGrid size={18} />
             </button>
             <button
               onClick={() => setView("list")}
-              className={`p-2 rounded-lg transition-all ${view === "list"
+              className={`p-2 rounded-lg transition-all ${
+                view === "list"
                   ? "bg-emerald-500/10 text-[#00B87C]"
                   : "text-muted-foreground hover:text-foreground"
-                }`}
+              }`}
             >
               <List size={18} />
             </button>
@@ -739,10 +744,11 @@ function ColleagueCard({
   return (
     <div
       onClick={onSelect}
-      className={`bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl hover:-translate-y-1.5 cursor-pointer group flex flex-col items-center text-center h-full relative overflow-hidden ${colleague.isDirectReport
+      className={`bg-card p-6 rounded-[28px] border transition-all hover:shadow-xl hover:-translate-y-1.5 cursor-pointer group flex flex-col items-center text-center h-full relative overflow-hidden ${
+        colleague.isDirectReport
           ? "border-[#00B87C]/30 shadow-emerald-500/[0.02]"
           : "border-border"
-        }`}
+      }`}
     >
       {colleague.isDirectReport && (
         <div className="absolute top-0 left-0 bg-emerald-500 text-white text-[8px] font-bold uppercase tracking-wider px-3 py-1 rounded-br-xl border-r border-b border-emerald-500/30">
@@ -764,14 +770,15 @@ function ColleagueCard({
           )}
         </div>
         <div
-          className={`absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full border-2 border-card ${colleague.availability === "Available"
+          className={`absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full border-2 border-card ${
+            colleague.availability === "Available"
               ? "bg-emerald-500"
               : colleague.availability === "Busy"
                 ? "bg-red-500"
                 : colleague.availability === "In Meeting"
                   ? "bg-amber-500"
                   : "bg-slate-400"
-            }`}
+          }`}
         />
       </div>
 
@@ -882,14 +889,15 @@ function ColleagueTable({
                         )}
                       </div>
                       <div
-                        className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-card ${c.availability === "Available"
+                        className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-card ${
+                          c.availability === "Available"
                             ? "bg-emerald-500"
                             : c.availability === "Busy"
                               ? "bg-red-500"
                               : c.availability === "In Meeting"
                                 ? "bg-amber-500"
                                 : "bg-slate-400"
-                          }`}
+                        }`}
                       />
                     </div>
                     <div>
@@ -1018,14 +1026,15 @@ function ColleagueSlidePanel({
               )}
             </div>
             <div
-              className={`absolute bottom-0 right-0 w-6 h-6 rounded-full border-4 border-card ${colleague.availability === "Available"
+              className={`absolute bottom-0 right-0 w-6 h-6 rounded-full border-4 border-card ${
+                colleague.availability === "Available"
                   ? "bg-emerald-500"
                   : colleague.availability === "Busy"
                     ? "bg-red-500"
                     : colleague.availability === "In Meeting"
                       ? "bg-amber-500"
                       : "bg-slate-400"
-                }`}
+              }`}
             />
           </div>
 

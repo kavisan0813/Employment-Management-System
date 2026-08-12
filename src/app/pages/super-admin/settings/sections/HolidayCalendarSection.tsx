@@ -1,3 +1,4 @@
+import React from "react";
 import { useSettingsContext } from "../SettingsContext";
 import {
   MapPin,
@@ -8,6 +9,7 @@ import {
 } from "lucide-react";
 
 interface HolidayRecord {
+  id?: React.Key;
   name: string;
   date: string;
   day: string;
@@ -119,6 +121,7 @@ export function HolidayCalendarSection() {
                   recurring: true,
                   status: "Active",
                   description: "Mahatma Gandhi Birthday",
+                  id: undefined,
                 },
                 {
                   name: "New Year's Day",
@@ -130,6 +133,7 @@ export function HolidayCalendarSection() {
                   recurring: false,
                   status: "Active",
                   description: "New Year",
+                  id: undefined,
                 },
               ];
               setHolidaysList([...holidaysList, ...mockIndiaTemplate]);
@@ -216,7 +220,7 @@ export function HolidayCalendarSection() {
             color: "#8B5CF6",
             bg: "rgba(139, 92, 246, 0.1)",
           },
-        ].map((card, idx) => (
+        ].map((card) => (
           <div
             key={card.label}
             className="p-4 rounded-2xl flex items-center justify-between shadow-sm"
@@ -436,7 +440,7 @@ export function HolidayCalendarSection() {
               </tr>
             </thead>
             <tbody>
-              {filteredHols.map((h: HolidayRecord, idx: number) => (
+              {filteredHols.map((h: HolidayRecord) => (
                 <tr
                   key={h.id}
                   style={{
@@ -620,7 +624,7 @@ export function HolidayCalendarSection() {
             className="grid grid-cols-7 gap-2"
             style={{ minHeight: "200px" }}
           >
-            {filteredHols.map((h: HolidayRecord, i: number) => (
+            {filteredHols.map((h: HolidayRecord) => (
               <div
                 key={h.id}
                 onClick={() => {
@@ -674,8 +678,11 @@ export function HolidayCalendarSection() {
             state: holRegionSpecific,
             setter: setHolRegionSpecific,
           },
-        ].map((row, idx) => (
-          <div key={row.label} className="flex justify-between items-center py-2">
+        ].map((row) => (
+          <div
+            key={row.label}
+            className="flex justify-between items-center py-2"
+          >
             <span
               style={{
                 fontSize: "13px",

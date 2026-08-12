@@ -1,5 +1,11 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter, Navigate, useNavigate, useRouteError } from "react-router";
+import {
+  createBrowserRouter,
+  Navigate,
+  useNavigate,
+  useRouteError,
+  Link,
+} from "react-router";
 import { Layout } from "./components/Layout";
 import { Login } from "./pages/shared/Login";
 import { Signup } from "./pages/shared/Signup";
@@ -630,8 +636,8 @@ function AccessDenied() {
         does not have permission to view this page. Please contact your
         administrator if you believe this is a mistake.
       </p>
-      <a
-        href="/"
+      <Link
+        to="/"
         className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-white text-sm font-bold transition-all hover:scale-105 active:scale-95"
         style={{
           background: "linear-gradient(135deg, #10B981, #059669)",
@@ -639,7 +645,7 @@ function AccessDenied() {
         }}
       >
         Return to Dashboard
-      </a>
+      </Link>
     </div>
   );
 }
@@ -1014,11 +1020,13 @@ function RootRedirect() {
 }
 
 function RootErrorBoundary() {
-  const error = useRouteError() as any;
+  const error = useRouteError() as Error;
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center p-4 text-center">
       <h1 className="text-2xl font-bold">Something went wrong</h1>
-      <p className="mt-2 text-gray-500">{error?.message || "An unexpected error occurred"}</p>
+      <p className="mt-2 text-gray-500">
+        {error?.message || "An unexpected error occurred"}
+      </p>
       <button
         onClick={() => window.location.reload()}
         className="mt-6 rounded-md bg-[#00B87C] px-4 py-2 text-white hover:bg-[#00B87C]/90 transition-colors"
@@ -1033,7 +1041,11 @@ function RootErrorBoundary() {
 export const router = createBrowserRouter([
   { path: "/login", Component: Login, ErrorBoundary: RootErrorBoundary },
   { path: "/signup", Component: Signup, ErrorBoundary: RootErrorBoundary },
-  { path: "/signup-success", Component: AuthSuccess, ErrorBoundary: RootErrorBoundary },
+  {
+    path: "/signup-success",
+    Component: AuthSuccess,
+    ErrorBoundary: RootErrorBoundary,
+  },
   {
     path: "/platform-admin",
     ErrorBoundary: RootErrorBoundary,

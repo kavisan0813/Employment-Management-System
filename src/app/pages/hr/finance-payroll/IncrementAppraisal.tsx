@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { lazy, useState, useRef, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router";
 import {
@@ -27,18 +27,17 @@ import {
   RefreshCw,
   Info,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  ScatterChart,
-  Scatter,
-  Cell,
-} from "recharts";
+const BarChart = lazy(() => import("recharts").then(m => ({ default: m.BarChart })));
+const Bar = lazy(() => import("recharts").then(m => ({ default: m.Bar })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then(m => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then(m => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const ScatterChart = lazy(() => import("recharts").then(m => ({ default: m.ScatterChart })));
+const Scatter = lazy(() => import("recharts").then(m => ({ default: m.Scatter })));
+const Cell = lazy(() => import("recharts").then(m => ({ default: m.Cell })));
+
 import { employees } from "../../../data/mockData";
 
 // ─── Types ────────────────────────────────────────────────
@@ -581,7 +580,7 @@ function DetailDrawer({
                 },
                 { label: "Leave Days", value: emp.leaveDays, color: "#D97706" },
                 { label: "Late Marks", value: emp.lateMarks, color: "#DC2626" },
-              ].map((s, i) => (
+              ].map((s) => (
                 <div
                   key={s.label}
                   style={{
@@ -663,7 +662,7 @@ function DetailDrawer({
                   value: `${emp.managerRating}/5`,
                   color: "#D97706",
                 },
-              ].map((s, i) => (
+              ].map((s) => (
                 <div
                   key={s.label}
                   style={{
@@ -1261,7 +1260,19 @@ function Toast({
 }
 
 // ─── Main Page ────────────────────────────────────────────
-function ColHeader({ label, col, sortCol, sortDir, onSort }: { label: string; col: string; sortCol: string; sortDir: string; onSort: (col: string) => void }) {
+function ColHeader({
+  label,
+  col,
+  sortCol,
+  sortDir,
+  onSort,
+}: {
+  label: string;
+  col: string;
+  sortCol: string;
+  sortDir: string;
+  onSort: (col: string) => void;
+}) {
   return (
     <span
       onClick={() => onSort(col)}
@@ -1572,9 +1583,6 @@ export function IncrementAppraisal() {
     navigate("/payroll");
   }
 
-
-
-
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10">
       {/* ── Page Header ── */}
@@ -1847,7 +1855,7 @@ export function IncrementAppraisal() {
             sub: "annual increment",
             link: "/payroll",
           },
-        ].map((card, i) => (
+        ].map((card) => (
           <div
             key={card.label}
             onClick={() => card.link && navigate(card.link)}
@@ -2181,7 +2189,14 @@ export function IncrementAppraisal() {
             { label: "Status", col: "status" },
             { label: "Action", col: "" },
           ].map(({ label, col }) => (
-            <ColHeader key={label} label={label} col={col} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+            <ColHeader
+              key={label}
+              label={label}
+              col={col}
+              sortCol={sortCol}
+              sortDir={sortDir}
+              onSort={handleSort}
+            />
           ))}
         </div>
 
@@ -2642,7 +2657,7 @@ export function IncrementAppraisal() {
                 }}
               />
               <Scatter data={scatterData} fill="var(--primary)">
-                {scatterData.map((entry, index) => (
+                {scatterData.map((entry) => (
                   <Cell
                     key={`cell-${entry.increment}`}
                     fill={
@@ -2726,9 +2741,9 @@ export function IncrementAppraisal() {
                 radius={[6, 6, 0, 0]}
                 maxBarSize={32}
               >
-                {deptIncrementData.map((_, i) => (
+                {deptIncrementData.map((data, i) => (
                   <Cell
-                    key={`bar-${i}`}
+                    key={data.dept}
                     fill={i % 2 === 0 ? "#10B981" : "#14B8A6"}
                   />
                 ))}
@@ -2808,7 +2823,7 @@ export function IncrementAppraisal() {
               bg: "rgba(239,68,68,0.08)",
               msg: "Not eligible or 5% if att. ok",
             },
-          ].map((r, i) => (
+          ].map((r) => (
             <div
               key={r.color}
               style={{

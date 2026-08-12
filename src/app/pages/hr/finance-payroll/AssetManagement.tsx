@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { lazy, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import {
   Package,
@@ -25,19 +25,33 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  Cell,
-  PieChart,
-  Pie,
-} from "recharts";
+const ResponsiveContainer = lazy(() =>
+  import("recharts").then((m) => ({ default: m.ResponsiveContainer })),
+);
+const BarChart = lazy(() =>
+  import("recharts").then((m) => ({ default: m.BarChart })),
+);
+const Bar = lazy(() => import("recharts").then((m) => ({ default: m.Bar })));
+const XAxis = lazy(() =>
+  import("recharts").then((m) => ({ default: m.XAxis })),
+);
+const YAxis = lazy(() =>
+  import("recharts").then((m) => ({ default: m.YAxis })),
+);
+const CartesianGrid = lazy(() =>
+  import("recharts").then((m) => ({ default: m.CartesianGrid })),
+);
+const Tooltip = lazy(() =>
+  import("recharts").then((m) => ({ default: m.Tooltip })),
+);
+const Legend = lazy(() =>
+  import("recharts").then((m) => ({ default: m.Legend })),
+);
+const Cell = lazy(() => import("recharts").then((m) => ({ default: m.Cell })));
+const PieChart = lazy(() =>
+  import("recharts").then((m) => ({ default: m.PieChart })),
+);
+const Pie = lazy(() => import("recharts").then((m) => ({ default: m.Pie })));
 
 // Interfaces
 interface Asset {
@@ -52,11 +66,11 @@ interface Asset {
   value: number;
   assignedDate: string | null;
   status:
-  | "Assigned"
-  | "Pending Return"
-  | "Overdue"
-  | "Available"
-  | "Maintenance";
+    | "Assigned"
+    | "Pending Return"
+    | "Overdue"
+    | "Available"
+    | "Maintenance";
 }
 
 const MOCK_ASSETS: Asset[] = [
@@ -407,18 +421,18 @@ export function AssetManagement() {
         assets.map((a) =>
           a.id === selectedAsset.id
             ? {
-              ...a,
-              status: "Assigned",
-              assignedTo: assignEmployee || "New Employee",
-              department: assignDept || "Engineering",
-              assignedDate:
-                assignDate ||
-                new Date().toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                }),
-            }
+                ...a,
+                status: "Assigned",
+                assignedTo: assignEmployee || "New Employee",
+                department: assignDept || "Engineering",
+                assignedDate:
+                  assignDate ||
+                  new Date().toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  }),
+              }
             : a,
         ),
       );
@@ -450,13 +464,13 @@ export function AssetManagement() {
         assets.map((a) =>
           a.id === selectedAsset.id
             ? {
-              ...a,
-              status: newStatus as Asset["status"],
-              assignedTo: null,
-              department: null,
-              assignedDate: null,
-              assignedToResigned: false,
-            }
+                ...a,
+                status: newStatus as Asset["status"],
+                assignedTo: null,
+                department: null,
+                assignedDate: null,
+                assignedToResigned: false,
+              }
             : a,
         ),
       );
@@ -659,7 +673,7 @@ export function AssetManagement() {
               color: "#6B7280",
               valColor: "#4B5563",
             },
-          ].map((kpi, idx) => (
+          ].map((kpi) => (
             <div
               key={kpi.label}
               onClick={() => {
@@ -716,10 +730,11 @@ export function AssetManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-[14px] font-bold transition-all relative ${activeTab === tab
-                ? "text-[#00B87C]"
-                : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`pb-3 text-[14px] font-bold transition-all relative ${
+                activeTab === tab
+                  ? "text-[#00B87C]"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               {tab}
               {activeTab === tab && (
@@ -757,10 +772,11 @@ export function AssetManagement() {
                 setDeptDropdownOpen(false);
                 setStatusDropdownOpen(false);
               }}
-              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${categoryFilter !== "All"
-                ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
-                : "bg-card border-border text-foreground hover:bg-muted"
-                }`}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+                categoryFilter !== "All"
+                  ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
+                  : "bg-card border-border text-foreground hover:bg-muted"
+              }`}
             >
               Category{categoryFilter !== "All" ? `: ${categoryFilter}` : ""}{" "}
               <ChevronDown
@@ -794,10 +810,11 @@ export function AssetManagement() {
                         setCategoryFilter(cat);
                         setCategoryDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${categoryFilter === cat
-                        ? "text-[#00B87C] bg-[#00B87C]/5"
-                        : "text-foreground"
-                        }`}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${
+                        categoryFilter === cat
+                          ? "text-[#00B87C] bg-[#00B87C]/5"
+                          : "text-foreground"
+                      }`}
                     >
                       {cat}
                       {categoryFilter === cat && (
@@ -818,10 +835,11 @@ export function AssetManagement() {
                 setCategoryDropdownOpen(false);
                 setStatusDropdownOpen(false);
               }}
-              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${deptFilter !== "All"
-                ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
-                : "bg-card border-border text-foreground hover:bg-muted"
-                }`}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+                deptFilter !== "All"
+                  ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
+                  : "bg-card border-border text-foreground hover:bg-muted"
+              }`}
             >
               Department{deptFilter !== "All" ? `: ${deptFilter}` : ""}{" "}
               <ChevronDown
@@ -855,10 +873,11 @@ export function AssetManagement() {
                         setDeptFilter(dept);
                         setDeptDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${deptFilter === dept
-                        ? "text-[#00B87C] bg-[#00B87C]/5"
-                        : "text-foreground"
-                        }`}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${
+                        deptFilter === dept
+                          ? "text-[#00B87C] bg-[#00B87C]/5"
+                          : "text-foreground"
+                      }`}
                     >
                       {dept}
                       {deptFilter === dept && (
@@ -879,10 +898,11 @@ export function AssetManagement() {
                 setCategoryDropdownOpen(false);
                 setDeptDropdownOpen(false);
               }}
-              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${statusFilter !== "All"
-                ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
-                : "bg-card border-border text-foreground hover:bg-muted"
-                }`}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
+                statusFilter !== "All"
+                  ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]"
+                  : "bg-card border-border text-foreground hover:bg-muted"
+              }`}
             >
               Status{statusFilter !== "All" ? `: ${statusFilter}` : ""}{" "}
               <ChevronDown
@@ -916,10 +936,11 @@ export function AssetManagement() {
                         setStatusFilter(stat);
                         setStatusDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${statusFilter === stat
-                        ? "text-[#00B87C] bg-[#00B87C]/5"
-                        : "text-foreground"
-                        }`}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${
+                        statusFilter === stat
+                          ? "text-[#00B87C] bg-[#00B87C]/5"
+                          : "text-foreground"
+                      }`}
                     >
                       {stat}
                       {statusFilter === stat && (
@@ -1058,7 +1079,7 @@ export function AssetManagement() {
                           ]}
                         />
                         <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                          {deptChartData.map((entry, index) => (
+                          {deptChartData.map((entry) => (
                             <Cell key={entry.name} fill="#8B5CF6" />
                           ))}
                         </Bar>
@@ -1115,7 +1136,7 @@ export function AssetManagement() {
                           formatter={(value) => [`${value} assets`, "Count"]}
                         />
                         <Bar dataKey="value" radius={[0, 8, 8, 0]}>
-                          {statusChartData.map((entry, index) => {
+                          {statusChartData.map((entry) => {
                             const statusColors: Record<string, string> = {
                               Assigned: "#00B87C",
                               "Pending Return": "#F59E0B",
@@ -1168,8 +1189,8 @@ export function AssetManagement() {
                           {assets.length === 0
                             ? 0
                             : Math.round(
-                              totalValueSum / assets.length,
-                            ).toLocaleString("en-IN")}
+                                totalValueSum / assets.length,
+                              ).toLocaleString("en-IN")}
                         </span>
                       </div>
                       <div className="p-3 bg-muted rounded-xl border border-border/50">
@@ -1854,10 +1875,11 @@ export function AssetManagement() {
                         key={cond}
                         type="button"
                         onClick={() => setAssignCondition(cond)}
-                        className={`flex-1 py-1.5 text-[12px] font-bold rounded-lg transition-all ${assignCondition === cond
-                          ? "bg-[#00B87C] text-white shadow-sm"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                          }`}
+                        className={`flex-1 py-1.5 text-[12px] font-bold rounded-lg transition-all ${
+                          assignCondition === cond
+                            ? "bg-[#00B87C] text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                        }`}
                       >
                         {cond}
                       </button>
@@ -1996,12 +2018,13 @@ export function AssetManagement() {
                         key={cond}
                         type="button"
                         onClick={() => setRecoverCondition(cond)}
-                        className={`flex-1 py-1.5 text-[12px] font-bold rounded-lg transition-all ${recoverCondition === cond
-                          ? cond === "Damaged" || cond === "Lost"
-                            ? "bg-[#EF4444] text-white"
-                            : "bg-[#00B87C] text-white shadow-sm"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                          }`}
+                        className={`flex-1 py-1.5 text-[12px] font-bold rounded-lg transition-all ${
+                          recoverCondition === cond
+                            ? cond === "Damaged" || cond === "Lost"
+                              ? "bg-[#EF4444] text-white"
+                              : "bg-[#00B87C] text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                        }`}
                       >
                         {cond}
                       </button>
@@ -2025,7 +2048,7 @@ export function AssetManagement() {
                 <div className="mb-6">
                   <label className="block text-[11px] font-semibold text-[#94A3B8] tracking-wider mb-2">
                     RECOVERY NOTES{" "}
-                    {["Damaged", "Lost"].includes(recoverCondition) && (
+                    {new Set(["Damaged", "Lost"]).has(recoverCondition) && (
                       <span className="text-red-500">*</span>
                     )}
                   </label>
@@ -2033,7 +2056,9 @@ export function AssetManagement() {
                     rows={2}
                     value={recoverNotes}
                     onChange={(e) => setRecoverNotes(e.target.value)}
-                    required={["Damaged", "Lost"].includes(recoverCondition)}
+                    required={new Set(["Damaged", "Lost"]).has(
+                      recoverCondition,
+                    )}
                     className="w-full px-3 py-2.5 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] outline-none resize-none"
                   ></textarea>
                 </div>
@@ -2278,16 +2303,17 @@ export function AssetManagement() {
 
               {/* Status Banner */}
               <div
-                className={`px-6 py-3 shrink-0 flex items-center justify-between ${selectedAsset.status === "Assigned"
-                  ? "bg-[#ECFDF5] border-b border-[#A7F3D0]"
-                  : selectedAsset.status === "Pending Return"
-                    ? "bg-[#FEF3C7] border-b border-[#FDE68A]"
-                    : selectedAsset.status === "Overdue"
-                      ? "bg-[#FEF2F2] border-b border-[#FECACA]"
-                      : selectedAsset.status === "Available"
-                        ? "bg-muted border-b border-border"
-                        : "bg-[#F0FDFA] border-b border-[#CCFBF1]"
-                  }`}
+                className={`px-6 py-3 shrink-0 flex items-center justify-between ${
+                  selectedAsset.status === "Assigned"
+                    ? "bg-[#ECFDF5] border-b border-[#A7F3D0]"
+                    : selectedAsset.status === "Pending Return"
+                      ? "bg-[#FEF3C7] border-b border-[#FDE68A]"
+                      : selectedAsset.status === "Overdue"
+                        ? "bg-[#FEF2F2] border-b border-[#FECACA]"
+                        : selectedAsset.status === "Available"
+                          ? "bg-muted border-b border-border"
+                          : "bg-[#F0FDFA] border-b border-[#CCFBF1]"
+                }`}
               >
                 <div className="flex items-center gap-2">
                   {selectedAsset.status === "Assigned" && (
@@ -2306,28 +2332,30 @@ export function AssetManagement() {
                     <Wrench size={16} className="text-[#0F766E]" />
                   )}
                   <span
-                    className={`text-[13px] font-bold uppercase tracking-wider ${selectedAsset.status === "Assigned"
-                      ? "text-[#065F46]"
-                      : selectedAsset.status === "Pending Return"
-                        ? "text-[#92400E]"
-                        : selectedAsset.status === "Overdue"
-                          ? "text-[#991B1B]"
-                          : selectedAsset.status === "Available"
-                            ? "text-muted-foreground"
-                            : "text-[#115E59]"
-                      }`}
+                    className={`text-[13px] font-bold uppercase tracking-wider ${
+                      selectedAsset.status === "Assigned"
+                        ? "text-[#065F46]"
+                        : selectedAsset.status === "Pending Return"
+                          ? "text-[#92400E]"
+                          : selectedAsset.status === "Overdue"
+                            ? "text-[#991B1B]"
+                            : selectedAsset.status === "Available"
+                              ? "text-muted-foreground"
+                              : "text-[#115E59]"
+                    }`}
                   >
                     {selectedAsset.status}
                   </span>
                 </div>
                 {selectedAsset.assignedTo && (
                   <span
-                    className={`text-[12px] font-semibold ${selectedAsset.status === "Overdue"
-                      ? "text-[#DC2626]"
-                      : selectedAsset.status === "Pending Return"
-                        ? "text-[#D97706]"
-                        : "text-[#059669]"
-                      }`}
+                    className={`text-[12px] font-semibold ${
+                      selectedAsset.status === "Overdue"
+                        ? "text-[#DC2626]"
+                        : selectedAsset.status === "Pending Return"
+                          ? "text-[#D97706]"
+                          : "text-[#059669]"
+                    }`}
                   >
                     To {selectedAsset.assignedTo}
                   </span>
@@ -2345,10 +2373,11 @@ export function AssetManagement() {
                   <button
                     key={tab}
                     onClick={() => setDetailTab(tab)}
-                    className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider transition-colors border-b-2 ${detailTab === tab
-                      ? "border-[#00B87C] text-[#00B87C]"
-                      : "border-transparent text-muted-foreground hover:text-muted-foreground"
-                      }`}
+                    className={`flex-1 py-3 text-[11px] font-black uppercase tracking-wider transition-colors border-b-2 ${
+                      detailTab === tab
+                        ? "border-[#00B87C] text-[#00B87C]"
+                        : "border-transparent text-muted-foreground hover:text-muted-foreground"
+                    }`}
                   >
                     {tab.split(" ")[0]}
                   </button>
@@ -2590,13 +2619,13 @@ export function AssetManagement() {
 
                     <div className="space-y-3">
                       {(maintenanceLogs[selectedAsset.assetId] || []).length ===
-                        0 ? (
+                      0 ? (
                         <p className="text-center text-[12px] text-muted-foreground font-semibold py-4">
                           No maintenance logs found
                         </p>
                       ) : (
                         (maintenanceLogs[selectedAsset.assetId] || []).map(
-                          (log, index) => (
+                          (log) => (
                             <div
                               key={log.title}
                               className="bg-card border border-border rounded-xl p-4 shadow-sm"
@@ -2640,7 +2669,7 @@ export function AssetManagement() {
                         ];
                         const randomName =
                           fileNames[
-                          Math.floor(Math.random() * fileNames.length)
+                            Math.floor(Math.random() * fileNames.length)
                           ];
                         const currentDocs =
                           assetDocuments[selectedAsset.assetId] || [];
@@ -2669,13 +2698,13 @@ export function AssetManagement() {
                     </button>
 
                     {(assetDocuments[selectedAsset.assetId] || []).length ===
-                      0 ? (
+                    0 ? (
                       <p className="text-center text-[12px] text-muted-foreground font-semibold py-4">
                         No documents uploaded
                       </p>
                     ) : (
                       (assetDocuments[selectedAsset.assetId] || []).map(
-                        (doc, index) => (
+                        (doc) => (
                           <div
                             key={doc.name}
                             className="bg-card border border-border rounded-xl p-3 flex items-center gap-3 shadow-sm hover:border-[#00B87C]/30 cursor-pointer group transition-colors"
@@ -2731,18 +2760,18 @@ export function AssetManagement() {
                     Assign Asset
                   </button>
                 )}
-                {["Pending Return", "Overdue", "Maintenance"].includes(
+                {new Set(["Pending Return", "Overdue", "Maintenance"]).has(
                   selectedAsset.status,
                 ) && (
-                    <>
-                      <button className="py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted transition-colors">
-                        Edit Asset
-                      </button>
-                      <button className="py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted transition-colors flex items-center justify-center gap-2">
-                        <Download size={14} /> Download Report
-                      </button>
-                    </>
-                  )}
+                  <>
+                    <button className="py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted transition-colors">
+                      Edit Asset
+                    </button>
+                    <button className="py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted transition-colors flex items-center justify-center gap-2">
+                      <Download size={14} /> Download Report
+                    </button>
+                  </>
+                )}
               </div>
             </motion.div>
           </>

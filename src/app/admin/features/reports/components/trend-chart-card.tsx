@@ -1,4 +1,10 @@
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { lazy } from "react";
+const Area = lazy(() => import("recharts").then(m => ({ default: m.Area })));
+const AreaChart = lazy(() => import("recharts").then(m => ({ default: m.AreaChart })));
+const ResponsiveContainer = lazy(() => import("recharts").then(m => ({ default: m.ResponsiveContainer })));
+const Tooltip = lazy(() => import("recharts").then(m => ({ default: m.Tooltip })));
+const XAxis = lazy(() => import("recharts").then(m => ({ default: m.XAxis })));
+
 
 interface TrendChartCardProps {
   title: string;

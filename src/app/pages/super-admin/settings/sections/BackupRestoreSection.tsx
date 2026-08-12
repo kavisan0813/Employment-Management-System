@@ -350,7 +350,7 @@ export function BackupRestoreSection() {
               </tr>
             </thead>
             <tbody>
-              {backupHistory.map((b, idx) => (
+              {backupHistory.map((b) => (
                 <tr
                   key={b.date}
                   className="border-b border-gray-100 hover:bg-[#00B87C]/[0.08] transition-all text-[13px]"

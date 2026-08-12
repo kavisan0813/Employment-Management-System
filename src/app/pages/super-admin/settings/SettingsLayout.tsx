@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import * as Icons from "lucide-react";
-import { useSettingsContext } from "./SettingsContext";
+import { SettingsContext } from "./SettingsContext";
 import { ROLE_NAVIGATION } from "./config/sectionAccess";
 import {
   CompanyProfileSection,
@@ -53,7 +53,10 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
   // If Employee, we use local state for simplicity and self-containment
   const isEmployee = role === "Employee";
 
-  const context = isEmployee ? null : useSettingsContext();
+  const context = useContext(SettingsContext);
+  if (!isEmployee && !context) {
+    throw new Error("SettingsContext must be used within SettingsProvider");
+  }
 
   // Local state for Employee active section
   const [empActiveSection, setEmpActiveSection] = useState("emp_security");
@@ -144,7 +147,6 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
         return <PerformanceSettingsSection />;
       case "user_management":
         return <UserManagementSection />;
-
       case "security":
         return <SecuritySettingsSection />;
       case "audit_logs":

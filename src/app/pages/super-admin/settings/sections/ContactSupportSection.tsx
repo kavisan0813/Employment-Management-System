@@ -55,7 +55,7 @@ export function ContactSupportSection({
             phone: "+91 98765 00000",
             emergency: true,
           },
-        ].map((card, i) => {
+        ].map((card) => {
           const Icon = card.icon;
           return (
             <div
@@ -157,7 +157,7 @@ export function ContactSupportSection({
             role: "Finance Officer",
             email: "ananya@viyanhr.com",
           },
-        ].map((contact, i) => (
+        ].map((contact) => (
           <div
             key={contact.name}
             className="flex items-center justify-between px-6 py-4 border-b border-border/50 last:border-b-0 hover:bg-[#00B87C]/[0.08] transition-colors"
@@ -201,7 +201,7 @@ export function ContactSupportSection({
               hours: "Monday–Saturday, 8:00 AM – 8:00 PM IST",
             },
             { label: "Emergency", hours: "24/7" },
-          ].map((item, i) => (
+          ].map((item) => (
             <div key={item.label} className="flex items-center justify-between">
               <span className="text-[14px] font-bold text-muted-foreground">
                 {item.label}

@@ -538,7 +538,7 @@ export function FinanceSettlements() {
                         type="number"
                         disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                         value={salary}
-                        onChange={(e) => setSalary(Number(e.target.value))}
+                        onChange={(e) => setSalary((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                         className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-[#00B87C]"
                       />
                     </div>
@@ -550,7 +550,7 @@ export function FinanceSettlements() {
                         type="number"
                         disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                         value={leaveEncashment}
-                        onChange={(e) => setLeaveEncashment(Number(e.target.value))}
+                        onChange={(e) => setLeaveEncashment((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                         className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-[#00B87C]"
                       />
                     </div>
@@ -563,7 +563,7 @@ export function FinanceSettlements() {
                           type="number"
                           disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                           value={bonus}
-                          onChange={(e) => setBonus(Number(e.target.value))}
+                          onChange={(e) => setBonus((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                           className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-[#00B87C]"
                         />
                       </div>
@@ -575,7 +575,7 @@ export function FinanceSettlements() {
                           type="number"
                           disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                           value={incentives}
-                          onChange={(e) => setIncentives(Number(e.target.value))}
+                          onChange={(e) => setIncentives((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                           className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-[#00B87C]"
                         />
                       </div>
@@ -588,7 +588,7 @@ export function FinanceSettlements() {
                         type="number"
                         disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                         value={reimbursements}
-                        onChange={(e) => setReimbursements(Number(e.target.value))}
+                        onChange={(e) => setReimbursements((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                         className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-[#00B87C]"
                       />
                     </div>
@@ -601,7 +601,7 @@ export function FinanceSettlements() {
                           type="number"
                           disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                           value={gratuity}
-                          onChange={(e) => setGratuity(Number(e.target.value))}
+                          onChange={(e) => setGratuity((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                           className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-[#00B87C]"
                         />
                       </div>
@@ -613,7 +613,7 @@ export function FinanceSettlements() {
                           type="number"
                           disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                           value={otherEarnings}
-                          onChange={(e) => setOtherEarnings(Number(e.target.value))}
+                          onChange={(e) => setOtherEarnings((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                           className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-[#00B87C]"
                         />
                       </div>
@@ -635,7 +635,7 @@ export function FinanceSettlements() {
                         type="number"
                         disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                         value={noticePeriodRecovery}
-                        onChange={(e) => setNoticePeriodRecovery(Number(e.target.value))}
+                        onChange={(e) => setNoticePeriodRecovery((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                         className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-red-500"
                       />
                     </div>
@@ -648,7 +648,7 @@ export function FinanceSettlements() {
                           type="number"
                           disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                           value={loanRecovery}
-                          onChange={(e) => setLoanRecovery(Number(e.target.value))}
+                          onChange={(e) => setLoanRecovery((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                           className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-red-500"
                         />
                       </div>
@@ -660,7 +660,7 @@ export function FinanceSettlements() {
                           type="number"
                           disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                           value={assetRecovery}
-                          onChange={(e) => setAssetRecovery(Number(e.target.value))}
+                          onChange={(e) => setAssetRecovery((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                           className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-red-500"
                         />
                       </div>
@@ -673,7 +673,7 @@ export function FinanceSettlements() {
                         type="number"
                         disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                         value={taxDeduction}
-                        onChange={(e) => setTaxDeduction(Number(e.target.value))}
+                        onChange={(e) => setTaxDeduction((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                         className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-red-500"
                       />
                     </div>
@@ -686,7 +686,7 @@ export function FinanceSettlements() {
                           type="number"
                           disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                           value={pfEsiAdjustment}
-                          onChange={(e) => setPfEsiAdjustment(Number(e.target.value))}
+                          onChange={(e) => setPfEsiAdjustment((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                           className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-red-500"
                         />
                       </div>
@@ -698,7 +698,7 @@ export function FinanceSettlements() {
                           type="number"
                           disabled={!canManage || selectedExit.ffStatus === "Approved & Processed"}
                           value={otherDeductions}
-                          onChange={(e) => setOtherDeductions(Number(e.target.value))}
+                          onChange={(e) => setOtherDeductions((e.target.value === "" || isNaN(Number(e.target.value)) ? undefined : Number(e.target.value)))}
                           className="w-full bg-card border border-border rounded-xl px-4 py-2.5 text-xs font-bold outline-none focus:border-red-500"
                         />
                       </div>

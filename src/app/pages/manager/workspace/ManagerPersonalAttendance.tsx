@@ -390,7 +390,7 @@ export function ManagerPersonalAttendance() {
           { label: "Present", value: "21", color: "#00B87C" },
           { label: "Absent", value: "0", color: "var(--destructive)" },
           { label: "Leaves Taken", value: "1", color: "#F59E0B" },
-        ].map((card, i) => (
+        ].map((card) => (
           <div
             key={card.label}
             className="p-6 bg-card rounded-2xl border border-border shadow-sm flex flex-col items-center justify-center text-center group hover:border-[#00B87C] transition-colors"
@@ -451,7 +451,12 @@ export function ManagerPersonalAttendance() {
             <div className="grid grid-cols-7 gap-3">
               {calendarDays.map((day, i) => {
                 if (day === null)
-                  return <div key={`empty-${day.toISOString()}`} className="aspect-square" />;
+                  return (
+                    <div
+                      key={`empty-${day.toISOString()}`}
+                      className="aspect-square"
+                    />
+                  );
 
                 const isWeekend = i % 7 === 0 || i % 7 === 6;
                 const isToday = day === 6;
@@ -540,14 +545,15 @@ export function ManagerPersonalAttendance() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span
-                            className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${log.status === "Present"
-                              ? "bg-[#00B87C]/10 text-[#00B87C]"
-                              : log.status === "Late"
-                                ? "bg-amber-500/10 text-amber-600"
-                                : log.status === "Weekend"
-                                  ? "bg-secondary text-muted-foreground"
-                                  : "bg-red-500/10 text-red-600"
-                              }`}
+                            className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                              log.status === "Present"
+                                ? "bg-[#00B87C]/10 text-[#00B87C]"
+                                : log.status === "Late"
+                                  ? "bg-amber-500/10 text-amber-600"
+                                  : log.status === "Weekend"
+                                    ? "bg-secondary text-muted-foreground"
+                                    : "bg-red-500/10 text-red-600"
+                            }`}
                           >
                             {log.status}
                           </span>
@@ -603,7 +609,7 @@ export function ManagerPersonalAttendance() {
                 color: "text-muted-foreground",
               },
               { label: "Punctuality", value: "98%", color: "text-[#00B87C]" },
-            ].map((stat, i) => (
+            ].map((stat) => (
               <div
                 key={stat.label}
                 className="bg-card p-5 rounded-2xl border border-border shadow-sm text-center group hover:border-[#00B87C] transition-colors"
@@ -652,7 +658,7 @@ export function ManagerPersonalAttendance() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {ATTENDANCE_LOGS.map((log, i) => (
+                  {ATTENDANCE_LOGS.map((log) => (
                     <tr
                       key={log.date}
                       className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors group"
@@ -668,14 +674,15 @@ export function ManagerPersonalAttendance() {
                       </td>
                       <td className="px-6">
                         <span
-                          className={`text-[11px] font-semibold ${log.status === "Present"
-                            ? "text-[#00B87C]"
-                            : log.status === "Late"
-                              ? "text-amber-500"
-                              : log.status === "Leave"
-                                ? "text-indigo-400"
-                                : "text-muted-foreground/30"
-                            }`}
+                          className={`text-[11px] font-semibold ${
+                            log.status === "Present"
+                              ? "text-[#00B87C]"
+                              : log.status === "Late"
+                                ? "text-amber-500"
+                                : log.status === "Leave"
+                                  ? "text-indigo-400"
+                                  : "text-muted-foreground/30"
+                          }`}
                         >
                           {log.status}
                         </span>
