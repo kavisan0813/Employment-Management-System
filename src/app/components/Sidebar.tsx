@@ -9,11 +9,11 @@ import {
   Lock,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { usePermissions } from "../shared/permission-engine/PermissionContext";
 import {
-  usePermissions,
   filterNavigation,
   FULL_NAVIGATION,
-} from "../shared/permission-engine";
+} from "../shared/permission-engine/navigation";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -189,7 +189,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                       padding: collapsed ? "10px 14px" : "9px 12px",
                       borderRadius: "10px",
                       textDecoration: "none",
-                      transition: "all 0.15s ease",
+                      transition: "background-color 0.15s ease, color 0.15s ease, padding 0.15s ease, justify-content 0.15s ease",
                       backgroundColor: isGroupActive
                         ? "rgba(0, 184, 124, 0.12)"
                         : "transparent",
@@ -337,7 +337,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                                     padding: "7px 12px",
                                     borderRadius: "8px",
                                     textDecoration: "none",
-                                    transition: "all 0.15s ease",
+                                    transition: "background-color 0.15s ease, color 0.15s ease",
                                     backgroundColor: active
                                       ? "rgba(0, 184, 124, 0.12)"
                                       : "transparent",

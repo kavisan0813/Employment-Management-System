@@ -1171,12 +1171,15 @@ export function AuditLogs() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F3F4F6] dark:divide-white/5">
-              {paginatedLogs.map((log) => {
-                const sev = getSeverityConfig(log.severity);
-                const act = getActionConfig(log.action);
-                const isUserBlocked = blockedUsers.includes(log.user);
-                const isIpBlocked = blockedIPs.includes(log.ip);
-                return (
+              {(() => {
+                const blockedUsersSet = new Set(blockedUsers);
+                const blockedIPsSet = new Set(blockedIPs);
+                return paginatedLogs.map((log) => {
+                  const sev = getSeverityConfig(log.severity);
+                  const act = getActionConfig(log.action);
+                  const isUserBlocked = blockedUsersSet.has(log.user);
+                  const isIpBlocked = blockedIPsSet.has(log.ip);
+                  return (
                   <m.tr
                     key={log.id}
                     initial={{
@@ -1282,7 +1285,7 @@ export function AuditLogs() {
                     </td>
                   </m.tr>
                 );
-              })}
+              })})()}
               {displayedLogs.length === 0 && (
                 <tr>
                   <td

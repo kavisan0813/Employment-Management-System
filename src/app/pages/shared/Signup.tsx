@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useNavigate } from "react-router";
 import {
   Mail,
@@ -117,7 +117,7 @@ interface SignupFormData {
 export function Signup() {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -239,9 +239,7 @@ export function Signup() {
       return;
     }
 
-    setIsLoading(true);
-
-    setTimeout(() => {
+    startTransition(() => {
       // Create user record in system db with orgId = null
       const newUser: PlatformUser = {
         id: `user-${Date.now()}`,
@@ -289,19 +287,16 @@ export function Signup() {
         initials: registeredUser.initials,
       });
 
-      setIsLoading(false);
       toast.success(
         "Account created successfully! Verification email simulated.",
       );
       setStep(2.1);
-    }, 1200);
+    });
   };
 
   // Screen 2.4: Save organization settings
   const confirmOrganization = () => {
-    setIsLoading(true);
-
-    setTimeout(() => {
+    startTransition(() => {
       // Use OrgService to create the organization row in local DB
       const generatedCode =
         formData.orgName
@@ -341,10 +336,9 @@ export function Signup() {
 
       sessionStorage.setItem("viyan_current_org_id", newOrg.id);
 
-      setIsLoading(false);
       toast.success("Organization setup completed successfully!");
       setStep(3);
-    }, 1500);
+    });
   };
 
   // Screen 3: Choose Plan
@@ -364,9 +358,7 @@ export function Signup() {
   };
 
   const savePlanDetails = (planName: "Starter" | "Growth") => {
-    setIsLoading(true);
-
-    setTimeout(() => {
+    startTransition(() => {
       const orgId = sessionStorage.getItem("viyan_current_org_id");
       if (orgId) {
         // Update mock organizations plan
@@ -404,38 +396,25 @@ export function Signup() {
         db.subscriptions.save(updatedSubs);
       }
 
-      setIsLoading(false);
-      toast.success(`Activated the ${planName} Plan! Welcome aboard.`);
-
-      sessionStorage.removeItem("viyan_onboarding_step");
-      sessionStorage.removeItem("viyan_onboarding_data");
-      sessionStorage.removeItem("viyan_current_org_id");
-
       navigate("/admin/dashboard");
-    }, 1500);
+    });
   };
 
   const submitPayment = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
+    startTransition(() => {
       savePlanDetails(formData.plan as "Growth");
-    }, 2000);
+    });
   };
 
   const submitContactSales = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
+    startTransition(() => {
       toast.success(
         "Sales request submitted! Our team will contact you shortly.",
       );
       setStep(3);
-    }, 1200);
+    });
   };
 
   // Helper validation for steps
@@ -856,7 +835,7 @@ export function Signup() {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isPending}
               className="w-full relative group overflow-hidden rounded-2xl py-4 mt-6 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
               style={{
                 background: "linear-gradient(135deg, #10B981, #059669)",
@@ -865,8 +844,8 @@ export function Signup() {
               }}
             >
               <span className="relative z-10 flex items-center justify-center gap-2 text-white font-bold text-[15px]">
-                {isLoading ? "Creating Account..." : "Create Account"}
-                {!isLoading && (
+                {isPending ? "Creating Account..." : "Create Account"}
+                {!isPending && (
                   <ArrowRight
                     size={18}
                     className="transition-transform group-hover:translate-x-1.5"
@@ -1300,12 +1279,12 @@ export function Signup() {
               </button>
               <button
                 type="button"
-                disabled={isLoading}
+                disabled={isPending}
                 onClick={confirmOrganization}
                 className="flex items-center gap-1.5 px-8 py-3.5 rounded-full bg-emerald-500 text-white font-extrabold text-sm shadow-lg hover:bg-emerald-600 transition-all active:scale-95"
               >
-                {isLoading ? "Saving Setup..." : "Confirm & Continue"}
-                {!isLoading && <ArrowRight size={16} />}
+                {isPending ? "Saving Setup..." : "Confirm & Continue"}
+                {!isPending && <ArrowRight size={16} />}
               </button>
             </div>
           </div>
@@ -1654,11 +1633,11 @@ export function Signup() {
               </button>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isPending}
                 className="flex items-center gap-1.5 px-8 py-3.5 rounded-full bg-emerald-500 text-white font-extrabold text-sm shadow-lg hover:bg-emerald-600 transition-all active:scale-95"
               >
-                {isLoading ? "Processing payment..." : "Pay & Activate Plan"}
-                {!isLoading && <ArrowRight size={16} />}
+                {isPending ? "Processing payment..." : "Pay & Activate Plan"}
+                {!isPending && <ArrowRight size={16} />}
               </button>
             </div>
           </form>
@@ -1722,11 +1701,11 @@ export function Signup() {
               </button>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isPending}
                 className="flex items-center gap-1.5 px-8 py-3.5 rounded-full bg-emerald-500 text-white font-extrabold text-sm shadow-lg hover:bg-emerald-600 transition-all active:scale-95"
               >
-                {isLoading ? "Submitting request..." : "Submit Inquiry"}
-                {!isLoading && <ArrowRight size={16} />}
+                {isPending ? "Submitting request..." : "Submit Inquiry"}
+                {!isPending && <ArrowRight size={16} />}
               </button>
             </div>
           </form>

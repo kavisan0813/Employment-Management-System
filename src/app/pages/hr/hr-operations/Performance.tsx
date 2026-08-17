@@ -724,6 +724,7 @@ export function Performance() {
       a.setAttribute("download", `Performance_Report_${year}.csv`);
       document.body.appendChild(a);
       a.click();
+    URL.revokeObjectURL(a.href);
       document.body.removeChild(a);
       toast.dismiss();
       toast.success("Report downloaded successfully!");

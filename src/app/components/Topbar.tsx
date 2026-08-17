@@ -21,7 +21,8 @@ import {
 } from "lucide-react";
 import { employees } from "../data/mockData";
 import { useAuth } from "../context/AuthContext";
-import { usePermissions, P } from "../shared/permission-engine";
+import { usePermissions } from "../shared/permission-engine/PermissionContext";
+import { P } from "../shared/permission-engine/permissions";
 
 interface TopbarProps {
   title: string;

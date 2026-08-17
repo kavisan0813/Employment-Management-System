@@ -40,11 +40,9 @@ export function DepartmentDetailModal({
   canDelete,
 }: DepartmentDetailModalProps) {
   const navigate = useNavigate();
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(true);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+
 
   const handleClose = () => {
     setMounted(false);

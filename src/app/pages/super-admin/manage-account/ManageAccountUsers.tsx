@@ -312,6 +312,7 @@ export function ManageAccountUsers() {
     return list;
   }, [allUsers, sidebarFilter, search, deptFilter, roleFilter, statusFilter]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+    const selectedRowsSet = new Set(selectedRows);
   const paged = filtered.slice((page - 1) * perPage, page * perPage);
   const toggleRow = (id: string) => {
     setSelectedRows((prev) =>
@@ -939,19 +940,19 @@ export function ManageAccountUsers() {
                     key={u.id}
                     style={{
                       borderBottom: "1px solid #f3f4f6",
-                      backgroundColor: selectedRows.includes(u.id)
+                      backgroundColor: selectedRowsSet.has(u.id)
                         ? "#f5f3ff"
                         : undefined,
                       transition: "background-color 0.1s",
                     }}
                     onMouseEnter={(e) => {
-                      if (!selectedRows.includes(u.id))
+                      if (!selectedRowsSet.has(u.id))
                         (
                           e.currentTarget as HTMLTableRowElement
                         ).style.backgroundColor = "#fafafa";
                     }}
                     onMouseLeave={(e) => {
-                      if (!selectedRows.includes(u.id))
+                      if (!selectedRowsSet.has(u.id))
                         (
                           e.currentTarget as HTMLTableRowElement
                         ).style.backgroundColor = "";
@@ -966,7 +967,7 @@ export function ManageAccountUsers() {
                     >
                       <input
                         type="checkbox"
-                        checked={selectedRows.includes(u.id)}
+                        checked={selectedRowsSet.has(u.id)}
                         onChange={() => toggleRow(u.id)}
                         style={{
                           accentColor: "var(--primary)",

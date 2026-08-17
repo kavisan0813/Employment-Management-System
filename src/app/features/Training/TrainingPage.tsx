@@ -8,7 +8,8 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
-import { P, usePermissions } from "../../shared/permission-engine";
+import { P } from "../../shared/permission-engine/permissions";
+import { usePermissions } from "../../shared/permission-engine/PermissionContext";
 import { activityItems } from "./constants/mockData";
 import { Analytics } from "./components/Analytics";
 import { CourseCatalog } from "./components/CourseCatalog";

@@ -1008,9 +1008,9 @@ function EditPayrollModal({
 }) {
   const { user } = useAuth();
   const isHR = user?.role === "HR Manager";
-  const [gross, setGross] = useState(employee.gross.toString());
-  const [deductions, setDeductions] = useState(employee.deductions.toString());
-  const [bonus, setBonus] = useState((employee.bonus || 0).toString());
+  const [gross, setGross] = useState(() => employee.gross.toString());
+  const [deductions, setDeductions] = useState(() => employee.deductions.toString());
+  const [bonus, setBonus] = useState(() => (employee.bonus || 0).toString());
   const [bankAccount, setBankAccount] = useState(employee.bankAccount || "");
   const [status, setStatus] = useState(employee.status);
   const [errors, setErrors] = useState<Record<string, string>>({});

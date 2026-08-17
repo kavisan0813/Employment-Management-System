@@ -221,8 +221,9 @@ export function ManagerTeamOnboarding() {
       `----------------------------------------`,
       `Onboarding Tasks & Status:`,
     ];
+    const completedTasksSet = new Set(completedTasks.current);
     TASKS_DATA.forEach((task) => {
-      const isDone = completedTasks.current.includes(task.id) || task.urgency === "green";
+      const isDone = completedTasksSet.has(task.id) || task.urgency === "green";
       lines.push(
         `- ${task.title} [${isDone ? "Completed" : "Pending"}] (Due: ${task.due})`,
       );
@@ -618,9 +619,11 @@ export function ManagerTeamOnboarding() {
             </div>
 
             <div className="space-y-3">
-              {TASKS_DATA.map((task) => {
-                const isDone = completedTasks.current.includes(task.id);
-                return (
+              {(() => {
+                const completedTasksSet = new Set(completedTasks.current);
+                return TASKS_DATA.map((task) => {
+                  const isDone = completedTasksSet.has(task.id);
+                  return (
                   <div
                     key={task.id}
                     className={`rounded-xl border p-4 transition-all relative ${getUrgencyBorder(task.urgency)} border-l-[4px] ${isDone ? "bg-emerald-500/5 border-green-500/30" : "bg-card border-border hover:shadow-sm"}`}
@@ -713,7 +716,7 @@ export function ManagerTeamOnboarding() {
                     )}
                   </div>
                 );
-              })}
+              })})()}
             </div>
 
             {/* Completed Tasks Accordion */}

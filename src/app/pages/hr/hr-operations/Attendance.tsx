@@ -3,6 +3,7 @@ import { EmployeeAttendance } from "../../employee/EmployeeAttendance";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router";
 import {
+  ArrowDownUp,
   ChevronLeft,
   ChevronRight,
   CalendarDays,
@@ -303,7 +304,13 @@ export function Attendance() {
 function AdminAttendance() {
   const navigate = useNavigate();
 
-  const [view, setView] = useState<"table" | "calendar">("table");
+  const [view, setView] = useState<"table" | "calendar">("calendar");
+  const [selectedLocation, setSelectedLocation] = useState("All Locations");
+  const [selectedStatus, setSelectedStatus] = useState("All Statuses");
+  const [selectedShift, setSelectedShift] = useState("All Shifts");
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
+  const [showCorrectionModal, setShowCorrectionModal] = useState(false);
+  const [correctionRecord, setCorrectionRecord] = useState<any>(null);
   const [selectedDept, setSelectedDept] = useState("All Departments");
   const [selectedEmpId, setSelectedEmpId] = useState("All Employees");
   const [selectedMonth, setSelectedMonth] = useState(3); // April
@@ -579,9 +586,13 @@ function AdminAttendance() {
   const handleReset = () => {
     setSelectedDept("All Departments");
     setSelectedEmpId("All Employees");
+    setSelectedLocation("All Locations");
+    setSelectedStatus("All Statuses");
+    setSelectedShift("All Shifts");
     setSelectedMonth(3);
     setSelectedYear(2026);
     setSearchQuery("");
+    setSortConfig(null);
   };
 
   const handleDownload = (
@@ -632,8 +643,16 @@ function AdminAttendance() {
     }, 1500);
   };
 
+  const handleSort = (key: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
   const filteredLogs = useMemo(() => {
-    return records.filter((log) => {
+    let logs = records.filter((log) => {
       // 1. Filter by Department
       if (
         selectedDept !== "All Departments" &&
@@ -650,6 +669,10 @@ function AdminAttendance() {
         return false;
       }
 
+      // Filter by Status
+      if (selectedStatus !== "All Statuses" && log.status !== selectedStatus) {
+        return false;
+      }
       // 3. Filter by Search Query
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -665,7 +688,28 @@ function AdminAttendance() {
       const logDate = new Date(log.date);
       return logDate >= startDate && logDate <= endDate;
     });
-  }, [records, selectedDept, selectedEmpId, searchQuery, startDate, endDate]);
+
+    if (sortConfig !== null) {
+      logs.sort((a, b) => {
+        let aValue: any = a[sortConfig.key as keyof AttendanceRecord];
+        let bValue: any = b[sortConfig.key as keyof AttendanceRecord];
+        
+        if (sortConfig.key === "date") {
+          aValue = new Date(a.date).getTime();
+          bValue = new Date(b.date).getTime();
+        } else if (sortConfig.key === "hours") {
+          aValue = parseFloat(a.hours.replace('h', '.').replace('m', ''));
+          bValue = parseFloat(b.hours.replace('h', '.').replace('m', ''));
+        }
+
+        if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+        if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return logs;
+  }, [records, selectedDept, selectedEmpId, selectedStatus, searchQuery, startDate, endDate, sortConfig]);
 
   // Calendar Math
   const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
@@ -1436,21 +1480,29 @@ function AdminAttendance() {
             <span>Add Attendance</span>
           </button>
 
-          <div
-            className="flex items-center gap-1.5 p-1 h-10 rounded-xl border bg-card"
-            style={{ borderColor: "var(--border)" }}
-          >
-            <button
-              onClick={() => setView("table")}
-              className={`flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-bold transition-all ${view === "table" ? "bg-[var(--secondary)] text-[var(--primary)] shadow-sm" : "text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
-            >
-              <List size={14} /> Table
+          <div className="flex items-center gap-1.5 p-1 h-10 rounded-xl border bg-card" style={{ borderColor: "var(--border)" }}>
+            <button onClick={() => {
+              let m = selectedMonth - 1;
+              let y = selectedYear;
+              if (m < 0) { m = 11; y--; }
+              setSelectedMonth(m); setSelectedYear(y);
+            }} className="flex items-center justify-center w-8 h-full rounded-lg text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-all">
+              <ChevronLeft size={16} />
             </button>
-            <button
-              onClick={() => setView("calendar")}
-              className={`flex items-center gap-2 px-3.5 h-full rounded-lg text-xs font-bold transition-all ${view === "calendar" ? "bg-[var(--secondary)] text-[var(--primary)] shadow-sm" : "text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
-            >
-              <LayoutGrid size={14} /> Calendar
+            <button onClick={() => {
+              const now = new Date();
+              setSelectedMonth(now.getMonth());
+              setSelectedYear(now.getFullYear());
+            }} className="px-3 h-full rounded-lg text-xs font-bold text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-all">
+              Today
+            </button>
+            <button onClick={() => {
+              let m = selectedMonth + 1;
+              let y = selectedYear;
+              if (m > 11) { m = 0; y++; }
+              setSelectedMonth(m); setSelectedYear(y);
+            }} className="flex items-center justify-center w-8 h-full rounded-lg text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 transition-all">
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>
@@ -1469,227 +1521,89 @@ function AdminAttendance() {
       )}
 
       {/* ── Filter Bar ── */}
+      
+      {/* ── Filter Bar ── */}
       <div
-        className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-end p-4 rounded-2xl border bg-card shadow-sm"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3 items-end p-4 rounded-2xl border bg-card shadow-sm"
         style={{ borderColor: "var(--border)" }}
       >
         {/* Date Filter */}
-        <div className="lg:col-span-3 space-y-1">
+        <div className="space-y-1 col-span-2">
           <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
-            Period Selection
+            Period
           </label>
           <div className="flex items-center gap-2">
             <select
               value={selectedMonth}
-              onChange={(e) =>
-                setSelectedMonth(
-                  e.target.value === "" || isNaN(parseInt(e.target.value))
-                    ? undefined
-                    : parseInt(e.target.value),
-                )
-              }
+              onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
               className="flex-1 h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
-              style={{
-                borderColor: "var(--border)",
-                color: "var(--foreground)",
-              }}
+              style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
             >
               {MONTH_NAMES.map((name, i) => (
-                <option key={name} value={i}>
-                  {name}
-                </option>
+                <option key={name} value={i}>{name}</option>
               ))}
             </select>
             <select
               value={selectedYear}
-              onChange={(e) =>
-                setSelectedYear(
-                  e.target.value === "" || isNaN(parseInt(e.target.value))
-                    ? undefined
-                    : parseInt(e.target.value),
-                )
-              }
+              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
               className="w-20 h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none"
-              style={{
-                borderColor: "var(--border)",
-                color: "var(--foreground)",
-              }}
+              style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
             >
-              {[2024, 2025, 2026].map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
+              {[2024, 2025, 2026, 2027].map((y) => (
+                <option key={y} value={y}>{y}</option>
               ))}
             </select>
           </div>
         </div>
 
-        {/* Department Dropdown */}
-        <div className="lg:col-span-3 space-y-1 relative" ref={deptRef}>
-          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
-            Department
-          </label>
+        <div className="space-y-1 relative" ref={deptRef}>
+          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Department</label>
           <button
             onClick={() => setShowDeptDropdown(!showDeptDropdown)}
-            className="w-full h-10 px-4 rounded-xl border bg-transparent flex items-center justify-between text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
-            style={{
-              borderColor: showDeptDropdown
-                ? "var(--primary)"
-                : "var(--border)",
-              color: "var(--foreground)",
-            }}
+            className="w-full h-10 px-3 rounded-xl border bg-transparent flex items-center justify-between text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all truncate"
+            style={{ borderColor: showDeptDropdown ? "var(--primary)" : "var(--border)", color: "var(--foreground)" }}
           >
-            <div className="flex items-center gap-2 overflow-hidden">
-              <Users size={14} className="text-emerald-600 flex-shrink-0" />
-              <span className="truncate">{selectedDept}</span>
-            </div>
-            <ChevronDown
-              size={14}
-              className={`transition-transform duration-200 ${showDeptDropdown ? "rotate-180" : ""}`}
-            />
+            <span className="truncate">{selectedDept}</span>
+            <ChevronDown size={14} className={`flex-shrink-0 transition-transform duration-200 ${showDeptDropdown ? "rotate-180" : ""}`} />
           </button>
-
           {showDeptDropdown && (
-            <div
-              className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-card shadow-xl overflow-hidden"
-              style={{ borderColor: "var(--border)" }}
-            >
+            <div className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-card shadow-xl overflow-hidden" style={{ borderColor: "var(--border)" }}>
               <div className="max-h-60 overflow-y-auto">
-                <button
-                  onClick={() => handleDeptChange("All Departments")}
-                  className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-[var(--secondary)] transition-colors border-b"
-                  style={{
-                    borderColor: "var(--border)",
-                    color:
-                      selectedDept === "All Departments"
-                        ? "var(--primary)"
-                        : "var(--foreground)",
-                  }}
-                >
-                  All Departments
-                </button>
+                <button onClick={() => handleDeptChange("All Departments")} className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-[var(--secondary)] transition-colors border-b" style={{ borderColor: "var(--border)", color: selectedDept === "All Departments" ? "var(--primary)" : "var(--foreground)" }}>All Departments</button>
                 {departments.map((dept) => (
-                  <button
-                    key={dept.id}
-                    onClick={() => handleDeptChange(dept.name)}
-                    className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-[var(--secondary)] transition-colors border-b last:border-0"
-                    style={{
-                      borderColor: "var(--border)",
-                      color:
-                        selectedDept === dept.name
-                          ? "var(--primary)"
-                          : "var(--foreground)",
-                    }}
-                  >
-                    {dept.name}
-                  </button>
+                  <button key={dept.id} onClick={() => handleDeptChange(dept.name)} className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-[var(--secondary)] transition-colors border-b last:border-0" style={{ borderColor: "var(--border)", color: selectedDept === dept.name ? "var(--primary)" : "var(--foreground)" }}>{dept.name}</button>
                 ))}
               </div>
             </div>
           )}
         </div>
 
-        {/* Employee Dropdown (Dependent) */}
-        <div className="lg:col-span-4 space-y-1 relative" ref={empRef}>
-          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
-            Employee
-          </label>
+        <div className="space-y-1 relative" ref={empRef}>
+          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Employee</label>
           <button
             onClick={() => setShowEmpDropdown(!showEmpDropdown)}
-            className="w-full h-10 px-4 rounded-xl border bg-transparent flex items-center justify-between text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all"
-            style={{
-              borderColor: showEmpDropdown ? "var(--primary)" : "var(--border)",
-              color: "var(--foreground)",
-            }}
+            className="w-full h-10 px-3 rounded-xl border bg-transparent flex items-center justify-between text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all truncate"
+            style={{ borderColor: showEmpDropdown ? "var(--primary)" : "var(--border)", color: "var(--foreground)" }}
           >
-            <div className="flex items-center gap-2 overflow-hidden">
-              <User size={14} className="text-emerald-600 flex-shrink-0" />
-              <span className="truncate">
-                {selectedEmployee ? selectedEmployee.name : "All Employees"}
-              </span>
-            </div>
-            <ChevronDown
-              size={14}
-              className={`transition-transform duration-200 ${showEmpDropdown ? "rotate-180" : ""}`}
-            />
+            <span className="truncate">{selectedEmployee ? selectedEmployee.name : "All Employees"}</span>
+            <ChevronDown size={14} className={`flex-shrink-0 transition-transform duration-200 ${showEmpDropdown ? "rotate-180" : ""}`} />
           </button>
-
           {showEmpDropdown && (
-            <div
-              className="absolute top-[calc(100%+8px)] left-0 w-full z-[2000] rounded-2xl border bg-card shadow-xl overflow-hidden"
-              style={{ borderColor: "var(--border)" }}
-            >
-              <div
-                className="p-2 border-b"
-                style={{ borderColor: "var(--border)" }}
-              >
-                <div
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-zinc-800 border"
-                  style={{ borderColor: "var(--border)" }}
-                >
+            <div className="absolute top-[calc(100%+8px)] left-0 w-full min-w-[200px] z-[2000] rounded-2xl border bg-card shadow-xl overflow-hidden" style={{ borderColor: "var(--border)" }}>
+              <div className="p-2 border-b" style={{ borderColor: "var(--border)" }}>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-zinc-800 border" style={{ borderColor: "var(--border)" }}>
                   <Search size={12} className="text-muted-foreground" />
-                  <input
-                    autoFocus
-                    placeholder="Search..."
-                    className="bg-transparent border-none outline-none text-[11px] font-medium w-full"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+                  <input autoFocus placeholder="Search..." className="bg-transparent border-none outline-none text-[11px] font-medium w-full" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                 </div>
               </div>
               <div className="max-h-60 overflow-y-auto">
-                <button
-                  onClick={() => {
-                    setSelectedEmpId("All Employees");
-                    setShowEmpDropdown(false);
-                  }}
-                  className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-[var(--secondary)] transition-colors border-b"
-                  style={{
-                    borderColor: "var(--border)",
-                    color:
-                      selectedEmpId === "All Employees"
-                        ? "var(--primary)"
-                        : "var(--foreground)",
-                  }}
-                >
-                  All Employees
-                </button>
+                <button onClick={() => { setSelectedEmpId("All Employees"); setShowEmpDropdown(false); }} className="w-full px-4 py-2.5 text-left text-xs font-bold hover:bg-[var(--secondary)] transition-colors border-b" style={{ borderColor: "var(--border)", color: selectedEmpId === "All Employees" ? "var(--primary)" : "var(--foreground)" }}>All Employees</button>
                 {displayedEmployees.map((emp) => (
-                  <button
-                    key={emp.id}
-                    onClick={() => {
-                      setSelectedEmpId(emp.id);
-                      setShowEmpDropdown(false);
-                    }}
-                    className="w-full px-4 py-2.5 flex items-center gap-3 text-left transition-colors border-b last:border-0 hover:bg-[var(--secondary)]"
-                    style={{ borderColor: "var(--border)" }}
-                  >
-                    <img
-                      src={emp.avatar}
-                      alt=""
-                      className="w-7 h-7 rounded-full object-cover border-2"
-                      style={{
-                        borderColor:
-                          selectedEmpId === emp.id
-                            ? "var(--primary)"
-                            : "transparent",
-                      }}
-                    />
+                  <button key={emp.id} onClick={() => { setSelectedEmpId(emp.id); setShowEmpDropdown(false); }} className="w-full px-4 py-2.5 flex items-center gap-3 text-left transition-colors border-b last:border-0 hover:bg-[var(--secondary)]" style={{ borderColor: "var(--border)" }}>
+                    <img src={emp.avatar} alt="" className="w-7 h-7 rounded-full object-cover border-2" style={{ borderColor: selectedEmpId === emp.id ? "var(--primary)" : "transparent" }} />
                     <div className="flex-1 min-w-0">
-                      <p
-                        className="text-xs font-bold truncate"
-                        style={{
-                          color:
-                            selectedEmpId === emp.id
-                              ? "var(--primary)"
-                              : "var(--foreground)",
-                        }}
-                      >
-                        {emp.name}
-                      </p>
-                      <p className="text-[9px] text-muted-foreground truncate uppercase">
-                        {emp.role}
-                      </p>
+                      <p className="text-xs font-bold truncate" style={{ color: selectedEmpId === emp.id ? "var(--primary)" : "var(--foreground)" }}>{emp.name}</p>
+                      <p className="text-[9px] text-muted-foreground truncate uppercase">{emp.role}</p>
                     </div>
                   </button>
                 ))}
@@ -1698,29 +1612,44 @@ function AdminAttendance() {
           )}
         </div>
 
-        {/* Actions */}
-        <div className="lg:col-span-2 flex items-center gap-2">
-          <button
-            onClick={handleReset}
-            className="flex-1 h-10 flex items-center justify-center gap-2 rounded-xl border border-dashed text-xs font-bold transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800"
-            style={{
-              borderColor: "var(--border)",
-              color: "var(--muted-foreground)",
-            }}
-          >
-            <RotateCcw size={14} /> Reset
+        <div className="space-y-1">
+          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Location</label>
+          <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)} className="w-full h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
+            <option value="All Locations">All Locations</option>
+            <option value="HQ Office">HQ Office</option>
+            <option value="Branch Office">Branch Office</option>
+            <option value="Remote">Remote</option>
+          </select>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Status</label>
+          <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} className="w-full h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
+            <option value="All Statuses">All Statuses</option>
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+            <option value="Late">Late</option>
+            <option value="Leave">Leave</option>
+            <option value="Holiday">Holiday</option>
+          </select>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Shift</label>
+          <select value={selectedShift} onChange={(e) => setSelectedShift(e.target.value)} className="w-full h-10 px-3 rounded-xl border bg-transparent text-xs font-bold focus:ring-2 focus:ring-emerald-500/20 outline-none" style={{ borderColor: "var(--border)", color: "var(--foreground)" }}>
+            <option value="All Shifts">All Shifts</option>
+            <option value="Morning">Morning</option>
+            <option value="Evening">Evening</option>
+            <option value="Night">Night</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button onClick={handleReset} className="w-10 h-10 flex items-center justify-center rounded-xl border border-dashed transition-all hover:bg-neutral-50 dark:hover:bg-zinc-800" style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}>
+            <RotateCcw size={14} />
           </button>
-          <button
-            onClick={(e) => handleDownload(e, "full")}
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-white shadow-lg shadow-emerald-500/20 transition-all hover:opacity-90 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
-            style={{ background: "linear-gradient(135deg, #10B981, #059669)" }}
-            disabled={isDownloading}
-          >
-            {isDownloading ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Download size={16} />
-            )}
+          <button onClick={(e) => handleDownload(e, "full")} className="flex-1 h-10 flex items-center justify-center gap-2 rounded-xl text-white shadow-lg shadow-emerald-500/20 transition-all hover:opacity-90 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed" style={{ background: "linear-gradient(135deg, #10B981, #059669)" }} disabled={isDownloading}>
+            {isDownloading ? <Loader2 size={16} className="animate-spin" /> : <><Download size={14} /><span className="text-xs font-bold">Export</span></>}
           </button>
         </div>
       </div>
@@ -1728,412 +1657,25 @@ function AdminAttendance() {
       {/* ── Summary Cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          {
-            label:
-              selectedEmpId === "All Employees"
-                ? "Avg. Working Days"
-                : "Total Working Days",
-            value: metrics.totalDays,
-            icon: CalendarIcon,
-            color: "var(--primary)",
-            bg: "var(--secondary)",
-            trend: null,
-          },
-          {
-            label:
-              selectedEmpId === "All Employees"
-                ? "Avg. Present Days"
-                : "Present Days",
-            value: metrics.present,
-            icon: CheckCircle2,
-            color: "var(--primary)",
-            bg: "var(--secondary)",
-            trend: "+2%",
-            trendUp: true,
-          },
-          {
-            label:
-              selectedEmpId === "All Employees"
-                ? "Avg. Absent Days"
-                : "Absent Days",
-            value: metrics.absent,
-            icon: XCircle,
-            color: "#EF4444",
-            bg: "rgba(239, 68, 68, 0.1)",
-            trend: "-1%",
-            trendUp: false,
-          },
-          {
-            label:
-              selectedEmpId === "All Employees"
-                ? "Avg. Late Count"
-                : "Late Count",
-            value: metrics.late,
-            icon: Clock,
-            color: "#F59E0B",
-            bg: "rgba(245, 158, 11, 0.1)",
-            trend: metrics.lateTrend + "%",
-            trendUp: false,
-          },
+          { label: "WEEKDAYS", value: "22", desc: "Selected month", color: "var(--primary)", bg: "var(--secondary)" },
+          { label: "WEEKEND HOLIDAYS", value: "8", desc: "Saturday + Sunday", color: "var(--muted-foreground)", bg: "var(--border)" },
+          { label: "FESTIVAL HOLIDAYS", value: "2", desc: "Configured holidays", color: "#F59E0B", bg: "rgba(245, 158, 11, 0.1)" },
+          { label: "WORKING DAYS", value: "20", desc: "Expected working days", color: "#10B981", bg: "rgba(16, 185, 129, 0.1)" },
         ].map((card) => (
-          <div
-            key={card.label}
-            className="group p-4 rounded-2xl border bg-card shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)]"
-            style={{ borderColor: "var(--border)" }}
-          >
-            <div className="flex items-start justify-between">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
-                style={{ backgroundColor: card.bg }}
-              >
-                <card.icon size={18} style={{ color: card.color }} />
-              </div>
-              {card.trend && (
-                <div
-                  className={`flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full ${card.trendUp ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10" : "bg-orange-50 text-orange-600 dark:bg-orange-500/10"}`}
-                >
-                  {card.trendUp ? (
-                    <TrendingUp size={10} />
-                  ) : (
-                    <TrendingDown size={10} />
-                  )}
-                  {card.trend}
-                </div>
-              )}
-            </div>
-            <div className="mt-3">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
-                {card.label}
-              </p>
-              <p
-                className="text-2xl font-black mt-0.5"
-                style={{ color: "var(--foreground)" }}
-              >
-                {card.value}
-              </p>
+          <div key={card.label} className="group p-5 rounded-2xl border bg-card shadow-sm transition-all hover:-translate-y-[2px] hover:border-[#00B87C]" style={{ borderColor: "var(--border)" }}>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{card.label}</p>
+            <div className="flex items-end gap-3">
+              <p className="text-4xl font-black leading-none" style={{ color: card.label === "WORKING DAYS" ? "#10B981" : "var(--foreground)" }}>{card.value}</p>
+              <p className="text-xs font-semibold text-muted-foreground mb-1">{card.desc}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-        {/* ── Main View (Table or Calendar) ── */}
-        <div className="xl:col-span-8 space-y-6">
-          {view === "table" ? (
-            <div
-              className="rounded-2xl border bg-card shadow-sm overflow-hidden flex flex-col"
-              style={{ borderColor: "var(--border)" }}
-            >
-              <div
-                className="p-4 border-b flex items-center justify-between"
-                style={{ borderColor: "var(--border)" }}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-5 rounded-full bg-emerald-500" />
-                  <h3
-                    className="text-base font-extrabold"
-                    style={{ color: "var(--foreground)" }}
-                  >
-                    Attendance Records
-                  </h3>
-                </div>
-                <div className="flex items-center gap-2 text-[11px] font-bold text-muted-foreground">
-                  Showing{" "}
-                  <span className="text-foreground">
-                    {Math.min(filteredLogs.length, itemsPerPage)}
-                  </span>{" "}
-                  of{" "}
-                  <span className="text-foreground">{filteredLogs.length}</span>
-                </div>
-              </div>
+      <div className="space-y-6">
+        {/* ── Attendance Calendar (Primary View) ── */}
+        <div className="rounded-2xl border bg-card shadow-sm overflow-hidden" style={{ borderColor: "var(--border)" }}>
 
-              <div className="overflow-x-auto scrollbar-thin">
-                <table className="w-full text-left border-collapse min-w-[800px]">
-                  <thead>
-                    <tr className="bg-neutral-50 dark:bg-zinc-800/50">
-                      <th
-                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
-                        style={{ borderColor: "var(--border)" }}
-                      >
-                        Employee
-                      </th>
-                      <th
-                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
-                        style={{ borderColor: "var(--border)" }}
-                      >
-                        Date
-                      </th>
-                      <th
-                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
-                        style={{ borderColor: "var(--border)" }}
-                      >
-                        Status
-                      </th>
-                      <th
-                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
-                        style={{ borderColor: "var(--border)" }}
-                      >
-                        Punch In
-                      </th>
-                      <th
-                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b"
-                        style={{ borderColor: "var(--border)" }}
-                      >
-                        Punch Out
-                      </th>
-                      <th
-                        className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b text-center"
-                        style={{ borderColor: "var(--border)" }}
-                      >
-                        Working Hours
-                      </th>
-                      <th
-                        className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b text-right"
-                        style={{ borderColor: "var(--border)" }}
-                      >
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredLogs
-                      .slice(
-                        (currentPage - 1) * itemsPerPage,
-                        currentPage * itemsPerPage,
-                      )
-                      .map((log) => {
-                        const emp =
-                          employees.find((e) => e.id === log.employeeId) ||
-                          employees[0];
-
-                        return (
-                          <tr
-                            key={log.id}
-                            className="group hover:bg-neutral-50/80 dark:hover:bg-zinc-800/40 transition-colors"
-                          >
-                            <td
-                              className="px-5 py-2.5 border-b"
-                              style={{ borderColor: "var(--border)" }}
-                            >
-                              <div
-                                className="flex items-center gap-3 cursor-pointer group/emp"
-                                onClick={() => handleEmployeeRedirect(emp.id)}
-                              >
-                                <div className="relative">
-                                  <img
-                                    src={emp.avatar}
-                                    alt=""
-                                    className="w-8 h-8 rounded-full object-cover border-2 border-white dark:border-zinc-800 shadow-sm transition-transform group-hover/emp:scale-110"
-                                  />
-                                  <div
-                                    className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-zinc-900"
-                                    style={{
-                                      backgroundColor: "var(--primary)",
-                                    }}
-                                  />
-                                </div>
-                                <div>
-                                  <p
-                                    className="text-xs font-bold transition-colors group-hover/emp:text-[var(--primary)]"
-                                    style={{ color: "var(--foreground)" }}
-                                  >
-                                    {emp.name}
-                                  </p>
-                                  <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-tight">
-                                    {emp.department}
-                                  </p>
-                                </div>
-                              </div>
-                            </td>
-                            <td
-                              className="px-5 py-2.5 border-b"
-                              style={{ borderColor: "var(--border)" }}
-                            >
-                              <p
-                                className="text-xs font-semibold"
-                                style={{ color: "var(--foreground)" }}
-                              >
-                                {log.date}
-                              </p>
-                            </td>
-                            <td
-                              className="px-5 py-2.5 border-b"
-                              style={{ borderColor: "var(--border)" }}
-                            >
-                              <StatusBadge status={log.status} />
-                            </td>
-                            <td
-                              className="px-5 py-2.5 border-b"
-                              style={{ borderColor: "var(--border)" }}
-                            >
-                              <div className="flex items-center gap-1.5">
-                                <ArrowUpRight
-                                  size={12}
-                                  className="text-emerald-500"
-                                />
-                                <span
-                                  className="text-xs font-bold"
-                                  style={{ color: "var(--foreground)" }}
-                                >
-                                  {log.checkIn}
-                                </span>
-                              </div>
-                            </td>
-                            <td
-                              className="px-5 py-2.5 border-b"
-                              style={{ borderColor: "var(--border)" }}
-                            >
-                              <div className="flex items-center gap-1.5">
-                                <ArrowUpRight
-                                  size={12}
-                                  className="text-orange-500 rotate-90"
-                                />
-                                <span
-                                  className="text-xs font-bold"
-                                  style={{ color: "var(--foreground)" }}
-                                >
-                                  {log.checkOut}
-                                </span>
-                              </div>
-                            </td>
-                            <td
-                              className="px-5 py-2.5 border-b text-center"
-                              style={{ borderColor: "var(--border)" }}
-                            >
-                              <div className="flex flex-col items-center">
-                                <p
-                                  className="text-xs font-black"
-                                  style={{ color: "var(--foreground)" }}
-                                >
-                                  {log.hours}
-                                </p>
-                                <div className="w-16 h-1 rounded-full bg-neutral-100 dark:bg-zinc-800 overflow-hidden mt-1">
-                                  <div
-                                    className="h-full bg-emerald-500 rounded-full"
-                                    style={{
-                                      width: log.hours.includes("9h")
-                                        ? "95%"
-                                        : "80%",
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </td>
-                            <td
-                              className="px-5 py-2.5 border-b text-right relative"
-                              style={{ borderColor: "var(--border)" }}
-                            >
-                              <div className="flex items-center justify-end gap-1">
-                                <button
-                                  className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors"
-                                  aria-label={`Actions for ${emp.name} on ${log.date}`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setActiveRowMenu(
-                                      activeRowMenu === log.id ? null : log.id,
-                                    );
-                                  }}
-                                >
-                                  <MoreVertical size={16} />
-                                </button>
-                                {activeRowMenu === log.id && (
-                                  <div className="absolute right-5 mt-1 w-32 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-[2100] py-1 text-left animate-in fade-in slide-in-from-top-1">
-                                    <button
-                                      className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40"
-                                      onClick={() => {
-                                        setActiveRowMenu(null);
-                                        handleOpenEdit(log);
-                                      }}
-                                    >
-                                      Edit
-                                    </button>
-                                    <button
-                                      className="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20"
-                                      onClick={() => {
-                                        setActiveRowMenu(null);
-                                        setDeleteConfirm(log.id);
-                                      }}
-                                    >
-                                      Delete
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pagination */}
-              <div
-                className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t"
-                style={{ borderColor: "var(--border)" }}
-              >
-                <p className="text-[11px] font-bold text-muted-foreground">
-                  Showing{" "}
-                  <span className="text-foreground">
-                    {(currentPage - 1) * itemsPerPage + 1}
-                  </span>{" "}
-                  to{" "}
-                  <span className="text-foreground">
-                    {Math.min(currentPage * itemsPerPage, filteredLogs.length)}
-                  </span>{" "}
-                  of{" "}
-                  <span className="text-foreground">{filteredLogs.length}</span>
-                </p>
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(1, prev - 1))
-                    }
-                    className="p-1.5 rounded-lg border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 disabled:opacity-30 transition-all active:scale-95"
-                    style={{ borderColor: "var(--border)" }}
-                    disabled={currentPage === 1}
-                  >
-                    <ChevronLeft size={14} />
-                  </button>
-                  {Array.from({
-                    length: Math.ceil(filteredLogs.length / itemsPerPage),
-                  }).map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrentPage(i + 1)}
-                      className={`w-7 h-7 rounded-lg text-[11px] font-semibold transition-all ${currentPage === i + 1 ? "bg-[var(--primary)] text-white shadow-lg shadow-emerald-500/20" : "border border-transparent hover:border-border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`}
-                      style={{
-                        borderColor:
-                          currentPage !== i + 1
-                            ? "var(--border)"
-                            : "transparent",
-                      }}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) =>
-                        Math.min(
-                          Math.ceil(filteredLogs.length / itemsPerPage),
-                          prev + 1,
-                        ),
-                      )
-                    }
-                    className="p-1.5 rounded-lg border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 disabled:opacity-30 transition-all active:scale-95"
-                    style={{ borderColor: "var(--border)" }}
-                    disabled={
-                      currentPage ===
-                      Math.ceil(filteredLogs.length / itemsPerPage)
-                    }
-                  >
-                    <ChevronRight size={14} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
             <div
               className="rounded-2xl border bg-card shadow-sm overflow-hidden"
               style={{ borderColor: "var(--border)" }}
@@ -2155,18 +1697,14 @@ function AdminAttendance() {
                   {[
                     { label: "Present", color: "#10B981" },
                     { label: "Absent", color: "#EF4444" },
-                    { label: "Leave", color: "#F59E0B" },
+                    { label: "Late", color: "#F59E0B" },
+                    { label: "Leave", color: "#A78BFA" },
                     { label: "Holiday", color: "#14B8A6" },
                     { label: "Weekend", color: "#94A3B8" },
                   ].map((item) => (
                     <div key={item.label} className="flex items-center gap-1.5">
-                      <div
-                        className="w-2.5 h-2.5 rounded-full"
-                        style={{ backgroundColor: item.color }}
-                      />
-                      <span className="text-[11px] font-bold text-muted-foreground">
-                        {item.label}
-                      </span>
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="text-[11px] font-bold text-muted-foreground">{item.label}</span>
                     </div>
                   ))}
                 </div>
@@ -2292,35 +1830,23 @@ function AdminAttendance() {
                         >
                           {day}
                         </span>
-                        {status !== "Weekend" && (
+                        {status !== "Weekend" && status !== "Future" && (
                           <div
-                            className="mt-1.5 w-1.5 h-1.5 rounded-full"
-                            style={{ backgroundColor: dotColor }}
-                          />
-                        )}
-
-                        {/* Status Label on Hover */}
-                        {status !== "Weekend" && (
-                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-white/60 dark:bg-zinc-900/60 rounded-2xl pointer-events-none">
-                            <span
-                              className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-md bg-white dark:bg-zinc-900 shadow-sm border"
-                              style={{
-                                color: config.color,
-                                borderColor: "var(--border)",
-                              }}
-                            >
-                              {status}
-                            </span>
+                            className="mt-1 px-1.5 py-0.5 rounded-md text-[9px] font-bold"
+                            style={{ backgroundColor: `${dotColor}20`, color: dotColor }}
+                          >
+                            {status}
                           </div>
                         )}
+
+                        
                       </button>
                     );
                   })}
-                </div>
-              </div>
-            </div>
-          )}
-
+                </div></div>
+        
+        {/* ── Analytics Section ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Monthly Trend Chart */}
           <div
             className="rounded-2xl border bg-card shadow-sm p-5"
@@ -2363,9 +1889,7 @@ function AdminAttendance() {
           </div>
         </div>
 
-        {/* ── Right Sidebar: Advanced Analytics ── */}
-        <div className="xl:col-span-4 space-y-5">
-          {/* Employee Year Summary */}
+        {/* Advanced Analytics */}
           <div
             className="rounded-2xl border bg-card shadow-sm p-5"
             style={{ borderColor: "var(--border)" }}
@@ -2524,7 +2048,94 @@ function AdminAttendance() {
             </div>
           </div>
 
-          {/* System Alerts */}
+          </div>
+
+        {/* ── Attendance Records Table ── */}
+        <div className="rounded-2xl border bg-card shadow-sm overflow-hidden flex flex-col" style={{ borderColor: "var(--border)" }}>
+          <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-5 rounded-full bg-emerald-500" />
+              <h3 className="text-base font-extrabold" style={{ color: "var(--foreground)" }}>Detailed Attendance Records</h3>
+            </div>
+          </div>
+          
+          <div className="overflow-x-auto scrollbar-thin">
+            <table className="w-full text-left border-collapse min-w-[1000px]">
+              <thead>
+                <tr className="bg-neutral-50 dark:bg-zinc-800/50">
+                  <th onClick={() => handleSort('employeeName')} className="cursor-pointer px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b hover:bg-black/5 dark:hover:bg-white/5" style={{ borderColor: "var(--border)" }}>
+                    <div className="flex items-center gap-1">Employee <ArrowDownUp size={12}/></div>
+                  </th>
+                  <th onClick={() => handleSort('date')} className="cursor-pointer px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b hover:bg-black/5 dark:hover:bg-white/5" style={{ borderColor: "var(--border)" }}>
+                    <div className="flex items-center gap-1">Date <ArrowDownUp size={12}/></div>
+                  </th>
+                  <th onClick={() => handleSort('status')} className="cursor-pointer px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b hover:bg-black/5 dark:hover:bg-white/5" style={{ borderColor: "var(--border)" }}>
+                    <div className="flex items-center gap-1">Status <ArrowDownUp size={12}/></div>
+                  </th>
+                  <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b" style={{ borderColor: "var(--border)" }}>Punch In</th>
+                  <th className="px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b" style={{ borderColor: "var(--border)" }}>Punch Out</th>
+                  <th onClick={() => handleSort('hours')} className="cursor-pointer px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b text-center hover:bg-black/5 dark:hover:bg-white/5" style={{ borderColor: "var(--border)" }}>
+                    <div className="flex items-center justify-center gap-1">Working Hours <ArrowDownUp size={12}/></div>
+                  </th>
+                  <th className="px-5 py-3 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b text-right" style={{ borderColor: "var(--border)" }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredLogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((log) => {
+                  const emp = employees.find((e) => e.id === log.employeeId) || employees[0];
+                  return (
+                    <tr key={log.id} className="group hover:bg-neutral-50/80 dark:hover:bg-zinc-800/40 transition-colors">
+                      <td className="px-5 py-2.5 border-b" style={{ borderColor: "var(--border)" }}>
+                        <div className="flex items-center gap-3">
+                          <img src={emp.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
+                          <div>
+                            <p className="text-xs font-bold" style={{ color: "var(--foreground)" }}>{emp.name}</p>
+                            <p className="text-[9px] text-muted-foreground font-medium uppercase tracking-tight">{emp.department}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-2.5 border-b" style={{ borderColor: "var(--border)" }}><p className="text-xs font-semibold" style={{ color: "var(--foreground)" }}>{log.date}</p></td>
+                      <td className="px-5 py-2.5 border-b" style={{ borderColor: "var(--border)" }}><StatusBadge status={log.status} /></td>
+                      <td className="px-5 py-2.5 border-b" style={{ borderColor: "var(--border)" }}><span className="text-xs font-bold" style={{ color: "var(--foreground)" }}>{log.checkIn}</span></td>
+                      <td className="px-5 py-2.5 border-b" style={{ borderColor: "var(--border)" }}><span className="text-xs font-bold" style={{ color: "var(--foreground)" }}>{log.checkOut}</span></td>
+                      <td className="px-5 py-2.5 border-b text-center" style={{ borderColor: "var(--border)" }}>
+                        <p className="text-xs font-black" style={{ color: "var(--foreground)" }}>{log.hours}</p>
+                      </td>
+                      <td className="px-5 py-2.5 border-b text-right relative" style={{ borderColor: "var(--border)" }}>
+                        <div className="flex items-center justify-end gap-1">
+                          <button className="w-7 h-7 flex items-center justify-center rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-zinc-800 hover:text-foreground transition-colors" onClick={(e) => { e.stopPropagation(); setActiveRowMenu(activeRowMenu === log.id ? null : log.id); }}>
+                            <MoreVertical size={16} />
+                          </button>
+                          {activeRowMenu === log.id && (
+                            <div className="absolute right-5 mt-1 w-32 bg-white dark:bg-zinc-800 border border-border rounded-xl shadow-lg z-[2100] py-1 text-left animate-in fade-in slide-in-from-top-1">
+                              <button className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-neutral-50 dark:hover:bg-zinc-700/40" onClick={() => { setActiveRowMenu(null); handleOpenEdit(log); }}>Edit</button>
+                              <button className="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20" onClick={() => { setActiveRowMenu(null); setDeleteConfirm(log.id); }}>Delete</button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          
+          <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t" style={{ borderColor: "var(--border)" }}>
+            <p className="text-[11px] font-bold text-muted-foreground">
+              Showing <span className="text-foreground">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-foreground">{Math.min(currentPage * itemsPerPage, filteredLogs.length)}</span> of <span className="text-foreground">{filteredLogs.length}</span>
+            </p>
+            <div className="flex items-center gap-1.5">
+              <button onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))} className="p-1.5 rounded-lg border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 disabled:opacity-30 transition-all active:scale-95" style={{ borderColor: "var(--border)" }} disabled={currentPage === 1}><ChevronLeft size={14} /></button>
+              {Array.from({ length: Math.ceil(filteredLogs.length / itemsPerPage) }).map((_, i) => (
+                <button key={i} onClick={() => setCurrentPage(i + 1)} className={`w-7 h-7 rounded-lg text-[11px] font-semibold transition-all ${currentPage === i + 1 ? "bg-[var(--primary)] text-white shadow-lg shadow-emerald-500/20" : "border border-transparent hover:border-border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800"}`} style={{ borderColor: currentPage !== i + 1 ? "var(--border)" : "transparent" }}>{i + 1}</button>
+              ))}
+              <button onClick={() => setCurrentPage((prev) => Math.min(Math.ceil(filteredLogs.length / itemsPerPage), prev + 1))} className="p-1.5 rounded-lg border text-muted-foreground hover:bg-neutral-50 dark:hover:bg-zinc-800 disabled:opacity-30 transition-all active:scale-95" style={{ borderColor: "var(--border)" }} disabled={currentPage === Math.ceil(filteredLogs.length / itemsPerPage)}><ChevronRight size={14} /></button>
+            </div>
+          </div>
+        </div>
+
+        {/* System Alerts */}
           <div
             className="rounded-2xl border bg-card shadow-sm p-5"
             style={{ borderColor: "var(--border)" }}

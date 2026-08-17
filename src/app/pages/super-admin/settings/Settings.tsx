@@ -1,4 +1,5 @@
-import { usePermissions, P } from "../../../shared/permission-engine";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import { SettingsProvider } from "./SettingsContext";
 import { SettingsLayout } from "./SettingsLayout";
 

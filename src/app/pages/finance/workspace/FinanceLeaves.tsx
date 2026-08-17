@@ -401,6 +401,7 @@ export function FinanceLeaves() {
               a.href = url;
               a.download = "leave_history.csv";
               a.click();
+    URL.revokeObjectURL(a.href);
               showToast(
                 "Exported",
                 "success",

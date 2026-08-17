@@ -73,10 +73,10 @@ export function RoleMultiSelect({
     onChange(newSelected);
   };
 
+  const selectedIdsSet = new Set(selectedIds);
   return (
     <div className="space-y-3">
       {options.map((option) => {
-        const selectedIdsSet = new Set(selectedIds);
         const isChecked = selectedIdsSet.has(option.value);
         const isDisabled =
           option.alwaysOn && isChecked && selectedIds.length === 1;

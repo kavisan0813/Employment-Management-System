@@ -4,13 +4,11 @@ import { db } from "../../mockData";
 import { RoleTemplate } from "../../types";
 
 export default function RoleTemplatesView() {
-  const [roles, setRoles] = useState<RoleTemplate[]>([]);
+  const [roles, setRoles] = useState<RoleTemplate[]>(() => db.roleTemplates.get());
   const [searchQuery, setSearchQuery] = useState("");
   const [scopeFilter, setScopeFilter] = useState("ALL");
 
-  useEffect(() => {
-    setRoles(db.roleTemplates.get());
-  }, []);
+
 
   const filteredRoles = roles.filter((role) => {
     const matchesSearch =

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useNavigate } from "react-router";
 import {
   Mail,
@@ -91,7 +91,7 @@ export function Login() {
   const [remember, setRemember] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // Redirect to dashboard if user is already logged in
   useEffect(() => {
@@ -151,24 +151,24 @@ export function Login() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    setTimeout(() => {
+    startTransition(() => {
       const role: UserRole = detectRole(email);
       let registeredAccount: RegisteredUser | undefined;
+      const registeredUsersRaw = localStorage.getItem("viyan_registered_users:v1");
+      let registeredUsers: RegisteredUser[] = [];
       try {
-        registeredAccount = (
-          JSON.parse(
-            localStorage.getItem("viyan_registered_users:v1") || "[]",
-          ) as RegisteredUser[]
-        ).find(
+        registeredUsers = registeredUsersRaw ? JSON.parse(registeredUsersRaw) : [];
+      } catch (e) {
+        /* ignore */
+      }
+      try {
+        registeredAccount = registeredUsers.find(
           (account) => account.email.toLowerCase() === email.toLowerCase(),
         );
         if (
           registeredAccount?.password &&
           registeredAccount.password !== password
         ) {
-          setIsLoading(false);
           alert("Invalid email or password.");
           return;
         }
@@ -194,10 +194,8 @@ export function Login() {
       // Check registered users list for name/initials if not found in db
       if (!accountName) {
         try {
-          const registered = localStorage.getItem("viyan_registered_users:v1");
-          if (registered) {
-            const users = JSON.parse(registered);
-            const match = users.find(
+          if (registeredUsersRaw) {
+            const match = registeredUsers.find(
               (u: RegisteredUser) =>
                 u.email.toLowerCase() === email.toLowerCase(),
             );
@@ -251,8 +249,7 @@ export function Login() {
             ? "/platform-admin/dashboard"
             : ROLE_HOME_ROUTE[role] || "/employee/dashboard";
       navigate(route, { replace: true });
-      setIsLoading(false);
-    }, 600);
+    });
   };
 
   const handleResetPassword = (e: React.FormEvent) => {
@@ -262,8 +259,7 @@ export function Login() {
   };
 
   const handleDemoLogin = (role: UserRole) => {
-    setIsLoading(true);
-    setTimeout(() => {
+    startTransition(() => {
       const demo = DEMO_ACCOUNTS[role as Exclude<UserRole, "IT">];
       login({
         name: demo.name,
@@ -272,13 +268,11 @@ export function Login() {
         initials: demo.initials,
       });
       navigate(ROLE_HOME_ROUTE[role], { replace: true });
-      setIsLoading(false);
-    }, 500);
+    });
   };
 
   const handlePlatformDemoLogin = () => {
-    setIsLoading(true);
-    setTimeout(() => {
+    startTransition(() => {
       login({
         name: "System Root",
         email: "platform@viyanhr.com",
@@ -286,8 +280,7 @@ export function Login() {
         initials: "SR",
       });
       navigate("/platform-admin/dashboard", { replace: true });
-      setIsLoading(false);
-    }, 500);
+    });
   };
 
   return (
@@ -526,11 +519,12 @@ export function Login() {
                 Forgot Password?
               </button>
             </div>
+              
 
             {/* Submit */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isPending}
               className="w-full relative group overflow-hidden rounded-2xl py-4 mt-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
               style={{
                 background: "linear-gradient(135deg, #10B981, #059669)",
@@ -539,8 +533,8 @@ export function Login() {
               }}
             >
               <span className="relative z-10 flex items-center justify-center gap-2 text-white font-bold text-[15px]">
-                {isLoading ? "Signing in…" : "Login"}
-                {!isLoading && (
+                {isPending ? "Signing in…" : "Login"}
+                {!isPending && (
                   <ArrowRight
                     size={18}
                     className="transition-transform group-hover:translate-x-1.5"
@@ -577,7 +571,7 @@ export function Login() {
                     key={role}
                     type="button"
                     onClick={() => handleDemoLogin(role)}
-                    disabled={isLoading}
+                    disabled={isPending}
                     className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${
                       isLast ? "col-span-2 justify-center" : ""
                     }`}
@@ -616,7 +610,7 @@ export function Login() {
             <button
               type="button"
               onClick={handlePlatformDemoLogin}
-              disabled={isLoading}
+              disabled={isPending}
               className="w-full flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group justify-center"
               style={{
                 borderColor: "#6366F130",

@@ -852,7 +852,7 @@ export function ManagerReports() {
                   cursor: "pointer",
                   fontSize: 12,
                   fontWeight: 700,
-                  transition: "all 0.2s",
+                  transition: "background 0.2s, color 0.2s",
                   background: period === p ? G.primary : "transparent",
                   color: period === p ? "white" : "var(--muted-foreground)",
                 }}
@@ -2128,7 +2128,7 @@ export function ManagerReports() {
                     padding: "4px 12px",
                     borderRadius: 20,
                     cursor: "pointer",
-                    transition: "all 0.15s",
+                    transition: "background 0.15s, color 0.15s, border 0.15s",
                     background: memberFilter === f ? G.primary : "transparent",
                     color:
                       memberFilter === f ? "white" : "var(--muted-foreground)",

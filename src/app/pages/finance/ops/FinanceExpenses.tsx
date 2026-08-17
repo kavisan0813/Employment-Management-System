@@ -512,14 +512,16 @@ export function FinanceExpenses() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filteredExpenses.map((exp, i) => (
+              {(() => {
+                const selectedRowsSet = new Set(selectedRows);
+                return filteredExpenses.map((exp, i) => (
                 <m.tr
                   key={exp.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
                   className={`group hover:bg-muted/50 dark:hover:bg-accent/50 transition-all cursor-pointer h-[64px] border-b border-border/50 last:border-0 ${
-                    selectedRows.includes(exp.id)
+                    selectedRowsSet.has(exp.id)
                       ? "bg-[#F0FDF4] dark:bg-emerald-500/5"
                       : ""
                   }`}
@@ -530,7 +532,7 @@ export function FinanceExpenses() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Checkbox
-                      checked={selectedRows.includes(exp.id)}
+                      checked={selectedRowsSet.has(exp.id)}
                       onChange={() => toggleRow(exp.id)}
                     />
                   </td>
@@ -632,7 +634,7 @@ export function FinanceExpenses() {
                     </div>
                   </td>
                 </m.tr>
-              ))}
+              ))})()}
             </tbody>
           </table>
         </div>

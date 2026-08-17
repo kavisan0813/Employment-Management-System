@@ -380,7 +380,7 @@ export const SectionTitle = ({ title }: { title: string }) => (
 export function useSettingsProviderValue(defaultTab: string = "company") {
   const [searchParams] = useSearchParams();
   const [activeSubTab, setActiveSubTab] = useState(
-    searchParams.get("tab") || defaultTab,
+    () => searchParams.get("tab") || defaultTab,
   );
   const [expandedGroups, setExpandedGroups] = useState({
     core: true,

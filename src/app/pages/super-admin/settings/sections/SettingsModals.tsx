@@ -2279,6 +2279,7 @@ export function SettingsModals() {
   }
   if (activeModal === "add_schedule" || activeModal === "edit_schedule") {
     const isEdit = activeModal === "edit_schedule";
+      const scheduleFormworkingDaysSet = new Set(scheduleForm.workingDays);
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
@@ -2538,7 +2539,7 @@ export function SettingsModals() {
               <div className="flex flex-wrap gap-2">
                 {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
                   (day) => {
-                    const isSelected = scheduleForm.workingDays.includes(day);
+                    const isSelected = scheduleFormworkingDaysSet.has(day);
                     return (
                       <button
                         key={day}

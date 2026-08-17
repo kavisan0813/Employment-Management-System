@@ -4810,7 +4810,7 @@ function DropZone({
         justifyContent: "center",
         gap: 8,
         cursor: "pointer",
-        transition: "all .2s ease-out",
+        transition: "border .2s ease-out, background-color .2s ease-out, box-shadow .2s ease-out, transform .2s ease-out",
         boxShadow: active ? "0 0 0 4px rgba(16,185,129,.12)" : "none",
         transform: active ? "scale(1.01)" : "scale(1)",
       }}
@@ -4824,7 +4824,7 @@ function DropZone({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          transition: "all .2s ease-out",
+          transition: "background-color .2s ease-out, box-shadow .2s ease-out",
           boxShadow: active ? "0 4px 12px rgba(16,185,129,.35)" : "none",
         }}
       >

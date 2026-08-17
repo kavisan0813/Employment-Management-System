@@ -3452,9 +3452,7 @@ export function SalaryStructuresSection({
     payrollService.getSalaryStructures(),
   );
   const [searchQuery, setSearchQuery] = useState("");
-  useEffect(() => {
-    setStructures(payrollService.getSalaryStructures());
-  }, []);
+
   const activeEmployees = useMemo(() => {
     return employeesList.filter((emp: Employee) => emp.status === "Active");
   }, [employeesList]);

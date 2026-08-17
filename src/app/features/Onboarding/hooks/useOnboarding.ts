@@ -231,7 +231,10 @@ export function useOnboarding() {
   const [departments, setDepartments] = useState(() => {
     const list = readStore<Array<{ name?: string }>>("viyan_departments", []);
     const source = list.length > 0 ? list : INITIAL_DEPARTMENTS;
-    return source.map((department) => department.name || "").filter(Boolean);
+    return source.flatMap((department) => {
+      const value = department.name || "";
+      return value ? [value] : [];
+    });
   });
   const taskOwners = Object.values(ROLE_TEMPLATES)
     .filter((role) => role.isSystemRole)
@@ -309,7 +312,10 @@ export function useOnboarding() {
       );
       const source = savedDepts.length > 0 ? savedDepts : INITIAL_DEPARTMENTS;
       setDepartments(
-        source.map((department) => department.name || "").filter(Boolean),
+        source.flatMap((department) => {
+          const value = department.name || "";
+          return value ? [value] : [];
+        }),
       );
     };
     window.addEventListener("storage", syncWorkflow);
@@ -627,6 +633,7 @@ export function useOnboarding() {
     a.href = URL.createObjectURL(blob);
     a.download = `Onboarding_${selected.name.replace(" ", "_")}.txt`;
     a.click();
+    URL.revokeObjectURL(a.href);
     showToast(
       "Report Downloaded",
       "success",

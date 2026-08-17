@@ -45,6 +45,14 @@ const Legend = lazy(() =>
 import { useDashboard } from "./hooks/useDashboard";
 import "../../../styles/DashboardView.css";
 
+const currencyFormatter = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  maximumFractionDigits: 0,
+});
+
+const numberFormatter = new Intl.NumberFormat("en-IN");
+
 export default function DashboardView() {
   const navigate = useNavigate();
   const {
@@ -133,13 +141,9 @@ export default function DashboardView() {
 
   // Formatting helpers
   const formatCurrency = (val: number) =>
-    new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0,
-    }).format(val);
+    currencyFormatter.format(val);
   const formatNumber = (val: number) =>
-    new Intl.NumberFormat("en-IN").format(val);
+    numberFormatter.format(val);
 
   // Growth calculations
   const signupsGrowth = summary.growth.signups_vs_last_month;

@@ -1,4 +1,4 @@
-import { lazy, useState, useEffect } from "react";
+import { lazy, useState, useEffect, useTransition } from "react";
 import DOMPurify from "dompurify";
 import { useLocation, useNavigate } from "react-router";
 import { useAuth } from "../../../context/AuthContext";
@@ -5886,7 +5886,7 @@ export function Reports() {
     user?.role === "Manager" ? "Engineering" : "All Departments",
   );
   const [filterLoc, setFilterLoc] = useState("All Locations");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [showDateDropdown, setShowDateDropdown] = useState(false);
   const [showDeptDropdown, setShowDeptDropdown] = useState(false);
   const [showLocDropdown, setShowLocDropdown] = useState(false);
@@ -6308,22 +6308,18 @@ export function Reports() {
     }, 1500);
   };
   const handleFilterChange = (type: string, value: string) => {
-    setIsLoading(true);
-    if (type === "date") setFilterDate(value);
-    if (type === "dept") setFilterDept(value);
-    if (type === "loc") setFilterLoc(value);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 600);
+    startTransition(() => {
+      if (type === "date") setFilterDate(value);
+      if (type === "dept") setFilterDept(value);
+      if (type === "loc") setFilterLoc(value);
+    });
   };
   const handleResetFilters = () => {
-    setIsLoading(true);
-    setFilterDate("This Month");
-    setFilterDept(user?.role === "Manager" ? "Engineering" : "All Departments");
-    setFilterLoc("All Locations");
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 600);
+    startTransition(() => {
+      setFilterDate("This Month");
+      setFilterDept(user?.role === "Manager" ? "Engineering" : "All Departments");
+      setFilterLoc("All Locations");
+    });
   };
   const getKpis = () => {
     const rawKpis = () => {
@@ -6501,6 +6497,7 @@ export function Reports() {
   }
   if (activeReport === "Attendance Report")
     return <AttendanceReport onBack={() => setActiveReport(null)} />;
+    const selectedFieldsSet = new Set(selectedFields);
   if (activeReport === "Performance Review")
     return <PerformanceReview onBack={() => setActiveReport(null)} />;
   if (activeReport === "Recruitment Pipeline")
@@ -6893,7 +6890,7 @@ export function Reports() {
           marginBottom: "24px",
         }}
       >
-        {isLoading
+        {isPending
           ? Array.from({
               length: 6,
             }).map((_, i) => (
@@ -7092,7 +7089,7 @@ export function Reports() {
                     borderRadius: "6px",
                     border: "none",
                     cursor: "pointer",
-                    transition: "all 0.2s",
+                    transition: "background-color 0.2s, color 0.2s",
                     backgroundColor:
                       timeRange === t ? "#00B87C" : "transparent",
                     color:
@@ -7143,7 +7140,7 @@ export function Reports() {
 
             {/* Chart Panel */}
             <div className="md:col-span-7 h-[250px]">
-              {isLoading ? (
+              {isPending ? (
                 <div
                   style={{
                     width: "100%",
@@ -7486,7 +7483,7 @@ export function Reports() {
           >
             Attendance Heatmap
           </h3>
-          {isLoading ? (
+          {isPending ? (
             <div
               style={{
                 width: "100%",
@@ -7590,7 +7587,7 @@ export function Reports() {
               height: "180px",
             }}
           >
-            {isLoading ? (
+            {isPending ? (
               <div
                 style={{
                   width: "100%",
@@ -7689,7 +7686,7 @@ export function Reports() {
               height: "180px",
             }}
           >
-            {isLoading ? (
+            {isPending ? (
               <div
                 style={{
                   width: "100%",
@@ -8239,7 +8236,7 @@ export function Reports() {
               height: "180px",
             }}
           >
-            {isLoading ? (
+            {isPending ? (
               <div
                 style={{
                   width: "100%",
@@ -8390,7 +8387,7 @@ export function Reports() {
             borderBottom:
               activeTab === "standard" ? "3px solid #00B87C" : "none",
             paddingBottom: "12px",
-            transition: "all 0.2s",
+            transition: "color 0.2s, border-bottom 0.2s",
           }}
         >
           Pre-built Reports
@@ -8406,7 +8403,7 @@ export function Reports() {
             color: activeTab === "custom" ? "#00B87C" : "#9CA3AF",
             borderBottom: activeTab === "custom" ? "3px solid #00B87C" : "none",
             paddingBottom: "12px",
-            transition: "all 0.2s",
+            transition: "color 0.2s, border-bottom 0.2s",
           }}
         >
           Custom Report Builder
@@ -8456,7 +8453,7 @@ export function Reports() {
                       fontWeight: 600,
                       border: "1px solid",
                       cursor: "pointer",
-                      transition: "all 0.2s",
+                      transition: "background-color 0.2s, color 0.2s, border-color 0.2s",
                       backgroundColor:
                         reportCategory === cat ? "#00B87C" : "#F3F4F6",
                       color: reportCategory === cat ? "white" : "#374151",
@@ -8743,7 +8740,7 @@ export function Reports() {
                 }}
               >
                 {availableFields.map((f) => {
-                  const isSelected = selectedFields.includes(f);
+                  const isSelected = selectedFieldsSet.has(f);
                   return (
                     <div
                       key={f}
@@ -8762,7 +8759,7 @@ export function Reports() {
                         borderRadius: "8px",
                         border: "1px solid",
                         cursor: "pointer",
-                        transition: "all 0.2s",
+                        transition: "border-color 0.2s, background-color 0.2s, color 0.2s, font-weight 0.2s",
                         borderColor: isSelected ? "#00B87C" : "var(--border)",
                         backgroundColor: isSelected
                           ? "rgba(0, 184, 124, 0.1)"
@@ -9997,3 +9994,4 @@ export function Reports() {
     </div>
   );
 }
+

@@ -795,7 +795,7 @@ export function Notifications() {
                       ? "white"
                       : "var(--muted-foreground)",
                   cursor: "pointer",
-                  transition: "all 0.2s",
+                  transition: "border 0.2s, background-color 0.2s, color 0.2s",
                 }}
               >
                 {filter === "Unread" ? `Unread (${unreadCount})` : filter}
@@ -829,7 +829,7 @@ export function Notifications() {
                     borderRadius: "8px",
                     borderLeft: !notif.read ? "3px solid #00B87C" : "none",
                     borderBottom: "1px solid var(--border)",
-                    transition: "all 0.15s",
+                    transition: "background-color 0.15s, border-left 0.15s",
                   }}
                 >
                   <div
@@ -1760,7 +1760,7 @@ export function Notifications() {
                             borderRadius: "20px",
                             backgroundColor: enabled ? "#00B87C" : "#E5E7EB",
                             position: "relative",
-                            transition: "all 0.2s",
+                            transition: "background-color 0.2s",
                             cursor: "pointer",
                             border: "none",
                           }}
@@ -1774,7 +1774,7 @@ export function Notifications() {
                               height: "16px",
                               borderRadius: "50%",
                               backgroundColor: "white",
-                              transition: "all 0.2s",
+                              transition: "left 0.2s",
                             }}
                           />
                         </button>
@@ -2638,7 +2638,7 @@ function ToggleRow({
           borderRadius: "20px",
           backgroundColor: value ? "#00B87C" : "#E5E7EB",
           position: "relative",
-          transition: "all 0.2s",
+          transition: "background-color 0.2s",
           cursor: "pointer",
           border: "none",
         }}
@@ -2652,7 +2652,7 @@ function ToggleRow({
             height: "16px",
             borderRadius: "50%",
             backgroundColor: "white",
-            transition: "all 0.2s",
+            transition: "left 0.2s",
           }}
         />
       </button>

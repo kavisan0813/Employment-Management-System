@@ -243,7 +243,7 @@ export function AppearanceSection() {
                       ? "#00B87C"
                       : "#E5E7EB",
                     position: "relative",
-                    transition: "all 0.2s",
+                    transition: "background-color 0.2s",
                     cursor: "pointer",
                     border: "none",
                   }}
@@ -259,7 +259,7 @@ export function AppearanceSection() {
                       height: "16px",
                       borderRadius: "50%",
                       backgroundColor: "white",
-                      transition: "all 0.2s",
+                      transition: "left 0.2s",
                     }}
                   />
                 </button>
@@ -352,7 +352,7 @@ export function AppearanceSection() {
                     ? "#00B87C"
                     : "#E5E7EB",
                   position: "relative",
-                  transition: "all 0.2s",
+                  transition: "background-color 0.2s",
                   cursor: "pointer",
                   border: "none",
                 }}
@@ -368,7 +368,7 @@ export function AppearanceSection() {
                     height: "16px",
                     borderRadius: "50%",
                     backgroundColor: "white",
-                    transition: "all 0.2s",
+                    transition: "left 0.2s",
                   }}
                 />
               </button>

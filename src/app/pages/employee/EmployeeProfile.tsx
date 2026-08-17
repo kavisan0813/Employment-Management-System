@@ -26,7 +26,9 @@ import {
 import { performanceData } from "../../data/mockData";
 import { useEmployees } from "../../context/AppContext";
 import { useAuth } from "../../context/AuthContext";
-import { P, usePermissions, ROLE_IDS } from "../../shared/permission-engine";
+import { P } from "../../shared/permission-engine/permissions";
+import { usePermissions } from "../../shared/permission-engine/PermissionContext";
+import { ROLE_IDS } from "../../shared/permission-engine/roles";
 const LineChart = lazy(() =>
   import("recharts").then((m) => ({ default: m.LineChart })),
 );

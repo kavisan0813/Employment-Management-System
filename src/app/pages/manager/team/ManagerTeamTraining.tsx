@@ -174,6 +174,7 @@ export function ManagerTeamTraining() {
   const [courseSearch, setCourseSearch] = useState("");
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
   const [priority, setPriority] = useState("Recommended");
+    const selectedAssigneesSet = new Set(selectedAssignees);
   const toggleAssignee = (id: string) => {
     if (id === "all") {
       if (selectedAssignees.length === MOCK_MY_TEAM.length) {
@@ -653,7 +654,7 @@ export function ManagerTeamTraining() {
                     <button
                       key={emp.id}
                       onClick={() => toggleAssignee(emp.id)}
-                      className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${selectedAssignees.includes(emp.id)
+                      className={`px-3 py-1.5 text-[11px] font-bold rounded-lg border transition-colors ${selectedAssigneesSet.has(emp.id)
                         ? "bg-primary text-white border-primary"
                         : "bg-background text-foreground border-border hover:bg-secondary"
                         }`}

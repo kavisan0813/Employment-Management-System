@@ -156,6 +156,7 @@ export function EmployeePortal() {
     const empTotal = empTasks.length;
 
     // 3. Uploaded documents & Company documents acknowledgment
+      const finalAcknowledgedSet = new Set(finalAcknowledged);
     const reqDocs = nextDocs.filter((d) => !d.issuedByOrg);
     const compDocs = nextDocs.filter((d) => d.issuedByOrg);
     const reqCompleted = reqDocs.filter((d) => d.status === "uploaded").length;
@@ -171,7 +172,7 @@ export function EmployeePortal() {
 
 
 
-      finalAcknowledged.includes(d.id),
+      finalAcknowledgedSet.has(d.id),
     ).length;
     const docCompleted = reqCompleted + compCompleted;
     const docTotal = nextDocs.length;
@@ -538,6 +539,8 @@ export function EmployeePortal() {
       </div>
     );
   }
+    const hireacknowledgedDocsSet = new Set((hire.acknowledgedDocs || []));
+    const hirecompletedTrainingSet = new Set((hire.completedTraining || []));
 
   // State B: Active Onboarding dashboard (template assigned)
   const employeeOwnedTasks = phases
@@ -630,7 +633,7 @@ export function EmployeePortal() {
             },
             {
               key: "company-documents",
-              label: `Company Documents (${documents.filter((d) => d.issuedByOrg && !(hire.acknowledgedDocs || []).includes(d.id)).length})`,
+              label: `Company Documents (${documents.filter((d) => d.issuedByOrg && !hireacknowledgedDocsSet.has(d.id)).length})`,
             },
             {
               key: "training",
@@ -773,7 +776,7 @@ export function EmployeePortal() {
               {documents
                 .filter((d) => d.issuedByOrg)
                 .map((doc) => {
-                  const acknowledged = (hire.acknowledgedDocs || []).includes(
+                  const acknowledged = hireacknowledgedDocsSet.has(
                     doc.id,
                   );
                   return (
@@ -847,7 +850,7 @@ export function EmployeePortal() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {(matchedTemplate?.training || []).map(
                 (course: NonNullable<Template["training"]>[number]) => {
-                  const complete = (hire.completedTraining || []).includes(
+                  const complete = hirecompletedTrainingSet.has(
                     course.id,
                   );
                   return (

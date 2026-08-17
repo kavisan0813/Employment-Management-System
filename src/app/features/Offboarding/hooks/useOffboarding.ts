@@ -118,6 +118,7 @@ export function useOffboarding() {
     a.href = URL.createObjectURL(blob);
     a.download = `Offboarding_Report_${Date.now()}.csv`;
     a.click();
+    URL.revokeObjectURL(a.href);
     showToast(
       "Export Completed",
       "success",

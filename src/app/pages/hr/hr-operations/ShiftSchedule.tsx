@@ -1858,38 +1858,43 @@ export const ShiftSchedule: React.FC = () => {
                         </button>
                       </div>
                       <div className="border border-border rounded-xl p-3 bg-neutral-50 dark:bg-zinc-800/50 max-h-[140px] overflow-y-auto space-y-2">
-                        {globalEmployees
-                          .filter(
-                            (emp) =>
-                              applyDept === "All Departments" ||
-                              emp.department.toLowerCase() ===
-                                applyDept.toLowerCase(),
-                          )
-                          .map((emp) => (
-                            <label
-                              key={emp.id}
-                              className="flex items-center gap-3 p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-700/40 transition-colors cursor-pointer"
-                            >
-                              <input
-                                type="checkbox"
-                                className="rounded text-[#00B87C] focus:ring-[#00B87C]/20 w-4 h-4 accent-[#00B87C]"
-                                checked={selectedEmps.includes(emp.id)}
-                                onChange={() => {
-                                  setSelectedEmps((prev) =>
-                                    prev.includes(emp.id)
-                                      ? prev.filter((id) => id !== emp.id)
-                                      : [...prev, emp.id],
-                                  );
-                                }}
-                              />
-                              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                                {emp.name}{" "}
-                                <span className="text-[9px] text-muted-foreground uppercase font-black ml-1">
-                                  ({emp.department})
+                        {(() => {
+                          const selectedEmpsSet = new Set(selectedEmps);
+                          return globalEmployees
+                            .filter(
+                              (emp) =>
+                                applyDept === "All Departments" ||
+                                emp.department.toLowerCase() ===
+                                  applyDept.toLowerCase(),
+                            )
+                            .map((emp) => {
+                              const isSelected = selectedEmpsSet.has(emp.id);
+                              return (
+                              <label
+                                key={emp.id}
+                                className="flex items-center gap-3 p-1.5 rounded-lg hover:bg-[#00B87C]/[0.08] dark:hover:bg-zinc-700/40 transition-colors cursor-pointer"
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="rounded text-[#00B87C] focus:ring-[#00B87C]/20 w-4 h-4 accent-[#00B87C]"
+                                  checked={isSelected}
+                                  onChange={() => {
+                                    setSelectedEmps((prev) =>
+                                      isSelected
+                                        ? prev.filter((id) => id !== emp.id)
+                                        : [...prev, emp.id],
+                                    );
+                                  }}
+                                />
+                                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                  {emp.name}{" "}
+                                  <span className="text-[9px] text-muted-foreground uppercase font-black ml-1">
+                                    ({emp.department})
+                                  </span>
                                 </span>
-                              </span>
-                            </label>
-                          ))}
+                              </label>
+                            )});
+                        })()}
                       </div>
                     </div>
                   </div>
@@ -2069,11 +2074,12 @@ export const ShiftSchedule: React.FC = () => {
                       Sat: 5,
                       Sun: 6,
                     };
+                    const selectedEmpsSet = new Set(selectedEmps);
                     setScheduleData((prev) =>
                       prev.map((emp) => {
             /* Step 2: Confirmation Popup */
 
-                        if (selectedEmps.includes(emp.id)) {
+                        if (selectedEmpsSet.has(emp.id)) {
                           const newShifts = { ...emp.shifts };
                           const times: Record<string, string> = {
                             Morning: "06:00 – 14:00",

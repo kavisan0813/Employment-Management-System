@@ -4,11 +4,9 @@ import { useAuth } from "../../context/AuthContext";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useEmployees, Employee } from "../../context/AppContext";
 import { departments } from "./utils/employee.utils";
-import {
-  P,
-  usePermissions,
-  RoleAssignment,
-} from "../../shared/permission-engine";
+import { P } from "../../shared/permission-engine/permissions";
+import { usePermissions } from "../../shared/permission-engine/PermissionContext";
+import { RoleAssignment } from "../../shared/permission-engine/roles";
 
 import EmployeeHeader from "./components/EmployeeHeader";
 import EmployeeFilters from "./components/EmployeeFilters";

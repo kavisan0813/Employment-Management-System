@@ -1,28 +1,21 @@
-import React from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { lazy, Suspense } from "react";
 
-export default function AttendanceStatusChart({
-  statusDistribution,
-}: {
+const AttendanceStatusChartContent = lazy(
+  () => import("./AttendanceStatusChartContent")
+);
+
+export default function AttendanceStatusChart(props: {
   statusDistribution: any[];
 }) {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <PieChart>
-        <Pie
-          data={statusDistribution}
-          cx="50%"
-          cy="50%"
-          innerRadius={55}
-          outerRadius={80}
-          paddingAngle={5}
-          dataKey="value"
-        >
-          {statusDistribution.map((entry) => (
-            <Cell key={`cell-${entry.color}`} fill={entry.color} />
-          ))}
-        </Pie>
-      </PieChart>
-    </ResponsiveContainer>
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex items-center justify-center text-sm text-muted-foreground">
+          Loading chart...
+        </div>
+      }
+    >
+      <AttendanceStatusChartContent {...props} />
+    </Suspense>
   );
 }

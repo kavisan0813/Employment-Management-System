@@ -82,6 +82,7 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
     ? setLocalSidebarOpen
     : context!.setIsSidebarOpen;
   const navigation = ROLE_NAVIGATION[role] || [];
+    const collapsedCategoriesSet = new Set(collapsedCategories);
 
   // Filter navigation items by search
   const filteredNavigation = navigation
@@ -322,7 +323,7 @@ export function SettingsLayout({ role }: SettingsLayoutProps) {
           </div>
 
           {filteredNavigation.map((category, idx) => {
-            const isCollapsed = collapsedCategories.includes(category.title);
+            const isCollapsed = collapsedCategoriesSet.has(category.title);
             return (
               <div key={category.title} className={idx > 0 ? "mt-4" : ""}>
                 <div

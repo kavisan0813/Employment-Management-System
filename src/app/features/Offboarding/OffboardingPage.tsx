@@ -311,8 +311,10 @@ export function OffboardingPage() {
               ];
             }
             const depts = parsed
-              .map((d: { name?: string }) => d?.name || "")
-              .filter(Boolean);
+              .flatMap((d: { name?: string }) => {
+                const value = d?.name || "";
+                return value ? [value] : [];
+              });
             return depts.length > 0
               ? depts
               : [

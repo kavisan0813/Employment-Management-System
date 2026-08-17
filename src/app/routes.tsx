@@ -545,7 +545,8 @@ const AssetManagement = lazy(() =>
 );
 
 // ── Permission Engine ─────────────────────────────────────────
-import { usePermissions, P } from "./shared/permission-engine";
+import { usePermissions } from "./shared/permission-engine/PermissionContext";
+import { P } from "./shared/permission-engine/permissions";
 
 // ── Loading spinner ───────────────────────────────────────────
 function PageLoader() {

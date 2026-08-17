@@ -4,7 +4,7 @@ import { RecruitmentProvider, EmployeesProvider } from "./context/AppContext";
 import { WorkflowProvider } from "./context/WorkflowContext";
 import { AuthProvider } from "./context/AuthContext";
 import { AttendanceProvider } from "./context/AttendanceContext";
-import { PermissionProvider } from "./shared/permission-engine";
+import { PermissionProvider } from "./shared/permission-engine/PermissionContext";
 import { Toaster } from "sonner";
 
 export default function App() {

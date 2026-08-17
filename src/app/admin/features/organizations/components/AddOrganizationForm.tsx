@@ -497,32 +497,35 @@ export function AddOrganizationForm({ onSuccess }: { onSuccess: () => void }) {
                     Enable HR Modules
                   </label>
                   <div className="grid grid-cols-2 gap-3">
-                    {[
-                      "Employee Management",
-                      "Attendance",
-                      "Leave Management",
-                      "Payroll",
-                      "Recruitment",
-                      "Performance",
-                      "Assets",
-                      "Training",
-                      "Help Desk",
-                    ].map((mod) => (
-                      <label
-                        key={mod}
-                        className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
-                      >
-                        <input
-                          type="checkbox"
-                          className="w-4 h-4 accent-indigo-600"
-                          checked={formData.enabledModules.includes(mod)}
-                          onChange={() => handleModuleToggle(mod)}
-                        />
-                        <span className="text-sm font-medium text-gray-800">
-                          {mod}
-                        </span>
-                      </label>
-                    ))}
+                    {(() => {
+                      const enabledModulesSet = new Set(formData.enabledModules);
+                      return [
+                        "Employee Management",
+                        "Attendance",
+                        "Leave Management",
+                        "Payroll",
+                        "Recruitment",
+                        "Performance",
+                        "Assets",
+                        "Training",
+                        "Help Desk",
+                      ].map((mod) => (
+                        <label
+                          key={mod}
+                          className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4 accent-indigo-600"
+                            checked={enabledModulesSet.has(mod)}
+                            onChange={() => handleModuleToggle(mod)}
+                          />
+                          <span className="text-sm font-medium text-gray-800">
+                            {mod}
+                          </span>
+                        </label>
+                      ));
+                    })()}
                   </div>
                 </div>
               </div>

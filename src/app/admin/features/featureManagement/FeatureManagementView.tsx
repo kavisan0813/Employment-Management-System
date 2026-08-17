@@ -14,7 +14,7 @@ import { FeatureFlag } from "../../types";
 import { toast } from "sonner";
 
 export default function FeatureManagementView() {
-  const [flags, setFlags] = useState<FeatureFlag[]>([]);
+  const [flags, setFlags] = useState<FeatureFlag[]>(() => db.featureFlags.get());
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -32,9 +32,6 @@ export default function FeatureManagementView() {
   });
 
   // Load flags
-  useEffect(() => {
-    setFlags(db.featureFlags.get());
-  }, []);
 
   const handleToggleStatus = (id: string) => {
     const updatedFlags = flags.map((flag) => {

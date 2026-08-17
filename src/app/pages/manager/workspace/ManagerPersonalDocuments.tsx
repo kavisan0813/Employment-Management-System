@@ -303,7 +303,9 @@ function CategoryCard({
       </div>
 
       <div className="divide-y divide-border">
-        {cat.items.map((doc) => (
+        {cat.items.map((doc) => {
+          const docActionsSet = new Set(doc.actions);
+          return (
           <div
             key={doc.name}
             className="px-5 py-3.5 flex items-center gap-4 group hover:bg-[#00B87C]/[0.08] transition-colors"
@@ -328,7 +330,7 @@ function CategoryCard({
             </div>
 
             <div className="flex items-center gap-3 flex-shrink-0 ml-2">
-              {doc.actions.includes("view") && (
+              {docActionsSet.has("view") && (
                 <button
                   onClick={() => onViewClick(doc.name)}
                   className="text-[12px] font-bold text-[#00B87C] hover:underline"
@@ -336,7 +338,7 @@ function CategoryCard({
                   View
                 </button>
               )}
-              {doc.actions.includes("upload") && (
+              {docActionsSet.has("upload") && (
                 <button
                   onClick={() => onUploadClick(doc.name)}
                   className="text-[12px] font-bold text-[#00B87C] hover:underline"
@@ -346,7 +348,7 @@ function CategoryCard({
               )}
             </div>
           </div>
-        ))}
+        )})}
       </div>
     </div>
   );

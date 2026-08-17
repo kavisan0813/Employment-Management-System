@@ -734,14 +734,17 @@ export function FinanceAssetCostReport() {
         {
           label: "IT Equipment",
           value: formatCurrency(
-            ASSET_COST_BY_CATEGORY.filter((c) =>
-              [
+            (() => {
+              const itCategoriesSet = new Set([
                 "Laptops",
                 "Monitors",
                 "Printers",
                 "Servers & Networking",
-              ].includes(c.category),
-            ).reduce((s, c) => s + c.totalValue, 0),
+              ]);
+              return ASSET_COST_BY_CATEGORY.filter((c) =>
+                itCategoriesSet.has(c.category)
+              ).reduce((s, c) => s + c.totalValue, 0);
+            })()
           ),
           color: "#8B5CF6",
         },

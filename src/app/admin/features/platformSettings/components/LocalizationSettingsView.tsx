@@ -34,6 +34,7 @@ export function LocalizationSettingsView({
     "w-full text-sm p-3 border border-gray-200 rounded-xl bg-white outline-none focus:border-indigo-400 transition-colors";
   const labelClass =
     "text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block";
+    const configlocalizationsupportedLanguagesSet = new Set(config.localization.supportedLanguages);
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -68,7 +69,7 @@ export function LocalizationSettingsView({
 
 
 
-                    checked={config.localization.supportedLanguages.includes(
+                    checked={configlocalizationsupportedLanguagesSet.has(
                       lang,
                     )}
                     onChange={(e) => {

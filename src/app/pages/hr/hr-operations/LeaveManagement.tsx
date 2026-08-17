@@ -1251,6 +1251,7 @@ export function LeaveManagement() {
         `Are you sure you want to ${action.toLowerCase()} ${selectedIds.length} requests?`,
       )
     ) {
+        const selectedIdsSet = new Set(selectedIds);
       setRequests((prev) =>
         prev.map((r) => {
 
@@ -1259,7 +1260,7 @@ export function LeaveManagement() {
 
 
 
-          if (!selectedIds.includes(r.id) || r.status !== "Pending") return r;
+          if (!selectedIdsSet.has(r.id) || r.status !== "Pending") return r;
           return {
             ...r,
             status: action === "Approve" ? "Approved" : "Rejected",
@@ -1819,9 +1820,10 @@ export function LeaveManagement() {
                         </p>
                       </td>
                     </tr>
-                  ) : (
-                    filtered.map((req) => {
-                      const isSelected = selectedIds.includes(req.id);
+                  ) : (() => {
+                    const selectedIdsSet = new Set(selectedIds);
+                    return filtered.map((req) => {
+                      const isSelected = selectedIdsSet.has(req.id);
                       const aging = getAgingLabel(req.submissionDate);
                       return (
                         <tr
@@ -1967,7 +1969,7 @@ export function LeaveManagement() {
                         </tr>
                       );
                     })
-                  )}
+                  })()}
                 </tbody>
               </table>
             </div>

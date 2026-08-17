@@ -27,6 +27,7 @@ export function TimezoneSettingsView({ config, setConfig }: Props) {
     "w-full text-sm p-2.5 border border-gray-200 rounded-lg outline-none focus:border-indigo-400 transition-colors";
   const labelClass =
     "text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block";
+    const configtimezonesupportedTimezonesSet = new Set(config.timezone.supportedTimezones);
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -63,7 +64,7 @@ export function TimezoneSettingsView({ config, setConfig }: Props) {
                     type="checkbox"
 
 
-                    checked={config.timezone.supportedTimezones.includes(tz)}
+                    checked={configtimezonesupportedTimezonesSet.has(tz)}
                     onChange={(e) => {
                       const next = e.target.checked
                         ? [...config.timezone.supportedTimezones, tz]

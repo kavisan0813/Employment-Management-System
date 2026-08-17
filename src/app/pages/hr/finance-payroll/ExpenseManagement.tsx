@@ -121,6 +121,12 @@ const trendData = [
     value: 72000,
   },
 ];
+
+const expenseFormatter = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  maximumFractionDigits: 0,
+});
 const initialClaims = [
   {
     id: "EXP-2026-001",
@@ -334,11 +340,7 @@ export function Expenses() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0,
-    }).format(val);
+    return expenseFormatter.format(val);
   };
   const filteredClaims = useMemo(() => {
     const today = new Date();

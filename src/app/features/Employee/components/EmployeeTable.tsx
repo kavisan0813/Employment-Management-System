@@ -43,6 +43,7 @@ export default function EmployeeTable({
 }: EmployeeTableProps) {
   const navigate = useNavigate();
   const [actionMenuRow, setActionMenuRow] = useState<string | null>(null);
+    const selectedRowsSet = new Set(selectedRows);
   return (
     <div
       className="rounded-2xl overflow-x-auto shadow-sm"
@@ -162,7 +163,7 @@ export default function EmployeeTable({
             <div onClick={(e) => e.stopPropagation()}>
               <input
                 type="checkbox"
-                checked={selectedRows.includes(emp.id)}
+                checked={selectedRowsSet.has(emp.id)}
                 onChange={() => toggleRowSelection(emp.id)}
                 style={{
                   accentColor: "var(--primary)",

@@ -273,6 +273,7 @@ export function useDashboard() {
           a.href = url;
           a.download = `dashboard_export_${new Date().toISOString()}.${format}`;
           a.click();
+    URL.revokeObjectURL(a.href);
         }
         resolve();
       }, 500);

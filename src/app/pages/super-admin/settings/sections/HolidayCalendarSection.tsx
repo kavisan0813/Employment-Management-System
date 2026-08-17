@@ -702,7 +702,7 @@ export function HolidayCalendarSection() {
                   ? "#00B87C"
                   : "var(--switch-background)",
                 position: "relative",
-                transition: "all 0.2s",
+                transition: "background-color 0.2s",
                 cursor: "pointer",
                 border: "none",
               }}
@@ -716,7 +716,7 @@ export function HolidayCalendarSection() {
                   height: "16px",
                   borderRadius: "50%",
                   backgroundColor: "white",
-                  transition: "all 0.2s",
+                  transition: "left 0.2s",
                 }}
               />
             </button>

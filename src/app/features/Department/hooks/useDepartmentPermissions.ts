@@ -1,6 +1,8 @@
 import { useAuth } from "../../../context/AuthContext";
 import { useEmployees } from "../../../context/AppContext";
-import { P, usePermissions, ROLE_IDS } from "../../../shared/permission-engine";
+import { P } from "../../../shared/permission-engine/permissions";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { ROLE_IDS } from "../../../shared/permission-engine/roles";
 import { Department } from "../types/department.types";
 
 export function useDepartmentPermissions() {
