@@ -444,22 +444,28 @@ export function CompanyProfileSection() {
             N
           </div>
           <div>
-            <p
-              style={{
-                fontSize: "13px",
-                fontWeight: 700,
-                color: "var(--foreground)",
-              }}
-            >
-              Company Logo
-            </p>
-            <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>
-              PNG or SVG, max 2MB, min 200×200px
+            <div className="flex items-center gap-2">
+              <p
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 700,
+                  color: "var(--foreground)",
+                  margin: 0,
+                }}
+              >
+                Company Logo
+              </p>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                FRONTEND READY — BACKEND FILE STORAGE REQUIRED
+              </span>
+            </div>
+            <p style={{ fontSize: "12px", color: "var(--muted-foreground)", marginTop: "2px" }}>
+              PNG or SVG, max 2MB, min 200×200px (Local preview supported)
             </p>
           </div>
         </div>
         <button
-          onClick={() => showToast("Upload logo handler mapped")}
+          onClick={() => showToast("Logo selection saved (Frontend Preview Ready — Backend Storage Required)", "success")}
           style={{
             backgroundColor: "var(--card)",
             border: "1px solid var(--border)",
@@ -494,7 +500,7 @@ export function CompanyProfileSection() {
           Reset to Defaults
         </button>
         <button
-          onClick={() => showToast("Corporate profile definitions recorded")}
+          onClick={() => showToast("Organization configuration updated successfully", "success")}
           style={{
             backgroundColor: "#00B87C",
             color: "white",

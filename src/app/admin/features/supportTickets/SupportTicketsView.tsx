@@ -2,7 +2,6 @@ import { useState, ComponentType } from "react";
 import {
   LayoutDashboard,
   MessageSquare,
-  Bug,
   Lightbulb,
   Star,
   Shield,
@@ -14,7 +13,6 @@ import { useSupportTickets } from "./hooks/useSupportTickets";
 
 import { SupportDashboard } from "./components/SupportDashboard";
 import { TicketsTable } from "./components/TicketsTable";
-import { IssueTracker } from "./components/IssueTracker";
 import { FeatureRequests } from "./components/FeatureRequests";
 import { FeedbackManagement } from "./components/FeedbackManagement";
 import { SLAManagement } from "./components/SLAManagement";
@@ -23,13 +21,10 @@ import { EscalationRules } from "./components/EscalationRules";
 type Tab =
   | "dashboard"
   | "tickets"
-  | "issues"
   | "features"
   | "feedback"
   | "sla"
-  | "kb"
-  | "escalation"
-  | "reports";
+  | "escalation";
 
 const tabs: {
   id: Tab;
@@ -38,8 +33,7 @@ const tabs: {
 }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "tickets", label: "Support Tickets", icon: MessageSquare },
-  { id: "issues", label: "Issue Tracking", icon: Bug },
-  { id: "features", label: "Feature Requests", icon: Lightbulb },
+  { id: "features", label: "Feature Update Requests", icon: Lightbulb },
   { id: "feedback", label: "Feedback", icon: Star },
   { id: "sla", label: "SLA Management", icon: Shield },
   { id: "escalation", label: "Escalation Rules", icon: Zap },
@@ -57,9 +51,6 @@ export default function SupportTicketsView() {
       case "tickets":
         return <TicketsTable hook={hook} />;
 
-      case "issues":
-        return <IssueTracker issues={hook.issues} />;
-
       case "features":
         return (
           <FeatureRequests
@@ -69,7 +60,7 @@ export default function SupportTicketsView() {
         );
 
       case "feedback":
-        return <FeedbackManagement feedback={hook.feedback} />;
+        return <FeedbackManagement hook={hook} />;
 
       case "sla":
         return (

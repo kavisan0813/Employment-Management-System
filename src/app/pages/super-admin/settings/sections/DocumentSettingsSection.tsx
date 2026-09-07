@@ -88,122 +88,19 @@ export function DocumentSettingsSection() {
         </button>
       </div>
 
-      {/* POLICY BLOCK 1: STORAGE CONFIGURATION */}
+      {/* POLICY BLOCK 1: BACKEND STORAGE INFRASTRUCTURE NOTICE */}
       <div
-        className="p-4 rounded-xl mb-6 border"
-        style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
+        className="p-4 rounded-xl mb-6 border bg-card border-border"
       >
-        <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
-          STORAGE CONFIGURATION
-        </span>
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="flex items-center justify-between">
           <div>
-            <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
-              Storage Provider
-            </label>
-            <select
-              value={extraConfig.docStorageProvider}
-              onChange={(e) =>
-                updateExtraConfig("docStorageProvider", e.target.value)
-              }
-              className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
-              style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
-            >
-              <option>AWS S3</option>
-              <option>Google Drive</option>
-              <option>Azure Blob</option>
-              <option>Local</option>
-            </select>
+            <span className="text-[13px] font-bold text-foreground block">
+              Document Storage & Infrastructure
+            </span>
+            <span className="text-[11px] text-muted-foreground">
+              Document storage providers, volume quotas, and blob object storage remain backend & cloud infrastructure-owned.
+            </span>
           </div>
-          <div>
-            <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
-              Max File Size (MB)
-            </label>
-            <input
-              type="number"
-              value={extraConfig.docMaxFileSize}
-              onChange={(e) =>
-                updateExtraConfig("docMaxFileSize", e.target.value)
-              }
-              className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
-              style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
-            />
-          </div>
-          <div>
-            <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
-              Total Storage Quota (GB)
-            </label>
-            <input
-              type="number"
-              value={extraConfig.docTotalQuota}
-              onChange={(e) =>
-                updateExtraConfig("docTotalQuota", e.target.value)
-              }
-              className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
-              style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
-            />
-          </div>
-          <div>
-            <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
-              Accepted File Types
-            </label>
-            <input
-              type="text"
-              value={extraConfig.docAcceptedTypes}
-              onChange={(e) =>
-                updateExtraConfig("docAcceptedTypes", e.target.value)
-              }
-              className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
-              style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
-            />
-          </div>
-        </div>
-        <div className="mb-4">
-          <div className="flex justify-between text-[12px] text-gray-600 mb-1">
-            <span>Storage Used</span>
-            <span className="font-bold">142 GB of 500 GB</span>
-          </div>
-          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-[#00B87C]" style={{ width: "28.4%" }} />
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-[13px] font-medium text-gray-800 dark:text-gray-200">
-            Backup to Secondary Storage
-          </span>
-          <button
-            onClick={() =>
-              updateExtraConfig(
-                "docBackupSecondary",
-                !extraConfig.docBackupSecondary,
-              )
-            }
-            style={{
-              width: "36px",
-              height: "20px",
-              borderRadius: "20px",
-              backgroundColor: extraConfig.docBackupSecondary
-                ? "#00B87C"
-                : "#E5E7EB",
-              position: "relative",
-              transition: "background-color 0.2s",
-              cursor: "pointer",
-              border: "none",
-            }}
-          >
-            <span
-              style={{
-                position: "absolute",
-                top: "2px",
-                left: extraConfig.docBackupSecondary ? "18px" : "2px",
-                width: "16px",
-                height: "16px",
-                borderRadius: "50%",
-                backgroundColor: "white",
-                transition: "left 0.2s",
-              }}
-            />
-          </button>
         </div>
       </div>
 

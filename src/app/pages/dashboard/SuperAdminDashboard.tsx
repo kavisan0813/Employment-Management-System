@@ -1,4 +1,4 @@
-import { lazy, useEffect, useReducer, useCallback } from "react";
+import { useEffect, useReducer, useCallback, lazy, Suspense } from "react";
 import { useNavigate } from "react-router";
 import {
   Users,
@@ -19,59 +19,25 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-const AreaChart = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.AreaChart,
-  })),
-);
-const Area = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.Area,
-  })),
-);
-const XAxis = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.XAxis,
-  })),
-);
-const YAxis = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.YAxis,
-  })),
-);
-const CartesianGrid = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.CartesianGrid,
-  })),
-);
-const Tooltip = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.Tooltip,
-  })),
-);
-const ResponsiveContainer = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.ResponsiveContainer,
-  })),
-);
-const PieChart = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.PieChart,
-  })),
-);
-const Pie = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.Pie,
-  })),
-);
-const Cell = lazy(() =>
-  import("recharts").then((m) => ({
-    default: m.Cell,
-  })),
-);
 import { AnimatePresence } from "motion/react";
 import { useTranslation } from "react-i18next";
 import * as m from "motion/react-m";
+
+const AreaChart = lazy(() => import("recharts").then((m) => ({ default: m.AreaChart })));
+const Area = lazy(() => import("recharts").then((m) => ({ default: m.Area })));
+const XAxis = lazy(() => import("recharts").then((m) => ({ default: m.XAxis })));
+const YAxis = lazy(() => import("recharts").then((m) => ({ default: m.YAxis })));
+const CartesianGrid = lazy(() => import("recharts").then((m) => ({ default: m.CartesianGrid })));
+const Tooltip = lazy(() => import("recharts").then((m) => ({ default: m.Tooltip })));
+const ResponsiveContainer = lazy(() => import("recharts").then((m) => ({ default: m.ResponsiveContainer })));
+const PieChart = lazy(() => import("recharts").then((m) => ({ default: m.PieChart })));
+const Pie = lazy(() => import("recharts").then((m) => ({ default: m.Pie })));
+const Cell = lazy(() => import("recharts").then((m) => ({ default: m.Cell })));
+
+import { usePermissions } from "../../shared/permission-engine/PermissionContext";
+import { PermissionGate } from "../../shared/permission-engine/PermissionGate";
+import { P } from "../../shared/permission-engine/permissions";
+
 const HEADCOUNT_PERIOD_DATA = {
   "6M": {
     data: [
@@ -273,114 +239,7 @@ const INITIAL_PENDING_ACTIONS = [
     bg: "rgba(14,165,233,0.1)",
   },
 ];
-const INITIAL_AUDIT_LOG = [
-  {
-    type: "Delete",
-    text: "Employee record #EMP-042 deleted",
-    user: "Admin",
-    time: "10m ago",
-    color: "#EF4444",
-  },
-  {
-    type: "Approve",
-    text: "Bulk leave approval processed",
-    user: "HR Mgr",
-    time: "1h ago",
-    color: "#00B87C",
-  },
-  {
-    type: "Update",
-    text: "Salary structure modified",
-    user: "Finance",
-    time: "2h ago",
-    color: "#8B5CF6",
-  },
-  {
-    type: "Create",
-    text: "New department 'AI Research' created",
-    user: "Admin",
-    time: "4h ago",
-    color: "#0EA5E9",
-  },
-  {
-    type: "Settings",
-    text: "MFA enforced for all managers",
-    user: "Security",
-    time: "1d ago",
-    color: "#F59E0B",
-  },
-];
-const INITIAL_MODULE_USAGE = [
-  {
-    label: "Dashboard",
-    value: 98,
-    color: "#00B87C",
-  },
-  {
-    label: "Attendance",
-    value: 94,
-    color: "#00B87C",
-  },
-  {
-    label: "Payroll",
-    value: 86,
-    color: "#8B5CF6",
-  },
-  {
-    label: "Leave",
-    value: 82,
-    color: "#F59E0B",
-  },
-  {
-    label: "Performance",
-    value: 75,
-    color: "#0EA5E9",
-  },
-];
-const INITIAL_ROLE_DIST = [
-  {
-    role: "Super Admin",
-    count: 4,
-    status: "Active",
-    color: "#8B5CF6",
-    bg: "#EDE9FE",
-  },
-  {
-    role: "HR Manager",
-    count: 12,
-    status: "Active",
-    color: "#00B87C",
-    bg: "#DCFCE7",
-  },
-  {
-    role: "Finance",
-    count: 8,
-    status: "Active",
-    color: "#0EA5E9",
-    bg: "#E0F2FE",
-  },
-  {
-    role: "Manager",
-    count: 42,
-    status: "Active",
-    color: "#F59E0B",
-    bg: "#FEF3C7",
-  },
-  {
-    role: "Employee",
-    count: 1218,
-    status: "Active",
-    color: "#64748B",
-    bg: "#F3F4F6",
-  },
-];
-interface RoleDistItem {
-  role: string;
-  count: number;
-  status: string;
-  color: string;
-  bg: string;
-}
+
 interface PendingActionItem {
   icon: React.ElementType;
   title: string;
@@ -388,21 +247,17 @@ interface PendingActionItem {
   color: string;
   bg: string;
 }
+
 export function SuperAdminDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     totalEmployeesCount: 1284,
-    pendingActionsCount: 3,
+    pendingActionsCount: 5,
     headcountPeriod: "6M" as "6M" | "1Y" | "2Y",
     pendingActionsList: INITIAL_PENDING_ACTIONS,
-    auditLogList: INITIAL_AUDIT_LOG,
-    roleDistList: INITIAL_ROLE_DIST,
     isAddEmployeeOpen: false,
     isPostAnnouncementOpen: false,
-    isManageRoleOpen: false,
-    selectedRoleToManage: null as RoleDistItem | null,
     activePendingAction: null as PendingActionItem | null,
     systemTaskType: null as "Backup" | "Scan" | null,
     progressPercent: 0,
@@ -431,18 +286,15 @@ export function SuperAdminDashboard() {
     pendingActionsCount,
     headcountPeriod,
     pendingActionsList,
-    auditLogList,
-    roleDistList,
     isAddEmployeeOpen,
     isPostAnnouncementOpen,
-    isManageRoleOpen,
-    selectedRoleToManage,
     activePendingAction,
     systemTaskType,
     progressPercent,
     employeeForm,
     announcementForm,
   } = __state;
+
   const setTotalEmployeesCount = useCallback(
     (val: any) =>
       __updateState((prev: any) => ({
@@ -475,20 +327,6 @@ export function SuperAdminDashboard() {
       })),
     [],
   );
-  const setAuditLogList = useCallback(
-    (val: any) =>
-      __updateState((prev: any) => ({
-        auditLogList: typeof val === "function" ? val(prev.auditLogList) : val,
-      })),
-    [],
-  );
-  const setRoleDistList = useCallback(
-    (val: any) =>
-      __updateState((prev: any) => ({
-        roleDistList: typeof val === "function" ? val(prev.roleDistList) : val,
-      })),
-    [],
-  );
   const setIsAddEmployeeOpen = useCallback(
     (val: any) =>
       __updateState((prev: any) => ({
@@ -502,22 +340,6 @@ export function SuperAdminDashboard() {
       __updateState((prev: any) => ({
         isPostAnnouncementOpen:
           typeof val === "function" ? val(prev.isPostAnnouncementOpen) : val,
-      })),
-    [],
-  );
-  const setIsManageRoleOpen = useCallback(
-    (val: any) =>
-      __updateState((prev: any) => ({
-        isManageRoleOpen:
-          typeof val === "function" ? val(prev.isManageRoleOpen) : val,
-      })),
-    [],
-  );
-  const setSelectedRoleToManage = useCallback(
-    (val: any) =>
-      __updateState((prev: any) => ({
-        selectedRoleToManage:
-          typeof val === "function" ? val(prev.selectedRoleToManage) : val,
       })),
     [],
   );
@@ -560,36 +382,15 @@ export function SuperAdminDashboard() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
 
-  // Reactive CRUD and Statistics state
-  // Modals Visibility
-  // System actions (loading state)
-  // Forms
+  const { hasPermissionKey } = usePermissions();
+
   // CRUD Handler: Add Employee
   const handleAddEmployeeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasPermissionKey(P.EMPLOYEES_CREATE)) return;
     if (!employeeForm.name || !employeeForm.email) return;
-    setTotalEmployeesCount((prev) => prev + 1);
-    const newLog = {
-      type: "Create",
-      text: `New employee '${employeeForm.name}' (${employeeForm.designation || "Staff"}) created`,
-      user: "Admin",
-      time: "Just now",
-      color: "#0EA5E9",
-    };
-    setAuditLogList((prev) => [newLog, ...prev]);
-    setRoleDistList((prev) =>
-      prev.map((r) => {
-        if (r.role === "Employee") {
-          return {
-            ...r,
-            count: r.count + 1,
-          };
-        }
-        return r;
-      }),
-    );
+    setTotalEmployeesCount((prev: number) => prev + 1);
     setEmployeeForm({
       name: "",
       email: "",
@@ -600,61 +401,19 @@ export function SuperAdminDashboard() {
     setIsAddEmployeeOpen(false);
   };
 
-  // CRUD Handler: Update Role
-  const handleManageRoleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedRoleToManage) return;
-    setRoleDistList((prev) =>
-      prev.map((r) => {
-        if (r.role === selectedRoleToManage.role) {
-          return {
-            ...r,
-            count: Number(selectedRoleToManage.count),
-            status: selectedRoleToManage.status,
-          };
-        }
-        return r;
-      }),
-    );
-    const newLog = {
-      type: "Update",
-      text: `Role '${selectedRoleToManage.role}' settings modified`,
-      user: "Admin",
-      time: "Just now",
-      color: "#8B5CF6",
-    };
-    setAuditLogList((prev) => [newLog, ...prev]);
-    setIsManageRoleOpen(false);
-    setSelectedRoleToManage(null);
-  };
-
   // CRUD Handler: Resolve/Delete Action
   const handleResolveAction = (title: string) => {
-    setPendingActionsList((prev) => prev.filter((a) => a.title !== title));
-    setPendingActionsCount((prev) => Math.max(0, prev - 1));
-    const newLog = {
-      type: "Approve",
-      text: `Action '${title}' resolved/approved`,
-      user: "Admin",
-      time: "Just now",
-      color: "#00B87C",
-    };
-    setAuditLogList((prev) => [newLog, ...prev]);
+    if (!hasPermissionKey(P.EMPLOYEES_MANAGE) && !hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE)) return;
+    setPendingActionsList((prev: PendingActionItem[]) => prev.filter((a) => a.title !== title));
+    setPendingActionsCount((prev: number) => Math.max(0, prev - 1));
     setActivePendingAction(null);
   };
 
   // CRUD Handler: Post Announcement
   const handlePostAnnouncementSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasPermissionKey(P.ANNOUNCEMENTS_MANAGE)) return;
     if (!announcementForm.title || !announcementForm.message) return;
-    const newLog = {
-      type: "Settings",
-      text: `Announcement: '${announcementForm.title}' published`,
-      user: "Admin",
-      time: "Just now",
-      color: "#F59E0B",
-    };
-    setAuditLogList((prev) => [newLog, ...prev]);
     setAnnouncementForm({
       title: "",
       message: "",
@@ -662,10 +421,11 @@ export function SuperAdminDashboard() {
     });
     setIsPostAnnouncementOpen(false);
   };
+
   useEffect(() => {
     if (systemTaskType !== "Backup") return;
     const interval = setInterval(() => {
-      setProgressPercent((prev) => {
+      setProgressPercent((prev: number) => {
         if (prev >= 100) {
           return 100;
         }
@@ -674,10 +434,11 @@ export function SuperAdminDashboard() {
     }, 150);
     return () => clearInterval(interval);
   }, [systemTaskType]);
+
   useEffect(() => {
     if (systemTaskType !== "Scan") return;
     const interval = setInterval(() => {
-      setProgressPercent((prev) => {
+      setProgressPercent((prev: number) => {
         if (prev >= 100) {
           return 100;
         }
@@ -686,43 +447,29 @@ export function SuperAdminDashboard() {
     }, 200);
     return () => clearInterval(interval);
   }, [systemTaskType]);
+
   useEffect(() => {
     if (progressPercent < 100 || !systemTaskType) return;
-    const currentTask = systemTaskType;
     const timeout = setTimeout(() => {
       setSystemTaskType(null);
-      const newLog =
-        currentTask === "Backup"
-          ? {
-              type: "Settings",
-              text: "Full database backup completed successfully",
-              user: "System",
-              time: "Just now",
-              color: "#64748B",
-            }
-          : {
-              type: "Settings",
-              text: "Vulnerability security scan completed - 0 threats found",
-              user: "Security",
-              time: "Just now",
-              color: "#EF4444",
-            };
-      setAuditLogList((prevLog) => [newLog, ...prevLog]);
     }, 300);
     return () => clearTimeout(timeout);
   }, [progressPercent, systemTaskType]);
 
   // Action: Backup Data (Simulated loading)
   const triggerBackup = () => {
+    if (!hasPermissionKey(P.SETTINGS_FULL)) return;
     setSystemTaskType("Backup");
     setProgressPercent(0);
   };
 
   // Action: Security Scan (Simulated loading)
   const triggerSecurityScan = () => {
+    if (!hasPermissionKey(P.SETTINGS_FULL)) return;
     setSystemTaskType("Scan");
     setProgressPercent(0);
   };
+
   return (
     <div className="w-full px-4 md:px-8 py-6 pb-10 space-y-6">
       {/* ═══ PAGE HEADER ═══ */}
@@ -752,39 +499,41 @@ export function SuperAdminDashboard() {
               {t("live")}
             </span>
           </div>
-          <button
-            onClick={() => navigate("/reports")}
-            className="px-4 py-2 rounded-xl bg-card border border-border text-[13px] font-bold hover:bg-secondary transition-colors cursor-pointer"
-          >
-            View Reports
-          </button>
+          <PermissionGate requires={P.REPORTS_VIEW}>
+            <button
+              onClick={() => navigate("/reports")}
+              className="px-4 py-2 rounded-xl bg-card border border-border text-[13px] font-bold hover:bg-secondary transition-colors cursor-pointer"
+            >
+              View Reports
+            </button>
+          </PermissionGate>
         </div>
       </div>
 
       {/* ═══ SYSTEM HEALTH BAR ═══ */}
-      <div className="w-full py-3 px-6 rounded-2xl bg-emerald-50/50 border border-emerald-100 flex flex-wrap items-center gap-8 shadow-sm">
+      <div className="w-full py-3 px-4 sm:px-6 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 flex flex-wrap items-center gap-y-2.5 gap-x-6 sm:gap-8 shadow-sm">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-purple-500" />
-          <span className="text-[12px] font-bold text-slate-700 tracking-tight">
+          <div className="w-2 h-2 rounded-full bg-purple-500 shrink-0" />
+          <span className="text-[12px] font-bold text-slate-800 dark:text-emerald-200 tracking-tight">
             {t("systemAllServicesOperational")}
           </span>
         </div>
-        <div className="flex items-center gap-2 border-l border-emerald-200/50 pl-8">
-          <div className="w-2 h-2 rounded-full bg-emerald-500" />
-          <span className="text-[12px] font-bold text-slate-700 tracking-tight">
+        <div className="flex items-center gap-2 sm:border-l sm:border-emerald-200/50 dark:sm:border-emerald-800/40 sm:pl-6 border-l-0 pl-0">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+          <span className="text-[12px] font-bold text-slate-800 dark:text-emerald-200 tracking-tight">
             {totalEmployeesCount.toLocaleString()} active users today
           </span>
         </div>
-        <div className="flex items-center gap-2 border-l border-emerald-200/50 pl-8">
-          <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-          <span className="text-[12px] font-bold text-slate-700 tracking-tight">
+        <div className="flex items-center gap-2 sm:border-l sm:border-emerald-200/50 dark:sm:border-emerald-800/40 sm:pl-6 border-l-0 pl-0">
+          <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
+          <span className="text-[12px] font-bold text-slate-800 dark:text-emerald-200 tracking-tight">
             {pendingActionsCount} pending admin actions
           </span>
         </div>
       </div>
 
       {/* ═══ ROW 1 — KPI CARDS ═══ */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 w-full">
         {[
           {
             icon: Users,
@@ -792,7 +541,7 @@ export function SuperAdminDashboard() {
             value: totalEmployeesCount.toLocaleString(),
             sub: "+12 this month",
             color: "#00B87C",
-            bg: "#DCFCE7",
+            bg: "rgba(0,184,124,0.12)",
           },
           {
             icon: Building,
@@ -800,7 +549,7 @@ export function SuperAdminDashboard() {
             value: "7",
             sub: "All active",
             color: "#0EA5E9",
-            bg: "#E0F2FE",
+            bg: "rgba(14,165,233,0.12)",
           },
           {
             icon: Calendar,
@@ -808,7 +557,7 @@ export function SuperAdminDashboard() {
             value: "91%",
             sub: "1,102 present",
             color: "#00B87C",
-            bg: "#DCFCE7",
+            bg: "rgba(0,184,124,0.12)",
           },
           {
             icon: IndianRupee,
@@ -816,7 +565,7 @@ export function SuperAdminDashboard() {
             value: "₹28.4L",
             sub: "Mar 2026",
             color: "#8B5CF6",
-            bg: "#EDE9FE",
+            bg: "rgba(139,92,246,0.12)",
           },
           {
             icon: Shield,
@@ -824,15 +573,15 @@ export function SuperAdminDashboard() {
             value: "0",
             sub: "All clear",
             color: "#EF4444",
-            bg: "#FEE2E2",
+            bg: "rgba(239,68,68,0.12)",
           },
           {
             icon: Settings,
             label: "SYSTEM UPTIME",
             value: "99.9%",
             sub: "Last 30 days",
-            color: "#111827",
-            bg: "#F3F4F6",
+            color: "#6366F1",
+            bg: "rgba(99,102,241,0.12)",
           },
         ].map((kpi, i) => (
           <m.div
@@ -848,10 +597,10 @@ export function SuperAdminDashboard() {
             transition={{
               delay: i * 0.05,
             }}
-            className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-shadow cursor-pointer"
+            className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all cursor-pointer"
           >
             <div
-              className="w-9 h-9 rounded-[10px] mb-3 flex items-center justify-center"
+              className="w-9 h-9 rounded-[10px] mb-3 flex items-center justify-center shrink-0"
               style={{
                 backgroundColor: kpi.bg,
               }}
@@ -863,19 +612,20 @@ export function SuperAdminDashboard() {
                 }}
               />
             </div>
-            <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
               {kpi.label}
             </p>
-            <p className="text-[28px] font-bold text-[#111827] mb-1">
+            <p className="text-[28px] font-bold text-foreground mb-1">
               {kpi.value}
             </p>
-            <p className="text-[12px] text-[#6B7280]">{kpi.sub}</p>
+            <p className="text-[12px] text-muted-foreground">{kpi.sub}</p>
           </m.div>
         ))}
       </div>
 
       {/* ═══ ROW 2 — CHARTS ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+        {/* Headcount Trend Chart */}
         <div className="lg:col-span-2 bg-card p-6 rounded-2xl border border-border shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-black text-foreground uppercase tracking-wider">
@@ -895,7 +645,7 @@ export function SuperAdminDashboard() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-10 gap-6">
             {/* Insights Panel */}
-            <div className="md:col-span-3 flex flex-col justify-between p-4 bg-emerald-50/20 dark:bg-emerald-950/5 border border-emerald-500/10 rounded-2xl h-full min-h-[140px] md:min-h-0">
+            <div className="md:col-span-3 flex flex-col justify-between p-4 bg-emerald-50/30 dark:bg-emerald-950/20 border border-emerald-500/20 rounded-2xl h-full min-h-[140px] md:min-h-0">
               <div className="space-y-2">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                   Period Insights ({headcountPeriod})
@@ -903,7 +653,7 @@ export function SuperAdminDashboard() {
                 <h4 className="text-[20px] font-black text-foreground leading-tight">
                   {HEADCOUNT_PERIOD_DATA[headcountPeriod].growth}
                 </h4>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-wider">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 text-[10px] font-black uppercase tracking-wider">
                   {HEADCOUNT_PERIOD_DATA[headcountPeriod].rate} Growth
                 </span>
                 <p className="text-[12px] font-semibold text-muted-foreground leading-snug mt-2">
@@ -931,86 +681,117 @@ export function SuperAdminDashboard() {
             </div>
 
             {/* Chart Panel */}
-            <div className="md:col-span-7 h-[280px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={HEADCOUNT_PERIOD_DATA[headcountPeriod].data}>
-                  <defs>
-                    <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#00B87C" stopOpacity={0.1} />
-                      <stop offset="95%" stopColor="#00B87C" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="rgba(0,0,0,0.03)"
-                  />
-                  <XAxis
-                    dataKey="month"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{
-                      fontSize: 10,
-                      fontWeight: 700,
-                    }}
-                    dy={10}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{
-                      fontSize: 10,
-                      fontWeight: 700,
-                    }}
-                  />
-                  <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#00B87C"
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorCount)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+            <div className="md:col-span-7 h-[280px] w-full min-h-[250px]">
+              <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-bold text-muted-foreground animate-pulse">Loading chart...</div>}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={HEADCOUNT_PERIOD_DATA[headcountPeriod].data}>
+                    <defs>
+                      <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#00B87C" stopOpacity={0.2} />
+                        <stop offset="95%" stopColor="#00B87C" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="var(--border, rgba(148,163,184,0.15))"
+                    />
+                    <XAxis
+                      dataKey="month"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        fill: "var(--muted-foreground, #64748B)",
+                      }}
+                      dy={10}
+                    />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        fill: "var(--muted-foreground, #64748B)",
+                      }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "var(--card, #ffffff)",
+                        borderColor: "var(--border, #e2e8f0)",
+                        borderRadius: "12px",
+                        color: "var(--foreground, #0f172a)",
+                        fontWeight: 700,
+                        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+                      }}
+                      itemStyle={{
+                        color: "var(--foreground, #0f172a)",
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#00B87C"
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill="url(#colorCount)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </Suspense>
             </div>
           </div>
         </div>
 
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">
+        {/* Department Distribution Chart */}
+        <div className="lg:col-span-1 bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col justify-between">
+          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-4">
             {t("deptDistribution")}
           </h3>
-          <div className="h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={INITIAL_DEPT_DATA}
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {INITIAL_DEPT_DATA.map((entry) => (
-                    <Cell key={`cell-${entry.color}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+          <div className="h-[200px] w-full min-h-[180px]">
+            <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs font-bold text-muted-foreground animate-pulse">Loading chart...</div>}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={INITIAL_DEPT_DATA}
+                    innerRadius={55}
+                    outerRadius={75}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {INITIAL_DEPT_DATA.map((entry) => (
+                      <Cell key={`cell-${entry.color}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "var(--card, #ffffff)",
+                      borderColor: "var(--border, #e2e8f0)",
+                      borderRadius: "12px",
+                      color: "var(--foreground, #0f172a)",
+                      fontWeight: 700,
+                      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+                    }}
+                    itemStyle={{
+                      color: "var(--foreground, #0f172a)",
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </Suspense>
           </div>
-          <div className="mt-6 grid grid-cols-2 gap-2">
+          <div className="mt-4 grid grid-cols-2 gap-2">
             {INITIAL_DEPT_DATA.map((dept) => (
               <div key={dept.name} className="flex items-center gap-2">
                 <div
-                  className="w-2 h-2 rounded-full"
+                  className="w-2.5 h-2.5 rounded-full shrink-0"
                   style={{
                     backgroundColor: dept.color,
                   }}
                 />
                 <span className="text-[11px] font-bold text-muted-foreground truncate">
-                  {dept.name}
+                  {dept.name} ({dept.value})
                 </span>
               </div>
             ))}
@@ -1018,10 +799,10 @@ export function SuperAdminDashboard() {
         </div>
       </div>
 
-      {/* ═══ ROW 3 — ADMIN ACTIONS & LOGS ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Pending Actions */}
-        <div className="bg-card rounded-[24px] border border-border shadow-sm overflow-hidden flex flex-col justify-between">
+      {/* ═══ ROW 3 — PENDING ADMIN ACTIONS + QUICK SYSTEM ACTIONS ═══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+        {/* Pending Admin Actions */}
+        <div className="lg:col-span-1 bg-card rounded-[24px] border border-border shadow-sm overflow-hidden flex flex-col justify-between">
           <div>
             <div className="p-6 border-b border-border">
               <h3 className="text-sm font-black text-foreground uppercase tracking-wider">
@@ -1034,7 +815,7 @@ export function SuperAdminDashboard() {
                   All actions resolved!
                 </div>
               ) : (
-                pendingActionsList.map((action) => (
+                pendingActionsList.map((action: PendingActionItem) => (
                   <div
                     key={action.title}
                     onClick={() => setActivePendingAction(action)}
@@ -1042,7 +823,7 @@ export function SuperAdminDashboard() {
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                         style={{
                           backgroundColor: action.bg,
                         }}
@@ -1070,7 +851,7 @@ export function SuperAdminDashboard() {
                     </div>
                     <ArrowRight
                       size={16}
-                      className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
+                      className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0 shrink-0"
                     />
                   </div>
                 ))
@@ -1078,240 +859,99 @@ export function SuperAdminDashboard() {
             </div>
           </div>
           <div className="p-4 text-center border-t border-border mt-auto">
-            <button
-              onClick={() => navigate("/employees")}
-              className="text-[12px] font-black text-primary uppercase tracking-widest hover:underline cursor-pointer"
-            >
-              {t("viewAllActions")}
-            </button>
-          </div>
-        </div>
-
-        {/* Audit Log */}
-        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-border">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">
-              {t("recentSystemActivity")}
-            </h3>
-          </div>
-          <div className="p-6 space-y-6 max-h-[380px] overflow-y-auto custom-scrollbar">
-            {auditLogList.map((log, i) => (
-              <div key={log.text} className="flex gap-4 relative">
-                {i !== auditLogList.length - 1 && (
-                  <div className="absolute left-[5px] top-4 w-[1px] h-full bg-border" />
-                )}
-                <div
-                  className="w-[11px] h-[11px] rounded-full mt-1.5 z-10 shrink-0 border-2 border-card"
-                  style={{
-                    backgroundColor: log.color,
-                  }}
-                />
-                <div className="overflow-hidden">
-                  <p className="text-[13px] font-bold text-foreground leading-tight">
-                    {log.text}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[11px] text-muted-foreground font-medium">
-                      {log.user}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-border" />
-                    <span className="text-[11px] text-muted-foreground font-medium">
-                      {log.time}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Module Usage */}
-        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-sm font-black text-foreground uppercase tracking-wider">
-              {t("moduleUsage")}
-            </h3>
-            <span className="px-2 py-0.5 rounded bg-emerald-50 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
-              {t("mostUsedAttendance", {
-                value: 94,
-              })}
-            </span>
-          </div>
-          <div className="space-y-6 flex-1">
-            {INITIAL_MODULE_USAGE.map((mod, i) => (
-              <div key={mod.label} className="space-y-2">
-                <div className="flex justify-between text-[12px] font-bold text-foreground">
-                  <span>{mod.label}</span>
-                  <span>{mod.value}%</span>
-                </div>
-                <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                  <m.div
-                    initial={{
-                      x: "-100%",
-                    }}
-                    animate={{
-                      x: `-${100 - mod.value}%`,
-                    }}
-                    transition={{
-                      duration: 1,
-                      delay: i * 0.1,
-                    }}
-                    className="h-full rounded-full w-full"
-                    style={{
-                      backgroundColor: mod.color,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ═══ BOTTOM ROW — ROLES & QUICK ACTIONS ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm overflow-hidden">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">
-            {t("userRolesDistribution")}
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="pb-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                    {t("roleName")}
-                  </th>
-                  <th className="pb-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                    {t("members")}
-                  </th>
-                  <th className="pb-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                    {t("status")}
-                  </th>
-                  <th className="pb-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-right">
-                    {t("action")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {roleDistList.map((role) => (
-                  <tr
-                    key={role.status}
-                    className="hover:bg-secondary/30 transition-colors"
-                  >
-                    <td className="py-4">
-                      <span
-                        className="px-3 py-1 rounded-full text-[11px] font-black tracking-wider"
-                        style={{
-                          color: role.color,
-                          backgroundColor: role.bg,
-                        }}
-                      >
-                        {role.role}
-                      </span>
-                    </td>
-                    <td className="py-4 font-bold text-foreground text-sm">
-                      {role.count}
-                    </td>
-                    <td className="py-4">
-                      <div className="flex items-center gap-1.5">
-                        <div
-                          className={`w-1.5 h-1.5 rounded-full ${role.status === "Active" ? "bg-emerald-500" : "bg-rose-500"}`}
-                        />
-                        <span className="text-[11px] font-bold text-muted-foreground">
-                          {role.status}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 text-right">
-                      <button
-                        onClick={() => {
-                          setSelectedRoleToManage(role);
-                          setIsManageRoleOpen(true);
-                        }}
-                        className="text-[12px] font-bold text-primary hover:underline cursor-pointer"
-                      >
-                        {t("manageArrow")}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="bg-card p-6 rounded-[24px] border border-border shadow-sm">
-          <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">
-            {t("quickSystemActions")}
-          </h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {[
-              {
-                icon: IndianRupee,
-                label: "Run Payroll",
-                color: "#8B5CF6",
-                bg: "#EDE9FE",
-                action: () => navigate("/payroll"),
-              },
-              {
-                icon: UserPlus,
-                label: "Add Employee",
-                color: "#00B87C",
-                bg: "#DCFCE7",
-                action: () => setIsAddEmployeeOpen(true),
-              },
-              {
-                icon: Megaphone,
-                label: "Post Announcement",
-                color: "#F59E0B",
-                bg: "#FEF3C7",
-                action: () => setIsPostAnnouncementOpen(true),
-              },
-              {
-                icon: BarChart3,
-                label: "Export Reports",
-                color: "#0EA5E9",
-                bg: "#E0F2FE",
-                action: () => navigate("/reports"),
-              },
-              {
-                icon: Database,
-                label: "Backup Data",
-                color: "#64748B",
-                bg: "#F3F4F6",
-                action: triggerBackup,
-              },
-              {
-                icon: ShieldCheck,
-                label: "Security Scan",
-                color: "#EF4444",
-                bg: "#FEE2E2",
-                action: triggerSecurityScan,
-              },
-            ].map((action) => (
+            <PermissionGate requires={P.EMPLOYEES_VIEW}>
               <button
-                key={action.label}
-                onClick={action.action}
-                className="flex flex-col items-center gap-3 p-4 rounded-2xl border border-border bg-card hover:bg-secondary transition-all group cursor-pointer"
+                onClick={() => navigate("/employees")}
+                className="text-[12px] font-black text-primary uppercase tracking-widest hover:underline cursor-pointer"
               >
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110"
-                  style={{
-                    backgroundColor: action.bg,
-                  }}
-                >
-                  <action.icon
-                    size={22}
-                    style={{
-                      color: action.color,
-                    }}
-                  />
-                </div>
-                <span className="text-[12px] font-bold text-foreground text-center leading-tight">
-                  {action.label}
-                </span>
+                {t("viewAllActions")}
               </button>
-            ))}
+            </PermissionGate>
+          </div>
+        </div>
+
+        {/* Quick System Actions */}
+        <div className="lg:col-span-1 bg-card p-6 rounded-[24px] border border-border shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-6">
+              {t("quickSystemActions")}
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {[
+                {
+                  icon: IndianRupee,
+                  label: "Run Payroll",
+                  color: "#8B5CF6",
+                  bg: "rgba(139,92,246,0.12)",
+                  permission: P.PAYROLL_MANAGE,
+                  action: () => navigate("/payroll"),
+                },
+                {
+                  icon: UserPlus,
+                  label: "Add Employee",
+                  color: "#00B87C",
+                  bg: "rgba(0,184,124,0.12)",
+                  permission: P.EMPLOYEES_CREATE,
+                  action: () => setIsAddEmployeeOpen(true),
+                },
+                {
+                  icon: Megaphone,
+                  label: "Post Announcement",
+                  color: "#F59E0B",
+                  bg: "rgba(245,158,11,0.12)",
+                  permission: P.ANNOUNCEMENTS_MANAGE,
+                  action: () => setIsPostAnnouncementOpen(true),
+                },
+                {
+                  icon: BarChart3,
+                  label: "Export Reports",
+                  color: "#0EA5E9",
+                  bg: "rgba(14,165,233,0.12)",
+                  permission: P.REPORTS_VIEW,
+                  action: () => navigate("/reports"),
+                },
+                {
+                  icon: Database,
+                  label: "Backup Data",
+                  color: "#64748B",
+                  bg: "rgba(100,116,139,0.15)",
+                  permission: P.SETTINGS_FULL,
+                  action: triggerBackup,
+                },
+                {
+                  icon: ShieldCheck,
+                  label: "Security Scan",
+                  color: "#EF4444",
+                  bg: "rgba(239,68,68,0.12)",
+                  permission: P.SETTINGS_FULL,
+                  action: triggerSecurityScan,
+                },
+              ].map((action) => (
+                <PermissionGate key={action.label} requires={action.permission}>
+                  <button
+                    onClick={action.action}
+                    className="flex flex-col items-center gap-3 p-4 rounded-2xl border border-border bg-card hover:bg-secondary transition-all group cursor-pointer w-full"
+                  >
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shrink-0"
+                      style={{
+                        backgroundColor: action.bg,
+                      }}
+                    >
+                      <action.icon
+                        size={22}
+                        style={{
+                          color: action.color,
+                        }}
+                      />
+                    </div>
+                    <span className="text-[12px] font-bold text-foreground text-center leading-tight">
+                      {action.label}
+                    </span>
+                  </button>
+                </PermissionGate>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -1602,113 +1242,6 @@ export function SuperAdminDashboard() {
           </div>
         )}
 
-        {/* MANAGE ROLE MODAL */}
-        {isManageRoleOpen && selectedRoleToManage && (
-          <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
-            <m.div
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              exit={{
-                opacity: 0,
-              }}
-              className="absolute inset-0 bg-black/55 backdrop-blur-sm"
-              onClick={() => setIsManageRoleOpen(false)}
-            />
-            <m.div
-              initial={{
-                scale: 0.95,
-                opacity: 0,
-              }}
-              animate={{
-                scale: 1,
-                opacity: 1,
-              }}
-              exit={{
-                scale: 0.95,
-                opacity: 0,
-              }}
-              className="relative bg-card w-full max-w-sm rounded-3xl p-6 border border-border shadow-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center pb-4 border-b border-border">
-                <h3 className="text-lg font-black text-foreground uppercase tracking-wide flex items-center gap-2">
-                  <Settings className="text-[#8B5CF6]" size={20} /> Manage Role:{" "}
-                  {selectedRoleToManage.role}
-                </h3>
-                <button
-                  onClick={() => setIsManageRoleOpen(false)}
-                  className="p-1 hover:bg-secondary rounded-lg transition-colors cursor-pointer text-muted-foreground"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              <form
-                onSubmit={handleManageRoleSubmit}
-                className="space-y-4 pt-4"
-              >
-                <div>
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-wider block mb-1">
-                    Active Members Count
-                  </label>
-                  <input
-                    required
-                    type="number"
-                    className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-[13px] font-bold outline-none focus:border-primary transition-all text-foreground"
-                    value={selectedRoleToManage.count}
-                    onChange={(e) =>
-                      setSelectedRoleToManage({
-                        ...selectedRoleToManage,
-                        count:
-                          (e.target.value === "" ||
-                          isNaN(parseInt(e.target.value))
-                            ? undefined
-                            : parseInt(e.target.value)) || 0,
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-wider block mb-1">
-                    Role Status
-                  </label>
-                  <select
-                    className="w-full bg-background border border-border rounded-xl px-3 py-2.5 text-[13px] font-bold outline-none focus:border-primary transition-all text-foreground"
-                    value={selectedRoleToManage.status}
-                    onChange={(e) =>
-                      setSelectedRoleToManage({
-                        ...selectedRoleToManage,
-                        status: e.target.value,
-                      })
-                    }
-                  >
-                    <option>Active</option>
-                    <option>Inactive</option>
-                  </select>
-                </div>
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsManageRoleOpen(false)}
-                    className="flex-1 py-3 bg-secondary hover:bg-border text-foreground text-[13px] font-black uppercase tracking-widest rounded-xl transition-all cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-3 bg-primary text-white text-[13px] font-black uppercase tracking-widest rounded-xl hover:opacity-95 shadow-md shadow-primary/20 transition-all cursor-pointer"
-                  >
-                    Save Changes
-                  </button>
-                </div>
-              </form>
-            </m.div>
-          </div>
-        )}
-
         {/* RESOLVE PENDING ACTION MODAL */}
         {activePendingAction && (
           <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4">
@@ -1780,12 +1313,14 @@ export function SuperAdminDashboard() {
                 >
                   Close
                 </button>
-                <button
-                  onClick={() => handleResolveAction(activePendingAction.title)}
-                  className="flex-1 py-2.5 rounded-xl bg-primary text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 shadow-md shadow-primary/25 transition-all cursor-pointer"
-                >
-                  Resolve / Approve
-                </button>
+                <PermissionGate requires={P.EMPLOYEES_MANAGE}>
+                  <button
+                    onClick={() => handleResolveAction(activePendingAction.title)}
+                    className="flex-1 py-2.5 rounded-xl bg-primary text-white text-[11px] font-black uppercase tracking-widest hover:opacity-90 shadow-md shadow-primary/25 transition-all cursor-pointer"
+                  >
+                    Resolve / Approve
+                  </button>
+                </PermissionGate>
               </div>
             </m.div>
           </div>

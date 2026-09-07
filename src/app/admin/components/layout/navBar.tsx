@@ -1,9 +1,15 @@
 import { Bell, Search, ChevronDown, Moon, ShieldCheck } from "lucide-react";
 import { Link } from "react-router";
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { OrganizationService } from "../../features/organizations/services/organization.service";
 import { useAuth } from "../../../context/AuthContext";
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -18,13 +24,27 @@ export default function Navbar() {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    const handleSearchOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsSearchOpen(false);
+    };
+    document.addEventListener("mousedown", handleSearchOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleSearchOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   return (
     <header className="h-18 border-b bg-white px-6 flex items-center justify-between">
       {/* Search */}
-      <div className="flex-1 max-w-xl">
+      <div className="flex-1 max-w-xl relative" ref={searchRef}>
         <div className="relative">
           <Search
             size={18}
@@ -33,10 +53,57 @@ export default function Navbar() {
 
           <input
             type="text"
-            placeholder="Search anything..."
-            className="w-full h-13 pl-11 pr-4 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Search organizations, domains..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setIsSearchOpen(true);
+            }}
+            onFocus={() => setIsSearchOpen(true)}
+            className="w-full h-11 pl-11 pr-4 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium"
           />
         </div>
+
+        {/* Search Results Dropdown */}
+        {isSearchOpen && searchQuery.trim() && (
+          <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-80 overflow-y-auto">
+            {(() => {
+              const allOrgs = OrganizationService.getOrganizations();
+              const results = allOrgs.filter(
+                (o) =>
+                  o.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  o.domain.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  (o.code && o.code.toLowerCase().includes(searchQuery.toLowerCase()))
+              );
+              if (results.length === 0) {
+                return (
+                  <div className="p-4 text-center text-xs text-gray-500 font-semibold">
+                    No matching organizations found
+                  </div>
+                );
+              }
+              return results.map((org) => (
+                <div
+                  key={org.id}
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    setSearchQuery("");
+                    navigate("/platform-admin/organizations");
+                  }}
+                  className="p-3 hover:bg-indigo-50/50 cursor-pointer flex items-center justify-between border-b border-gray-100 last:border-none transition-colors"
+                >
+                  <div>
+                    <p className="text-sm font-bold text-gray-900">{org.name}</p>
+                    <p className="text-xs text-gray-500 font-medium">{org.domain}</p>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 text-gray-700">
+                    {org.status}
+                  </span>
+                </div>
+              ));
+            })()}
+          </div>
+        )}
       </div>
 
       {/* Right Actions */}

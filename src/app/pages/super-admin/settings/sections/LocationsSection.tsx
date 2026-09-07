@@ -370,7 +370,7 @@ export function LocationsSection() {
                   }}
                 >
                   <span
-                    className="px-2 py-1 rounded-lg text-xs font-bold"
+                    className="px-2.5 py-0.5 rounded-lg text-xs font-bold"
                     style={{
                       backgroundColor: "var(--muted)",
                       color: "var(--foreground)",
@@ -555,16 +555,6 @@ export function LocationsSection() {
             state: allowRemoteWork,
             setter: setAllowRemoteWork,
           },
-          {
-            label: "Require Geofence Verification",
-            state: requireGeofence,
-            setter: setRequireGeofence,
-          },
-          {
-            label: "Region-specific Holiday Calendars",
-            state: regionHolidays,
-            setter: setRegionHolidays,
-          },
         ].map((row) => (
           <div
             key={row.label}
@@ -612,31 +602,6 @@ export function LocationsSection() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div>
-          <label
-            style={{
-              display: "block",
-              fontSize: "11px",
-              fontWeight: 700,
-              color: "var(--muted-foreground)",
-              textTransform: "uppercase",
-              marginBottom: "6px",
-            }}
-          >
-            Geofence Radius (meters)
-          </label>
-          <input
-            type="text"
-            value={geofenceRadius}
-            onChange={(e) => setGeofenceRadius(e.target.value)}
-            className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
-            style={{
-              backgroundColor: "var(--input-background)",
-              borderColor: "var(--border)",
-              color: "var(--foreground)",
-            }}
-          />
-        </div>
         <div>
           <label
             style={{

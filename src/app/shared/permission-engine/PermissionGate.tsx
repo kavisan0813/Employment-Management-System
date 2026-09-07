@@ -1,36 +1,56 @@
-import type { ReactNode } from "react";
-import { usePermissions } from "./PermissionContext";
-import { permissionKey as makeKey } from "./permissions";
+/**
+ * ─────────────────────────────────────────────────────────────────
+ *  PERMISSION GATE COMPONENT
+ *
+ *  Declarative wrapper component for conditional permission rendering.
+ *  Uses the canonical `usePermissions()` hook.
+ *
+ *  Usage:
+ *    <PermissionGate requires={P.EMPLOYEES_MANAGE} fallback={<ReadOnlyNotice />}>
+ *      <AddEmployeeButton />
+ *    </PermissionGate>
+ * ─────────────────────────────────────────────────────────────────
+ */
 
-interface PermissionGateProps {
-  module?: string;
-  action?: string;
-  permissionKey?: string;
-  anyOf?: string[];
-  allOf?: string[];
+import { ReactNode } from "react";
+import { usePermissions } from "./PermissionContext";
+
+export interface PermissionGateProps {
+  /** Single permission key required */
+  requires?: string;
+  /** Array of permission keys - user must hold ALL */
+  requiresAll?: string[];
+  /** Array of permission keys - user must hold ANY */
+  requiresAny?: string[];
+  /** Fallback content rendered if permission check fails (default: null) */
   fallback?: ReactNode;
+  /** Content rendered if permission check passes */
   children: ReactNode;
 }
 
 export function PermissionGate({
-  module,
-  action,
-  permissionKey,
-  anyOf,
-  allOf,
+  requires,
+  requiresAll,
+  requiresAny,
   fallback = null,
   children,
 }: PermissionGateProps) {
-  const { hasPermissionKey, hasAnyPermission, hasAllPermissions } =
+  const { hasPermissionKey, hasAllPermissions, hasAnyPermission } =
     usePermissions();
 
-  const allowed = (() => {
-    if (permissionKey) return hasPermissionKey(permissionKey);
-    if (module && action) return hasPermissionKey(makeKey(module, action));
-    if (anyOf && anyOf.length > 0) return hasAnyPermission(anyOf);
-    if (allOf && allOf.length > 0) return hasAllPermissions(allOf);
-    return true;
-  })();
+  if (requires && !hasPermissionKey(requires)) {
+    return <>{fallback}</>;
+  }
 
-  return <>{allowed ? children : fallback}</>;
+  if (requiresAll && requiresAll.length > 0 && !hasAllPermissions(requiresAll)) {
+    return <>{fallback}</>;
+  }
+
+  if (requiresAny && requiresAny.length > 0 && !hasAnyPermission(requiresAny)) {
+    return <>{fallback}</>;
+  }
+
+  return <>{children}</>;
 }
+
+export default PermissionGate;

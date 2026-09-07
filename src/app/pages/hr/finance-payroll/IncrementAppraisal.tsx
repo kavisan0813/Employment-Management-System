@@ -1,5 +1,6 @@
 import { lazy, useState, useRef, useEffect } from "react";
-import { useAuth } from "../../../context/AuthContext";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import { useNavigate } from "react-router";
 import {
   Download,
@@ -392,8 +393,10 @@ function DetailDrawer({
   onApplyPayroll: () => void;
 }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const isHR = user?.role === "HR Manager";
+  const { hasPermissionKey } = usePermissions();
+  const canApproveAppraisal =
+    hasPermissionKey(P.APPRAISAL_APPROVE) ||
+    hasPermissionKey(P.APPRAISAL_MANAGE);
   const attScore = emp.attendancePct * 0.4 + emp.performanceScore * 0.6;
   const annualImpact = emp.revisedSalary - emp.currentSalary;
   const monthlyImpact = Math.round(annualImpact / 12);
@@ -513,13 +516,18 @@ function DetailDrawer({
               />
             </div>
             <div>
-              <p
+              <button
+                type="button"
                 style={{
                   fontSize: "17px",
                   fontWeight: 800,
                   color: "var(--foreground)",
                   margin: 0,
+                  padding: 0,
+                  background: "none",
+                  border: "none",
                   cursor: "pointer",
+                  textAlign: "left",
                 }}
                 onClick={() => {
                   navigate(`/employees/${emp.id}`);
@@ -527,7 +535,7 @@ function DetailDrawer({
                 }}
               >
                 {emp.name}
-              </p>
+              </button>
               <p
                 style={{
                   fontSize: "12px",
@@ -1039,7 +1047,7 @@ function DetailDrawer({
             flexShrink: 0,
           }}
         >
-          {!isHR && (
+          {canApproveAppraisal && (
             <div
               style={{
                 display: "grid",
@@ -1091,7 +1099,7 @@ function DetailDrawer({
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: isHR ? "1fr" : "1fr 1fr",
+              gridTemplateColumns: !canApproveAppraisal ? "1fr" : "1fr 1fr",
               gap: "8px",
             }}
           >
@@ -1114,7 +1122,7 @@ function DetailDrawer({
             >
               <Send size={14} /> Send for Review
             </button>
-            {!isHR && (
+            {canApproveAppraisal && (
               <button
                 onClick={onApplyPayroll}
                 style={{

@@ -35,6 +35,20 @@ export interface Organization {
   storageUsedGB?: number;
   storageAllocatedGB?: number;
   enabledModules?: string[];
+  /** Feature overrides per organization: featureKey -> boolean */
+  featureOverrides?: Record<string, boolean>;
+  /** Configured branches/locations */
+  branches?: string[];
+  /** Configured department names */
+  departments?: string[];
+  /** Organization-level settings */
+  settings?: {
+    timezone?: string;
+    currency?: string;
+    dateFormat?: string;
+    allowSelfRegistration?: boolean;
+    mfaRequired?: boolean;
+  };
   joinedAt: string;
   lastActiveAt: string;
   trialEndsAt?: string;

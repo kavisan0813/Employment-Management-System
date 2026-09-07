@@ -14,189 +14,67 @@ export interface SettingsCategory {
 export const ROLE_NAVIGATION: Record<string, SettingsCategory[]> = {
   "Super Admin": [
     {
-      title: "ORGANIZATION",
+      title: "GENERAL",
       items: [
-        { id: "company", label: "Company Profile", iconName: "Building2" },
-        { id: "departments", label: "Departments", iconName: "FolderTree" },
-        { id: "locations", label: "Locations", iconName: "MapPin" },
-        { id: "schedules", label: "Work Schedules", iconName: "CalendarDays" },
-        { id: "holidays", label: "Holidays", iconName: "PartyPopper" },
+        { id: "organization", label: "Organization", iconName: "Building2" },
+        { id: "appearance", label: "Appearance & Branding", iconName: "Palette" },
       ],
     },
     {
-      title: "HR POLICIES",
+      title: "GOVERNANCE",
       items: [
-        {
-          id: "attendance_policy",
-          label: "Attendance Policy",
-          iconName: "ClipboardCheck",
-        },
-        { id: "leave_policy", label: "Leave Policy", iconName: "TreePalm" },
-        {
-          id: "payroll_settings",
-          label: "Payroll Settings",
-          iconName: "IndianRupee",
-        },
-        {
-          id: "performance_settings",
-          label: "Performance & Appraisal",
-          iconName: "Star",
-        },
-      ],
-    },
-    {
-      title: "SECURITY & ACCESS",
-      items: [
-        { id: "user_management", label: "User Management", iconName: "User" },
+        { id: "policies", label: "Policies", iconName: "ShieldCheck" },
+        { id: "workflows", label: "Approval Workflows", iconName: "GitPullRequest" },
         { id: "roles", label: "Roles & Permissions", iconName: "Lock" },
-        { id: "security", label: "Security Settings", iconName: "Shield" },
-        { id: "audit_logs", label: "Audit Logs", iconName: "FileText" },
+        { id: "features", label: "Feature Management", iconName: "Sliders" },
       ],
     },
     {
-      title: "INTEGRATIONS",
+      title: "COMMUNICATION",
       items: [
-        { id: "connected_apps", label: "Connected Apps", iconName: "Link2" },
-        { id: "api", label: "API & Tokens", iconName: "Key" },
-        { id: "webhooks", label: "Webhooks", iconName: "Zap" },
+        { id: "notifications", label: "Notification Preferences", iconName: "Bell" },
       ],
     },
     {
-      title: "NOTIFICATIONS",
+      title: "SECURITY",
       items: [
-        { id: "email_templates", label: "Email Templates", iconName: "Mail" },
-        {
-          id: "notification_rules",
-          label: "Notification Rules",
-          iconName: "Bell",
-        },
-        { id: "sms", label: "SMS Settings", iconName: "Smartphone" },
+        { id: "security", label: "Security & Sessions", iconName: "Shield" },
+        { id: "integrations", label: "Integrations", iconName: "Link2" },
       ],
     },
     {
-      title: "SYSTEM PREFERENCES",
+      title: "SYSTEM",
       items: [
-        { id: "appearance", label: "Appearance", iconName: "Palette" },
-        { id: "language", label: "Language & Region", iconName: "Globe" },
-        { id: "backup", label: "Backup & Restore", iconName: "Database" },
-        {
-          id: "import_export",
-          label: "Data Import / Export",
-          iconName: "Download",
-        },
-      ],
-    },
-    {
-      title: "WORKFLOW AUTOMATION",
-      items: [
-        {
-          id: "workflows",
-          label: "Approval Workflows",
-          iconName: "GitPullRequest",
-        },
-        {
-          id: "leave_approvals",
-          label: "Leave Approvals",
-          iconName: "CheckCircle",
-        },
-        { id: "shift_swaps", label: "Shift Swap Rules", iconName: "RefreshCw" },
-      ],
-    },
-    {
-      title: "MODULE SETTINGS",
-      items: [
-        { id: "docs", label: "Document Settings", iconName: "FileCode" },
-        {
-          id: "training",
-          label: "Training Settings",
-          iconName: "GraduationCap",
-        },
-        {
-          id: "onboarding",
-          label: "Onboarding Settings",
-          iconName: "UserPlus",
-        },
+        { id: "audit_logs", label: "Audit & Logs", iconName: "FileText" },
       ],
     },
   ],
   "HR Manager": [
     {
-      title: "ORGANIZATION",
+      title: "GENERAL",
       items: [
-        { id: "schedules", label: "Work Schedules", iconName: "CalendarDays" },
-        { id: "holidays", label: "Holidays", iconName: "PartyPopper" },
+        { id: "organization", label: "Organization", iconName: "Building2" },
+        { id: "appearance", label: "Appearance & Branding", iconName: "Palette" },
       ],
     },
     {
-      title: "HR POLICIES",
+      title: "GOVERNANCE",
       items: [
-        {
-          id: "attendance_policy",
-          label: "Attendance Policy",
-          iconName: "ClipboardCheck",
-        },
-        { id: "leave_policy", label: "Leave Policy", iconName: "TreePalm" },
-        {
-          id: "payroll_settings",
-          label: "Payroll Settings",
-          iconName: "IndianRupee",
-        },
-        {
-          id: "performance_settings",
-          label: "Performance & Appraisal",
-          iconName: "Star",
-        },
+        { id: "policies", label: "Policies", iconName: "ShieldCheck" },
+        { id: "workflows", label: "Approval Workflows", iconName: "GitPullRequest" },
+        { id: "roles", label: "Roles & Permissions", iconName: "Lock" },
       ],
     },
     {
-      title: "NOTIFICATIONS",
+      title: "COMMUNICATION",
       items: [
-        { id: "email_templates", label: "Email Templates", iconName: "Mail" },
-        {
-          id: "notification_rules",
-          label: "Notification Rules",
-          iconName: "Bell",
-        },
-        { id: "sms", label: "SMS Settings", iconName: "Smartphone" },
+        { id: "notifications", label: "Notification Preferences", iconName: "Bell" },
       ],
     },
     {
-      title: "SYSTEM PREFERENCES",
+      title: "SYSTEM",
       items: [
-        { id: "appearance", label: "Appearance", iconName: "Palette" },
-        { id: "language", label: "Language & Region", iconName: "Globe" },
-      ],
-    },
-    {
-      title: "WORKFLOW AUTOMATION",
-      items: [
-        {
-          id: "workflows",
-          label: "Approval Workflows",
-          iconName: "GitPullRequest",
-        },
-        {
-          id: "leave_approvals",
-          label: "Leave Approvals",
-          iconName: "CheckCircle",
-        },
-        { id: "shift_swaps", label: "Shift Swap Rules", iconName: "RefreshCw" },
-      ],
-    },
-    {
-      title: "MODULE SETTINGS",
-      items: [
-        { id: "docs", label: "Document Settings", iconName: "FileCode" },
-        {
-          id: "training",
-          label: "Training Settings",
-          iconName: "GraduationCap",
-        },
-        {
-          id: "onboarding",
-          label: "Onboarding Settings",
-          iconName: "UserPlus",
-        },
+        { id: "audit_logs", label: "Audit & Logs", iconName: "FileText" },
       ],
     },
   ],

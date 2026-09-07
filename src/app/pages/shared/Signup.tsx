@@ -1501,12 +1501,21 @@ export function Signup() {
             <div className="text-center mt-6">
               <span className="text-xs text-gray-500 font-semibold">
                 Not sure? Start on{" "}
-                <strong
+                <button
+                  type="button"
                   onClick={() => choosePlan("Starter")}
                   className="text-emerald-600 hover:underline cursor-pointer"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    margin: 0,
+                    font: "inherit",
+                    fontWeight: 600,
+                  }}
                 >
                   Starter
-                </strong>{" "}
+                </button>{" "}
                 — you can upgrade anytime.
               </span>
             </div>

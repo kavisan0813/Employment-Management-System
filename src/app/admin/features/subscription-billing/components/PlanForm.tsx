@@ -122,7 +122,7 @@ export function PlanForm({ plan, isEditing, onSave, onClose }: PlanFormProps) {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-[10px] uppercase font-semibold tracking-wide text-gray-400">
-                Monthly price (USD) <span className="text-rose-500">*</span>
+                Monthly price (INR) <span className="text-rose-500">*</span>
               </label>
               <input
                 type="number"
@@ -141,7 +141,7 @@ export function PlanForm({ plan, isEditing, onSave, onClose }: PlanFormProps) {
             </div>
             <div className="space-y-1">
               <label className="text-[10px] uppercase font-semibold tracking-wide text-gray-400">
-                Annual price (USD)
+                Annual price (INR)
               </label>
               <input
                 type="number"

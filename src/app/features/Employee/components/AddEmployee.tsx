@@ -441,7 +441,7 @@ export default function AddEmployee() {
           mfaEnabled: false,
           lastLoginAt: "",
           organization: user?.organization || "viyanHR Org",
-          organizationId: "org-1",
+          organizationId: user?.organizationId || "org-1",
         };
         localStorage.setItem(
           "viyan_registered_users:v1",
@@ -478,6 +478,26 @@ export default function AddEmployee() {
         })();
       } catch (err) {
         console.error("Failed to register platform login", err);
+      }
+
+      // ─── Dispatch In-App Notification ───
+      try {
+        const notifs = JSON.parse(localStorage.getItem("viyan_notifications:v1") || "[]");
+        const newNotif = {
+          id: Date.now(),
+          type: "Info",
+          title: "New Employee Added",
+          description: `${fullName} has been added successfully.`,
+          time: "Just now",
+          read: false,
+          category: "System",
+          actionRoute: "/onboarding",
+          actionLabel: "Start Onboarding",
+        };
+        localStorage.setItem("viyan_notifications:v1", JSON.stringify([newNotif, ...notifs]));
+        window.dispatchEvent(new Event("viyan:notifications-updated"));
+      } catch (e) {
+        console.error("Failed to post in-app notification", e);
       }
 
       sessionStorage.removeItem(AUTOSAVE_KEY);
@@ -617,18 +637,14 @@ export default function AddEmployee() {
                 <label className={labelCls}>Employee ID</label>
                 <input
                   type="text"
-                  placeholder="e.g. EMP001"
-                  className={inputCls}
-                  value={form.employeeId}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, employeeId: e.target.value }))
-                  }
+                  disabled
+                  readOnly
+                  className={`${inputCls} bg-slate-100 text-slate-500 cursor-not-allowed font-mono`}
+                  value={`${form.employeeId} (Auto-generated)`}
                 />
-                {!isIdUnique && (
-                  <p className="text-xs text-rose-500 font-bold mt-1.5 flex items-center gap-1">
-                    <Info size={12} /> Employee ID already registered!
-                  </p>
-                )}
+                <p className="text-[11px] text-slate-400 font-medium mt-1">
+                  Authoritative Employee ID is generated automatically on account creation.
+                </p>
               </div>
               <div className="md:col-span-1">
                 <label className={labelCls}>Email Address</label>
@@ -652,6 +668,18 @@ export default function AddEmployee() {
                     <Info size={12} /> Email already taken!
                   </p>
                 )}
+              </div>
+              <div>
+                <label className={labelCls}>Personal Contact / Phone</label>
+                <input
+                  type="tel"
+                  placeholder="+91 98765 43210"
+                  className={inputCls}
+                  value={form.personalMobile}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, personalMobile: e.target.value }))
+                  }
+                />
               </div>
               <div>
                 <label className={labelCls}>Password</label>
@@ -1110,22 +1138,6 @@ export default function AddEmployee() {
                           probationEndDate,
                         }));
                       }}
-                    />
-                  </div>
-                  {/* Total Experience */}
-                  <div>
-                    <label className={labelCls}>Total Experience (Years)</label>
-                    <input
-                      type="number"
-                      placeholder="e.g. 5"
-                      className={inputCls}
-                      value={form.totalExperience}
-                      onChange={(e) =>
-                        setForm((f) => ({
-                          ...f,
-                          totalExperience: e.target.value,
-                        }))
-                      }
                     />
                   </div>
                 </div>

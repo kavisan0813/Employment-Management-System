@@ -7,6 +7,10 @@ import {
   FileText,
   Send,
   Layers,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  ShieldCheck,
 } from "lucide-react";
 import { usePermissionKey } from "../../../shared/permission-engine/usePermission";
 import { P } from "../../../shared/permission-engine/permissions";
@@ -17,7 +21,15 @@ import { exitTypeChip, getClearanceIcon } from "../utils/chips";
 import type { OffboardingTemplate } from "../types/offboarding.types";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { useAuth } from "../../../context/AuthContext";
+import {
+  areAllClearancesComplete,
+  areAllDocumentsVerified,
+  formatExitStatusLabel,
+  normalizeExitStatus,
+  EXIT_STATUS,
+} from "../services/offboardingWorkflow";
 import * as m from "motion/react-m";
+
 interface OffboardingDetailProps {
   exit: ExitEmployee;
   templates: OffboardingTemplate[];
@@ -34,6 +46,7 @@ interface OffboardingDetailProps {
     comments: string,
   ) => void;
 }
+
 const CLEARANCE_CONFIGS: Record<
   string,
   {
@@ -80,6 +93,7 @@ const CLEARANCE_CONFIGS: Record<
     ],
   },
 };
+
 export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
   exit,
   templates,
@@ -103,6 +117,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
   const canApproveFinance = usePermissionKey(P.OFFBOARDING_CLEARANCE_FINANCE);
   const canApproveHR = usePermissionKey(P.OFFBOARDING_CLEARANCE_HR);
   const canApproveAdmin = usePermissionKey(P.OFFBOARDING_CLEARANCE_ADMIN);
+
   const clearanceApprovalByDepartment: Record<string, boolean> = {
     Manager: canApproveManager,
     IT: canApproveIT,
@@ -110,11 +125,21 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
     HR: canApproveHR,
     Admin: canApproveAdmin,
   };
+
   const [completedChecks, setCompletedChecks] = useState<
     Record<string, Record<string, boolean>>
   >({});
   const [deptComments, setDeptComments] = useState<Record<string, string>>({});
+  const [confirmModal, setConfirmModal] = useState<{
+    type: "clearance" | "finance";
+    dept?: string;
+  } | null>(null);
+
   const selectedTemplate = useRef<string>("");
+
+  const allClearancesDone = areAllClearancesComplete(exit);
+  const allDocsVerified = areAllDocumentsVerified(exit);
+
   const toggleCheck = (dept: string, item: string) => {
     setCompletedChecks((prev) => ({
       ...prev,
@@ -124,7 +149,31 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
       },
     }));
   };
-  const handleApproveClick = (dept: string) => {
+
+  const initiateClearanceApproval = (dept: string) => {
+    if (!allDocsVerified) {
+      showToast(
+        "Document Verification Warning",
+        "error",
+        "Please resolve unverified or rejected exit documents before approving clearance.",
+      );
+      return;
+    }
+    setConfirmModal({ type: "clearance", dept });
+  };
+
+  const handleConfirmClearance = () => {
+    if (!confirmModal?.dept) return;
+    const dept = confirmModal.dept;
+    if (dept === "Manager" && !canApproveManager && !canOverrideClearances) {
+      showToast(
+        "Permission Denied",
+        "error",
+        "Only the assigned Reporting Manager can approve Manager Exit Clearance."
+      );
+      setConfirmModal(null);
+      return;
+    }
     const comment = deptComments[dept] || "";
     const approverName = user?.name || user?.role || "System Admin";
     onApproveClearance(dept, approverName, comment);
@@ -132,6 +181,26 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
       ...prev,
       [dept]: "",
     }));
+    setConfirmModal(null);
+    showToast(`${dept} Clearance Approved`, "success", `Clearance sign-off complete.`);
+  };
+
+  const initiateFinanceSettlement = () => {
+    if (!allClearancesDone) {
+      showToast(
+        "Clearance Incomplete",
+        "error",
+        "All departmental clearances must be completed before initiating Finance F&F.",
+      );
+      return;
+    }
+    setConfirmModal({ type: "finance" });
+  };
+
+  const handleConfirmFinance = () => {
+    onSendToFinance();
+    setConfirmModal(null);
+    showToast("Finance F&F Initiated", "success", "Settlement request sent to Finance team.");
   };
   return (
     <div
@@ -504,7 +573,7 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                             />
                             <button
                               disabled={!allChecked}
-                              onClick={() => handleApproveClick(c.dept)}
+                              onClick={() => initiateClearanceApproval(c.dept)}
                               className="w-full py-2 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                             >
                               Approve {c.dept} Clearance
@@ -709,27 +778,37 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     </span>
                   </div>
                 </div>
+
                 <div className="mt-3 flex items-center justify-between">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FEF3C7] text-amber-500 border border-[#FDE68A] text-[11px] font-semibold uppercase tracking-wider">
                     <Clock size={12} /> {exit.ffStatus}
                   </span>
                 </div>
+
+                {!allClearancesDone && (
+                  <div className="mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[11px] font-bold flex items-start gap-2">
+                    <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+                    <span>
+                      Clearance Incomplete: All department clearances must be completed before initiating Finance F&F settlement.
+                    </span>
+                  </div>
+                )}
+
                 {canManageOffboarding ? (
                   <button
-                    disabled={exit.ffStatus !== "Pending"}
-                    onClick={onSendToFinance}
-                    className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    disabled={!allClearancesDone || exit.ffStatus !== "Pending"}
+                    onClick={initiateFinanceSettlement}
+                    className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5"
                   >
-                    <Send size={14} className="inline mr-1.5" /> Initiate F&F
+                    <Send size={14} /> Initiate F&F
                   </button>
                 ) : canManageFinance ? (
                   <button
-                    disabled={exit.ffStatus === "Approved & Processed"}
-                    onClick={onSendToFinance}
-                    className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    disabled={!allClearancesDone || exit.ffStatus === "Approved & Processed"}
+                    onClick={initiateFinanceSettlement}
+                    className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[#00B87C] text-white text-[11px] font-black uppercase tracking-wider hover:opacity-90 transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5"
                   >
-                    <Send size={14} className="inline mr-1.5" /> Approve &
-                    Process
+                    <Send size={14} /> Approve & Process F&F
                   </button>
                 ) : null}
               </div>
@@ -764,6 +843,53 @@ export const OffboardingDetail: React.FC<OffboardingDetailProps> = ({
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Confirmation Modal */}
+        {confirmModal && (
+          <div
+            className="fixed inset-0 z-[3000] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+            onClick={() => setConfirmModal(null)}
+          >
+            <div
+              className="w-full max-w-md bg-card rounded-[28px] p-6 shadow-2xl border border-border"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-12 h-12 rounded-2xl bg-[#00B87C]/10 text-[#00B87C] flex items-center justify-center mb-4 border border-[#00B87C]/20">
+                <ShieldCheck size={24} />
+              </div>
+              <h3 className="text-base font-black text-foreground mb-1">
+                {confirmModal.type === "clearance"
+                  ? `Approve ${confirmModal.dept} Clearance?`
+                  : "Initiate Finance F&F Settlement?"}
+              </h3>
+              <p className="text-xs text-muted-foreground font-medium mb-6">
+                {confirmModal.type === "clearance"
+                  ? `You are confirming that all ${confirmModal.dept} clearance requirements for ${exit.name} are met. This action will log a department sign-off audit event.`
+                  : `Initiating Full & Final Settlement for ${exit.name} will notify the Finance team to review and process gross/net payouts.`}
+              </p>
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
+                <button
+                  onClick={() => setConfirmModal(null)}
+                  className="px-4 py-2.5 rounded-xl border border-border text-xs font-bold text-muted-foreground hover:bg-muted transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={
+                    confirmModal.type === "clearance"
+                      ? handleConfirmClearance
+                      : handleConfirmFinance
+                  }
+                  className="px-5 py-2.5 rounded-xl bg-[#00B87C] text-white text-xs font-bold shadow-sm hover:opacity-90 transition-all"
+                >
+                  {confirmModal.type === "clearance"
+                    ? "Confirm Clearance Sign-off"
+                    : "Confirm & Send to Finance"}
+                </button>
               </div>
             </div>
           </div>

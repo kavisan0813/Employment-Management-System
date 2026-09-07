@@ -7,10 +7,13 @@ import { useState } from "react";
 import { SystemConfig } from "../types/platformSettings.types";
 import { platformSettingsService } from "../services/platformSettings.service";
 import { pushAuditLog } from "../../../mockData";
+import { usePermissions } from "../../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../../shared/permission-engine/permissions";
 
 const CURRENT_ADMIN_EMAIL = "admin@ems.io";
 
 export function usePlatformSettings() {
+  const { hasPermissionKey } = usePermissions();
   const [config, setConfig] = useState<SystemConfig>(() =>
     platformSettingsService.loadSettings(),
   );
@@ -34,6 +37,10 @@ export function usePlatformSettings() {
   };
 
   const handleSave = (section: keyof SystemConfig) => {
+    if (!hasPermissionKey(P.PLATFORM_ADMIN_FULL)) {
+      triggerAlert("Permission denied: Platform Admin authorization required.", "error");
+      return;
+    }
     try {
       platformSettingsService.saveSettings(config);
 

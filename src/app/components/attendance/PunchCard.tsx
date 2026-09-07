@@ -14,6 +14,32 @@ export function PunchCard() {
   } = useAttendance();
 
   const [tickerTime, setTickerTime] = useState<string>("");
+  const [geoStatus, setGeoStatus] = useState<"Allowed" | "Denied" | "Permission Required" | "Unavailable">("Permission Required");
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setGeoStatus("Unavailable");
+      return;
+    }
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions
+        .query({ name: "geolocation" as PermissionName })
+        .then((result) => {
+          if (result.state === "granted") setGeoStatus("Allowed");
+          else if (result.state === "denied") setGeoStatus("Denied");
+          else setGeoStatus("Permission Required");
+
+          result.onchange = () => {
+            if (result.state === "granted") setGeoStatus("Allowed");
+            else if (result.state === "denied") setGeoStatus("Denied");
+            else setGeoStatus("Permission Required");
+          };
+        })
+        .catch(() => {
+          setGeoStatus("Permission Required");
+        });
+    }
+  }, []);
 
   useEffect(() => {
     if (derivedState !== "punched-in" || !todayRecord?.punchIn) {
@@ -49,11 +75,37 @@ export function PunchCard() {
 
   return (
     <div className="bg-card rounded-2xl p-7 border border-border shadow-sm">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-[15px] font-black text-foreground">
-          Today's Shift Attendance
-        </h3>
-        <span className="text-[12px] font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-lg border border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h3 className="text-[15px] font-black text-foreground">
+            Today's Shift Attendance
+          </h3>
+          <span
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border ${
+              geoStatus === "Allowed"
+                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                : geoStatus === "Denied"
+                ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                : geoStatus === "Permission Required"
+                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                : "bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20"
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                geoStatus === "Allowed"
+                  ? "bg-emerald-500 animate-pulse"
+                  : geoStatus === "Denied"
+                  ? "bg-rose-500"
+                  : geoStatus === "Permission Required"
+                  ? "bg-amber-500 animate-pulse"
+                  : "bg-gray-500"
+              }`}
+            />
+            GPS {geoStatus}
+          </span>
+        </div>
+        <span className="text-[12px] font-bold text-muted-foreground bg-secondary px-3 py-1 rounded-lg border border-border self-start sm:self-auto">
           {new Date().toLocaleDateString(undefined, {
             month: "long",
             day: "numeric",

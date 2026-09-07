@@ -14,6 +14,7 @@ import {
   isPunchInLate,
   findEmployeeByEmail,
 } from "./attendance.utils";
+import { AttendanceService } from "../pages/hr/hr-operations/attendance/attendanceService";
 
 export type AttendanceLog = {
   time: string;
@@ -32,6 +33,8 @@ export interface AttendanceRecord {
   checkIn: string; // e.g. "08:58 AM"
   checkOut: string; // e.g. "06:02 PM"
   hours: string; // e.g. "9h 04m"
+  location?: string; // "HQ Office" | "Branch Office" | "Remote"
+  shift?: string; // "Morning" | "Evening" | "Night"
   notes?: string;
   punchIn?: string; // ISO timestamp
   punchOut?: string; // ISO timestamp
@@ -74,26 +77,17 @@ export function AttendanceProvider({
   const { user } = useAuth();
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
 
-  // Load records from the shared HR local storage key
+  // Load records from the tenant-scoped AttendanceService
   useEffect(() => {
-    const saved = localStorage.getItem("viyan_attendance_records:v1");
-    if (saved) {
-      try {
-        setRecords(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse HR attendance records", e);
-      }
-    }
-  }, []);
+    const fetched = AttendanceService.getAttendanceRecords(user?.organizationId);
+    setRecords(fetched);
+  }, [user?.organizationId]);
 
-  // Sync records helper
+  // Sync records helper using AttendanceService
   const saveRecords = useCallback((newRecords: AttendanceRecord[]) => {
     setRecords(newRecords);
-    localStorage.setItem(
-      "viyan_attendance_records:v1",
-      JSON.stringify(newRecords),
-    );
-  }, []);
+    AttendanceService.saveAttendanceRecords(newRecords, user?.organizationId);
+  }, [user?.organizationId]);
 
   // Resolve today's record for the logged-in user
   const todayRecord = useMemo(() => {

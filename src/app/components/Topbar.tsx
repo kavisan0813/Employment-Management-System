@@ -457,9 +457,7 @@ export function Topbar({
                   style={{ borderColor: "var(--border)" }}
                   onClick={() => {
                     setShowNotifications(false);
-                    navigate(
-                      isEmployeeOnly ? "/my-notifications" : "/notifications",
-                    );
+                    navigate("/notifications");
                   }}
                 >
                   <span

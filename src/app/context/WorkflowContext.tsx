@@ -1,6 +1,5 @@
 import {
   createContext,
-  useContext,
   useState,
   ReactNode,
   useMemo,
@@ -45,11 +44,4 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
       {children}
     </WorkflowContext.Provider>
   );
-}
-
-export function useWorkflow() {
-  const context = useContext(WorkflowContext);
-  if (context === undefined)
-    throw new Error("useWorkflow must be used within a WorkflowProvider");
-  return context;
 }

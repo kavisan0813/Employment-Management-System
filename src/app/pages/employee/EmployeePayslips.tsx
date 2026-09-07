@@ -615,7 +615,7 @@ export function EmployeePayslips() {
     return match ? user.email : "sarah.johnson@viyanhr.com";
   }, [user]);
   const employeePayslips = useMemo(() => {
-    const runs = payrollService.getAllPayRuns();
+    const runs = payrollService.getAllPayRuns(user?.organizationId);
     const disbursedRuns = runs.filter((r) => r.status === "disbursed");
     const realPayslips = disbursedRuns
       .map((run) => {
@@ -656,7 +656,7 @@ export function EmployeePayslips() {
       })
       .filter((p) => p !== null) as Payslip[];
     return realPayslips.length > 0 ? realPayslips : MOCK_PAYSLIPS;
-  }, [employeeEmail]);
+  }, [employeeEmail, user]);
   const filteredPayslips = useMemo(() => {
     return employeePayslips.filter((p) => {
       const yearMatch =

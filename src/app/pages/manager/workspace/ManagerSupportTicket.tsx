@@ -63,7 +63,7 @@ interface Ticket {
   timeline: TimelineEntry[];
   attachments: Attachment[];
 }
-const TABS = ["My Tickets", "Knowledge Base"];
+const TABS = ["My Tickets"];
 const INITIAL_TICKETS: Ticket[] = [
   {
     id: "#TKT-0812",
@@ -342,19 +342,6 @@ export function ManagerSupportTicket() {
         </div>
       </div>
 
-      {/* ─── Tab Bar ─────────────────────────────────────────────── */}
-      <div className="bg-card rounded-2xl border border-border shadow-sm p-1.5 flex items-center gap-1 overflow-x-auto no-scrollbar">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-6 py-3 rounded-xl text-[13px] transition-all whitespace-nowrap uppercase tracking-wider ${activeTab === tab ? "bg-[#00B87C] text-white font-bold shadow-md shadow-emerald-500/20" : "text-muted-foreground font-bold hover:bg-secondary"}`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
       {/* ─── Tab Content ──────────────────────────────────────────── */}
       <div className="min-h-[400px]">
         <AnimatePresence mode="wait">
@@ -390,7 +377,7 @@ export function ManagerSupportTicket() {
                 onViewTicket={(t: Ticket) => setViewingTicket(t)}
               />
             )}
-            {activeTab === "Knowledge Base" && <KnowledgeBaseTab />}
+            
           </m.div>
         </AnimatePresence>
       </div>
@@ -610,85 +597,6 @@ function MyTicketsTab({
 /* ─────────────────────────────────────────────────────────────── */
 /* Knowledge Base Tab Component                                   */
 /* ─────────────────────────────────────────────────────────────── */
-function KnowledgeBaseTab() {
-  const faqs = [
-    {
-      q: "How do I approve a direct report's leave request?",
-      a: "Navigate to the Team Operations side and select Leave Planner. Find the pending leaves under 'Requests' and click 'Approve L1'. This automatically updates the employee and escalates to HR for administrative entry.",
-    },
-    {
-      q: "What is the team equipment allocation process?",
-      a: "If a direct report requires hardware upgrades (monitors, RAM, laptop refresh), click 'Raise Support Ticket' and select the 'Hardware Allocation' category. HR Ops and IT Admin will verify allocations against project budgets.",
-    },
-    {
-      q: "How to correct an direct report's missing attendance logs?",
-      a: "Go to Team Attendance, select the member, and find the day needing modification. Select 'Correct Timesheet' to manually append timestamps on their behalf, then save.",
-    },
-    {
-      q: "When do quarterly appraisal cycles open?",
-      a: "Appraisal reviews start 1 week prior to quarter closure. You will receive manager check-in prompts in your Notification Feed. Direct reports complete their self-appraisals first, followed by your manager L1 scores.",
-    },
-  ];
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* FAQ categories grid */}
-      <div className="lg:col-span-1 space-y-4">
-        <h3 className="text-[13px] font-bold text-foreground uppercase tracking-wider mb-3">
-          Support Categories
-        </h3>
-        <div className="grid grid-cols-1 gap-3">
-          {FAQ_CATEGORIES.map((cat) => {
-            const Icon = cat.icon;
-            return (
-              <div
-                key={cat.name}
-                className="bg-card p-4 rounded-2xl border border-border shadow-sm hover:border-[#00B87C]/30 hover:-translate-y-[2px] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all flex items-center justify-between cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/5 group-hover:bg-emerald-500/10 flex items-center justify-center text-[#00B87C] border border-emerald-500/10">
-                    <Icon size={16} />
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-bold text-foreground group-hover:text-[#00B87C] transition-colors leading-none">
-                      {cat.name}
-                    </p>
-                    <p className="text-[11px] font-bold text-muted-foreground mt-1 uppercase tracking-wider">
-                      {cat.count} Articles
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight size={14} className="text-muted-foreground" />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* FAQ details grid */}
-      <div className="lg:col-span-2 space-y-4">
-        <h3 className="text-[13px] font-bold text-foreground uppercase tracking-wider mb-3">
-          Frequently Answered Topics
-        </h3>
-        <div className="space-y-4">
-          {faqs.map((faq) => (
-            <div
-              key={faq.q}
-              className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-3"
-            >
-              <h4 className="text-[15px] font-bold text-foreground flex items-center gap-2">
-                <AlertCircle size={16} className="text-[#00B87C]" /> {faq.q}
-              </h4>
-              <p className="text-[13px] font-medium text-muted-foreground leading-relaxed">
-                {faq.a}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ─────────────────────────────────────────────────────────────── */
 /* Raised Ticket Modal Component                                  */
 /* ─────────────────────────────────────────────────────────────── */

@@ -115,7 +115,6 @@ const BRUSH_SHIFTS: Record<string, ShiftDetails> = {
 };
 
 export function ManagerTeamSchedule() {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     selectedDept: "All Departments",
     view: "Week" as "Week" | "Month" | "Day",
@@ -282,7 +281,6 @@ export function ManagerTeamSchedule() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Week navigation state
   const getShiftForDate = useCallback(
     (empName: string, dateStr: string) => {

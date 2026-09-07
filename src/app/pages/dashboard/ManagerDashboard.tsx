@@ -393,43 +393,7 @@ export function ManagerPersonalDashboard() {
             </div>
           </div>
 
-          <div className="bg-card rounded-2xl p-6 border border-border shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[14px] font-bold text-foreground">
-                Announcements
-              </h3>
-              <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-[11px] font-bold border border-amber-500/20">
-                3 new
-              </span>
-            </div>
-            <div className="space-y-4">
-              {ANNOUNCEMENTS.map((ann) => (
-                <div
-                  key={ann.title}
-                  className={`pl-3 border-l-[3px] py-1 ${ann.priority === "green" ? "border-primary" : ann.priority === "amber" ? "border-amber-500" : "border-rose-500"}`}
-                >
-                  <h4 className="text-[13px] font-bold text-foreground hover:text-amber-500 cursor-pointer transition-colors leading-tight mb-1">
-                    {ann.title}
-                  </h4>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-muted-foreground">
-                      {ann.time}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-border"></span>
-                    <span className="text-[11px] text-muted-foreground font-medium truncate">
-                      {ann.desc}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={() => navigate("/manager/announcements")}
-              className="w-full mt-6 py-3 text-amber-500 text-[13px] font-bold hover:underline text-center"
-            >
-              View All Announcements →
-            </button>
-          </div>
+          
 
           <div className="bg-amber-500 rounded-2xl p-6 text-white shadow-lg shadow-amber-500/20 relative overflow-hidden group cursor-pointer">
             <Sparkles

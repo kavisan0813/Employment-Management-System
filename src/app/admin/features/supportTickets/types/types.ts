@@ -1,8 +1,17 @@
 // ─── Support & Tickets — Type Definitions ────────────────────────────────────
 
 export type TicketStatus =
-  "Open" | "Assigned" | "In Progress" | "Resolved" | "Closed";
+  | "Open" | "Assigned" | "In Progress" | "Resolved" | "Closed";
 export type TicketPriority = "Low" | "Medium" | "High" | "Critical";
+export type TicketResolution =
+  | "Resolved"
+  | "Workaround Provided"
+  | "Duplicate"
+  | "Not Reproducible"
+  | "Feature Request"
+  | "User Error"
+  | "Configuration Updated";
+
 export type TicketCategory =
   | "Payroll"
   | "Attendance"
@@ -26,8 +35,9 @@ export type IssueStatus =
   | "Closed";
 
 export type FeatureRequestStatus =
-  "New" | "Under Review" | "Approved" | "Rejected" | "Released";
+  | "New" | "Under Review" | "Approved" | "Rejected" | "Released";
 export type FeedbackCategory = "Product" | "Support" | "Training" | "UI";
+export type FeedbackStatus = "New" | "Under Review" | "Actioned" | "Archived";
 export type SLATier = "Critical" | "High" | "Medium" | "Low";
 
 // ─── Ticket ──────────────────────────────────────────────────────────────────
@@ -48,6 +58,8 @@ export interface Ticket {
   category: TicketCategory;
   priority: TicketPriority;
   status: TicketStatus;
+  resolution?: TicketResolution | null;
+  resolutionNote?: string | null;
   organizationId: string;
   organization: string;
   createdBy: string;
@@ -99,6 +111,9 @@ export interface FeatureRequest {
 export interface Feedback {
   id: string;
   rating: 1 | 2 | 3 | 4 | 5;
+  superAdminRating?: 1 | 2 | 3 | 4 | 5 | null;
+  status?: FeedbackStatus;
+  adminResponse?: string | null;
   comment: string;
   category: FeedbackCategory;
   user: string;

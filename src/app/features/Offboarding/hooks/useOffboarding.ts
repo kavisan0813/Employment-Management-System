@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../../../context/AuthContext";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import {
   ExitEmployee,
@@ -23,7 +24,7 @@ const withSharedDocuments = (exit: ExitEmployee): ExitEmployee => {
 };
 
 export function useOffboarding() {
-  const { user } = useAuth();
+  const { hasPermissionKey } = usePermissions();
   const [exits, setExits] = useState<ExitEmployee[]>(() => {
     const saved = localStorage.getItem(OFFBOARDING_EXITS_KEY);
     if (saved) {
@@ -248,7 +249,7 @@ export function useOffboarding() {
   };
 
   const handleSendToFinance = (exitId: string) => {
-    const isHR = user?.role === "HR Manager";
+    const isHR = !hasPermissionKey(P.OFFBOARDING_FINANCE_MANAGE);
     setExits((prev) =>
       prev.map((e) => {
         if (e.id !== exitId) return e;

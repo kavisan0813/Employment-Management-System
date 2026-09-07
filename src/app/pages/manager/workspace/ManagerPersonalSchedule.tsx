@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import {
   Clock,
   ChevronLeft,
@@ -8,8 +8,14 @@ import {
   CheckCircle2,
   AlertCircle,
   X,
+  Plus,
+  Trash2,
+  Edit2,
+  CheckSquare,
+  Square,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
+import { useAuth } from "../../../context/AuthContext";
 
 /* ─────────────────────────────────────────────────────────────── */
 /* Types                                                           */
@@ -326,11 +332,103 @@ export function ManagerPersonalSchedule() {
     return `${fmt(mon)} – ${fmt(sun)}, ${sun.getFullYear()}`;
   }, [view, navDate]);
 
+  const { user } = useAuth();
+
+  // Date key for To-Do isolation (YYYY-MM-DD)
+  const dateKey = useMemo(() => {
+    const y = navDate.getFullYear();
+    const m = String(navDate.getMonth() + 1).padStart(2, "0");
+    const d = String(navDate.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }, [navDate]);
+
+  // Tenant + User + Date scoped storage key
+  const storageKey = useMemo(() => {
+    const org = user?.organizationId || "org_default";
+    const usr = (user as any)?.email || (user as any)?.name || "user_default";
+    return `manager_todos:${org}:${usr}:${dateKey}`;
+  }, [user, dateKey]);
+
+  interface TodoItem {
+    id: string;
+    text: string;
+    completed: boolean;
+  }
+
+  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const [newTodoText, setNewTodoText] = useState("");
+  const [editingTodoId, setEditingTodoId] = useState<string | null>(null);
+  const [editingTodoText, setEditingTodoText] = useState("");
+
+  // Load To-Dos whenever date or user changes
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        setTodos(JSON.parse(saved));
+      } else if (dateKey === "2026-04-06") {
+        setTodos([
+          { id: "t1", text: "Review team attendance", completed: false },
+          { id: "t2", text: "Approve pending requests", completed: false },
+          { id: "t3", text: "Weekly team sync", completed: true },
+        ]);
+      } else {
+        setTodos([]);
+      }
+    } catch {
+      setTodos([]);
+    }
+  }, [storageKey, dateKey]);
+
+  const saveTodos = (updated: TodoItem[]) => {
+    setTodos(updated);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(updated));
+    } catch {
+      // storage quota error fallback
+    }
+  };
+
+  const handleAddTodo = () => {
+    if (!newTodoText.trim()) return;
+    const newItem: TodoItem = {
+      id: `td_${Date.now()}`,
+      text: newTodoText.trim(),
+      completed: false,
+    };
+    saveTodos([...todos, newItem]);
+    setNewTodoText("");
+    showToast("To-Do Added", "success", "Item added to schedule date.");
+  };
+
+  const handleToggleTodo = (id: string) => {
+    saveTodos(
+      todos.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)),
+    );
+  };
+
+  const handleDeleteTodo = (id: string) => {
+    saveTodos(todos.filter((t) => t.id !== id));
+    showToast("To-Do Removed", "info", "Item deleted.");
+  };
+
+  const handleStartEdit = (todo: TodoItem) => {
+    setEditingTodoId(todo.id);
+    setEditingTodoText(todo.text);
+  };
+
+  const handleSaveEdit = (id: string) => {
+    if (!editingTodoText.trim()) return;
+    saveTodos(
+      todos.map((t) => (t.id === id ? { ...t, text: editingTodoText.trim() } : t)),
+    );
+    setEditingTodoId(null);
+  };
+
   // Modal States
   const [showSwapModal, setShowSwapModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showTimeChangeModal, setShowTimeChangeModal] = useState(false);
-  const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
   const [showIssueModal, setShowIssueModal] = useState(false);
   const [showRequestDetail, setShowRequestDetail] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -963,47 +1061,52 @@ export function ManagerPersonalSchedule() {
                         </button>
 
                         {activeMenuId === shift.id && (
-                          <div
-                            className={`absolute right-0 ${isLastTwo ? "bottom-full mb-2" : "mt-2"} w-48 bg-card border border-border rounded-2xl shadow-2xl z-50 py-2 animate-in fade-in ${isLastTwo ? "slide-in-from-bottom-2" : "slide-in-from-top-2"} duration-200`}
-                          >
-                            {[
-                              {
-                                label: "View Details",
-                                onClick: () => handleViewDetails(shift),
-                              },
-                              {
-                                label: "Request Shift Swap",
-                                onClick: () => handleRequestSwap(shift),
-                              },
-                              {
-                                label: "Request Time Change",
-                                onClick: () => {
-                                  setSelectedShift(shift);
-                                  setShowTimeChangeModal(true);
+                          <>
+                            <div
+                              className="fixed inset-0 z-[90]"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveMenuId(null);
+                              }}
+                            />
+                            <div
+                              className={`absolute right-0 ${isLastTwo ? "bottom-full mb-2" : "mt-2"} w-48 bg-card border border-border rounded-2xl shadow-2xl z-[100] py-2 animate-in fade-in ${isLastTwo ? "slide-in-from-bottom-2" : "slide-in-from-top-2"} duration-200`}
+                            >
+                              {[
+                                {
+                                  label: "View Details",
+                                  onClick: () => handleViewDetails(shift),
                                 },
-                              },
-                              {
-                                label: "Mark Availability",
-                                onClick: () => setShowAvailabilityModal(true),
-                              },
-                              {
-                                label: "Report Issue",
-                                onClick: () => setShowIssueModal(true),
-                              },
-                            ].map((item) => (
-                              <button
-                                key={item.label}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  item.onClick();
-                                  setActiveMenuId(null);
-                                }}
-                                className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-foreground hover:bg-secondary transition-all"
-                              >
-                                {item.label}
-                              </button>
-                            ))}
-                          </div>
+                                {
+                                  label: "Request Shift Swap",
+                                  onClick: () => handleRequestSwap(shift),
+                                },
+                                {
+                                  label: "Request Time Change",
+                                  onClick: () => {
+                                    setSelectedShift(shift);
+                                    setShowTimeChangeModal(true);
+                                  },
+                                },
+                                {
+                                  label: "Report Issue",
+                                  onClick: () => setShowIssueModal(true),
+                                },
+                              ].map((item) => (
+                                <button
+                                  key={item.label}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    item.onClick();
+                                    setActiveMenuId(null);
+                                  }}
+                                  className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-foreground hover:bg-secondary transition-all"
+                                >
+                                  {item.label}
+                                </button>
+                              ))}
+                            </div>
+                          </>
                         )}
                       </div>
                     </div>
@@ -1013,44 +1116,143 @@ export function ManagerPersonalSchedule() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
-              SHIFT NOTES
-            </h3>
-            <div className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-primary">
-                  <CheckCircle2 size={20} />
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+                SHIFT NOTES
+              </h3>
+              <div className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-primary">
+                    <CheckCircle2 size={20} />
+                  </div>
+                  <div>
+                    <h5 className="text-[14px] font-black text-foreground">
+                      Available Swaps
+                    </h5>
+                    <p className="text-[12px] font-bold text-muted-foreground">
+                      2 colleagues looking to swap
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h5 className="text-[14px] font-black text-foreground">
-                    Available Swaps
-                  </h5>
-                  <p className="text-[12px] font-bold text-muted-foreground">
-                    2 colleagues looking to swap
-                  </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
+                    <AlertCircle size={20} />
+                  </div>
+                  <div>
+                    <h5 className="text-[14px] font-black text-foreground">
+                      Pending Requests
+                    </h5>
+                    <p className="text-[12px] font-bold text-muted-foreground">
+                      {requests.filter((r) => r.status === "Pending").length}{" "}
+                      request awaiting manager
+                    </p>
+                  </div>
                 </div>
+                <button
+                  onClick={() => setCurrentPage("requests")}
+                  className="w-full py-3 bg-secondary text-primary text-[13px] font-black rounded-xl border border-primary/20 hover:bg-emerald-500/10 transition-all"
+                >
+                  View My Requests
+                </button>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
-                  <AlertCircle size={20} />
-                </div>
-                <div>
-                  <h5 className="text-[14px] font-black text-foreground">
-                    Pending Requests
-                  </h5>
-                  <p className="text-[12px] font-bold text-muted-foreground">
-                    {requests.filter((r) => r.status === "Pending").length}{" "}
-                    request awaiting manager
-                  </p>
-                </div>
+            </div>
+
+            {/* ─── Day-Wise To-Do ────────────────────────────────────────── */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[12px] font-black text-muted-foreground uppercase tracking-widest">
+                  DAY-WISE TO-DO
+                </h3>
+                <span className="text-[11px] font-bold text-primary bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-primary/20">
+                  {navDate.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </span>
               </div>
-              <button
-                onClick={() => setCurrentPage("requests")}
-                className="w-full py-3 bg-secondary text-primary text-[13px] font-black rounded-xl border border-primary/20 hover:bg-emerald-500/10 transition-all"
-              >
-                View My Requests
-              </button>
+              <div className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-4">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder="Add task for this date..."
+                    value={newTodoText}
+                    onChange={(e) => setNewTodoText(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleAddTodo()}
+                    className="flex-1 px-3 py-2 bg-secondary border border-border rounded-xl text-[13px] font-medium text-foreground outline-none focus:border-primary transition-colors"
+                  />
+                  <button
+                    onClick={handleAddTodo}
+                    className="px-3.5 py-2 bg-primary text-white text-[13px] font-bold rounded-xl hover:opacity-90 transition-all flex items-center gap-1 shrink-0"
+                  >
+                    <Plus size={16} /> Add
+                  </button>
+                </div>
+
+                {todos.length === 0 ? (
+                  <p className="text-[12px] font-bold text-muted-foreground text-center py-4 italic">
+                    No to-do items for this date.
+                  </p>
+                ) : (
+                  <div className="space-y-2.5 max-h-[260px] overflow-y-auto custom-scrollbar pr-1">
+                    {todos.map((todo) => (
+                      <div
+                        key={todo.id}
+                        className="flex items-center justify-between p-3 rounded-xl bg-secondary/50 border border-border/60 hover:border-primary/40 transition-colors group"
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <button
+                            onClick={() => handleToggleTodo(todo.id)}
+                            className="text-primary shrink-0 hover:scale-110 transition-transform"
+                          >
+                            {todo.completed ? (
+                              <CheckSquare size={18} className="text-primary fill-primary/10" />
+                            ) : (
+                              <Square size={18} className="text-muted-foreground/60" />
+                            )}
+                          </button>
+
+                          {editingTodoId === todo.id ? (
+                            <input
+                              type="text"
+                              autoFocus
+                              value={editingTodoText}
+                              onChange={(e) => setEditingTodoText(e.target.value)}
+                              onBlur={() => handleSaveEdit(todo.id)}
+                              onKeyDown={(e) => e.key === "Enter" && handleSaveEdit(todo.id)}
+                              className="flex-1 px-2 py-1 bg-card border border-primary rounded text-[13px] font-semibold text-foreground outline-none"
+                            />
+                          ) : (
+                            <span
+                              onClick={() => handleToggleTodo(todo.id)}
+                              className={`text-[13px] font-semibold truncate cursor-pointer select-none ${todo.completed ? "line-through text-muted-foreground/60" : "text-foreground"}`}
+                            >
+                              {todo.text}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">
+                          <button
+                            onClick={() => handleStartEdit(todo)}
+                            className="p-1 hover:bg-card text-muted-foreground hover:text-foreground rounded transition-colors"
+                            title="Edit"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTodo(todo.id)}
+                            className="p-1 hover:bg-card text-muted-foreground hover:text-rose-500 rounded transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -1058,7 +1260,7 @@ export function ManagerPersonalSchedule() {
     );
   };
   return (
-    <div className="w-full px-4 md:px-8 py-6 pb-20 overflow-hidden">
+    <div className="w-full px-4 md:px-8 py-6 pb-20 overflow-visible">
       {currentPage === "calendar" ? renderCalendar() : renderRequests()}
 
       {/* ─── Shift Details Modal ────────────────────────────────────── */}
@@ -1340,64 +1542,6 @@ export function ManagerPersonalSchedule() {
               Submit Request
             </button>
           </div>
-        </div>
-      </Modal>
-
-      {/* ─── Availability Modal ─────────────────────────────────────── */}
-      <Modal
-        isOpen={showAvailabilityModal}
-        onClose={() => setShowAvailabilityModal(false)}
-        title="Mark Availability"
-        icon={CheckCircle2}
-      >
-        <div className="space-y-5">
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
-              Select Date
-            </label>
-            <input
-              type="date"
-              className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
-              Status
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {["Available", "Not Available", "Preferred"].map((s) => (
-                <button
-                  key={s}
-                  className="py-2.5 px-2 rounded-xl border border-border text-[11px] font-black text-muted-foreground hover:bg-secondary hover:text-primary transition-all active:scale-95"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
-              Notes
-            </label>
-            <textarea
-              rows={3}
-              placeholder="Additional notes about your availability..."
-              className="w-full px-4 py-3 bg-secondary border border-border rounded-xl text-[13px] font-bold text-foreground outline-none resize-none"
-            />
-          </div>
-          <button
-            onClick={() => {
-              showToast(
-                "Availability Saved",
-                "success",
-                "Your availability has been updated.",
-              );
-              setShowAvailabilityModal(false);
-            }}
-            className="w-full py-4 bg-primary text-white text-[14px] font-black rounded-2xl shadow-xl shadow-[#00B87C]/20 hover:opacity-95 transition-all mt-2"
-          >
-            Save Availability
-          </button>
         </div>
       </Modal>
 

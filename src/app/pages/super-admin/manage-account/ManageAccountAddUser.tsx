@@ -1,7 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../../context/AuthContext";
 import { useEmployees, EmployeeInput } from "../../../context/AppContext";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
+import { PermissionGate } from "../../../shared/permission-engine/PermissionGate";
+import { ROLE_TEMPLATES, LEGACY_ROLE_MAP, SystemRoleId } from "../../../shared/permission-engine/roles";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import {
   ChevronLeft,
@@ -13,23 +17,70 @@ import {
   Lock,
   ArrowRight,
   Info,
+  Rocket,
+  CheckCircle2,
+  Phone,
+  Building,
+  MapPin,
+  Calendar,
+  XCircle,
+  Shield,
+  ShieldCheck,
+  AlertCircle,
 } from "lucide-react";
 
 const AUTOSAVE_KEY = "viyan_manage_account_add_user_draft";
+
+/* Role Descriptions & Capabilities Summary Map */
+const ROLE_CAPABILITIES_SUMMARY: Record<string, { desc: string; highlights: string[] }> = {
+  Employee: {
+    desc: "Standard employee access to personal workspace, self attendance, leave applications, and training modules.",
+    highlights: ["View Personal Profile & Payslips", "Apply for Leaves & Log Attendance", "Access Employee Training & Self Help"],
+  },
+  Manager: {
+    desc: "Department/Team Manager with authority to approve team leaves, log reviews, and track team performance.",
+    highlights: ["Approve Team Leaves & Attendance", "Conduct Team Performance Reviews", "Recommend Appraisals & Training"],
+  },
+  "HR Manager": {
+    desc: "Comprehensive HR operational authority over employee directory, onboarding, recruitment, and attendance.",
+    highlights: ["Manage Employee Directory & Creation", "Oversee Onboarding & Offboarding", "Configure Shift Schedules & Leaves"],
+  },
+  Finance: {
+    desc: "Financial management authority over payroll processing, expense reimbursements, and full settlements.",
+    highlights: ["Process Monthly Payroll & Payslips", "Approve Expense Reimbursements", "Manage Final Exit Settlements"],
+  },
+  "Super Admin": {
+    desc: "Full organization owner access across all EMS modules, system settings, subscription billing, and security.",
+    highlights: ["Full Administrative Organization Control", "Manage All Roles & Permission Scopes", "Access System Audit Logs & Config"],
+  },
+};
 
 export function ManageAccountAddUser() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { employeesList, addEmployee } = useEmployees();
+  const { hasPermissionKey } = usePermissions();
 
-  const currentUserRole = user?.role || "Employee";
-  const isSuperAdmin =
-    currentUserRole === "Super Admin" || currentUserRole === "Platform Admin";
+  /* ─── Permission Checks ─── */
+  const canManageAccount =
+    hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE) ||
+    hasPermissionKey(P.EMPLOYEES_MANAGE) ||
+    hasPermissionKey(P.EMPLOYEES_CREATE) ||
+    hasPermissionKey(P.PLATFORM_ADMIN_FULL);
 
-  // ─── Step state ───
-  const [step, setStep] = useState(1);
+  const canAssignPrivilegedRole =
+    hasPermissionKey(P.PLATFORM_ADMIN_FULL) ||
+    hasPermissionKey(P.SETTINGS_FULL) ||
+    hasPermissionKey(P.ROLES_MANAGE);
 
-  // ─── Dropdown lists (dynamic inline addition) ───
+  // Active Organization Context
+  const activeOrgId = user?.organizationId || "org-1";
+  const activeOrgName = user?.organization || "NexusHR Org";
+
+  // Step state (1: Method, 2: Account, 3: Details, 4: Alerts, 5: Success)
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+
+  // Dropdown lists
   const [depts, setDepts] = useState([
     "Engineering",
     "Marketing",
@@ -41,34 +92,29 @@ export function ManageAccountAddUser() {
     "Operations",
   ]);
   const [locations, setLocations] = useState([
-    "Bangalore",
-    "Mumbai",
-    "Delhi",
+    "HQ - Bangalore",
+    "Mumbai Branch",
+    "Delhi Branch",
     "Remote",
     "San Francisco",
   ]);
   const [designations, setDesignations] = useState([
-    "Senior Developer",
+    "Senior Software Engineer",
     "Software Engineer",
     "HR Specialist",
     "Product Manager",
     "UI/UX Designer",
     "Financial Analyst",
-    "Operations Associate",
+    "Operations Lead",
   ]);
   const [employmentTypes, setEmploymentTypes] = useState([
     "Full-time",
     "Contract",
     "Intern",
-  ]);
-  const [sourcesOfHire, setSourcesOfHire] = useState([
-    "Referral",
-    "Job Portal",
-    "Campus",
-    "Other",
+    "Part-time",
   ]);
 
-  // ─── Form state ───
+  // Form state
   const [form, setForm] = useState({
     entryType: "single" as "single" | "spreadsheet",
     employeeId: "",
@@ -82,27 +128,17 @@ export function ManageAccountAddUser() {
     nickName: "",
 
     department: "Engineering",
-    location: "Bangalore",
+    location: "HQ - Bangalore",
     designation: "Software Engineer",
     employmentType: "Full-time",
     employeeStatus: "Active",
-    sourceOfHire: "Referral",
     dateOfJoining: new Date().toISOString().split("T")[0],
-    currentExperience: "",
-    totalExperience: "",
 
     dob: "",
     gender: "Male",
     maritalStatus: "Single",
-    bloodGroup: "",
-    nationality: "Indian",
 
-    aadhaarNumber: "",
-    panNumber: "",
-    uanNumber: "",
-    passportNumber: "",
-
-    personalMobile: "+91 ",
+    personalMobile: "+91 98765 43210",
     workMobile: "",
     currentAddress: "",
     permanentAddress: "",
@@ -120,14 +156,14 @@ export function ManageAccountAddUser() {
     sendInvite: true,
     notifyManager: true,
     notifyHR: false,
-    reminderUnopened: true,
   });
 
   const [activeTab, setActiveTab] = useState("basic");
+  const [createdEmployee, setCreatedEmployee] = useState<EmployeeInput | null>(null);
 
   // Inline new-value prompt
   const [newValPrompt, setNewValPrompt] = useState<{
-    field: "dept" | "location" | "designation" | "type" | "source";
+    field: "dept" | "location" | "designation" | "type";
     visible: boolean;
     value: string;
   }>({ field: "dept", visible: false, value: "" });
@@ -147,7 +183,6 @@ export function ManageAccountAddUser() {
     if (draft) {
       try {
         setForm(JSON.parse(draft));
-        showToast("Restored incomplete draft", "info");
       } catch (e) {
         console.log(e);
       }
@@ -158,32 +193,32 @@ export function ManageAccountAddUser() {
   useEffect(() => {
     const t = setTimeout(
       () => sessionStorage.setItem(AUTOSAVE_KEY, JSON.stringify(form)),
-      3000,
+      3000
     );
     return () => clearTimeout(t);
   }, [form]);
 
-  // ─── Validation ───
+  /* ─── VALIDATION LOGIC ─── */
   const isIdUnique = !employeesList.some(
-    (e) => e.id.toLowerCase() === form.employeeId.toLowerCase().trim(),
+    (e) => e.id.toLowerCase() === form.employeeId.toLowerCase().trim()
   );
+
   const isEmailUnique =
-    !employeesList.some(
-      (e) => e.email.toLowerCase() === form.email.toLowerCase().trim(),
-    ) &&
+    !employeesList.some((e) => e.email.toLowerCase() === form.email.toLowerCase().trim()) &&
     !((): boolean => {
       try {
         const saved = localStorage.getItem("viyan_registered_users:v1");
         if (saved)
           return JSON.parse(saved).some(
-            (u: { email: string }) =>
-              u.email.toLowerCase() === form.email.toLowerCase().trim(),
+            (u: { email: string }) => u.email.toLowerCase() === form.email.toLowerCase().trim()
           );
       } catch (e) {
         console.log(e);
       }
       return false;
     })();
+
+  const isPhoneValid = /^\+?[0-9\s\-()]{7,15}$/.test(form.personalMobile.trim());
 
   const isStep2Valid =
     form.employeeId.trim() !== "" &&
@@ -200,11 +235,7 @@ export function ManageAccountAddUser() {
       form.department.trim() === "" ||
       form.location.trim() === "" ||
       form.designation.trim() === "",
-    personal: false,
-    identity: false,
-    contact:
-      form.personalMobile.trim() === "" || form.personalMobile.trim() === "+91",
-    other: false,
+    contact: !isPhoneValid,
   };
 
   const isStep3Valid = !Object.values(tabErrors).some((err) => err);
@@ -216,7 +247,7 @@ export function ManageAccountAddUser() {
     return true;
   };
 
-  // ─── Inline add new value ───
+  /* Inline add option submit */
   const handleAddNewValSubmit = () => {
     const val = newValPrompt.value.trim();
     if (!val) return;
@@ -232,16 +263,18 @@ export function ManageAccountAddUser() {
     } else if (newValPrompt.field === "type") {
       setEmploymentTypes((p) => [...p, val]);
       setForm((f) => ({ ...f, employmentType: val }));
-    } else if (newValPrompt.field === "source") {
-      setSourcesOfHire((p) => [...p, val]);
-      setForm((f) => ({ ...f, sourceOfHire: val }));
     }
     setNewValPrompt({ field: "dept", visible: false, value: "" });
-    showToast("Added successfully", "success");
+    showToast("Option added", "success");
   };
 
-  // ─── Final submit ───
+  /* ─── FINAL SUBMIT HANDLER ─── */
   const handleFinalSubmit = () => {
+    if (!canManageAccount) {
+      showToast("Access Denied", "error", "You do not have permission to add new users.");
+      return;
+    }
+
     const newEmp: EmployeeInput = {
       id: form.employeeId.trim(),
       name: form.fullName.trim(),
@@ -252,13 +285,13 @@ export function ManageAccountAddUser() {
       designation: form.designation,
       status: "Pending Invite",
       joinDate: form.dateOfJoining,
-      salary: 500000,
+      salary: 600000,
       location: form.location,
       manager: form.reportingManager || "Unassigned",
       employmentType: form.employmentType,
       gender: form.gender,
       dob: form.dob || "1995-01-01",
-      address: form.currentAddress || "N/A",
+      address: form.currentAddress || "HQ - Bangalore",
       emergencyContact: form.emergencyContactName
         ? `${form.emergencyContactName} (${form.emergencyContactNumber})`
         : "N/A",
@@ -266,142 +299,182 @@ export function ManageAccountAddUser() {
 
     addEmployee(newEmp);
 
+    // Register User Login in viyan_registered_users:v1 with Dynamic Org Context
     try {
-      const savedUsers =
-        localStorage.getItem("viyan_registered_users:v1") || "[]";
+      const savedUsers = localStorage.getItem("viyan_registered_users:v1") || "[]";
       const usersList = JSON.parse(savedUsers);
       const newPlatformUser = {
         id: `user-${Date.now()}`,
         name: form.fullName.trim(),
         email: form.email.trim(),
+        phone: form.personalMobile.trim(),
         initials: form.fullName
           .split(" ")
           .map((w) => w[0])
           .join("")
-          .toUpperCase(),
+          .toUpperCase()
+          .slice(0, 2),
         role: form.role,
         status: "Pending Invite",
         joinedAt: new Date().toISOString(),
         mfaEnabled: false,
         lastLoginAt: "",
-        organization: user?.organization || "viyanHR Org",
-        organizationId: "org-1",
+        organization: activeOrgName,
+        organizationId: activeOrgId,
       };
       localStorage.setItem(
         "viyan_registered_users:v1",
-        JSON.stringify([newPlatformUser, ...usersList]),
+        JSON.stringify([newPlatformUser, ...usersList])
       );
     } catch (err) {
       console.error("Failed to register platform login", err);
     }
 
+    // Dispatch In-App Notification
+    try {
+      const notifs = JSON.parse(localStorage.getItem("viyan_notifications:v1") || "[]");
+      const newNotif = {
+        id: Date.now(),
+        type: "Info",
+        title: "New Employee Added",
+        description: `${form.fullName.trim()} has been added successfully.`,
+        time: "Just now",
+        read: false,
+        category: "System",
+        actionRoute: "/onboarding",
+        actionLabel: "Start Onboarding",
+      };
+      localStorage.setItem("viyan_notifications:v1", JSON.stringify([newNotif, ...notifs]));
+      window.dispatchEvent(new Event("viyan:notifications-updated"));
+    } catch (err) {
+      console.error("Failed to dispatch in-app notification", err);
+    }
+
     sessionStorage.removeItem(AUTOSAVE_KEY);
-    showToast(`${form.fullName} has been added — invite sent.`, "success");
-    navigate("/admin/manage-account");
+    setCreatedEmployee(newEmp);
+    setStep(5); // Move to Success state
+    showToast(`${form.fullName} added successfully — invitation created.`, "success");
   };
 
-  /* ─── Shared styles ─── */
-  const labelCls = "block text-xs font-bold text-slate-700 uppercase mb-2";
-  const inputCls =
-    "w-full px-4 py-3.5 bg-[#F5F6F8] rounded-xl text-sm border-0 focus:ring-2 focus:ring-emerald-500/20 outline-none text-slate-800 font-medium";
-  const selectCls = inputCls;
+  // Selected Role Permission Preview Info
+  const rolePreview = useMemo(() => {
+    return (
+      ROLE_CAPABILITIES_SUMMARY[form.role] || {
+        desc: "Standard role capabilities as defined by organization permission policies.",
+        highlights: ["Module access as configured by role template"],
+      }
+    );
+  }, [form.role]);
+
+  if (!canManageAccount) {
+    return (
+      <div className="w-full px-4 md:px-12 py-12 bg-background min-h-screen flex items-center justify-center">
+        <div className="bg-card p-8 rounded-3xl border border-border shadow-xl max-w-md text-center">
+          <XCircle size={48} className="text-rose-500 mx-auto mb-4" />
+          <h2 className="text-xl font-black text-foreground mb-2">Access Restricted</h2>
+          <p className="text-xs text-muted-foreground mb-6">
+            You do not have the required permission (<code>manage_account:manage</code> or <code>employees:create</code>) to add new users.
+          </p>
+          <button
+            onClick={() => navigate("/admin/manage-account")}
+            className="px-6 py-3 rounded-xl bg-primary text-white text-xs font-bold hover:opacity-90 transition-all cursor-pointer"
+          >
+            Return to User Directory
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full px-4 md:px-12 py-8 bg-[#F8F9FD] min-h-screen">
-      {/* Back */}
+    <div className="w-full px-4 md:px-12 py-8 bg-background min-h-screen text-foreground transition-colors duration-200">
+      {/* ═══ BACK BUTTON ═══ */}
       <button
         onClick={() => navigate("/admin/manage-account")}
-        className="flex items-center gap-1.5 text-xs text-slate-500 font-bold hover:text-slate-800 transition-colors mb-6"
+        className="flex items-center gap-1.5 text-xs text-muted-foreground font-bold hover:text-foreground transition-colors mb-6 cursor-pointer"
       >
-        <ChevronLeft size={16} /> Back to Users
+        <ChevronLeft size={16} /> Back to User Directory
       </button>
 
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-          Add User
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Create a new user account and invite them to the organization
-        </p>
-      </div>
-
-      {/* ─── Step Tracker ─── */}
-      <div className="max-w-3xl mx-auto mb-10 px-4">
-        <div className="flex items-center justify-between relative">
-          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-slate-200 -z-10" />
-          <div
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-[var(--primary)] -z-10 transition-all duration-300"
-            style={{ width: `${((step - 1) / 3) * 100}%` }}
-          />
-          {[
-            { s: 1, label: "Selection" },
-            { s: 2, label: "Account" },
-            { s: 3, label: "Details" },
-            { s: 4, label: "Alerts" },
-          ].map((item) => {
-            const done = step > item.s;
-            const active = step === item.s;
-            return (
-              <div key={item.s} className="flex flex-col items-center gap-2">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
-                    done
-                      ? "bg-[var(--primary)] border-[var(--primary)] text-white"
-                      : active
-                        ? "bg-white border-[var(--primary)] text-[var(--primary)] shadow-md shadow-emerald-200"
-                        : "bg-white border-slate-200 text-slate-400"
-                  }`}
-                >
-                  {done ? <Check size={16} strokeWidth={3} /> : item.s}
-                </div>
-                <span
-                  className={`text-xs font-bold transition-colors ${active ? "text-[var(--primary)]" : "text-slate-500"}`}
-                >
-                  {item.label}
-                </span>
-              </div>
-            );
-          })}
+      {/* ═══ HEADER ═══ */}
+      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">Add User Account</h1>
+          <p className="text-xs text-muted-foreground mt-1">
+            Create a new employee profile, configure role permissions, and issue account invitations.
+          </p>
+        </div>
+        <div className="px-3.5 py-1.5 rounded-full bg-secondary border border-border text-xs font-bold text-muted-foreground flex items-center gap-2 self-start">
+          <Building size={14} className="text-primary" />
+          <span>Active Context: <strong className="text-foreground">{activeOrgName}</strong></span>
         </div>
       </div>
 
-      {/* ─── Card ─── */}
-      <div className="max-w-4xl mx-auto bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/50 overflow-hidden mb-12">
-        {/* ═══ STEP 1: Selection ═══ */}
+      {/* ═══ STEP TRACKER ═══ */}
+      {step < 5 && (
+        <div className="max-w-3xl mx-auto mb-10 px-4">
+          <div className="flex items-center justify-between relative">
+            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-border -z-10" />
+            <div
+              className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-primary -z-10 transition-all duration-300"
+              style={{ width: `${((step - 1) / 3) * 100}%` }}
+            />
+            {[
+              { s: 1, label: "Method" },
+              { s: 2, label: "Account" },
+              { s: 3, label: "Profile Details" },
+              { s: 4, label: "Alerts & Confirm" },
+            ].map((item) => {
+              const done = step > item.s;
+              const active = step === item.s;
+              return (
+                <div key={item.s} className="flex flex-col items-center gap-2">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs border-2 transition-all duration-300 ${
+                      done
+                        ? "bg-emerald-500 border-emerald-500 text-white shadow-md shadow-emerald-500/20"
+                        : active
+                        ? "bg-card border-primary text-primary shadow-md shadow-primary/20"
+                        : "bg-card border-border text-muted-foreground"
+                    }`}
+                  >
+                    {done ? <Check size={16} strokeWidth={3} /> : item.s}
+                  </div>
+                  <span className={`text-xs font-bold ${active ? "text-primary" : "text-muted-foreground"}`}>
+                    {item.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ═══ CARD CONTAINER ═══ */}
+      <div className="max-w-4xl mx-auto bg-card rounded-3xl border border-border shadow-xl overflow-hidden mb-12">
+        {/* ── STEP 1: METHOD SELECTION ── */}
         {step === 1 && (
-          <div className="p-8 md:p-12">
-            <h2 className="text-xl font-black text-slate-800 mb-2">
-              Select User Onboarding Method
-            </h2>
-            <p className="text-sm text-slate-400 mb-8">
-              Choose whether you are adding a single new user or importing a
-              batch.
+          <div className="p-6 md:p-10 space-y-6">
+            <h2 className="text-xl font-extrabold text-foreground">Select User Onboarding Method</h2>
+            <p className="text-xs text-muted-foreground">
+              Choose whether you are adding a single new employee profile or performing a bulk spreadsheet import.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
               <div
                 onClick={() => setForm((f) => ({ ...f, entryType: "single" }))}
-                className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 flex flex-col items-start ${
+                className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
                   form.entryType === "single"
-                    ? "border-[var(--primary)] bg-emerald-50/20"
-                    : "border-slate-200 hover:border-slate-300"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/40 hover:bg-secondary/40"
                 }`}
               >
-                <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                    form.entryType === "single"
-                      ? "bg-emerald-100 text-[var(--primary)]"
-                      : "bg-slate-100 text-slate-500"
-                  }`}
-                >
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
                   <User size={24} />
                 </div>
-                <h3 className="font-extrabold text-slate-800 text-base mb-1">
-                  Add a single user
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Fill in one person's details manually. Selected by default.
+                <h3 className="font-extrabold text-foreground text-base mb-1">Add Single User</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Fill in employee identity, department, role, and contact details manually.
                 </p>
               </div>
 
@@ -410,26 +483,23 @@ export function ManageAccountAddUser() {
                   setForm((f) => ({ ...f, entryType: "spreadsheet" }));
                   navigate("/admin/manage-account/import");
                 }}
-                className="p-6 rounded-2xl border-2 border-slate-200 hover:border-slate-300 cursor-pointer transition-all duration-200 flex flex-col items-start"
+                className="p-6 rounded-2xl border-2 border-border hover:border-primary/40 hover:bg-secondary/40 cursor-pointer transition-all"
               >
-                <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-secondary text-muted-foreground flex items-center justify-center mb-4">
                   <Briefcase size={24} />
                 </div>
-                <h3 className="font-extrabold text-slate-800 text-base mb-1">
-                  Bulk Import
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Import employees from a CSV file. Redirects to the import
-                  page.
+                <h3 className="font-extrabold text-foreground text-base mb-1">Bulk Import</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Import multiple employee records from a CSV spreadsheet. Redirects to the 6-step wizard.
                 </p>
               </div>
             </div>
 
-            <div className="flex justify-end pt-6 border-t border-slate-100">
+            <div className="flex justify-end pt-6 border-t border-border">
               <button
                 disabled={!canContinue()}
                 onClick={() => setStep(2)}
-                className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 rounded-xl bg-primary text-white text-xs font-bold flex items-center gap-2 shadow-md hover:opacity-90 transition-all cursor-pointer"
               >
                 Continue <ArrowRight size={16} />
               </button>
@@ -437,40 +507,39 @@ export function ManageAccountAddUser() {
           </div>
         )}
 
-        {/* ═══ STEP 2: Create Account ═══ */}
+        {/* ── STEP 2: CREATE ACCOUNT & ROLE PERMISSION PREVIEW ── */}
         {step === 2 && (
-          <div className="p-8 md:p-12">
-            <h2 className="text-xl font-black text-slate-800 mb-2">
-              Create User Account
-            </h2>
-            <p className="text-sm text-slate-400 mb-8">
-              Capture minimum identity to create login access.
+          <div className="p-6 md:p-10 space-y-6">
+            <h2 className="text-xl font-extrabold text-foreground">Create User Account & Assign Role</h2>
+            <p className="text-xs text-muted-foreground">
+              Define core employee identity and system authorization access.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className={labelCls}>Employee ID</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-2">
+                  Employee ID
+                </label>
                 <input
                   type="text"
-                  placeholder="e.g. EMP001"
-                  className={inputCls}
-                  value={form.employeeId}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, employeeId: e.target.value }))
-                  }
+                  disabled
+                  readOnly
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-secondary text-muted-foreground font-mono text-xs font-bold outline-none cursor-not-allowed"
+                  value={`${form.employeeId} (Auto-generated by backend)`}
                 />
-                {!isIdUnique && (
-                  <p className="text-xs text-rose-500 font-bold mt-1.5 flex items-center gap-1">
-                    <Info size={12} /> Employee ID already registered!
-                  </p>
-                )}
+                <p className="text-[11px] text-muted-foreground font-medium mt-1">
+                  Authoritative system Employee ID is generated automatically upon account creation.
+                </p>
               </div>
+
               <div>
-                <label className={labelCls}>Full Name</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-2">
+                  Full Name *
+                </label>
                 <input
                   type="text"
-                  placeholder="e.g. John Doe"
-                  className={inputCls}
+                  placeholder="e.g. Arun Kumar"
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20"
                   value={form.fullName}
                   onChange={(e) => {
                     const fullName = e.target.value;
@@ -484,114 +553,121 @@ export function ManageAccountAddUser() {
                   }}
                 />
               </div>
+
               <div>
-                <label className={labelCls}>Email Address</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-2">
+                  Corporate Email Address *
+                </label>
                 <div className="relative">
-                  <Mail
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                    size={16}
-                  />
+                  <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="email"
-                    placeholder="name@organization.com"
-                    className={`${inputCls} pl-11`}
+                    placeholder="arun@nexus-ems.com"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-foreground text-xs font-bold outline-none focus:ring-2 focus:ring-primary/20"
                     value={form.email}
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, email: e.target.value }))
-                    }
+                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                   />
                 </div>
                 {!isEmailUnique && form.email && (
                   <p className="text-xs text-rose-500 font-bold mt-1.5 flex items-center gap-1">
-                    <Info size={12} /> Email already taken!
+                    <Info size={12} /> Email address already registered!
                   </p>
                 )}
               </div>
+
               <div>
-                <label className={labelCls}>System Role</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-2">
+                  System Role Assignment *
+                </label>
                 <select
-                  className={selectCls}
+                  className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs outline-none focus:ring-2 focus:ring-primary/20"
                   value={form.role}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, role: e.target.value }))
-                  }
+                  onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
                 >
-                  <option value="Employee">Team Member</option>
+                  <option value="Employee">Employee (Team Member)</option>
+                  <option value="Manager">Team Manager</option>
                   <option value="HR Manager">HR Manager</option>
                   <option value="Finance">Finance Manager</option>
-                  <option value="Manager">Team Manager</option>
-                  {isSuperAdmin && (
-                    <option value="Super Admin">Admin (Super Admin)</option>
-                  )}
+                  {canAssignPrivilegedRole && <option value="Super Admin">Super Admin (Org Owner)</option>}
                 </select>
               </div>
+
               <div className="md:col-span-2">
-                <label className={labelCls}>Reporting Manager</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-2">
+                  Reporting Manager
+                </label>
                 <select
-                  className={selectCls}
+                  className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs outline-none focus:ring-2 focus:ring-primary/20"
                   value={form.reportingManager}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, reportingManager: e.target.value }))
-                  }
+                  onChange={(e) => setForm((f) => ({ ...f, reportingManager: e.target.value }))}
                 >
                   <option value="">Unassigned / Direct Report</option>
-                  {employeesList
-                    .filter(
-                      (e) =>
-                        e.role === "Manager" ||
-                        e.role === "Super Admin" ||
-                        e.role === "HR Manager",
-                    )
-                    .map((mgr) => (
-                      <option key={mgr.id} value={mgr.name}>
-                        {mgr.name} ({mgr.designation})
-                      </option>
-                    ))}
+                  {employeesList.map((mgr) => (
+                    <option key={mgr.id} value={mgr.name}>
+                      {mgr.name} ({mgr.designation} - {mgr.department})
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
 
-            <div className="p-4 bg-emerald-50/30 rounded-2xl flex items-start gap-3 mb-10">
-              <Info
-                className="text-[var(--primary)] shrink-0 mt-0.5"
-                size={16}
-              />
-              <p className="text-xs text-emerald-900/60 leading-relaxed font-semibold">
-                The user will receive an email invitation to create their own
-                password.
+            {/* ═══ ROLE PERMISSION SUMMARY PREVIEW CARD ═══ */}
+            <div className="p-5 rounded-2xl bg-secondary/60 border border-border space-y-3">
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={18} className="text-primary" />
+                <h4 className="font-extrabold text-foreground text-xs">
+                  Role Capabilities Summary — <span className="text-primary">{form.role}</span>
+                </h4>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">{rolePreview.desc}</p>
+              <div className="space-y-1.5 pt-1">
+                {rolePreview.highlights.map((h) => (
+                  <div key={h} className="flex items-center gap-2 text-xs font-bold text-foreground">
+                    <Check size={14} className="text-emerald-500 shrink-0" />
+                    <span>{h}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 bg-primary/10 rounded-2xl flex items-start gap-3">
+              <Info size={18} className="text-primary shrink-0 mt-0.5" />
+              <p className="text-xs text-foreground font-semibold leading-relaxed">
+                An account invitation record will be initialized for <strong>{form.email || "the employee"}</strong> under tenant <strong>{activeOrgName}</strong>.
               </p>
             </div>
 
-            <div className="flex justify-between pt-6 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-6 border-t border-border">
               <button
                 onClick={() => setStep(1)}
-                className="px-6 py-3.5 border border-slate-200 text-slate-500 hover:bg-slate-50 rounded-xl text-sm font-bold transition-all"
+                className="px-6 py-3 rounded-xl border border-border text-muted-foreground hover:text-foreground text-xs font-bold transition-all cursor-pointer"
               >
-                ← Back
+                Back
               </button>
               <button
                 disabled={!canContinue()}
                 onClick={() => setStep(3)}
-                className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`px-6 py-3 rounded-xl text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer ${
+                  isStep2Valid
+                    ? "bg-primary text-white hover:opacity-90"
+                    : "bg-primary/40 text-white/70 cursor-not-allowed"
+                }`}
               >
-                Continue <ArrowRight size={16} />
+                Continue to Details <ArrowRight size={16} />
               </button>
             </div>
           </div>
         )}
 
-        {/* ═══ STEP 3: Employee Details ═══ */}
+        {/* ── STEP 3: PROFILE DETAILS ── */}
         {step === 3 && (
-          <div className="flex flex-col md:flex-row min-h-[500px]">
+          <div className="flex flex-col md:flex-row min-h-[480px]">
             {/* Left Vertical Tabs */}
-            <div className="w-full md:w-64 border-r border-slate-100 bg-[#FAFBFD] p-6 flex md:flex-col gap-2 overflow-x-auto md:overflow-x-visible">
+            <div className="w-full md:w-60 border-r border-border bg-secondary/30 p-4 flex md:flex-col gap-2 overflow-x-auto">
               {[
                 { id: "basic", label: "Basic Information" },
                 { id: "work", label: "Work Information" },
-                { id: "personal", label: "Personal Info" },
-                { id: "identity", label: "Identity Data" },
-                { id: "contact", label: "Contact Info" },
-                { id: "other", label: "Other Details" },
+                { id: "contact", label: "Contact Details" },
               ].map((tabItem) => {
                 const hasErr = tabErrors[tabItem.id as keyof typeof tabErrors];
                 const isActive = activeTab === tabItem.id;
@@ -599,746 +675,243 @@ export function ManageAccountAddUser() {
                   <button
                     key={tabItem.id}
                     onClick={() => setActiveTab(tabItem.id)}
-                    className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between shrink-0 md:shrink ${
+                    className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between shrink-0 md:shrink cursor-pointer ${
                       isActive
-                        ? "bg-white text-[var(--primary)] shadow-md shadow-slate-100 border border-slate-100"
-                        : "text-slate-500 hover:bg-slate-100/50"
+                        ? "bg-card text-primary shadow-sm border border-border"
+                        : "text-muted-foreground hover:bg-secondary"
                     }`}
                   >
                     <span>{tabItem.label}</span>
-                    {hasErr && (
-                      <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
-                    )}
+                    {hasErr && <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />}
                   </button>
                 );
               })}
             </div>
 
-            {/* Tab content */}
-            <div className="flex-1 p-8 md:p-10 flex flex-col justify-between">
+            {/* Tab Body */}
+            <div className="flex-1 p-6 md:p-8 flex flex-col justify-between">
               <div>
-                {/* Basic */}
+                {/* Basic Tab */}
                 {activeTab === "basic" && (
                   <div className="space-y-5">
-                    <h3 className="font-extrabold text-slate-800 text-lg mb-4">
-                      Basic Information
-                    </h3>
+                    <h3 className="font-extrabold text-foreground text-base mb-4">Basic Profile Info</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className={labelCls}>Employee ID</label>
+                        <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">First Name *</label>
                         <input
                           type="text"
-                          disabled
-                          className={`${inputCls} bg-slate-100 text-slate-400 cursor-not-allowed`}
-                          value={form.employeeId}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Nick Name</label>
-                        <input
-                          type="text"
-                          className={inputCls}
-                          value={form.nickName}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, nickName: e.target.value }))
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>First Name *</label>
-                        <input
-                          type="text"
-                          className={inputCls}
+                          className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs"
                           value={form.firstName}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              firstName: e.target.value,
-                            }))
-                          }
+                          onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
                         />
                       </div>
                       <div>
-                        <label className={labelCls}>Email (Read Only)</label>
+                        <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Last Name *</label>
                         <input
                           type="text"
-                          disabled
-                          className={`${inputCls} bg-slate-100 text-slate-400 cursor-not-allowed`}
-                          value={form.email}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Last Name *</label>
-                        <input
-                          type="text"
-                          className={inputCls}
+                          className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs"
                           value={form.lastName}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, lastName: e.target.value }))
-                          }
+                          onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Nick Name</label>
+                        <input
+                          type="text"
+                          className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs"
+                          value={form.nickName}
+                          onChange={(e) => setForm((f) => ({ ...f, nickName: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Date of Birth</label>
+                        <input
+                          type="date"
+                          className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs"
+                          value={form.dob}
+                          onChange={(e) => setForm((f) => ({ ...f, dob: e.target.value }))}
                         />
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Work */}
+                {/* Work Tab */}
                 {activeTab === "work" && (
                   <div className="space-y-5">
-                    <h3 className="font-extrabold text-slate-800 text-lg mb-4">
-                      Work Information
-                    </h3>
+                    <h3 className="font-extrabold text-foreground text-base mb-4">Work & Organization Info</h3>
                     <div className="grid grid-cols-2 gap-4">
-                      {/* Department */}
                       <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-bold text-slate-700 uppercase">
-                            Department *
-                          </label>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="text-xs font-bold text-muted-foreground uppercase">Department *</label>
                           <button
-                            onClick={() =>
-                              setNewValPrompt({
-                                field: "dept",
-                                visible: true,
-                                value: "",
-                              })
-                            }
-                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
+                            onClick={() => setNewValPrompt({ field: "dept", visible: true, value: "" })}
+                            className="text-primary hover:underline text-[11px] font-bold flex items-center"
                           >
-                            <Plus size={10} /> New
+                            + New
                           </button>
                         </div>
                         <select
-                          className={selectCls}
+                          className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs"
                           value={form.department}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              department: e.target.value,
-                            }))
-                          }
+                          onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))}
                         >
                           {depts.map((d) => (
-                            <option key={d} value={d}>
-                              {d}
-                            </option>
+                            <option key={d} value={d}>{d}</option>
                           ))}
                         </select>
                       </div>
-                      {/* Role (read-only) */}
+
                       <div>
-                        <label className={labelCls}>System Role</label>
-                        <select
-                          className={selectCls}
-                          value={form.role}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, role: e.target.value }))
-                          }
-                        >
-                          <option value="Employee">Team Member</option>
-                          <option value="HR Manager">HR Manager</option>
-                          <option value="Finance">Finance Manager</option>
-                          <option value="Manager">Team Manager</option>
-                          {isSuperAdmin && (
-                            <option value="Super Admin">Admin</option>
-                          )}
-                        </select>
-                      </div>
-                      {/* Location */}
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-bold text-slate-700 uppercase">
-                            Location *
-                          </label>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="text-xs font-bold text-muted-foreground uppercase">Branch Location *</label>
                           <button
-                            onClick={() =>
-                              setNewValPrompt({
-                                field: "location",
-                                visible: true,
-                                value: "",
-                              })
-                            }
-                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
+                            onClick={() => setNewValPrompt({ field: "location", visible: true, value: "" })}
+                            className="text-primary hover:underline text-[11px] font-bold flex items-center"
                           >
-                            <Plus size={10} /> New
+                            + New
                           </button>
                         </div>
                         <select
-                          className={selectCls}
+                          className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs"
                           value={form.location}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, location: e.target.value }))
-                          }
+                          onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
                         >
                           {locations.map((l) => (
-                            <option key={l} value={l}>
-                              {l}
-                            </option>
+                            <option key={l} value={l}>{l}</option>
                           ))}
                         </select>
                       </div>
-                      {/* Employment Type */}
+
                       <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-bold text-slate-700 uppercase">
-                            Employment Type
-                          </label>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="text-xs font-bold text-muted-foreground uppercase">Designation *</label>
                           <button
-                            onClick={() =>
-                              setNewValPrompt({
-                                field: "type",
-                                visible: true,
-                                value: "",
-                              })
-                            }
-                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
+                            onClick={() => setNewValPrompt({ field: "designation", visible: true, value: "" })}
+                            className="text-primary hover:underline text-[11px] font-bold flex items-center"
                           >
-                            <Plus size={10} /> New
+                            + New
                           </button>
                         </div>
                         <select
-                          className={selectCls}
-                          value={form.employmentType}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              employmentType: e.target.value,
-                            }))
-                          }
-                        >
-                          {employmentTypes.map((t) => (
-                            <option key={t} value={t}>
-                              {t}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {/* Designation */}
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-bold text-slate-700 uppercase">
-                            Designation *
-                          </label>
-                          <button
-                            onClick={() =>
-                              setNewValPrompt({
-                                field: "designation",
-                                visible: true,
-                                value: "",
-                              })
-                            }
-                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
-                          >
-                            <Plus size={10} /> New
-                          </button>
-                        </div>
-                        <select
-                          className={selectCls}
+                          className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs"
                           value={form.designation}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              designation: e.target.value,
-                            }))
-                          }
+                          onChange={(e) => setForm((f) => ({ ...f, designation: e.target.value }))}
                         >
                           {designations.map((d) => (
-                            <option key={d} value={d}>
-                              {d}
-                            </option>
+                            <option key={d} value={d}>{d}</option>
                           ))}
                         </select>
                       </div>
-                      {/* Employee Status */}
+
                       <div>
-                        <label className={labelCls}>Employee Status</label>
-                        <select
-                          className={selectCls}
-                          value={form.employeeStatus}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              employeeStatus: e.target.value,
-                            }))
-                          }
-                        >
-                          <option value="Active">Active</option>
-                          <option value="Probation">Probation</option>
-                          <option value="Notice Period">Notice Period</option>
-                        </select>
-                      </div>
-                      {/* Source of Hire */}
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-bold text-slate-700 uppercase">
-                            Source of Hire
-                          </label>
-                          <button
-                            onClick={() =>
-                              setNewValPrompt({
-                                field: "source",
-                                visible: true,
-                                value: "",
-                              })
-                            }
-                            className="text-[var(--primary)] hover:underline text-[11px] font-bold flex items-center"
-                          >
-                            <Plus size={10} /> New
-                          </button>
-                        </div>
-                        <select
-                          className={selectCls}
-                          value={form.sourceOfHire}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              sourceOfHire: e.target.value,
-                            }))
-                          }
-                        >
-                          {sourcesOfHire.map((s) => (
-                            <option key={s} value={s}>
-                              {s}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {/* Date of Joining */}
-                      <div>
-                        <label className={labelCls}>Date of Joining</label>
+                        <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Date of Joining</label>
                         <input
                           type="date"
-                          className={inputCls}
+                          className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs"
                           value={form.dateOfJoining}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            let probationEndDate = "";
-                            if (val) {
-                              const d = new Date(val);
-                              d.setDate(d.getDate() + 90);
-                              probationEndDate = d.toISOString().split("T")[0];
-                            }
-                            setForm((f) => ({
-                              ...f,
-                              dateOfJoining: val,
-                              probationEndDate,
-                            }));
-                          }}
-                        />
-                      </div>
-                      {/* Current Experience */}
-                      <div>
-                        <label className={labelCls}>Current Experience</label>
-                        <input
-                          type="text"
-                          placeholder="-"
-                          className={inputCls}
-                          value={form.currentExperience}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              currentExperience: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                      {/* Total Experience */}
-                      <div>
-                        <label className={labelCls}>
-                          Total Experience (Years)
-                        </label>
-                        <input
-                          type="number"
-                          placeholder="e.g. 5"
-                          className={inputCls}
-                          value={form.totalExperience}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              totalExperience: e.target.value,
-                            }))
-                          }
+                          onChange={(e) => setForm((f) => ({ ...f, dateOfJoining: e.target.value }))}
                         />
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Personal */}
-                {activeTab === "personal" && (
-                  <div className="space-y-5">
-                    <h3 className="font-extrabold text-slate-800 text-lg mb-4">
-                      Personal Information
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className={labelCls}>Date of Birth</label>
-                        <input
-                          type="date"
-                          className={inputCls}
-                          value={form.dob}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, dob: e.target.value }))
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Gender</label>
-                        <select
-                          className={selectCls}
-                          value={form.gender}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, gender: e.target.value }))
-                          }
-                        >
-                          <option>Male</option>
-                          <option>Female</option>
-                          <option>Other</option>
-                          <option>Prefer not to say</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className={labelCls}>Marital Status</label>
-                        <select
-                          className={selectCls}
-                          value={form.maritalStatus}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              maritalStatus: e.target.value,
-                            }))
-                          }
-                        >
-                          <option>Single</option>
-                          <option>Married</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className={labelCls}>Blood Group</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. O+"
-                          className={inputCls}
-                          value={form.bloodGroup}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              bloodGroup: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className={labelCls}>Nationality</label>
-                      <input
-                        type="text"
-                        className={inputCls}
-                        value={form.nationality}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            nationality: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Identity */}
-                {activeTab === "identity" && (
-                  <div className="space-y-5">
-                    <div className="flex items-center gap-2 p-3 bg-amber-50 rounded-xl mb-4 border border-amber-100">
-                      <Lock className="text-amber-600" size={14} />
-                      <p className="text-[11px] text-amber-800/80 font-bold">
-                        Sensitive Information: Only Admin and HR Managers can
-                        edit. All updates are logged in the Audit Log.
-                      </p>
-                    </div>
-                    <h3 className="font-extrabold text-slate-800 text-lg mb-4">
-                      Identity Information
-                    </h3>
-                    <div>
-                      <label className={labelCls}>Aadhaar Number</label>
-                      <input
-                        type="text"
-                        placeholder="12-digit Aadhaar"
-                        className={inputCls}
-                        value={form.aadhaarNumber}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            aadhaarNumber: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className={labelCls}>PAN Number</label>
-                      <input
-                        type="text"
-                        placeholder="Permanent Account Number"
-                        className={inputCls}
-                        value={form.panNumber}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, panNumber: e.target.value }))
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className={labelCls}>UAN Number</label>
-                      <input
-                        type="text"
-                        placeholder="Universal PF Account Number"
-                        className={inputCls}
-                        value={form.uanNumber}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, uanNumber: e.target.value }))
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className={labelCls}>Passport Number</label>
-                      <input
-                        type="text"
-                        className={inputCls}
-                        value={form.passportNumber}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            passportNumber: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Contact */}
+                {/* Contact Tab */}
                 {activeTab === "contact" && (
                   <div className="space-y-5">
-                    <h3 className="font-extrabold text-slate-800 text-lg mb-4">
-                      Contact Information
-                    </h3>
+                    <h3 className="font-extrabold text-foreground text-base mb-4">Contact & Communication</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className={labelCls}>Personal Mobile *</label>
+                        <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">
+                          Contact / Personal Mobile *
+                        </label>
                         <input
                           type="tel"
-                          placeholder="+91 "
-                          className={inputCls}
+                          placeholder="+91 98765 43210"
+                          className={`w-full p-3 rounded-xl border bg-background text-foreground font-bold text-xs ${
+                            !isPhoneValid ? "border-rose-500 ring-1 ring-rose-500" : "border-border"
+                          }`}
                           value={form.personalMobile}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              personalMobile: e.target.value,
-                            }))
-                          }
+                          onChange={(e) => setForm((f) => ({ ...f, personalMobile: e.target.value }))}
                         />
+                        {!isPhoneValid && (
+                          <p className="text-[11px] font-bold text-rose-500 mt-1">
+                            Please enter a valid phone contact number.
+                          </p>
+                        )}
                       </div>
-                      <div>
-                        <label className={labelCls}>Work Mobile</label>
-                        <input
-                          type="tel"
-                          className={inputCls}
-                          value={form.workMobile}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              workMobile: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className={labelCls}>Current Address</label>
-                      <textarea
-                        rows={2}
-                        className={`${inputCls} resize-none`}
-                        value={form.currentAddress}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            currentAddress: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="text-xs font-bold text-slate-700 uppercase">
-                          Permanent Address
-                        </label>
-                        <label className="flex items-center gap-1 text-[11px] text-[var(--primary)] font-bold cursor-pointer select-none">
-                          <input
-                            type="checkbox"
-                            className="rounded text-[var(--primary)] focus:ring-0 cursor-pointer"
-                            checked={form.sameAddress}
-                            onChange={(e) => {
-                              const c = e.target.checked;
-                              setForm((f) => ({
-                                ...f,
-                                sameAddress: c,
-                                permanentAddress: c ? f.currentAddress : "",
-                              }));
-                            }}
-                          />
-                          Same as Current
-                        </label>
-                      </div>
-                      <textarea
-                        rows={2}
-                        className={`${inputCls} resize-none`}
-                        value={form.permanentAddress}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            permanentAddress: e.target.value,
-                          }))
-                        }
-                        disabled={form.sameAddress}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className={labelCls}>
-                          Emergency Contact Name
-                        </label>
-                        <input
-                          type="text"
-                          className={inputCls}
-                          value={form.emergencyContactName}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              emergencyContactName: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>
-                          Emergency Contact Mobile
-                        </label>
-                        <input
-                          type="tel"
-                          className={inputCls}
-                          value={form.emergencyContactNumber}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              emergencyContactNumber: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
 
-                {/* Other */}
-                {activeTab === "other" && (
-                  <div className="space-y-5">
-                    <h3 className="font-extrabold text-slate-800 text-lg mb-4">
-                      Other Information
-                    </h3>
-                    <div>
-                      <label className={labelCls}>Probation End Date</label>
-                      <input
-                        type="date"
-                        className={inputCls}
-                        value={form.probationEndDate}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            probationEndDate: e.target.value,
-                          }))
-                        }
-                      />
+                      <div>
+                        <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Work Mobile</label>
+                        <input
+                          type="tel"
+                          placeholder="+91 98765 00000"
+                          className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs"
+                          value={form.workMobile}
+                          onChange={(e) => setForm((f) => ({ ...f, workMobile: e.target.value }))}
+                        />
+                      </div>
                     </div>
+
                     <div>
-                      <label className={labelCls}>Internal Notes</label>
+                      <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">Current Address</label>
                       <textarea
-                        rows={4}
-                        placeholder="Internal notes — never shown to the employee."
-                        className={`${inputCls} resize-none`}
-                        value={form.notes}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, notes: e.target.value }))
-                        }
+                        rows={2}
+                        className="w-full p-3 rounded-xl border border-border bg-background text-foreground font-bold text-xs resize-none"
+                        value={form.currentAddress}
+                        onChange={(e) => setForm((f) => ({ ...f, currentAddress: e.target.value }))}
                       />
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Nav buttons */}
-              <div className="flex justify-between pt-8 border-t border-slate-100 mt-10">
+              {/* Step Navigation Footer */}
+              <div className="flex items-center justify-between pt-6 border-t border-border mt-8">
                 <button
                   onClick={() => setStep(2)}
-                  className="px-6 py-3.5 border border-slate-200 text-slate-500 hover:bg-slate-50 rounded-xl text-sm font-bold transition-all"
+                  className="px-6 py-3 rounded-xl border border-border text-muted-foreground hover:text-foreground text-xs font-bold transition-all cursor-pointer"
                 >
-                  ← Back
+                  Back
                 </button>
                 <button
-                  disabled={!canContinue()}
+                  disabled={!isStep3Valid}
                   onClick={() => setStep(4)}
-                  className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`px-6 py-3 rounded-xl text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer ${
+                    isStep3Valid
+                      ? "bg-primary text-white hover:opacity-90"
+                      : "bg-primary/40 text-white/70 cursor-not-allowed"
+                  }`}
                 >
-                  Continue <ArrowRight size={16} />
+                  Proceed to Review <ArrowRight size={16} />
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* ═══ STEP 4: Alerts ═══ */}
+        {/* ── STEP 4: ALERTS & CONFIRMATION ── */}
         {step === 4 && (
-          <div className="p-8 md:p-12">
-            <h2 className="text-xl font-black text-slate-800 mb-2">
-              Configure Notification Alerts
-            </h2>
-            <p className="text-sm text-slate-400 mb-8">
-              Select which system notifications trigger once the user is
-              created.
+          <div className="p-6 md:p-10 space-y-6">
+            <h2 className="text-xl font-extrabold text-foreground">Configure Invitation & Notifications</h2>
+            <p className="text-xs text-muted-foreground">
+              Set automated notifications triggered upon account creation.
             </p>
 
-            <div className="space-y-6 mb-10">
+            <div className="space-y-4">
               {[
-                {
-                  id: "sendInvite",
-                  label: "Send invite email",
-                  desc: "User receives a link to set their password and sign in.",
-                },
-                {
-                  id: "notifyManager",
-                  label: "Notify Reporting Manager",
-                  desc: "Manager gets an email once the account is active.",
-                },
-                {
-                  id: "notifyHR",
-                  label: "Notify HR",
-                  desc: "HR gets a copy of the new-hire record.",
-                },
-                {
-                  id: "reminderUnopened",
-                  label: "Reminder if invite unopened",
-                  desc: "Auto-resend the invite after 3 days of no response.",
-                },
+                { id: "sendInvite", label: "Create Account Invitation Record", desc: "Generates simulated password setup invitation link for onboarding." },
+                { id: "notifyManager", label: "Notify Reporting Manager", desc: "Sends alert to manager regarding newly assigned direct report." },
+                { id: "notifyHR", label: "Notify HR Department", desc: "Logs user creation record in HR onboarding workflow." },
               ].map((alertItem) => (
                 <div
                   key={alertItem.id}
-                  className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-[#FAFBFD] transition-all hover:border-slate-200"
+                  className="flex items-center justify-between p-4 rounded-2xl border border-border bg-secondary/30"
                 >
                   <div>
-                    <h4 className="font-extrabold text-slate-800 text-sm mb-0.5">
-                      {alertItem.label}
-                    </h4>
-                    <p className="text-xs text-slate-400 font-medium">
-                      {alertItem.desc}
-                    </p>
+                    <h4 className="font-extrabold text-foreground text-xs">{alertItem.label}</h4>
+                    <p className="text-[11px] text-muted-foreground">{alertItem.desc}</p>
                   </div>
                   <button
                     onClick={() =>
@@ -1347,79 +920,120 @@ export function ManageAccountAddUser() {
                         [alertItem.id]: !f[alertItem.id as keyof typeof f],
                       }))
                     }
-                    className={`w-12 h-6 rounded-full p-1 transition-all duration-300 ${form[alertItem.id as keyof typeof form] ? "bg-[var(--primary)]" : "bg-slate-200"}`}
+                    className={`w-12 h-6 rounded-full p-1 transition-all duration-300 cursor-pointer ${
+                      form[alertItem.id as keyof typeof form] ? "bg-primary" : "bg-border"
+                    }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${form[alertItem.id as keyof typeof form] ? "translate-x-6" : "translate-x-0"}`}
+                      className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${
+                        form[alertItem.id as keyof typeof form] ? "translate-x-6" : "translate-x-0"
+                      }`}
                     />
                   </button>
                 </div>
               ))}
             </div>
 
-            <div className="flex justify-between pt-6 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-6 border-t border-border">
               <button
                 onClick={() => setStep(3)}
-                className="px-6 py-3.5 border border-slate-200 text-slate-500 hover:bg-slate-50 rounded-xl text-sm font-bold transition-all"
+                className="px-6 py-3 rounded-xl border border-border text-muted-foreground hover:text-foreground text-xs font-bold transition-all cursor-pointer"
               >
-                ← Back
+                Back
               </button>
               <button
                 onClick={handleFinalSubmit}
-                className="px-6 py-3.5 bg-[var(--primary)] text-white rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all hover:opacity-90 active:scale-95 shadow-md shadow-emerald-100"
+                className="px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition-all cursor-pointer"
               >
-                Create User ✓
+                <CheckCircle2 size={18} /> Confirm & Create User Account
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 5: SUCCESS STATE & ONBOARDING REDIRECT ── */}
+        {step === 5 && createdEmployee && (
+          <div className="p-8 md:p-12 text-center space-y-6">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
+              <CheckCircle2 size={36} />
+            </div>
+
+            <div>
+              <h2 className="text-2xl font-black text-foreground">User Account Created</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                <strong>{createdEmployee.name}</strong> ({createdEmployee.email}) is registered as <code>{createdEmployee.id}</code> under <strong>{activeOrgName}</strong> with status <strong>Pending Invite</strong>.
+              </p>
+            </div>
+
+            {/* Created Summary Card */}
+            <div className="p-5 rounded-2xl bg-secondary/50 border border-border max-w-md mx-auto grid grid-cols-2 gap-4 text-left text-xs">
+              <div>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase block">Employee ID</span>
+                <span className="font-mono font-bold text-primary">{createdEmployee.id}</span>
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase block">System Role</span>
+                <span className="font-bold text-foreground">{createdEmployee.role}</span>
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase block">Department</span>
+                <span className="font-bold text-foreground">{createdEmployee.department}</span>
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase block">Branch Location</span>
+                <span className="font-bold text-foreground">{createdEmployee.location}</span>
+              </div>
+            </div>
+
+            {/* CTA Actions */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-border max-w-md mx-auto">
+              <button
+                onClick={() =>
+                  navigate("/onboarding", {
+                    state: {
+                      employeeId: createdEmployee.id,
+                      employeeName: createdEmployee.name,
+                    },
+                  })
+                }
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-purple-600/20 transition-all cursor-pointer"
+              >
+                <Rocket size={16} /> Start Employee Onboarding
+              </button>
+              <button
+                onClick={() => navigate("/admin/manage-account")}
+                className="w-full sm:w-auto px-6 py-3 rounded-xl border border-border bg-card hover:bg-secondary text-foreground text-xs font-bold transition-all cursor-pointer"
+              >
+                Return to Directory
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* ─── Inline add modal ─── */}
+      {/* Inline Option Add Modal */}
       {newValPrompt.visible && (
-        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/40">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full border border-slate-100 shadow-2xl">
-            <h3 className="font-extrabold text-slate-800 text-lg mb-2">
-              Add{" "}
-              {newValPrompt.field === "dept"
-                ? "Department"
-                : newValPrompt.field === "location"
-                  ? "Location"
-                  : newValPrompt.field === "designation"
-                    ? "Designation"
-                    : newValPrompt.field === "type"
-                      ? "Employment Type"
-                      : "Source of Hire"}
-            </h3>
-            <p className="text-xs text-slate-400 mb-6 font-medium">
-              This option will be appended to the dropdown and selected.
-            </p>
+        <div className="fixed inset-0 z-[3000] bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4">
+            <h3 className="text-sm font-black text-foreground">Add Custom Option</h3>
             <input
               type="text"
-              placeholder="Enter new value"
-              className={`${inputCls} mb-6 font-bold`}
+              placeholder="Enter title..."
+              className="w-full p-3 rounded-xl border border-border bg-background text-foreground text-xs font-bold"
               value={newValPrompt.value}
-              onChange={(e) =>
-                setNewValPrompt((p) => ({ ...p, value: e.target.value }))
-              }
+              onChange={(e) => setNewValPrompt((p) => ({ ...p, value: e.target.value }))}
               autoFocus
-              onKeyDown={(e) => {
-                if (e.nativeEvent.isComposing) return;
-                if (e.key === "Enter") handleAddNewValSubmit();
-              }}
             />
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
-                onClick={() =>
-                  setNewValPrompt((p) => ({ ...p, visible: false }))
-                }
-                className="flex-1 py-3 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 hover:bg-slate-200/65 transition-all"
+                onClick={() => setNewValPrompt((p) => ({ ...p, visible: false }))}
+                className="flex-1 py-2.5 rounded-xl border border-border bg-card text-foreground text-xs font-bold"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddNewValSubmit}
-                className="flex-1 py-3 rounded-xl text-xs font-bold text-white bg-[var(--primary)] hover:opacity-90 transition-all"
+                className="flex-1 py-2.5 rounded-xl bg-primary text-white text-xs font-bold"
               >
                 Add Option
               </button>

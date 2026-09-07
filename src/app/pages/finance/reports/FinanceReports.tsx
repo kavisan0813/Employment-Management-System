@@ -1,6 +1,7 @@
 import { lazy, useState, useReducer, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { useAuth } from "../../../context/AuthContext";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import {
   BarChart3,
   Download,
@@ -271,7 +272,6 @@ export interface ReportItem {
 }
 export function FinanceReports() {
   const location = useLocation();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     activeTab: location.state?.activeTab || ("Dashboards" as ReportTab),
     showExportModal: false,
@@ -422,13 +422,12 @@ export function FinanceReports() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   const handleFilterChange =
     (setter: (val: string) => void) =>
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setter(e.target.value);
-      setRefreshKey((prev) => prev + 1);
-    };
+      (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setter(e.target.value);
+        setRefreshKey((prev) => prev + 1);
+      };
   const executeExport = () => {
     setIsExporting(true);
     setTimeout(() => {
@@ -460,6 +459,7 @@ export function FinanceReports() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(url);
       setIsExporting(false);
       setShowExportModal(false);
       showToast(`${activeTab} report exported successfully.`, "success");
@@ -688,7 +688,7 @@ export function FinanceReports() {
               {activeTab === "Custom Builder" && (
                 <FinanceCustomBuilder
                   onExportTriggered={() => setShowExportModal(true)}
-                  onEmailTriggered={() => {}}
+                  onEmailTriggered={() => { }}
                   onSaveReport={(reportData) => {
                     const newReport = {
                       id: Date.now(),
@@ -976,16 +976,17 @@ function DashboardsTab() {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#0F3047",
-                    border: "none",
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
                     borderRadius: "12px",
-                    color: "white",
+                    color: "var(--foreground)",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                   }}
                 />
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Total cost
               </span>
               <span className="text-xl font-black text-foreground tracking-tighter">
@@ -1057,39 +1058,33 @@ function DashboardsTab() {
         </ChartCard>
 
         <ChartCard title="Salary Band Distribution">
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={SALARY_BAND_DATA}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="var(--border)"
-              />
-              <XAxis
-                dataKey="band"
-                axisLine={false}
-                tickLine={false}
-                tick={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                }}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                }}
-              />
-              <Tooltip />
-              <Bar
-                dataKey="count"
-                fill="#10B981"
-                radius={[4, 4, 0, 0]}
-                barSize={24}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="space-y-3 pt-2">
+            {SALARY_BAND_DATA.map((item) => {
+              const totalCount = SALARY_BAND_DATA.reduce(
+                (acc, curr) => acc + curr.count,
+                0,
+              );
+              const percentage = Math.round((item.count / totalCount) * 100);
+              return (
+                <div key={item.band} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-extrabold text-foreground">
+                      ₹{item.band}
+                    </span>
+                    <span className="text-muted-foreground font-bold">
+                      <strong className="text-foreground">{item.count}</strong> emp ({percentage}%)
+                    </span>
+                  </div>
+                  <div className="h-2.5 w-full bg-secondary rounded-full overflow-hidden flex">
+                    <div
+                      className="h-full bg-[#00B87C] rounded-full transition-all duration-500"
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </ChartCard>
 
         <ChartCard title="Payroll Growth YoY">
@@ -1316,19 +1311,19 @@ function AssetReportsTab({
   setSelectedReport?: (report: ReportItem | null) => void;
 }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { hasPermissionKey } = usePermissions();
   const assetReports = [
-    ...(user?.role === "Finance"
+    ...(hasPermissionKey(P.ASSETS_VIEW_COST)
       ? [
-          {
-            name: "Asset Cost Report",
-            desc: "Asset valuation, depreciation overview, and category-wise cost breakdown",
-            icon: "BarChart3",
-            color: "#8B5CF6",
-            bgColor: "#EDE9FE",
-            path: "/finance/asset-cost-report",
-          },
-        ]
+        {
+          name: "Asset Cost Report",
+          desc: "Asset valuation, depreciation overview, and category-wise cost breakdown",
+          icon: "BarChart3",
+          color: "#8B5CF6",
+          bgColor: "#EDE9FE",
+          path: "/finance/asset-cost-report",
+        },
+      ]
       : []),
     {
       name: "Asset Lifecycle Report",

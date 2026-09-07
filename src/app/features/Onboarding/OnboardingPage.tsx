@@ -429,6 +429,8 @@ export function Onboarding() {
           show={hook.showUploadModal}
           onClose={() => hook.setShowUploadModal(false)}
           handleConfirmUpload={hook.handleConfirmUpload}
+          documentTitle={hook.uploadDocType}
+          existingDocNames={hook.documents.map((d) => d.fileName || d.name)}
         />
 
         <TemplateEditorModal

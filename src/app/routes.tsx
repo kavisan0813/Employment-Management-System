@@ -1368,7 +1368,7 @@ export const router = createBrowserRouter([
         ),
       },
       { path: "onboarding", element: protectedRoute(Onboarding) },
-      { path: "documents", element: protectedRoute(Documents) },
+      { path: "documents", element: <Navigate to="/settings?tab=policies" replace /> },
       {
         path: "training",
         element: (
@@ -1402,11 +1402,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "my-documents",
-        element: (
-          <Protected>
-            <DocumentsWrapper />
-          </Protected>
-        ),
+        element: <Navigate to="/profile" replace />,
       },
       { path: "my-assets", element: protectedRoute(MyAssets) },
       { path: "my-exit", element: protectedRoute(EmployeeExit) },

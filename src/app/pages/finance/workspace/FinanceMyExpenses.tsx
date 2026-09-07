@@ -427,7 +427,6 @@ const MONTH_DATE_MAP: Record<string, string> = {
 };
 
 export function FinanceMyExpenses() {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     activeTab: "All" as "All" | "Pending" | "Approved" | "Rejected",
     selectedExpense: null as Expense | null,
@@ -595,7 +594,6 @@ export function FinanceMyExpenses() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Controlled states for new expense form
   const categoryMap: Record<string, ExpenseCategory> = {
     Travel: "Travel",

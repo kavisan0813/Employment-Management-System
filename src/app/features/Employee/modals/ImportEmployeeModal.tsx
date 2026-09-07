@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { X } from "lucide-react";
+import { useNavigate } from "react-router";
+import { X, ExternalLink, FileSpreadsheet, Sparkles } from "lucide-react";
 import { EmployeeInput } from "../types/employee.types";
 
 export function ImportEmployeeModal({
@@ -9,6 +10,7 @@ export function ImportEmployeeModal({
   onClose: () => void;
   onImport: (emps: EmployeeInput[]) => void;
 }) {
+  const navigate = useNavigate();
   const [csvText, setCsvText] = useState("");
   const [parsedEmployees, setParsedEmployees] = useState<EmployeeInput[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +40,7 @@ export function ImportEmployeeModal({
     })();
     if (!hasRequired) {
       setError(
-        "CSV headers must include: name, email, department, designation, salary, joindate",
+        "CSV headers must include: name, email, department, designation, salary, joindate"
       );
       return;
     }
@@ -69,113 +71,142 @@ export function ImportEmployeeModal({
   return (
     <div
       className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
+      style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl"
+        className="w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl transition-all"
         style={{
           backgroundColor: "var(--card)",
           border: "1px solid var(--border)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-8 py-6 border-b border-border">
-          <div>
-            <h3 className="text-lg font-black text-foreground">
-              Bulk Import Employees
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Paste CSV formatted text to import multiple employees
-            </p>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <FileSpreadsheet size={20} />
+            </div>
+            <div>
+              <h3 className="text-base font-black text-foreground">
+                Bulk Import Employees
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Paste CSV data or use the full 6-step guided wizard
+              </p>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl hover:bg-secondary text-muted-foreground"
+            className="p-2 rounded-xl hover:bg-secondary text-muted-foreground transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>
         </div>
 
-        <div className="px-8 py-6 space-y-4 max-h-[60vh] overflow-y-auto">
+        {/* Banner to Full Import Wizard */}
+        <div className="p-4 mx-6 mt-5 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="text-primary shrink-0" size={18} />
+            <div>
+              <p className="text-xs font-black text-foreground">Guided 6-Step Import Wizard</p>
+              <p className="text-[11px] text-muted-foreground">Includes drag & drop, field mapping & validation reports</p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              onClose();
+              navigate("/admin/manage-account/import");
+            }}
+            className="px-3.5 py-1.5 rounded-xl bg-primary text-white text-xs font-bold flex items-center gap-1 hover:opacity-90 transition-all shrink-0 cursor-pointer shadow-sm"
+          >
+            Open Wizard <ExternalLink size={13} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="px-6 py-4 space-y-4 max-h-[55vh] overflow-y-auto">
           {parsedEmployees.length === 0 ? (
             <div>
               <label className="block text-xs font-black uppercase tracking-wider mb-2 text-foreground">
-                Paste CSV Data (Include Header)
+                Quick Paste CSV Data (Include Header)
               </label>
               <textarea
-                rows={8}
-                className="w-full rounded-xl p-4 text-xs font-mono border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-emerald-500/20"
+                rows={6}
+                className="w-full rounded-2xl p-3.5 text-xs font-mono border border-border bg-background text-foreground outline-none focus:ring-2 focus:ring-primary/20"
                 placeholder="name,email,department,designation,salary,joindate&#10;Arun Kumar,arun@viyanhr.com,Engineering,Developer,90000,2024-03-01&#10;Priya Sharma,priya@viyanhr.com,Product,Manager,120000,2023-05-15"
                 value={csvText}
                 onChange={(e) => setCsvText(e.target.value)}
               />
-              <p className="text-[10px] text-muted-foreground mt-1">
-                Headers should match: name, email, department, designation,
-                salary, joindate
+              <p className="text-[10px] text-muted-foreground mt-1.5 font-medium">
+                Headers must match: <code>name, email, department, designation, salary, joindate</code>
               </p>
               {error && (
                 <p className="text-xs font-bold text-rose-500 mt-2">{error}</p>
               )}
               <button
                 onClick={handleParse}
-                className="mt-4 px-5 py-2.5 rounded-xl font-bold text-xs bg-primary text-white hover:opacity-90"
+                className="mt-3 px-4 py-2 rounded-xl font-bold text-xs bg-secondary text-foreground border border-border hover:bg-secondary/80 transition-all cursor-pointer"
               >
-                Parse Employees
+                Parse CSV Records
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
-              <p className="text-xs font-bold text-emerald-600">
-                Parsed {parsedEmployees.length} employees successfully.
+            <div className="space-y-3">
+              <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                ✓ Parsed {parsedEmployees.length} employees successfully.
               </p>
-              <div className="border border-border rounded-xl overflow-hidden max-h-[250px] overflow-y-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-secondary text-muted-foreground">
+              <div className="border border-border rounded-xl overflow-hidden max-h-[200px] overflow-y-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead className="bg-secondary text-muted-foreground font-bold">
                     <tr>
-                      <th className="p-3 font-semibold">Name</th>
-                      <th className="p-3 font-semibold">Department</th>
-                      <th className="p-3 font-semibold">Designation</th>
-                      <th className="p-3 font-semibold">Salary</th>
+                      <th className="p-2.5">Name</th>
+                      <th className="p-2.5">Department</th>
+                      <th className="p-2.5">Designation</th>
+                      <th className="p-2.5 text-right">Salary</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border bg-background text-foreground">
+                  <tbody className="divide-y divide-border bg-card text-foreground">
                     {parsedEmployees.map((emp) => (
                       <tr key={emp.name}>
-                        <td className="p-3 font-bold">{emp.name}</td>
-                        <td className="p-3">{emp.department}</td>
-                        <td className="p-3">{emp.designation}</td>
-                        <td className="p-3">₹{emp.salary?.toLocaleString()}</td>
+                        <td className="p-2.5 font-bold">{emp.name}</td>
+                        <td className="p-2.5">{emp.department}</td>
+                        <td className="p-2.5">{emp.designation}</td>
+                        <td className="p-2.5 text-right font-mono">₹{emp.salary?.toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setParsedEmployees([])}
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-secondary text-foreground hover:opacity-85"
-                >
-                  Clear & Edit
-                </button>
-              </div>
+              <button
+                onClick={() => setParsedEmployees([])}
+                className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-secondary text-muted-foreground hover:text-foreground cursor-pointer"
+              >
+                Clear & Edit
+              </button>
             </div>
           )}
         </div>
 
-        <div className="px-8 py-5 flex gap-3 border-t border-border bg-secondary/10">
+        {/* Footer */}
+        <div className="px-6 py-4 flex gap-3 border-t border-border bg-secondary/20">
           <button
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-wider bg-secondary text-primary border-none"
+            className="flex-1 py-2.5 rounded-xl text-xs font-bold border border-border bg-card text-foreground hover:bg-secondary transition-all cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={() => onImport(parsedEmployees)}
             disabled={parsedEmployees.length === 0}
-            className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-wider text-white border-none ${parsedEmployees.length === 0 ? "bg-emerald-500/40 cursor-not-allowed" : "bg-emerald-500 hover:bg-emerald-600"}`}
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold text-white transition-all shadow-md cursor-pointer ${
+              parsedEmployees.length === 0
+                ? "bg-primary/40 cursor-not-allowed"
+                : "bg-primary hover:opacity-90"
+            }`}
           >
-            Import Employees
+            Import Employees ({parsedEmployees.length})
           </button>
         </div>
       </div>

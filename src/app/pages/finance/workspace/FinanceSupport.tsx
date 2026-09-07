@@ -163,7 +163,6 @@ const KB_CATEGORIES = [
 ];
 export function FinanceSupport() {
   const navigate = useNavigate();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     activeTab: "My Tickets",
     tickets: INITIAL_TICKETS as Ticket[],
@@ -267,7 +266,6 @@ export function FinanceSupport() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   const handleAddReply = (ticketId: string, replyText: string) => {
     if (!replyText.trim()) return;
     const newComment: TimelineEntry = {

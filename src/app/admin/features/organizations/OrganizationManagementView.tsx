@@ -6,6 +6,8 @@ import {
   ShieldAlert,
   ArrowLeft,
   Users,
+  ToggleLeft,
+  MapPin,
 } from "lucide-react";
 import { useOrganizations } from "./hooks/useOrganizations";
 
@@ -18,9 +20,11 @@ import { OrganizationProfile } from "./components/OrganizationProfile";
 import { OrganizationStatus } from "./components/OrganizationStatus";
 import { StorageUsage } from "./components/StorageUsage";
 import { OrganizationUsersTab } from "./components/OrganizationUsersTab";
+import { OrganizationFeaturesTab } from "./components/OrganizationFeaturesTab";
+import { OrganizationStructureTab } from "./components/OrganizationStructureTab";
 
 type GlobalTab = "all" | "add" | "plans";
-type OrgTab = "profile" | "status" | "storage" | "users";
+type OrgTab = "profile" | "features" | "structure" | "status" | "storage" | "users";
 
 export function OrganizationManagementView() {
   const hook = useOrganizations();
@@ -29,11 +33,23 @@ export function OrganizationManagementView() {
 
   // Determine what to render
   const renderContent = () => {
+    if (hook.loading) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-8 h-8 border-3 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin" />
+        </div>
+      );
+    }
+
     if (hook.activeOrgId) {
       // Org Context
       switch (activeOrgTab) {
         case "profile":
           return <OrganizationProfile org={hook.activeOrg!} hook={hook} />;
+        case "features":
+          return <OrganizationFeaturesTab org={hook.activeOrg!} hook={hook} />;
+        case "structure":
+          return <OrganizationStructureTab org={hook.activeOrg!} hook={hook} />;
         case "status":
           return <OrganizationStatus org={hook.activeOrg!} hook={hook} />;
         case "storage":
@@ -78,7 +94,7 @@ export function OrganizationManagementView() {
           </p>
         </div>
 
-        {/* Context Selector Dropdown */}
+        {/* Navigation Action */}
         <div className="flex items-center gap-2 shrink-0">
           {hook.activeOrgId && (
             <button
@@ -86,37 +102,12 @@ export function OrganizationManagementView() {
                 hook.setActiveOrgId(null);
                 setActiveGlobalTab("all");
               }}
-              className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer mr-2"
+              className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Organizations
             </button>
           )}
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-            Context Focus:
-          </label>
-          <select
-            value={hook.activeOrgId || "global"}
-            onChange={(e) => {
-              if (e.target.value === "global") {
-                hook.setActiveOrgId(null);
-                setActiveGlobalTab("all");
-              } else {
-                hook.setActiveOrgId(e.target.value);
-                setActiveOrgTab("profile");
-              }
-            }}
-            className="bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold px-3 py-2 outline-none focus:border-indigo-500 shadow-sm transition-colors cursor-pointer"
-          >
-            <option value="global">Global Platform View</option>
-            <optgroup label="Manage Tenant">
-              {hook.orgs.map((o) => (
-                <option key={o.id} value={o.id}>
-                  {o.name}
-                </option>
-              ))}
-            </optgroup>
-          </select>
         </div>
       </div>
 
@@ -156,6 +147,8 @@ export function OrganizationManagementView() {
               {(
                 [
                   { id: "profile", label: "Profile", icon: Building2 },
+                  { id: "features", label: "Features & Overrides", icon: ToggleLeft },
+                  { id: "structure", label: "Structure & Locations", icon: MapPin },
                   { id: "status", label: "Status", icon: ShieldAlert },
                   { id: "storage", label: "Storage", icon: Database },
                   { id: "users", label: "User Management", icon: Users },

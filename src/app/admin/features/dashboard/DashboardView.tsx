@@ -1,4 +1,4 @@
-import { lazy, useState, useEffect } from "react";
+import { lazy, useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router";
 import {
   Building2,
@@ -69,7 +69,15 @@ export default function DashboardView() {
   } = useDashboard();
 
   const [isARR, setIsARR] = useState(false);
+  const [mrrPeriod, setMrrPeriod] = useState<"6M" | "12M" | "ALL">("6M");
   const [minsAgo, setMinsAgo] = useState(0);
+
+  const displayedMrrTrend = useMemo(() => {
+    if (!mrrTrend) return [];
+    if (mrrPeriod === "6M") return mrrTrend.slice(-6);
+    if (mrrPeriod === "12M") return mrrTrend.slice(-12);
+    return mrrTrend;
+  }, [mrrTrend, mrrPeriod]);
 
   const calculatedAt = summary?.current?.calculated_at;
 
@@ -369,7 +377,7 @@ export default function DashboardView() {
               <Users className="w-5 h-5" />
             </div>
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              Users
+              Total Users
             </span>
           </div>
           <div className="mt-4">
@@ -393,15 +401,30 @@ export default function DashboardView() {
                 Revenue Trend (MRR)
               </h3>
               <p className="text-sm text-gray-500 font-semibold mt-1">
-                Platform monthly recurring revenue over last 6 months
+                Platform monthly recurring revenue trend
               </p>
+            </div>
+            <div className="flex bg-gray-100 p-1 rounded-lg gap-1 border border-gray-200">
+              {(["6M", "12M", "ALL"] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setMrrPeriod(p)}
+                  className={`px-3 py-1 text-xs font-bold rounded-md transition-all cursor-pointer ${
+                    mrrPeriod === p
+                      ? "bg-white text-indigo-600 shadow-xs border border-gray-200"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
             </div>
           </div>
           <div className="h-72 w-full">
             {mrrTrend && (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
-                  data={mrrTrend}
+                  data={displayedMrrTrend}
                   margin={{ top: 5, right: 10, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid

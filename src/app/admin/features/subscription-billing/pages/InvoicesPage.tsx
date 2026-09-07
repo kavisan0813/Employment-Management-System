@@ -121,7 +121,7 @@ export function InvoicesPage() {
               },
               {
                 label: "Paid",
-                val: `$${stats.totalPaid.toLocaleString()}`,
+                val: `₹${stats.totalPaid.toLocaleString("en-IN")}`,
                 sub: "Successfully collected",
                 icon: CheckCircle2,
                 bg: "bg-emerald-50",
@@ -130,7 +130,7 @@ export function InvoicesPage() {
               },
               {
                 label: "Overdue",
-                val: `$${stats.totalOverdue.toLocaleString()}`,
+                val: `₹${stats.totalOverdue.toLocaleString("en-IN")}`,
                 sub: "Past due date",
                 icon: AlertTriangle,
                 bg: "bg-rose-50",
@@ -139,7 +139,7 @@ export function InvoicesPage() {
               },
               {
                 label: "Pending",
-                val: `$${stats.totalPending.toLocaleString()}`,
+                val: `₹${stats.totalPending.toLocaleString("en-IN")}`,
                 sub: "Awaiting payment",
                 icon: Clock,
                 bg: "bg-amber-50",

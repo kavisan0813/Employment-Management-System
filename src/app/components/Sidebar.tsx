@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { usePermissions } from "../shared/permission-engine/PermissionContext";
+import { useFeature } from "../shared/feature-engine/FeatureContext";
 import {
   filterNavigation,
   FULL_NAVIGATION,
@@ -25,11 +26,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { permissions } = usePermissions();
+  const { isFeatureEnabled } = useFeature();
 
-  // ── Permission-driven navigation ──────────────────────────────
+  // ── Permission & Feature-driven navigation ─────────────────────
   // Filter the full navigation tree to only items this user can see.
-  // This replaces the 5 hardcoded `if (currentRole === "X")` blocks.
-  const groups = filterNavigation(FULL_NAVIGATION, permissions);
+  const groups = filterNavigation(FULL_NAVIGATION, permissions, isFeatureEnabled);
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     {},

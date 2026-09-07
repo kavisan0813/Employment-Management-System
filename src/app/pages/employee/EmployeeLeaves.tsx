@@ -51,7 +51,6 @@ interface LeaveRecord {
 export function EmployeeLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     activeTab: "My Requests" as LeaveTab,
     isApplyModalOpen: false,
@@ -180,7 +179,6 @@ export function EmployeeLeaves() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Initialize from navigation state if present
   useEffect(() => {
     if (location.state?.activeTab) {

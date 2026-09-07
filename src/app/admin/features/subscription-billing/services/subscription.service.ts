@@ -5,6 +5,7 @@
 
 import { db, pushAuditLog } from "../../../../admin/mockData";
 import { Subscription } from "../../../../admin/types";
+import { notifyFeatureStateChange } from "../../../../shared/feature-engine/featureEvents";
 import {
   SubscriptionRecord,
   SubscriptionStats,
@@ -93,6 +94,7 @@ export const SubscriptionService = {
         s.id === subId ? { ...s, plan: newPlan, amount: newAmount } : s,
       );
     db.subscriptions.save(subs);
+    notifyFeatureStateChange();
 
     pushAuditLog(
       "subscription.plan_change",
@@ -114,6 +116,7 @@ export const SubscriptionService = {
           : s,
       );
     db.subscriptions.save(subs);
+    notifyFeatureStateChange();
 
     pushAuditLog(
       "subscription.cancel",
@@ -140,6 +143,7 @@ export const SubscriptionService = {
         : s,
     );
     db.subscriptions.save(subs);
+    notifyFeatureStateChange();
 
     pushAuditLog(
       "subscription.reactivate",

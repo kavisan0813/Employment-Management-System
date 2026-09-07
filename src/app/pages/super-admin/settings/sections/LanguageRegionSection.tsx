@@ -56,128 +56,19 @@ export function LanguageRegionSection() {
         </button>
       </div>
 
-      {/* POLICY BLOCK 1: LANGUAGE */}
+      {/* POLICY BLOCK 1: LANGUAGE OWNERSHIP NOTICE */}
       <div
-        className="p-4 rounded-xl mb-6 border"
-        style={{ backgroundColor: "var(--card)", borderColor: "#E5E7EB" }}
+        className="p-4 rounded-xl mb-6 border bg-card border-border"
       >
-        <span className="block text-[11px] font-bold text-[#94A3B8] mb-3 uppercase">
-          LANGUAGE
-        </span>
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="flex items-center justify-between">
           <div>
-            <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
-              System Language
-            </label>
-            <select
-              value={appLanguage}
-              onChange={(e) => setAppLanguage(e.target.value)}
-              className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
-              style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
-            >
-              <option value="en">English (US)</option>
-              <option value="en-uk">English (UK)</option>
-              <option value="hi">Hindi</option>
-              <option value="ta">Tamil</option>
-              <option value="te">Telugu</option>
-              <option value="fr">French</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
-              Secondary Language
-            </label>
-            <select
-              value={extraConfig.secondaryLanguage}
-              onChange={(e) =>
-                updateExtraConfig("secondaryLanguage", e.target.value)
-              }
-              className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
-              style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
-            >
-              <option>English (US)</option>
-              <option>Hindi</option>
-              <option>Tamil</option>
-              <option>Telugu</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
-              Employee Portal Language
-            </label>
-            <select
-              value={extraConfig.employeePortalLanguage}
-              onChange={(e) =>
-                updateExtraConfig("employeePortalLanguage", e.target.value)
-              }
-              className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
-              style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
-            >
-              <option>Follow System</option>
-              <option>English (US)</option>
-              <option>Hindi</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-[11px] font-bold text-[#94A3B8] mb-1 uppercase">
-              Email Language
-            </label>
-            <select
-              value={extraConfig.emailLanguage}
-              onChange={(e) =>
-                updateExtraConfig("emailLanguage", e.target.value)
-              }
-              className="w-full rounded-xl px-3 py-2.5 text-sm border bg-white dark:bg-neutral-800"
-              style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
-            >
-              <option>English (US)</option>
-              <option>English (UK)</option>
-              <option>Hindi</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <div>
-            <span className="text-[13px] font-medium text-gray-800 dark:text-gray-200 block">
-              Allow Employees to Set Their Own Language
+            <span className="text-[13px] font-bold text-foreground block">
+              Employee Language Ownership
             </span>
-            <span className="text-[11px] text-[#94A3B8]">
-              Each employee can choose their preferred UI language
+            <span className="text-[11px] text-muted-foreground">
+              Language selection is canonically owned at the individual employee profile level under My Account → Language & Region.
             </span>
           </div>
-          <button
-            onClick={() =>
-              updateExtraConfig(
-                "allowEmployeeLanguage",
-                !extraConfig.allowEmployeeLanguage,
-              )
-            }
-            style={{
-              width: "36px",
-              height: "20px",
-              borderRadius: "20px",
-              backgroundColor: extraConfig.allowEmployeeLanguage
-                ? "#00B87C"
-                : "#E5E7EB",
-              position: "relative",
-              transition: "background-color 0.2s",
-              cursor: "pointer",
-              border: "none",
-            }}
-          >
-            <span
-              style={{
-                position: "absolute",
-                top: "2px",
-                left: extraConfig.allowEmployeeLanguage ? "18px" : "2px",
-                width: "16px",
-                height: "16px",
-                borderRadius: "50%",
-                backgroundColor: "white",
-                transition: "left 0.2s",
-              }}
-            />
-          </button>
         </div>
       </div>
 

@@ -1,15 +1,18 @@
 import { lazy, useState } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../../context/AuthContext";
+import { usePermissions } from "../../shared/permission-engine/PermissionContext";
+import { P } from "../../shared/permission-engine/permissions";
 import {
   Users,
   UserCheck,
   UserX,
   CheckCircle2,
   AlertCircle,
-  ArrowRight,
   Briefcase,
   Search,
   X,
+  Calendar,
 } from "lucide-react";
 const AreaChart = lazy(() =>
   import("recharts").then((m) => ({
@@ -69,7 +72,7 @@ interface Toast {
   type: "success" | "error" | "info";
 }
 const HEADCOUNT_TREND_DATA = {
-  "Last 6 Months": [
+  Monthly: [
     {
       month: "Oct",
       count: 1240,
@@ -95,7 +98,7 @@ const HEADCOUNT_TREND_DATA = {
       count: 1284,
     },
   ],
-  "Last Year": [
+  Yearly: [
     {
       month: "Apr",
       count: 1150,
@@ -198,32 +201,9 @@ const LEAVE_REQUESTS = [
     avatar: "TS",
   },
 ];
-const RECENT_HIRES = [
-  {
-    name: "Michael Chen",
-    role: "Software Engineer",
-    dept: "Engineering",
-    date: "2 days ago",
-    avatar: "MC",
-  },
-  {
-    name: "Jessica Lee",
-    role: "UX Designer",
-    dept: "Product",
-    date: "4 days ago",
-    avatar: "JL",
-  },
-  {
-    name: "David Miller",
-    role: "Sales Exec",
-    dept: "Sales",
-    date: "1 week ago",
-    avatar: "DM",
-  },
-];
 const DEPT_ATTENDANCE = [
   {
-    name: "Eng",
+    name: "Engineering",
     value: 94,
   },
   {
@@ -231,11 +211,11 @@ const DEPT_ATTENDANCE = [
     value: 88,
   },
   {
-    name: "Mark",
+    name: "Marketing",
     value: 91,
   },
   {
-    name: "Ops",
+    name: "Operations",
     value: 95,
   },
   {
@@ -245,10 +225,25 @@ const DEPT_ATTENDANCE = [
 ];
 export function HRDashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { hasPermissionKey } = usePermissions();
+
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [timeRange, setTimeRange] = useState("Last 6 Months");
+  const [timeRange, setTimeRange] = useState<"Monthly" | "Yearly">("Monthly");
   const [searchQuery, setSearchQuery] = useState("");
   const [leaveRequests, setLeaveRequests] = useState(LEAVE_REQUESTS);
+
+  if (!user?.organizationId) {
+    return (
+      <div className="w-full p-8 text-center bg-card rounded-2xl border border-red-500/20 m-6">
+        <h3 className="text-lg font-bold text-red-500">Organization Access Required</h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          Please select or switch to a valid organization tenant.
+        </p>
+      </div>
+    );
+  }
+
   const showToast = (
     message: string,
     type: "success" | "error" | "info" = "success",
@@ -276,14 +271,26 @@ export function HRDashboard() {
     }
   };
   const handleApproveLeave = (name: string) => {
+    if (!hasPermissionKey(P.LEAVE_APPROVE)) {
+      showToast("Permission Denied: Leave approval permission required", "error");
+      return;
+    }
     setLeaveRequests((prev) => prev.filter((req) => req.name !== name));
     showToast(`Approved leave request for ${name}`, "success");
   };
   const handleRejectLeave = (name: string) => {
+    if (!hasPermissionKey(P.LEAVE_APPROVE)) {
+      showToast("Permission Denied: Leave approval permission required", "error");
+      return;
+    }
     setLeaveRequests((prev) => prev.filter((req) => req.name !== name));
     showToast(`Rejected leave request for ${name}`, "error");
   };
   const handleProcessAllLeaves = () => {
+    if (!hasPermissionKey(P.LEAVE_APPROVE)) {
+      showToast("Permission Denied: Leave approval permission required", "error");
+      return;
+    }
     if (leaveRequests.length === 0) {
       showToast("No pending leave requests to process", "info");
       return;
@@ -304,7 +311,7 @@ export function HRDashboard() {
               HR Dashboard
             </h2>
             <p className="text-[13px] text-muted-foreground">
-              Welcome back, Alex johnson
+              Welcome back, {user?.name || "Alex Johnson"}
             </p>
           </div>
         </div>
@@ -324,8 +331,15 @@ export function HRDashboard() {
             />
           </div>
           <button
-            onClick={() => navigate("/recruitment")}
-            className="px-4 py-2 rounded-xl bg-primary text-white text-[13px] font-bold hover:opacity-90 shadow-lg shadow-primary/20 cursor-pointer"
+            type="button"
+            onClick={() => {
+              if (!hasPermissionKey(P.RECRUITMENT_MANAGE)) {
+                showToast("Permission Denied: Recruitment permission required", "error");
+                return;
+              }
+              navigate("/recruitment");
+            }}
+            className="px-4 py-2 rounded-xl bg-primary text-white text-[13px] font-bold hover:opacity-90 shadow-lg shadow-primary/20 cursor-pointer border-none"
           >
             Create Job Post
           </button>
@@ -335,6 +349,7 @@ export function HRDashboard() {
       {/* ═══ INFO BAR ═══ */}
       <div className="w-full py-3 px-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 flex flex-wrap items-center gap-8 shadow-sm">
         <button
+          type="button"
           onClick={() => navigate("/leave")}
           className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer text-left bg-transparent border-none p-0 outline-none"
         >
@@ -344,7 +359,14 @@ export function HRDashboard() {
           </span>
         </button>
         <button
-          onClick={() => navigate("/recruitment")}
+          type="button"
+          onClick={() => {
+            if (!hasPermissionKey(P.RECRUITMENT_MANAGE)) {
+              showToast("Permission Denied: Recruitment permission required", "error");
+              return;
+            }
+            navigate("/recruitment");
+          }}
           className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer text-left bg-transparent border-none p-0 outline-none"
         >
           <div className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -353,6 +375,7 @@ export function HRDashboard() {
           </span>
         </button>
         <button
+          type="button"
           onClick={() => navigate("/payroll")}
           className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer text-left bg-transparent border-none p-0 outline-none"
         >
@@ -446,24 +469,34 @@ export function HRDashboard() {
             <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Headcount Trend
             </h3>
-            <select
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-              className="bg-secondary text-foreground text-[11px] font-bold px-3 py-1 rounded-lg border border-border outline-none cursor-pointer"
-            >
-              <option value="Last 6 Months">Last 6 Months</option>
-              <option value="Last Year">Last Year</option>
-            </select>
+            <div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-xl border border-border">
+              <button
+                type="button"
+                onClick={() => setTimeRange("Monthly")}
+                className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer border-none ${
+                  timeRange === "Monthly"
+                    ? "bg-card text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground bg-transparent"
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                type="button"
+                onClick={() => setTimeRange("Yearly")}
+                className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer border-none ${
+                  timeRange === "Yearly"
+                    ? "bg-card text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground bg-transparent"
+                }`}
+              >
+                Yearly
+              </button>
+            </div>
           </div>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={
-                  HEADCOUNT_TREND_DATA[
-                    timeRange as keyof typeof HEADCOUNT_TREND_DATA
-                  ]
-                }
-              >
+              <AreaChart data={HEADCOUNT_TREND_DATA[timeRange]}>
                 <defs>
                   <linearGradient id="hrColorCount" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10B981" stopOpacity={0.15} />
@@ -575,12 +608,15 @@ export function HRDashboard() {
         </div>
       </div>
 
-      {/* ═══ ROW 3 — LEAVES & HIRES ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Pending Leaves */}
+      {/* ═══ ROW 3 — LEAVES & ATTENDANCE ═══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Pending Leaves Card */}
         <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col justify-between">
           <div>
-            <div className="p-6 border-b border-border flex items-center justify-between">
+            <div
+              onClick={() => navigate("/leave?tab=approvals")}
+              className="p-6 border-b border-border flex items-center justify-between cursor-pointer hover:bg-secondary/20 transition-colors"
+            >
               <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Leave Approvals
               </h3>
@@ -612,21 +648,23 @@ export function HRDashboard() {
                     </div>
                     <div className="flex gap-2 relative z-10">
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleApproveLeave(req.name);
                         }}
-                        className="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
+                        className="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer border-none"
                         title="Approve Leave"
                       >
                         <CheckCircle2 size={16} />
                       </button>
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRejectLeave(req.name);
                         }}
-                        className="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
+                        className="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer border-none"
                         title="Reject Leave"
                       >
                         <UserX size={16} />
@@ -639,75 +677,34 @@ export function HRDashboard() {
           </div>
           <div className="p-4 text-center border-t border-border mt-auto">
             <button
+              type="button"
               onClick={handleProcessAllLeaves}
-              className="text-[12px] font-black text-primary uppercase tracking-widest hover:underline cursor-pointer"
+              className="text-[12px] font-black text-primary uppercase tracking-widest hover:underline cursor-pointer bg-transparent border-none"
             >
               Process All Leaves
             </button>
           </div>
         </div>
 
-        {/* Recent Hires */}
-        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col justify-between">
-          <div>
-            <div className="p-6 border-b border-border">
-              <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                Recent Hires
-              </h3>
-            </div>
-            <div className="p-4 space-y-4">
-              {RECENT_HIRES.map((hire) => (
-                <div
-                  key={hire.name}
-                  onClick={() => navigate("/onboarding")}
-                  className="flex items-center gap-4 p-3 rounded-2xl hover:bg-secondary/50 transition-colors border border-transparent hover:border-border cursor-pointer group"
-                >
-                  <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500 font-black text-sm border border-purple-500/20">
-                    {hire.avatar}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-bold text-foreground">
-                      {hire.name}
-                    </p>
-                    <p className="text-[11px] font-semibold text-muted-foreground">
-                      {hire.role}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-[9px] font-black text-primary uppercase tracking-wider border border-primary/20">
-                        {hire.dept}
-                      </span>
-                      <span className="text-[11px] text-muted-foreground font-medium">
-                        {hire.date}
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight
-                    size={16}
-                    className="text-muted-foreground transition-transform group-hover:translate-x-1"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="p-4 text-center border-t border-border mt-auto">
-            <button
-              onClick={() => navigate("/onboarding")}
-              className="text-[12px] font-black text-primary uppercase tracking-widest hover:underline cursor-pointer"
-            >
-              Complete Onboarding (4)
-            </button>
-          </div>
-        </div>
-
-        {/* Attendance by Dept */}
+        {/* Consolidated Attendance Overview Widget */}
         <div className="bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col justify-between">
           <div>
-            <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-6">
-              Attendance by Dept
-            </h3>
-            <div className="space-y-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  Attendance Overview
+                </h3>
+                <p className="text-xs font-bold text-foreground mt-0.5">
+                  Overall Attendance Rate
+                </p>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-black text-emerald-600 uppercase tracking-wider">
+                94% Overall
+              </span>
+            </div>
+            <div className="space-y-4">
               {DEPT_ATTENDANCE.map((dept, i) => (
-                <div key={dept.name} className="space-y-2">
+                <div key={dept.name} className="space-y-1.5">
                   <div className="flex justify-between text-[12px] font-bold text-foreground">
                     <span>{dept.name}</span>
                     <span>{dept.value}%</span>
@@ -731,19 +728,25 @@ export function HRDashboard() {
               ))}
             </div>
           </div>
-          <div className="mt-8 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20">
-            <div className="flex gap-3">
-              <AlertCircle size={20} className="text-amber-500 shrink-0" />
+          <div className="mt-6 flex flex-col gap-4">
+            <div className="p-3.5 rounded-2xl bg-amber-500/5 border border-amber-500/20 flex gap-3">
+              <AlertCircle size={18} className="text-amber-500 shrink-0 mt-0.5" />
               <div>
-                <p className="text-[13px] font-bold text-foreground leading-tight">
+                <p className="text-[12px] font-bold text-foreground leading-tight">
                   Retention Alert
                 </p>
-                <p className="text-[11px] font-semibold text-muted-foreground mt-1">
-                  High attrition risk detected in Sales department for Mid-level
-                  roles.
+                <p className="text-[11px] font-semibold text-muted-foreground mt-0.5">
+                  High attrition risk detected in Sales department for Mid-level roles.
                 </p>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={() => navigate("/attendance")}
+              className="w-full py-2.5 rounded-xl bg-primary text-white font-bold text-[12px] uppercase tracking-wider hover:opacity-90 transition-all cursor-pointer border-none shadow-md shadow-primary/20"
+            >
+              View Attendance
+            </button>
           </div>
         </div>
       </div>
@@ -774,7 +777,7 @@ export function HRDashboard() {
               <span className="text-foreground">{toast.message}</span>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer border-none bg-transparent"
               >
                 <X size={14} />
               </button>

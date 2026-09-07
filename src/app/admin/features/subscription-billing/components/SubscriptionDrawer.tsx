@@ -148,7 +148,7 @@ export function SubscriptionDrawer({
             />
             <InfoRow
               label="Amount"
-              value={`$${sub.amount.toLocaleString()} ${sub.currency}`}
+              value={`₹${sub.amount.toLocaleString("en-IN")} INR`}
             />
             <InfoRow label="Start Date" value={sub.startDate} />
             <InfoRow label="Renewal Date" value={sub.renewalDate || "—"} />
@@ -201,9 +201,9 @@ export function SubscriptionDrawer({
                       }
                       className="w-full bg-white border border-gray-200 rounded-lg p-2 text-xs focus:border-indigo-400 focus:ring-1 focus:ring-indigo-100 outline-none"
                     >
-                      <option value="Starter">Starter ($99/mo)</option>
-                      <option value="Growth">Growth ($1,200/mo)</option>
-                      <option value="Enterprise">Enterprise ($3,500/mo)</option>
+                      <option value="Starter">Starter (₹99/mo)</option>
+                      <option value="Growth">Growth (₹1,200/mo)</option>
+                      <option value="Enterprise">Enterprise (₹3,500/mo)</option>
                     </select>
                   </div>
                   <div className="flex gap-2">

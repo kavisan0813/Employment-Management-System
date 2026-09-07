@@ -1,11 +1,12 @@
 import { useSettingsContext } from "../SettingsContext";
 import type { UserManagementRecord } from "../SettingsContext";
-import { useAuth } from "../../../../context/AuthContext";
+import { usePermissions } from "../../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../../shared/permission-engine/permissions";
 import { ChevronRight } from "lucide-react";
 
 export function UserManagementSection() {
-  const { user } = useAuth();
-  const isHR = user?.role === "HR Manager";
+  const { hasPermissionKey } = usePermissions();
+  const canManageAccount = hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE);
 
   const {
     SectionTitle,
@@ -77,33 +78,35 @@ export function UserManagementSection() {
             Manage system access and user accounts
           </p>
         </div>
-        <button
-          onClick={() => {
-            setInviteForm({
-              name: "",
-              email: "",
-              role: "Employee",
-              dept: "Engineering",
-              location: "",
-              sendEmail: true,
-              tempPassword: "",
-              notes: "",
-            });
-            setActiveModal("invite_user");
-          }}
-          style={{
-            backgroundColor: "#00B87C",
-            color: "white",
-            border: "none",
-            borderRadius: "10px",
-            padding: "8px 16px",
-            fontSize: "13px",
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          + Invite User
-        </button>
+        {canManageAccount && (
+          <button
+            onClick={() => {
+              setInviteForm({
+                name: "",
+                email: "",
+                role: "Employee",
+                dept: "Engineering",
+                location: "",
+                sendEmail: true,
+                tempPassword: "",
+                notes: "",
+              });
+              setActiveModal("invite_user");
+            }}
+            style={{
+              backgroundColor: "#00B87C",
+              color: "white",
+              border: "none",
+              borderRadius: "10px",
+              padding: "8px 16px",
+              fontSize: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            + Invite User
+          </button>
+        )}
       </div>
 
       {/* Filter Bar */}
@@ -377,7 +380,7 @@ export function UserManagementSection() {
                           >
                             Edit
                           </button>
-                          {isHR ? (
+                          {!canManageAccount ? (
                             <button
                               onClick={() =>
                                 showToast(
@@ -422,81 +425,81 @@ export function UserManagementSection() {
                       )}
                       {(u.status === "Inactive" ||
                         u.status === "Suspended") && (
-                        <>
-                          <button
-                            onClick={() => {
-                              setSelectedUser(u);
-                              setEditForm({
-                                name: u.name,
-                                email: u.email,
-                                role: u.role,
-                                dept: u.dept,
-                                location: u.location || "",
-                                status: u.status,
-                                permissions: "",
-                              });
-                              setActiveModal("edit_user");
-                            }}
-                            style={{
-                              backgroundColor: "transparent",
-                              border: "1px solid var(--border)",
-                              borderRadius: "8px",
-                              padding: "4px 10px",
-                              fontSize: "12px",
-                              fontWeight: 600,
-                              color: "var(--foreground)",
-                              cursor: "pointer",
-                            }}
-                          >
-                            Edit
-                          </button>
-                          {isHR ? (
-                            <button
-                              onClick={() =>
-                                showToast(
-                                  "Password reset link sent to user's email.",
-                                  "success",
-                                )
-                              }
-                              style={{
-                                backgroundColor: "transparent",
-                                border: "1px solid #3B82F6",
-                                borderRadius: "8px",
-                                padding: "4px 10px",
-                                fontSize: "12px",
-                                fontWeight: 600,
-                                color: "#3B82F6",
-                                cursor: "pointer",
-                              }}
-                            >
-                              Reset Password
-                            </button>
-                          ) : (
+                          <>
                             <button
                               onClick={() => {
                                 setSelectedUser(u);
-                                setReactivateConfirm({
-                                  sendEmail: true,
-                                  confirmDetails: false,
+                                setEditForm({
+                                  name: u.name,
+                                  email: u.email,
+                                  role: u.role,
+                                  dept: u.dept,
+                                  location: u.location || "",
+                                  status: u.status,
+                                  permissions: "",
                                 });
-                                setActiveModal("reactivate_user");
+                                setActiveModal("edit_user");
                               }}
                               style={{
                                 backgroundColor: "transparent",
-                                border: "1px solid #00B87C",
+                                border: "1px solid var(--border)",
                                 borderRadius: "8px",
                                 padding: "4px 10px",
                                 fontSize: "12px",
                                 fontWeight: 600,
-                                color: "#00B87C",
+                                color: "var(--foreground)",
                                 cursor: "pointer",
                               }}
                             >
-                              Reactivate
+                              Edit
                             </button>
-                          )}
-                        </>
-                      )}
+                            {!canManageAccount ? (
+                              <button
+                                onClick={() =>
+                                  showToast(
+                                    "Password reset link sent to user's email.",
+                                    "success",
+                                  )
+                                }
+                                style={{
+                                  backgroundColor: "transparent",
+                                  border: "1px solid #3B82F6",
+                                  borderRadius: "8px",
+                                  padding: "4px 10px",
+                                  fontSize: "12px",
+                                  fontWeight: 600,
+                                  color: "#3B82F6",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Reset Password
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  setSelectedUser(u);
+                                  setReactivateConfirm({
+                                    sendEmail: true,
+                                    confirmDetails: false,
+                                  });
+                                  setActiveModal("reactivate_user");
+                                }}
+                                style={{
+                                  backgroundColor: "transparent",
+                                  border: "1px solid #00B87C",
+                                  borderRadius: "8px",
+                                  padding: "4px 10px",
+                                  fontSize: "12px",
+                                  fontWeight: 600,
+                                  color: "#00B87C",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Reactivate
+                              </button>
+                            )}
+                          </>
+                        )}
                     </div>
                   </td>
                 </tr>

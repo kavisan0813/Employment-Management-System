@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useReducer } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import type { Employee } from "../../../context/AppContext";
 import {
@@ -17,20 +17,119 @@ import {
   ShieldCheck,
   IndianRupee,
   Info,
+  AlertCircle,
 } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { useEmployees } from "../../../context/AppContext";
 import { payrollService } from "../payroll/payroll.service";
+
+interface PayrollConfigState {
+  payCycle: { frequency: string; basis: string; processingDate: string; payoutDate: string; lockAfterProcessing: boolean };
+  salaryComponents: SalaryComponent[];
+  salaryBands: SalaryGrade[];
+  pfConfig: { employerContrib: string; employeeContrib: string; wageCeiling: string; epsApplicable: boolean };
+  esiConfig: { employeeContrib: string; employerContrib: string; salaryLimit: string; enabled: boolean };
+  professionalTax: any[];
+  tdsSlabs: { oldRegime: any[]; newRegime: any[] };
+  gratuityConfig: { eligibilityYears: string; formula: string; enabled: boolean };
+  payrollCalendar: any[];
+  banks: any[];
+  payslipTemplate: any;
+}
+
+type PayrollConfigAction =
+  | { type: "SYNC_ALL"; payload: PayrollConfigState }
+  | { type: "SET_FIELD"; field: keyof PayrollConfigState; value: any };
+
+const initialPayrollConfigState: PayrollConfigState = {
+  payCycle: {
+    frequency: "Monthly",
+    basis: "Calendar Days",
+    processingDate: "25",
+    payoutDate: "30",
+    lockAfterProcessing: true,
+  },
+  salaryComponents: [],
+  salaryBands: [],
+  pfConfig: {
+    employerContrib: "12",
+    employeeContrib: "12",
+    wageCeiling: "15000",
+    epsApplicable: true,
+  },
+  esiConfig: {
+    employeeContrib: "0.75",
+    employerContrib: "3.25",
+    salaryLimit: "21000",
+    enabled: true,
+  },
+  professionalTax: [],
+  tdsSlabs: {
+    oldRegime: [],
+    newRegime: [],
+  },
+  gratuityConfig: {
+    eligibilityYears: "5",
+    formula: "(15 * Basic * Service Years) / 26",
+    enabled: true,
+  },
+  payrollCalendar: [],
+  banks: [],
+  payslipTemplate: {
+    templateId: "sleek",
+    templateSource: "EMS_DEFAULT",
+    name: "Modern Sleek",
+    desc: "Clean glassmorphic layout with breakdown charts and corporate header",
+    logoUrl: "",
+    headerColor: "#00B87C",
+    accentColor: "#00B87C",
+    customTitle: "PAYSLIP FOR THE MONTH",
+    headerText: "VIYAN HR EMS CORPORATE PAYSLIP",
+    footerText: "This is a computer-generated payslip and does not require a physical signature.",
+    notes: "Confidential - For Internal Use Only",
+    signatureUrl: "",
+    emailSubject: "Salary Payslip - {Month} {Year} - {EmployeeName}",
+    emailBody: "Dear {EmployeeName},\n\nPlease find attached your salary payslip for {Month} {Year}.\n\nBest regards,\nFinance Team",
+    autoEmail: true,
+    visibleSections: {
+      employeeInfo: true,
+      earnings: true,
+      deductions: true,
+      employerContrib: true,
+      netPay: true,
+      paymentInfo: true,
+    },
+    uploadedTemplateFileName: "",
+    uploadedTemplateFileType: "pdf",
+    uploadedTemplateStatus: "FRONTEND READY — BACKEND FILE STORAGE REQUIRED",
+  },
+};
+
+function payrollConfigReducer(state: PayrollConfigState, action: PayrollConfigAction): PayrollConfigState {
+  switch (action.type) {
+    case "SYNC_ALL":
+      return action.payload;
+    case "SET_FIELD":
+      return { ...state, [action.field]: typeof action.value === "function" ? action.value(state[action.field]) : action.value };
+    default:
+      return state;
+  }
+}
+import { payrollSettingsService } from "../payroll/payrollSettings.service";
+import { usePermissionKey } from "../../../shared/permission-engine/usePermission";
+import { P } from "../../../shared/permission-engine/permissions";
 import { calculatePayslip } from "../payroll/calculatePayslip";
 import type { SalaryStructure } from "../payroll/payroll.types";
 import { useForm } from "react-hook-form";
 import * as m from "motion/react-m";
+
 type NavItem = {
   id: string;
   label: string;
   section: "PAYROLL" | "STATUTORY" | "PROCESSING";
 };
+
 const NAV_ITEMS: NavItem[] = [
   {
     id: "pay-cycle",
@@ -93,30 +192,41 @@ const NAV_ITEMS: NavItem[] = [
     section: "PROCESSING",
   },
 ];
+
 export interface SalaryComponent {
   id: string;
+  code?: string;
   name: string;
   type: string;
+  calculationBasis?: string;
   taxable: boolean;
+  pfApplicable?: boolean;
+  esiApplicable?: boolean;
   formula: string;
   order: number;
   isSystem: boolean;
   status: string;
 }
+
 export interface SalaryGrade {
   id: string;
+  code?: string;
   grade: string;
   minSalary: number;
   maxSalary: number;
+  currency?: string;
+  department?: string;
   employees: number;
   desc: string;
 }
+
 export interface TaxSlab {
   id: string;
   fromAmt: number;
   toAmt: number;
   rate: number;
 }
+
 export interface ProfessionalTax {
   id: string;
   state: string;
@@ -124,6 +234,7 @@ export interface ProfessionalTax {
   maxSalary: number;
   amount: number;
 }
+
 export interface MonthSchedule {
   id: string;
   month: string;
@@ -131,15 +242,21 @@ export interface MonthSchedule {
   transferDate: string;
   status: string;
 }
+
 export interface BankItem {
   id: string;
+  bank?: string;
   bankName: string;
   accountNo: string;
+  ifsc?: string;
   ifscCode: string;
   branch: string;
   status: string;
   lastSync?: string;
+  paymentMode?: string;
+  isDefault?: boolean;
 }
+
 export interface PayslipTemplate {
   id: string;
   name: string;
@@ -147,11 +264,16 @@ export interface PayslipTemplate {
   status: string;
   previewUrl: string;
 }
+
 export interface EditingItem {
   id?: string;
+  code?: string;
   name?: string;
   type?: string;
+  calculationBasis?: string;
   taxable?: boolean;
+  pfApplicable?: boolean;
+  esiApplicable?: boolean;
   formula?: string;
   order?: number;
   isSystem?: boolean;
@@ -159,6 +281,8 @@ export interface EditingItem {
   grade?: string;
   minSalary?: number;
   maxSalary?: number;
+  currency?: string;
+  department?: string;
   employees?: number;
   desc?: string;
   fromAmt?: number;
@@ -169,10 +293,14 @@ export interface EditingItem {
   month?: string;
   processingDate?: string;
   transferDate?: string;
+  bank?: string;
   bankName?: string;
   accountNo?: string;
+  ifsc?: string;
   ifscCode?: string;
   branch?: string;
+  paymentMode?: string;
+  isDefault?: boolean;
   previewUrl?: string;
   regime?: "oldRegime" | "newRegime";
   headerColor?: string;
@@ -225,342 +353,135 @@ export function FinancePayrollSettings() {
     }, 4000);
   };
 
-  // Determine Role Permissions
-  const isFinance = user?.role === "Finance";
+  // Determine Role Permissions using Canonical Permission Engine
+  const hasPayrollManage = usePermissionKey(P.PAYROLL_MANAGE);
+  const hasPayrollFull = usePermissionKey(P.PAYROLL_FULL);
+  const canManagePayroll =
+    hasPayrollManage ||
+    hasPayrollFull ||
+    user?.role === "Finance" ||
+    user?.role === "Super Admin";
 
-  // Global Mock States
-  const [payCycle, setPayCycle] = useState({
-    frequency: "Monthly",
-    basis: "Calendar Days",
-    processingDate: "25",
-    payoutDate: "30",
-    lockAfterProcessing: true,
-  });
-  const [salaryComponents, setSalaryComponents] = useState([
-    {
-      id: "1",
-      name: "Basic Pay",
-      type: "Earnings",
-      taxable: true,
-      formula: "50% of CTC",
-      order: 1,
-      isSystem: true,
-      status: "Enabled",
-    },
-    {
-      id: "2",
-      name: "HRA",
-      type: "Earnings",
-      taxable: true,
-      formula: "40% of Basic",
-      order: 2,
-      isSystem: true,
-      status: "Enabled",
-    },
-    {
-      id: "3",
-      name: "Special Allowance",
-      type: "Earnings",
-      taxable: true,
-      formula: "Balance of CTC",
-      order: 3,
-      isSystem: false,
-      status: "Enabled",
-    },
-    {
-      id: "4",
-      name: "Performance Bonus",
-      type: "Earnings",
-      taxable: true,
-      formula: "% of Basic",
-      order: 4,
-      isSystem: false,
-      status: "Enabled",
-    },
-    {
-      id: "5",
-      name: "Conveyance",
-      type: "Earnings",
-      taxable: false,
-      formula: "₹1,600/month",
-      order: 5,
-      isSystem: false,
-      status: "Enabled",
-    },
-    {
-      id: "6",
-      name: "Medical Allowance",
-      type: "Earnings",
-      taxable: false,
-      formula: "₹1,250/month",
-      order: 6,
-      isSystem: false,
-      status: "Enabled",
-    },
-    {
-      id: "7",
-      name: "PF Employer Contribution",
-      type: "Deductions",
-      taxable: false,
-      formula: "12% of Basic",
-      order: 7,
-      isSystem: true,
-      status: "Enabled",
-    },
-  ]);
-  const [salaryBands, setSalaryBands] = useState([
-    {
-      id: "1",
-      grade: "Grade A",
-      minSalary: 30000,
-      maxSalary: 60000,
-      employees: 24,
-      desc: "Junior Associate / Analyst",
-    },
-    {
-      id: "2",
-      grade: "Grade B",
-      minSalary: 60000,
-      maxSalary: 120000,
-      employees: 42,
-      desc: "Senior Specialist / Consultant",
-    },
-    {
-      id: "3",
-      grade: "Grade C",
-      minSalary: 120000,
-      maxSalary: 250000,
-      employees: 15,
-      desc: "Lead Developer / Manager",
-    },
-    {
-      id: "4",
-      grade: "Grade D",
-      minSalary: 250000,
-      maxSalary: 500000,
-      employees: 5,
-      desc: "Director / Vice President",
-    },
-  ]);
-  const [pfConfig, setPfConfig] = useState({
-    employerContrib: "12",
-    employeeContrib: "12",
-    wageCeiling: "15000",
-    epsApplicable: true,
-  });
-  const [tdsSlabs, setTdsSlabs] = useState({
-    oldRegime: [
-      {
-        id: "o1",
-        fromAmt: 0,
-        toAmt: 250000,
-        rate: 0,
-      },
-      {
-        id: "o2",
-        fromAmt: 250001,
-        toAmt: 500000,
-        rate: 5,
-      },
-      {
-        id: "o3",
-        fromAmt: 500001,
-        toAmt: 1000000,
-        rate: 20,
-      },
-      {
-        id: "o4",
-        fromAmt: 1000001,
-        toAmt: 99999999,
-        rate: 30,
-      },
-    ],
-    newRegime: [
-      {
-        id: "n1",
-        fromAmt: 0,
-        toAmt: 300000,
-        rate: 0,
-      },
-      {
-        id: "n2",
-        fromAmt: 300001,
-        toAmt: 600000,
-        rate: 5,
-      },
-      {
-        id: "n3",
-        fromAmt: 600001,
-        toAmt: 900000,
-        rate: 10,
-      },
-      {
-        id: "n4",
-        fromAmt: 900001,
-        toAmt: 1200000,
-        rate: 15,
-      },
-      {
-        id: "n5",
-        fromAmt: 1200001,
-        toAmt: 1500000,
-        rate: 20,
-      },
-      {
-        id: "n6",
-        fromAmt: 1500001,
-        toAmt: 99999999,
-        rate: 30,
-      },
-    ],
-  });
-  const [professionalTax, setProfessionalTax] = useState([
-    {
-      id: "1",
-      state: "Maharashtra",
-      minSalary: 0,
-      maxSalary: 7500,
-      amount: 0,
-    },
-    {
-      id: "2",
-      state: "Maharashtra",
-      minSalary: 7501,
-      maxSalary: 10000,
-      amount: 175,
-    },
-    {
-      id: "3",
-      state: "Maharashtra",
-      minSalary: 10001,
-      maxSalary: 99999999,
-      amount: 200,
-    },
-    {
-      id: "4",
-      state: "Karnataka",
-      minSalary: 0,
-      maxSalary: 25000,
-      amount: 0,
-    },
-    {
-      id: "5",
-      state: "Karnataka",
-      minSalary: 25001,
-      maxSalary: 99999999,
-      amount: 200,
-    },
-  ]);
-  const [esiConfig, setEsiConfig] = useState({
-    employeeContrib: "0.75",
-    employerContrib: "3.25",
-    salaryLimit: "21000",
-    enabled: true,
-  });
-  const [gratuityConfig, setGratuityConfig] = useState({
-    eligibilityYears: "5",
-    formula: "(15 * Basic * Service Years) / 26",
-    enabled: true,
-  });
-  const [payrollCalendar, setPayrollCalendar] = useState([
-    {
-      id: "1",
-      month: "January 2026",
-      processingDate: "2026-01-25",
-      transferDate: "2026-01-30",
-      status: "Processed",
-    },
-    {
-      id: "2",
-      month: "February 2026",
-      processingDate: "2026-02-24",
-      transferDate: "2026-02-27",
-      status: "Processed",
-    },
-    {
-      id: "3",
-      month: "March 2026",
-      processingDate: "2026-03-25",
-      transferDate: "2026-03-31",
-      status: "Processed",
-    },
-    {
-      id: "4",
-      month: "April 2026",
-      processingDate: "2026-04-24",
-      transferDate: "2026-04-30",
-      status: "Processed",
-    },
-    {
-      id: "5",
-      month: "May 2026",
-      processingDate: "2026-05-25",
-      transferDate: "2026-05-29",
-      status: "Processed",
-    },
-    {
-      id: "6",
-      month: "June 2026",
-      processingDate: "2026-06-25",
-      transferDate: "2026-06-30",
-      status: "Scheduled",
-    },
-    {
-      id: "7",
-      month: "July 2026",
-      processingDate: "2026-07-24",
-      transferDate: "2026-07-31",
-      status: "Pending",
-    },
-  ]);
-  const [banks, setBanks] = useState([
-    {
-      id: "1",
-      bank: "HDFC Bank",
-      accountNo: "50200012345678",
-      ifsc: "HDFC0000123",
-      branch: "Mumbai Main",
-      status: "Connected",
-      lastSync: "2026-06-11 10:30 AM",
-    },
-    {
-      id: "2",
-      bank: "ICICI Bank",
-      accountNo: "000401512345",
-      ifsc: "ICIC0000004",
-      branch: "Bangalore MG Road",
-      status: "Connected",
-      lastSync: "2026-06-11 11:15 AM",
-    },
-    {
-      id: "3",
-      bank: "State Bank of India",
-      accountNo: "31234567890",
-      ifsc: "SBIN0000843",
-      branch: "Delhi Connaught",
-      status: "Disconnected",
-      lastSync: "N/A",
-    },
-    {
-      id: "4",
-      bank: "Axis Bank",
-      accountNo: "91201001234567",
-      ifsc: "UTIB0000010",
-      branch: "Pune Deccan",
-      status: "Disconnected",
-      lastSync: "N/A",
-    },
-  ]);
-  const [payslipTemplate, setPayslipTemplate] = useState({
-    logoUrl: "",
-    headerColor: "#052E28",
-    footerText:
-      "This is a computer-generated document and does not require a signature.",
-    signatureUrl: "",
-    emailSubject: "Payslip for [Month] [Year]",
-    emailBody:
-      "Dear [Employee Name],\n\nPlease find attached your payslip for the month of [Month] [Year].\n\nBest Regards,\nHR & Finance Team",
-  });
+  // Global Tenant-Scoped Payroll Settings State (synced with payrollSettingsService)
+  const orgId = user?.organizationId || "";
+
+  const [payrollConfig, dispatchPayrollConfig] = useReducer(payrollConfigReducer, initialPayrollConfigState);
+  const {
+    payCycle, salaryComponents, salaryBands, pfConfig, esiConfig,
+    professionalTax, tdsSlabs, gratuityConfig, payrollCalendar, banks, payslipTemplate
+  } = payrollConfig;
+
+  const setPayCycle = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "payCycle", value: v });
+  const setSalaryComponents = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "salaryComponents", value: v });
+  const setSalaryBands = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "salaryBands", value: v });
+  const setPfConfig = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "pfConfig", value: v });
+  const setEsiConfig = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "esiConfig", value: v });
+  const setProfessionalTax = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "professionalTax", value: v });
+  const setTdsSlabs = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "tdsSlabs", value: v });
+  const setGratuityConfig = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "gratuityConfig", value: v });
+  const setPayrollCalendar = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "payrollCalendar", value: v });
+  const setBanks = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "banks", value: v });
+  const setPayslipTemplate = (v: any) => dispatchPayrollConfig({ type: "SET_FIELD", field: "payslipTemplate", value: v });
+
+  // Sync state from payrollSettingsService
+  useEffect(() => {
+    const sync = () => {
+      const s = payrollSettingsService.getSettings(orgId);
+      dispatchPayrollConfig({
+        type: "SYNC_ALL",
+        payload: {
+          payCycle: {
+            frequency: s.payCycle.frequency,
+            basis: s.payCycle.basis,
+            processingDate: s.payCycle.processingDate,
+            payoutDate: s.payCycle.payoutDate,
+            lockAfterProcessing: s.payCycle.lockAfterProcessing,
+          },
+          salaryComponents: s.salaryComponents.map((c) => ({
+            id: c.id,
+            code: c.code,
+            name: c.name,
+            type: c.type,
+            taxable: c.taxable,
+            formula: c.formula || (c.fixedAmount ? `₹${c.fixedAmount}` : `${c.percentageValue}%`),
+            order: c.order,
+            isSystem: c.isSystem,
+            status: c.status,
+            calculationBasis: c.calculationBasis,
+            fixedAmount: c.fixedAmount,
+            percentageValue: c.percentageValue,
+            pfApplicable: c.pfApplicable,
+            esiApplicable: c.esiApplicable,
+            effectiveDate: c.effectiveDate,
+          })) as any,
+          salaryBands: s.salaryBands.map((b) => ({
+            id: b.id,
+            code: b.code,
+            grade: b.grade,
+            minSalary: b.minSalary,
+            maxSalary: b.maxSalary,
+            employees: b.employees,
+            desc: b.desc,
+            currency: b.currency,
+            department: b.department,
+            status: b.status,
+            effectiveDate: b.effectiveDate,
+          })) as any,
+          pfConfig: {
+            employerContrib: s.pfConfig.employerContrib,
+            employeeContrib: s.pfConfig.employeeContrib,
+            wageCeiling: s.pfConfig.wageCeiling,
+            epsApplicable: s.pfConfig.epsApplicable,
+          },
+          esiConfig: {
+            employeeContrib: s.esiConfig.employeeContrib,
+            employerContrib: s.esiConfig.employerContrib,
+            salaryLimit: s.esiConfig.salaryLimit,
+            enabled: s.esiConfig.enabled,
+          },
+          professionalTax: s.ptConfig.slabs as any,
+          tdsSlabs: {
+            oldRegime: s.tdsConfig.oldRegime,
+            newRegime: s.tdsConfig.newRegime,
+          },
+          gratuityConfig: {
+            eligibilityYears: s.gratuityConfig.eligibilityYears,
+            formula: s.gratuityConfig.formula,
+            enabled: s.gratuityConfig.enabled,
+          },
+          payrollCalendar: s.payrollCalendar as any,
+          banks: s.bankItems.map((b) => ({
+            id: b.id,
+            bank: b.bankName,
+            accountNo: b.accountNo,
+            ifsc: b.ifscCode,
+            branch: b.branch,
+            status: b.status === "Configured" ? "Connected" : b.status,
+            lastSync: b.lastSync || "N/A",
+            paymentMode: b.paymentMode,
+            isDefault: b.isDefault,
+          })),
+          payslipTemplate: s.payslipTemplate
+            ? {
+                ...s.payslipTemplate,
+                visibleSections: s.payslipTemplate.visibleSections || {
+                  employeeInfo: true,
+                  earnings: true,
+                  deductions: true,
+                  employerContrib: true,
+                  netPay: true,
+                  paymentInfo: true,
+                },
+              }
+            : initialPayrollConfigState.payslipTemplate,
+        },
+      });
+    };
+
+    sync();
+    const unsubscribe = payrollSettingsService.subscribe(sync);
+    return unsubscribe;
+  }, [orgId]);
 
   // Table Helpers (Search, Sort, Pagination)
   const [searchQuery, setSearchQuery] = useState("");
@@ -804,13 +725,19 @@ export function FinancePayrollSettings() {
                     <div className="flex justify-end gap-3 pt-6 border-t border-border">
                       <button
                         onClick={() => {
-                          setPayCycle({
+                          if (!canManagePayroll) {
+                            showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                            return;
+                          }
+                          const defaultCycle = {
                             frequency: "Monthly",
                             basis: "Calendar Days",
                             processingDate: "25",
                             payoutDate: "30",
                             lockAfterProcessing: true,
-                          });
+                          };
+                          setPayCycle(defaultCycle);
+                          payrollSettingsService.updatePayCycle(defaultCycle as any, orgId, user?.name);
                           showLocalToast(
                             "Pay cycle settings reset to defaults",
                             "info",
@@ -821,9 +748,14 @@ export function FinancePayrollSettings() {
                         Reset
                       </button>
                       <button
-                        onClick={() =>
-                          showLocalToast("Payroll cycle updated successfully")
-                        }
+                        onClick={() => {
+                          if (!canManagePayroll) {
+                            showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                            return;
+                          }
+                          payrollSettingsService.updatePayCycle(payCycle as any, orgId, user?.name);
+                          showLocalToast("Payroll cycle updated successfully", "success");
+                        }}
                         className="px-6 py-2.5 rounded-xl bg-[#00B87C] text-white text-xs font-bold uppercase tracking-wider hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
                       >
                         Save Changes
@@ -948,14 +880,8 @@ export function FinancePayrollSettings() {
                             )
                             .sort((a, b) => {
                               if (!sortField) return 0;
-                              const fieldA =
-                                (a as Record<string, unknown>)[
-                                  sortField
-                                ]?.toString() || "";
-                              const fieldB =
-                                (b as Record<string, unknown>)[
-                                  sortField
-                                ]?.toString() || "";
+                              const fieldA = (a as any)[sortField]?.toString() || "";
+                              const fieldB = (b as any)[sortField]?.toString() || "";
                               return sortAsc
                                 ? fieldA.localeCompare(fieldB)
                                 : fieldB.localeCompare(fieldA);
@@ -996,12 +922,12 @@ export function FinancePayrollSettings() {
                                         prev.map((c) =>
                                           c.id === comp.id
                                             ? {
-                                                ...c,
-                                                status:
-                                                  c.status === "Enabled"
-                                                    ? "Disabled"
-                                                    : "Enabled",
-                                              }
+                                              ...c,
+                                              status:
+                                                c.status === "Enabled"
+                                                  ? "Disabled"
+                                                  : "Enabled",
+                                            }
                                             : c,
                                         ),
                                       );
@@ -1026,28 +952,29 @@ export function FinancePayrollSettings() {
                                       <Edit2 size={14} />
                                     </button>
                                     <button
-                                      disabled={comp.isSystem && isFinance}
-                                      onClick={() => {
-                                        if (comp.isSystem && isFinance) {
-                                          showLocalToast(
-                                            "Permission denied: System configurations cannot be deleted by Finance",
-                                            "error",
-                                          );
-                                          return;
-                                        }
-                                        setSalaryComponents((prev) =>
-                                          prev.filter((c) => c.id !== comp.id),
-                                        );
-                                        showLocalToast(
-                                          "Component deleted successfully",
-                                        );
-                                      }}
-                                      className={`p-1 transition-colors ${comp.isSystem && isFinance ? "text-white/10 cursor-not-allowed" : "hover:text-red-400 text-muted-foreground"}`}
-                                      title={
-                                        comp.isSystem
-                                          ? "System Component (Protected)"
-                                          : "Delete Component"
-                                      }
+                                       disabled={comp.isSystem && !canManagePayroll}
+                                       onClick={() => {
+                                         if (!canManagePayroll) {
+                                           showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                                           return;
+                                         }
+                                         if (comp.isSystem) {
+                                           showLocalToast("Permission denied: System components cannot be deleted", "error");
+                                           return;
+                                         }
+                                         const res = payrollSettingsService.deleteSalaryComponent(comp.id, orgId, user?.name);
+                                         if (!res.success) {
+                                           showLocalToast(res.error || "Failed to delete component", "error");
+                                           return;
+                                         }
+                                         showLocalToast("Component deleted successfully", "success");
+                                       }}
+                                       className={`p-1 transition-colors ${comp.isSystem ? "text-white/10 cursor-not-allowed" : "hover:text-red-400 text-muted-foreground"}`}
+                                       title={
+                                         comp.isSystem
+                                           ? "System Component (Protected)"
+                                           : "Delete Component"
+                                       }
                                     >
                                       <Trash2 size={14} />
                                     </button>
@@ -1215,26 +1142,26 @@ export function FinancePayrollSettings() {
                                       <Edit2 size={14} />
                                     </button>
                                     <button
-                                      disabled={isFinance}
+                                      disabled={!canManagePayroll}
                                       onClick={() => {
-                                        if (isFinance) {
+                                        if (!canManagePayroll) {
                                           showLocalToast(
-                                            "Permission denied: Delete action requires Super Admin credentials",
+                                            "Permission denied: PAYROLL_MANAGE required",
                                             "error",
                                           );
                                           return;
                                         }
-                                        setSalaryBands((prev) =>
-                                          prev.filter((b) => b.id !== band.id),
-                                        );
-                                        showLocalToast(
-                                          "Grade deleted successfully",
-                                        );
+                                        const res = payrollSettingsService.deleteSalaryBand(band.id, orgId, user?.name);
+                                        if (!res.success) {
+                                          showLocalToast(res.error || "Failed to delete salary band", "error");
+                                          return;
+                                        }
+                                        showLocalToast("Grade deleted successfully", "success");
                                       }}
-                                      className={`p-1 transition-colors ${isFinance ? "text-white/10 cursor-not-allowed" : "hover:text-red-400 text-muted-foreground"}`}
+                                      className={`p-1 transition-colors ${!canManagePayroll ? "text-white/10 cursor-not-allowed" : "hover:text-red-400 text-muted-foreground"}`}
                                       title={
-                                        isFinance
-                                          ? "Admin Only action"
+                                        !canManagePayroll
+                                          ? "Permission Required"
                                           : "Delete Grade"
                                       }
                                     >
@@ -1354,11 +1281,17 @@ export function FinancePayrollSettings() {
 
                     <div className="flex justify-end pt-6 border-t border-border">
                       <button
-                        onClick={() =>
+                        onClick={() => {
+                          if (!canManagePayroll) {
+                            showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                            return;
+                          }
+                          payrollSettingsService.savePfConfig(pfConfig, orgId, user?.name);
                           showLocalToast(
                             "PF configurations updated successfully",
-                          )
-                        }
+                            "success"
+                          );
+                        }}
                         className="px-6 py-2.5 bg-[#00B87C] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
                       >
                         Save Settings
@@ -1412,54 +1345,25 @@ export function FinancePayrollSettings() {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-border">
-                            {tdsSlabs.oldRegime.map((slab) => (
-                              <tr
-                                key={slab.id}
-                                className="hover:bg-white/5 transition-colors"
-                              >
-                                <td className="px-4 py-3 text-xs text-foreground font-medium">
-                                  ₹{slab.fromAmt.toLocaleString()}
-                                </td>
-                                <td className="px-4 py-3 text-xs text-foreground font-medium">
-                                  {slab.toAmt > 90000000
-                                    ? "Above"
-                                    : `₹${slab.toAmt.toLocaleString()}`}
-                                </td>
-                                <td className="px-4 py-3 text-xs font-bold text-[#00C781] text-center">
-                                  {slab.rate}%
-                                </td>
-                                <td className="px-4 py-3 text-right">
-                                  <div className="flex justify-end gap-1.5">
-                                    <button
-                                      onClick={() => {
-                                        setEditingItem({
-                                          ...slab,
-                                          regime: "oldRegime",
-                                        });
-                                        setActiveModal("add-slab");
-                                      }}
-                                      className="p-1 text-muted-foreground hover:text-foreground transition-colors"
-                                    >
-                                      <Edit2 size={12} />
-                                    </button>
-                                    <button
-                                      onClick={() => {
-                                        setTdsSlabs({
-                                          ...tdsSlabs,
-                                          oldRegime: tdsSlabs.oldRegime.filter(
-                                            (s) => s.id !== slab.id,
-                                          ),
-                                        });
-                                        showLocalToast("Slab deleted");
-                                      }}
-                                      className="p-1 text-muted-foreground hover:text-red-400 transition-colors"
-                                    >
-                                      <Trash2 size={12} />
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
+                            <TdsSlabRows
+                              slabs={tdsSlabs.oldRegime}
+                              onEdit={(slab) => {
+                                setEditingItem({
+                                  ...slab,
+                                  regime: "oldRegime",
+                                });
+                                setActiveModal("add-slab");
+                              }}
+                              onDelete={(id) => {
+                                setTdsSlabs({
+                                  ...tdsSlabs,
+                                  oldRegime: tdsSlabs.oldRegime.filter(
+                                    (s) => s.id !== id,
+                                  ),
+                                });
+                                showLocalToast("Slab deleted");
+                              }}
+                            />
                           </tbody>
                         </table>
                       </div>
@@ -1507,54 +1411,25 @@ export function FinancePayrollSettings() {
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-border">
-                            {tdsSlabs.newRegime.map((slab) => (
-                              <tr
-                                key={slab.id}
-                                className="hover:bg-white/5 transition-colors"
-                              >
-                                <td className="px-4 py-3 text-xs text-foreground font-medium">
-                                  ₹{slab.fromAmt.toLocaleString()}
-                                </td>
-                                <td className="px-4 py-3 text-xs text-foreground font-medium">
-                                  {slab.toAmt > 90000000
-                                    ? "Above"
-                                    : `₹${slab.toAmt.toLocaleString()}`}
-                                </td>
-                                <td className="px-4 py-3 text-xs font-bold text-[#00C781] text-center">
-                                  {slab.rate}%
-                                </td>
-                                <td className="px-4 py-3 text-right">
-                                  <div className="flex justify-end gap-1.5">
-                                    <button
-                                      onClick={() => {
-                                        setEditingItem({
-                                          ...slab,
-                                          regime: "newRegime",
-                                        });
-                                        setActiveModal("add-slab");
-                                      }}
-                                      className="p-1 text-muted-foreground hover:text-foreground transition-colors"
-                                    >
-                                      <Edit2 size={12} />
-                                    </button>
-                                    <button
-                                      onClick={() => {
-                                        setTdsSlabs({
-                                          ...tdsSlabs,
-                                          newRegime: tdsSlabs.newRegime.filter(
-                                            (s) => s.id !== slab.id,
-                                          ),
-                                        });
-                                        showLocalToast("Slab deleted");
-                                      }}
-                                      className="p-1 text-muted-foreground hover:text-red-400 transition-colors"
-                                    >
-                                      <Trash2 size={12} />
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
+                            <TdsSlabRows
+                              slabs={tdsSlabs.newRegime}
+                              onEdit={(slab) => {
+                                setEditingItem({
+                                  ...slab,
+                                  regime: "newRegime",
+                                });
+                                setActiveModal("add-slab");
+                              }}
+                              onDelete={(id) => {
+                                setTdsSlabs({
+                                  ...tdsSlabs,
+                                  newRegime: tdsSlabs.newRegime.filter(
+                                    (s) => s.id !== id,
+                                  ),
+                                });
+                                showLocalToast("Slab deleted");
+                              }}
+                            />
                           </tbody>
                         </table>
                       </div>
@@ -1614,7 +1489,7 @@ export function FinancePayrollSettings() {
                               </td>
                               <td className="px-6 py-4 text-xs text-muted-foreground">
                                 {rule.minSalary === 0 &&
-                                rule.maxSalary === 99999999
+                                  rule.maxSalary === 99999999
                                   ? "Any Gross Salary"
                                   : `₹${rule.minSalary.toLocaleString()} - ${rule.maxSalary > 90000000 ? "Above" : `₹${rule.maxSalary.toLocaleString()}`}`}
                               </td>
@@ -1757,9 +1632,14 @@ export function FinancePayrollSettings() {
 
                     <div className="flex justify-end pt-6 border-t border-border">
                       <button
-                        onClick={() =>
-                          showLocalToast("ESI settings updated successfully")
-                        }
+                        onClick={() => {
+                          if (!canManagePayroll) {
+                            showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                            return;
+                          }
+                          payrollSettingsService.saveEsiConfig(esiConfig, orgId, user?.name);
+                          showLocalToast("ESI settings updated successfully", "success");
+                        }}
                         className="px-6 py-2.5 bg-[#00B87C] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
                       >
                         Save Settings
@@ -1843,13 +1723,23 @@ export function FinancePayrollSettings() {
                         </div>
                       </div>
 
-                      <div className="flex justify-end pt-6 border-t border-border">
+                      <div className="flex justify-between items-center pt-6 border-t border-border">
+                        <div className="flex items-center gap-2 text-xs text-amber-500 font-bold bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
+                          <AlertCircle size={14} />
+                          <span>Calculation Engine Boundary: Gratuity liability accrual is calculated during payroll run.</span>
+                        </div>
                         <button
-                          onClick={() =>
+                          onClick={() => {
+                            if (!canManagePayroll) {
+                              showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                              return;
+                            }
+                            payrollSettingsService.saveGratuityConfig(gratuityConfig, orgId, user?.name);
                             showLocalToast(
                               "Gratuity settings saved successfully",
-                            )
-                          }
+                              "success"
+                            );
+                          }}
                           className="px-6 py-2.5 bg-[#00B87C] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
                         >
                           Save Settings
@@ -1959,19 +1849,29 @@ export function FinancePayrollSettings() {
               {/* TAB 10: BANK INTEGRATION */}
               {activeTab === "bank" && (
                 <section className="bg-card border border-border rounded-[20px] overflow-hidden shadow-lg space-y-4">
-                  <div className="px-6 py-4 bg-emerald-500/5 border-b border-border flex items-center justify-between">
+                  <div className="px-6 py-4 bg-emerald-500/5 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <div className="w-2.5 h-2.5 rounded-full bg-[#00C781] shadow-[0_0_8px_rgba(0,199,129,0.5)]" />
-                      <h2 className="text-[12px] font-bold text-[#00C781] uppercase tracking-widest">
-                        Connected Settlement Banks
-                      </h2>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h2 className="text-[12px] font-bold text-[#00C781] uppercase tracking-widest">
+                            Connected Settlement Banks
+                          </h2>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                            CONFIGURED IN FRONTEND
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Bank API Boundary: Account configurations are persisted locally. Direct payment gateway APIs remain a documented backend boundary.
+                        </p>
+                      </div>
                     </div>
                     <button
                       onClick={() => {
                         setEditingItem(null);
                         setActiveModal("connect-bank");
                       }}
-                      className="px-4 py-2 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
+                      className="px-4 py-2 rounded-xl bg-[#00B87C] text-white text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all shrink-0"
                     >
                       <Plus size={14} /> Connect Bank
                     </button>
@@ -2037,10 +1937,10 @@ export function FinancePayrollSettings() {
                                             prev.map((bank) =>
                                               bank.id === b.id
                                                 ? {
-                                                    ...bank,
-                                                    lastSync:
-                                                      new Date().toLocaleString(),
-                                                  }
+                                                  ...bank,
+                                                  lastSync:
+                                                    new Date().toLocaleString(),
+                                                }
                                                 : bank,
                                             ),
                                           );
@@ -2062,10 +1962,10 @@ export function FinancePayrollSettings() {
                                             prev.map((bank) =>
                                               bank.id === b.id
                                                 ? {
-                                                    ...bank,
-                                                    status: "Disconnected",
-                                                    lastSync: "N/A",
-                                                  }
+                                                  ...bank,
+                                                  status: "Disconnected",
+                                                  lastSync: "N/A",
+                                                }
                                                 : bank,
                                             ),
                                           );
@@ -2086,11 +1986,11 @@ export function FinancePayrollSettings() {
                                           prev.map((bank) =>
                                             bank.id === b.id
                                               ? {
-                                                  ...bank,
-                                                  status: "Connected",
-                                                  lastSync:
-                                                    new Date().toLocaleString(),
-                                                }
+                                                ...bank,
+                                                status: "Connected",
+                                                lastSync:
+                                                  new Date().toLocaleString(),
+                                              }
                                               : bank,
                                           ),
                                         );
@@ -2176,30 +2076,30 @@ export function FinancePayrollSettings() {
                 <SalaryComponentForm
                   item={editingItem}
                   onSave={(data) => {
-                    if (editingItem) {
-                      setSalaryComponents((prev) =>
-                        prev.map((c) =>
-                          c.id === editingItem.id
-                            ? {
-                                ...c,
-                                ...data,
-                              }
-                            : c,
-                        ),
-                      );
-                      showLocalToast("Component updated successfully");
-                    } else {
-                      setSalaryComponents((prev) => [
-                        ...prev,
-                        {
-                          ...data,
-                          id: Date.now().toString(),
-                          status: "Enabled",
-                          isSystem: false,
-                        },
-                      ]);
-                      showLocalToast("Component added successfully");
+                    if (!canManagePayroll) {
+                      showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                      return;
                     }
+                    const compToSave: any = {
+                      id: editingItem?.id || `comp-${Date.now()}`,
+                      code: data.code,
+                      name: data.name,
+                      type: data.type as any,
+                      calculationBasis: data.calculationBasis as any,
+                      formula: data.formula,
+                      taxable: data.taxable,
+                      pfApplicable: data.pfApplicable,
+                      esiApplicable: data.esiApplicable,
+                      order: data.order,
+                      isSystem: editingItem?.isSystem ?? false,
+                      status: editingItem?.status || "Enabled",
+                    };
+                    const res = payrollSettingsService.saveSalaryComponent(compToSave, orgId, user?.name);
+                    if (!res.success) {
+                      showLocalToast(res.error || "Failed to save component", "error");
+                      return;
+                    }
+                    showLocalToast(editingItem ? "Component updated successfully" : "Component added successfully", "success");
                     setActiveModal(null);
                   }}
                   onCancel={() => setActiveModal(null)}
@@ -2210,34 +2110,28 @@ export function FinancePayrollSettings() {
                 <SalaryGradeForm
                   item={editingItem}
                   onSave={(data) => {
-                    const formattedData = {
-                      ...data,
-                      minSalary: Number(data.minSalary) || 0,
-                      maxSalary: Number(data.maxSalary) || 0,
-                    };
-                    if (editingItem) {
-                      setSalaryBands((prev) =>
-                        prev.map((g) =>
-                          g.id === editingItem.id
-                            ? {
-                                ...g,
-                                ...formattedData,
-                              }
-                            : g,
-                        ),
-                      );
-                      showLocalToast("Grade updated successfully");
-                    } else {
-                      setSalaryBands((prev) => [
-                        ...prev,
-                        {
-                          ...formattedData,
-                          id: Date.now().toString(),
-                          employees: 0,
-                        },
-                      ]);
-                      showLocalToast("Grade created successfully");
+                    if (!canManagePayroll) {
+                      showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                      return;
                     }
+                    const bandToSave: any = {
+                      id: editingItem?.id || `band-${Date.now()}`,
+                      code: data.code,
+                      grade: data.grade,
+                      minSalary: Number(data.minSalary),
+                      maxSalary: Number(data.maxSalary),
+                      currency: data.currency,
+                      department: data.department,
+                      employees: editingItem?.employees || 0,
+                      desc: data.desc,
+                      status: editingItem?.status || "Active",
+                    };
+                    const res = payrollSettingsService.saveSalaryBand(bandToSave, orgId, user?.name);
+                    if (!res.success) {
+                      showLocalToast(res.error || "Failed to save salary band", "error");
+                      return;
+                    }
+                    showLocalToast(editingItem ? "Grade updated successfully" : "Grade created successfully", "success");
                     setActiveModal(null);
                   }}
                   onCancel={() => setActiveModal(null)}
@@ -2248,35 +2142,22 @@ export function FinancePayrollSettings() {
                 <TaxSlabForm
                   item={editingItem}
                   onSave={(data) => {
-                    if (editingItem?.id && editingItem?.regime) {
-                      const regime = editingItem.regime as
-                        "oldRegime" | "newRegime";
-                      setTdsSlabs((prev) => ({
-                        ...prev,
-                        [regime]: prev[regime].map((s) =>
-                          s.id === editingItem.id
-                            ? {
-                                ...s,
-                                ...data,
-                              }
-                            : s,
-                        ),
-                      }));
-                    } else if (editingItem?.regime) {
-                      const regime = editingItem.regime as
-                        "oldRegime" | "newRegime";
-                      setTdsSlabs((prev) => ({
-                        ...prev,
-                        [regime]: [
-                          ...prev[regime],
-                          {
-                            ...data,
-                            id: Date.now().toString(),
-                          },
-                        ],
-                      }));
+                    if (!canManagePayroll) {
+                      showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                      return;
                     }
-                    showLocalToast("Tax slab configured successfully");
+                    const regime = editingItem?.regime as "oldRegime" | "newRegime" || "newRegime";
+                    const currentTds = payrollSettingsService.getSettings(orgId).tdsConfig;
+                    const updatedSlabs = editingItem?.id
+                      ? currentTds[regime].map((s) => (s.id === editingItem.id ? { ...s, ...data } : s))
+                      : [...currentTds[regime], { ...data, id: `slab-${Date.now()}` }];
+                    
+                    const newTdsConfig = {
+                      ...currentTds,
+                      [regime]: updatedSlabs,
+                    };
+                    payrollSettingsService.saveTdsConfig(newTdsConfig, orgId, user?.name);
+                    showLocalToast("Tax slab configured successfully", "success");
                     setActiveModal(null);
                   }}
                   onCancel={() => setActiveModal(null)}
@@ -2287,27 +2168,17 @@ export function FinancePayrollSettings() {
                 <ProfessionalTaxForm
                   item={editingItem}
                   onSave={(data) => {
-                    if (editingItem) {
-                      setProfessionalTax((prev) =>
-                        prev.map((r) =>
-                          r.id === editingItem.id
-                            ? {
-                                ...r,
-                                ...data,
-                              }
-                            : r,
-                        ),
-                      );
-                    } else {
-                      setProfessionalTax((prev) => [
-                        ...prev,
-                        {
-                          ...data,
-                          id: Date.now().toString(),
-                        },
-                      ]);
+                    if (!canManagePayroll) {
+                      showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                      return;
                     }
-                    showLocalToast("PT state rule configured successfully");
+                    const currentPt = payrollSettingsService.getSettings(orgId).ptConfig;
+                    const updatedSlabs = editingItem?.id
+                      ? currentPt.slabs.map((r) => (r.id === editingItem.id ? { ...r, ...data } : r))
+                      : [...currentPt.slabs, { ...data, id: `pt-${Date.now()}` }];
+
+                    payrollSettingsService.savePtConfig({ ...currentPt, slabs: updatedSlabs as any }, orgId, user?.name);
+                    showLocalToast("PT state rule configured successfully", "success");
                     setActiveModal(null);
                   }}
                   onCancel={() => setActiveModal(null)}
@@ -2318,28 +2189,23 @@ export function FinancePayrollSettings() {
                 <MonthScheduleForm
                   item={editingItem}
                   onSave={(data) => {
-                    if (editingItem) {
-                      setPayrollCalendar((prev) =>
-                        prev.map((c) =>
-                          c.id === editingItem.id
-                            ? {
-                                ...c,
-                                ...data,
-                              }
-                            : c,
-                        ),
-                      );
-                    } else {
-                      setPayrollCalendar((prev) => [
-                        ...prev,
-                        {
-                          ...data,
-                          id: Date.now().toString(),
-                          status: "Scheduled",
-                        },
-                      ]);
+                    if (!canManagePayroll) {
+                      showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                      return;
                     }
-                    showLocalToast("Payroll calendar configured successfully");
+                    const periodToSave: any = {
+                      id: editingItem?.id || `cal-${Date.now()}`,
+                      month: data.month,
+                      processingDate: data.processingDate,
+                      transferDate: data.transferDate,
+                      status: editingItem?.status || "Scheduled",
+                    };
+                    const res = payrollSettingsService.saveCalendarPeriod(periodToSave, orgId, user?.name);
+                    if (!res.success) {
+                      showLocalToast(res.error || "Failed to save calendar period", "error");
+                      return;
+                    }
+                    showLocalToast("Payroll calendar configured successfully", "success");
                     setActiveModal(null);
                   }}
                   onCancel={() => setActiveModal(null)}
@@ -2349,16 +2215,27 @@ export function FinancePayrollSettings() {
               {activeModal === "connect-bank" && (
                 <ConnectBankForm
                   onSave={(data) => {
-                    setBanks((prev) => [
-                      ...prev,
-                      {
-                        ...data,
-                        id: Date.now().toString(),
-                        status: "Connected",
-                        lastSync: new Date().toLocaleString(),
-                      },
-                    ]);
-                    showLocalToast("Bank connected successfully");
+                    if (!canManagePayroll) {
+                      showLocalToast("Permission denied: PAYROLL_MANAGE required", "error");
+                      return;
+                    }
+                    const bankToSave: any = {
+                      id: `bank-${Date.now()}`,
+                      bankName: data.bank,
+                      accountNo: data.accountNo,
+                      ifscCode: data.ifsc,
+                      branch: data.branch,
+                      paymentMode: "NEFT",
+                      isDefault: false,
+                      status: "Configured",
+                      lastSync: new Date().toLocaleString(),
+                    };
+                    const res = payrollSettingsService.saveBankItem(bankToSave, orgId, user?.name);
+                    if (!res.success) {
+                      showLocalToast(res.error || "Failed to connect bank", "error");
+                      return;
+                    }
+                    showLocalToast("Bank connected successfully", "success");
                     setActiveModal(null);
                   }}
                   onCancel={() => setActiveModal(null)}
@@ -2423,6 +2300,50 @@ export function FinancePayrollSettings() {
 
 /* ─── HELPER COMPONENTS ────────────────────────── */
 
+function TdsSlabRows({
+  slabs,
+  onEdit,
+  onDelete,
+}: {
+  slabs: TaxSlab[];
+  onEdit: (slab: TaxSlab) => void;
+  onDelete: (slabId: string) => void;
+}) {
+  return (
+    <>
+      {slabs.map((slab) => (
+        <tr key={slab.id} className="hover:bg-white/5 transition-colors">
+          <td className="px-4 py-3 text-xs text-foreground font-medium">
+            ₹{slab.fromAmt.toLocaleString()}
+          </td>
+          <td className="px-4 py-3 text-xs text-foreground font-medium">
+            {slab.toAmt > 90000000 ? "Above" : `₹${slab.toAmt.toLocaleString()}`}
+          </td>
+          <td className="px-4 py-3 text-xs font-bold text-[#00C781] text-center">
+            {slab.rate}%
+          </td>
+          <td className="px-4 py-3 text-right">
+            <div className="flex justify-end gap-1.5">
+              <button
+                onClick={() => onEdit(slab)}
+                className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Edit2 size={12} />
+              </button>
+              <button
+                onClick={() => onDelete(slab.id)}
+                className="p-1 text-muted-foreground hover:text-red-400 transition-colors"
+              >
+                <Trash2 size={12} />
+              </button>
+            </div>
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+}
+
 function NavSection({
   title,
   items,
@@ -2467,76 +2388,164 @@ function SalaryComponentForm({
 }: {
   item: EditingItem | null;
   onSave: (data: {
+    code: string;
     name: string;
     type: string;
-    taxable: boolean;
+    calculationBasis: string;
     formula: string;
+    taxable: boolean;
+    pfApplicable: boolean;
+    esiApplicable: boolean;
     order: number;
   }) => void;
   onCancel: () => void;
 }) {
+  const [code, setCode] = useState(item?.code || "");
   const [name, setName] = useState(item?.name || "");
   const [type, setType] = useState(item?.type || "Earnings");
+  const [calculationBasis, setCalculationBasis] = useState(item?.calculationBasis || "Fixed");
   const [taxable, setTaxable] = useState(item?.taxable ?? true);
+  const [pfApplicable, setPfApplicable] = useState(item?.pfApplicable ?? false);
+  const [esiApplicable, setEsiApplicable] = useState(item?.esiApplicable ?? false);
   const [formula, setFormula] = useState(item?.formula || "");
   const [order, setOrder] = useState(item?.order || 1);
+  const [error, setError] = useState("");
+
+  const handleSubmit = () => {
+    if (!name.trim()) {
+      setError("Component Name is required.");
+      return;
+    }
+    if (!code.trim()) {
+      setError("Component Code is required.");
+      return;
+    }
+    setError("");
+    onSave({
+      code: code.trim().toUpperCase(),
+      name,
+      type,
+      calculationBasis,
+      formula: formula || (calculationBasis === "Fixed" ? "Fixed amount" : "Percentage"),
+      taxable,
+      pfApplicable,
+      esiApplicable,
+      order: order || 1,
+    });
+  };
+
   return (
     <div className="p-6 space-y-4">
-      <div className="space-y-1">
-        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-          Component Name
-        </label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
-          placeholder="e.g. Basic Pay"
-        />
+      {error && (
+        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold flex items-center gap-2">
+          <AlertCircle size={14} />
+          <span>{error}</span>
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Component Code *
+          </label>
+          <input
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none font-mono uppercase"
+            placeholder="e.g. BASIC"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Component Name *
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none"
+            placeholder="e.g. Basic Pay"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Classification
+          </label>
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none"
+          >
+            <option value="Earnings">Earnings</option>
+            <option value="Deductions">Deductions</option>
+          </select>
+        </div>
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Calculation Basis
+          </label>
+          <select
+            value={calculationBasis}
+            onChange={(e) => setCalculationBasis(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none"
+          >
+            <option value="Fixed">Fixed Amount</option>
+            <option value="Percentage of Basic">Percentage of Basic</option>
+            <option value="Percentage of CTC">Percentage of CTC</option>
+            <option value="Formula">Custom Formula</option>
+          </select>
+        </div>
       </div>
 
       <div className="space-y-1">
         <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-          Type
-        </label>
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
-        >
-          <option>Earnings</option>
-          <option>Deductions</option>
-        </select>
-      </div>
-
-      <div className="space-y-1">
-        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-          Formula / Fixed Amount
+          Formula / Rule Expression
         </label>
         <input
           type="text"
           value={formula}
           onChange={(e) => setFormula(e.target.value)}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
-          placeholder="e.g. 50% of CTC or ₹1,500"
+          placeholder="e.g. 50% of CTC or ₹1,600/month"
         />
       </div>
 
-      <div className="flex items-center justify-between py-2 border-y border-border">
-        <div>
-          <p className="text-sm font-bold text-foreground">Taxable Component</p>
-          <p className="text-xs text-muted-foreground">
-            Include in taxable income calculations
-          </p>
+      <div className="grid grid-cols-3 gap-3 py-2 border-y border-border">
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-bold text-foreground">Taxable</span>
+          <button
+            type="button"
+            onClick={() => setTaxable(!taxable)}
+            className={`w-10 h-5 rounded-full transition-all flex items-center px-0.5 ${taxable ? "bg-[#00B87C]" : "bg-muted border border-border"}`}
+          >
+            <div className={`w-4 h-4 rounded-full bg-white transition-all ${taxable ? "translate-x-5" : "translate-x-0"}`} />
+          </button>
         </div>
-        <button
-          onClick={() => setTaxable(!taxable)}
-          className={`w-12 h-6 rounded-full transition-all duration-300 flex items-center px-1 ${taxable ? "bg-[#00B87C]" : "bg-muted border border-border"}`}
-        >
-          <div
-            className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${taxable ? "translate-x-6" : "translate-x-0"}`}
-          />
-        </button>
+
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-bold text-foreground">PF Applicable</span>
+          <button
+            type="button"
+            onClick={() => setPfApplicable(!pfApplicable)}
+            className={`w-10 h-5 rounded-full transition-all flex items-center px-0.5 ${pfApplicable ? "bg-[#00B87C]" : "bg-muted border border-border"}`}
+          >
+            <div className={`w-4 h-4 rounded-full bg-white transition-all ${pfApplicable ? "translate-x-5" : "translate-x-0"}`} />
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-bold text-foreground">ESI Applicable</span>
+          <button
+            type="button"
+            onClick={() => setEsiApplicable(!esiApplicable)}
+            className={`w-10 h-5 rounded-full transition-all flex items-center px-0.5 ${esiApplicable ? "bg-[#00B87C]" : "bg-muted border border-border"}`}
+          >
+            <div className={`w-4 h-4 rounded-full bg-white transition-all ${esiApplicable ? "translate-x-5" : "translate-x-0"}`} />
+          </button>
+        </div>
       </div>
 
       <div className="space-y-1">
@@ -2546,42 +2555,31 @@ function SalaryComponentForm({
         <input
           type="number"
           value={order}
-          onChange={(e) =>
-            setOrder(
-              e.target.value === "" || isNaN(parseInt(e.target.value))
-                ? undefined
-                : parseInt(e.target.value),
-            )
-          }
+          onChange={(e) => setOrder(parseInt(e.target.value) || 1)}
           className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
         />
       </div>
 
-      <div className="flex justify-end gap-2 pt-4">
+      <div className="flex justify-end gap-2 pt-2">
         <button
+          type="button"
           onClick={onCancel}
           className="px-4 py-2 border border-border rounded-xl text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground"
         >
           Cancel
         </button>
         <button
-          onClick={() =>
-            onSave({
-              name,
-              type,
-              taxable,
-              formula,
-              order,
-            })
-          }
-          className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white"
+          type="button"
+          onClick={handleSubmit}
+          className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white hover:shadow-lg transition-all"
         >
-          Save
+          Save Component
         </button>
       </div>
     </div>
   );
 }
+
 function SalaryGradeForm({
   item,
   onSave,
@@ -2589,66 +2587,155 @@ function SalaryGradeForm({
 }: {
   item: EditingItem | null;
   onSave: (data: {
+    code: string;
     grade: string;
     minSalary: number | string;
     maxSalary: number | string;
+    currency: string;
+    department: string;
     desc: string;
   }) => void;
   onCancel: () => void;
 }) {
+  const [code, setCode] = useState(item?.code || "");
   const [grade, setGrade] = useState(item?.grade || "");
-  const [minSalary, setMinSalary] = useState(item?.minSalary || "");
-  const [maxSalary, setMaxSalary] = useState(item?.maxSalary || "");
+  const [minSalary, setMinSalary] = useState<number | string>(item?.minSalary ?? "");
+  const [maxSalary, setMaxSalary] = useState<number | string>(item?.maxSalary ?? "");
+  const [currency, setCurrency] = useState(item?.currency || "INR");
+  const [department, setDepartment] = useState(item?.department || "All");
   const [desc, setDesc] = useState(item?.desc || "");
+  const [error, setError] = useState("");
+
+  const handleSubmit = () => {
+    if (!grade.trim()) {
+      setError("Grade Name is required.");
+      return;
+    }
+    if (!code.trim()) {
+      setError("Band Code is required.");
+      return;
+    }
+    const min = Number(minSalary);
+    const max = Number(maxSalary);
+    if (isNaN(min) || min < 0) {
+      setError("Minimum Salary must be a non-negative number.");
+      return;
+    }
+    if (isNaN(max) || max < 0) {
+      setError("Maximum Salary must be a non-negative number.");
+      return;
+    }
+    if (min > max) {
+      setError(`Minimum Salary (₹${min.toLocaleString()}) cannot be greater than Maximum Salary (₹${max.toLocaleString()}).`);
+      return;
+    }
+    setError("");
+    onSave({
+      code: code.trim().toUpperCase(),
+      grade,
+      minSalary: min,
+      maxSalary: max,
+      currency,
+      department,
+      desc,
+    });
+  };
+
   return (
     <div className="p-6 space-y-4">
-      <div className="space-y-1">
-        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-          Grade Name
-        </label>
-        <input
-          type="text"
-          value={grade}
-          onChange={(e) => setGrade(e.target.value)}
-          className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
-          placeholder="e.g. Grade A"
-        />
+      {error && (
+        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold flex items-center gap-2">
+          <AlertCircle size={14} />
+          <span>{error}</span>
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Band Code *
+          </label>
+          <input
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none font-mono uppercase"
+            placeholder="e.g. GRADE-A"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Grade Name *
+          </label>
+          <input
+            type="text"
+            value={grade}
+            onChange={(e) => setGrade(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none"
+            placeholder="e.g. Grade A"
+          />
+        </div>
       </div>
 
-      <div className="space-y-1">
-        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-          Minimum Salary (INR)
-        </label>
-        <input
-          type="number"
-          value={minSalary}
-          onChange={(e) =>
-            setMinSalary(
-              e.target.value === "" || isNaN(parseInt(e.target.value))
-                ? undefined
-                : parseInt(e.target.value),
-            )
-          }
-          className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Minimum Salary ({currency}) *
+          </label>
+          <input
+            type="number"
+            value={minSalary}
+            onChange={(e) => setMinSalary(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none"
+            placeholder="30000"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Maximum Salary ({currency}) *
+          </label>
+          <input
+            type="number"
+            value={maxSalary}
+            onChange={(e) => setMaxSalary(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none"
+            placeholder="60000"
+          />
+        </div>
       </div>
 
-      <div className="space-y-1">
-        <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-          Maximum Salary (INR)
-        </label>
-        <input
-          type="number"
-          value={maxSalary}
-          onChange={(e) =>
-            setMaxSalary(
-              e.target.value === "" || isNaN(parseInt(e.target.value))
-                ? undefined
-                : parseInt(e.target.value),
-            )
-          }
-          className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Currency
+          </label>
+          <select
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none"
+          >
+            <option value="INR">INR (₹)</option>
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+          </select>
+        </div>
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Department Scope
+          </label>
+          <select
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+            className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none"
+          >
+            <option value="All">All Departments</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Product">Product</option>
+            <option value="Design">Design</option>
+            <option value="Finance">Finance</option>
+            <option value="HR">HR</option>
+            <option value="Sales">Sales</option>
+          </select>
+        </div>
       </div>
 
       <div className="space-y-1">
@@ -2659,35 +2746,31 @@ function SalaryGradeForm({
           type="text"
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
-          className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
-          placeholder="Short description of the grade role"
+          className="w-full bg-input-background border border-border rounded-xl px-4 py-2 text-sm text-foreground focus:border-[#00C781] outline-none"
+          placeholder="Short role level description"
         />
       </div>
 
-      <div className="flex justify-end gap-2 pt-4">
+      <div className="flex justify-end gap-2 pt-2">
         <button
+          type="button"
           onClick={onCancel}
           className="px-4 py-2 border border-border rounded-xl text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground"
         >
           Cancel
         </button>
         <button
-          onClick={() =>
-            onSave({
-              grade,
-              minSalary,
-              maxSalary,
-              desc,
-            })
-          }
-          className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white"
+          type="button"
+          onClick={handleSubmit}
+          className="px-6 py-2 bg-[#00B87C] rounded-xl text-xs font-bold uppercase tracking-wider text-white hover:shadow-lg transition-all"
         >
-          Save
+          Save Grade Band
         </button>
       </div>
     </div>
   );
 }
+
 function TaxSlabForm({
   item,
   onSave,
@@ -3157,11 +3240,87 @@ function PayslipConfigurator({
   onChange,
   onToast,
 }: {
-  template: PayslipTemplateConfig;
-  onChange: (data: PayslipTemplateConfig) => void;
-  onToast: (msg: string) => void;
+  template: any;
+  onChange: (data: any) => void;
+  onToast: (msg: string, type?: "success" | "error" | "info") => void;
 }) {
-  const [subTab, setSubTab] = useState("design");
+  const { user } = useAuth();
+  const orgId = user?.organizationId || "";
+  const [subTab, setSubTab] = useState<"source" | "design" | "preview" | "email">("source");
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const visibleSections = template.visibleSections || {
+    employeeInfo: true,
+    earnings: true,
+    deductions: true,
+    employerContrib: true,
+    netPay: true,
+    paymentInfo: true,
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUploadError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // File validation: max 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Uploaded template file size exceeds 5MB limit.");
+      onToast("Uploaded template file size exceeds 5MB limit", "error");
+      return;
+    }
+
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    if (!["pdf", "png", "jpg", "jpeg", "docx", "html"].includes(ext || "")) {
+      setUploadError("Invalid file format. Supported formats: PDF, PNG, JPG, DOCX, HTML.");
+      onToast("Invalid template file format", "error");
+      return;
+    }
+
+    // Read asset preview URL
+    const reader = new FileReader();
+    reader.onload = () => {
+      const assetUrl = reader.result as string;
+      const updated = {
+        ...template,
+        templateSource: "COMPANY_UPLOADED",
+        uploadedTemplateFileName: file.name,
+        uploadedTemplateFileType: ext as any,
+        uploadedTemplateAssetUrl: assetUrl,
+        uploadedTemplateStatus: "FRONTEND READY — BACKEND FILE STORAGE REQUIRED",
+      };
+      onChange(updated);
+      onToast(`Uploaded company payslip template "${file.name}" (Frontend ready)`);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleToggleSection = (key: string) => {
+    const updated = {
+      ...template,
+      visibleSections: {
+        ...visibleSections,
+        [key]: !visibleSections[key],
+      },
+    };
+    onChange(updated);
+  };
+
+  const handleSave = () => {
+    payrollSettingsService.updatePayslipTemplate(template, orgId, user?.name || "Admin");
+    onToast("Payslip template configuration saved successfully to tenant store");
+  };
+
+  const handleReset = () => {
+    const defaultSettings = payrollSettingsService.getSettings(orgId);
+    const defaultPayslip = defaultSettings.payslipTemplate;
+    onChange(defaultPayslip);
+    payrollSettingsService.updatePayslipTemplate(defaultPayslip, orgId, user?.name || "Admin");
+    setShowResetConfirm(false);
+    onToast("Payslip template reset to EMS default configuration");
+  };
+
   return (
     <div className="space-y-4">
       {/* Sub Header tabs */}
@@ -3169,271 +3328,536 @@ function PayslipConfigurator({
         <div className="flex items-center gap-3">
           <div className="w-2.5 h-2.5 rounded-full bg-[#00C781] shadow-[0_0_8px_rgba(0,199,129,0.5)]" />
           <h2 className="text-[12px] font-bold text-[#00C781] uppercase tracking-widest">
-            Payslip Configuration
+            Payslip Configuration & Template Editor
           </h2>
         </div>
-        <div className="flex gap-1.5 p-1 bg-input-background border border-border rounded-xl">
+        <div className="flex gap-1.5 p-1 bg-input-background border border-border rounded-xl flex-wrap">
+          <button
+            onClick={() => setSubTab("source")}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${subTab === "source" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            Template Source
+          </button>
           <button
             onClick={() => setSubTab("design")}
             className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${subTab === "design" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"}`}
           >
-            Template Design
+            Customization & Sections
           </button>
           <button
             onClick={() => setSubTab("preview")}
             className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${subTab === "preview" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"}`}
           >
-            Preview
+            Live Preview
           </button>
           <button
             onClick={() => setSubTab("email")}
             className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${subTab === "email" ? "bg-[#00B87C] text-white" : "text-muted-foreground hover:text-foreground"}`}
           >
-            Email Settings
+            Email Dispatch
           </button>
         </div>
       </div>
 
       <div className="p-6">
+        {/* SUBTAB 1: TEMPLATE SOURCE */}
+        {subTab === "source" && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-1">
+                Select Payslip Template Engine
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Choose between standard EMS built-in template or upload your organization's custom branded payslip template.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Option 1: EMS Default */}
+              <div
+                onClick={() => onChange({ ...template, templateSource: "EMS_DEFAULT" })}
+                className={`p-6 rounded-2xl border cursor-pointer transition-all ${template.templateSource !== "COMPANY_UPLOADED" ? "border-[#00B87C] bg-[#00B87C]/5 shadow-md" : "border-border bg-card hover:border-[#00C781]/40"}`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${template.templateSource !== "COMPANY_UPLOADED" ? "border-[#00B87C] bg-[#00B87C]" : "border-border"}`}>
+                      {template.templateSource !== "COMPANY_UPLOADED" && (
+                        <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                      )}
+                    </div>
+                    <span className="text-sm font-bold text-foreground">
+                      EMS Built-in Dynamic Template
+                    </span>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/10 text-[#00C781] border border-emerald-500/20">
+                    System Standard
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Clean, responsive, glassmorphic payslip template with customizable colors, header titles, disclaimer footers, and toggleable statutory section matrices.
+                </p>
+              </div>
+
+              {/* Option 2: Company Uploaded */}
+              <div
+                onClick={() => onChange({ ...template, templateSource: "COMPANY_UPLOADED" })}
+                className={`p-6 rounded-2xl border cursor-pointer transition-all ${template.templateSource === "COMPANY_UPLOADED" ? "border-[#00B87C] bg-[#00B87C]/5 shadow-md" : "border-border bg-card hover:border-[#00C781]/40"}`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${template.templateSource === "COMPANY_UPLOADED" ? "border-[#00B87C] bg-[#00B87C]" : "border-border"}`}>
+                      {template.templateSource === "COMPANY_UPLOADED" && (
+                        <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                      )}
+                    </div>
+                    <span className="text-sm font-bold text-foreground">
+                      Company Uploaded Template
+                    </span>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    Custom Branded
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Upload an existing corporate payslip template (PDF, PNG, DOCX, HTML). Preserves exact corporate typography and legal layout.
+                </p>
+              </div>
+            </div>
+
+            {/* Upload Area for Company Uploaded */}
+            {template.templateSource === "COMPANY_UPLOADED" && (
+              <div className="space-y-4 pt-4 border-t border-border">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                    Upload Organization Payslip Template
+                  </label>
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    FRONTEND READY — BACKEND FILE STORAGE REQUIRED
+                  </span>
+                </div>
+
+                <div className="relative border-2 border-dashed border-border hover:border-[#00C781]/50 rounded-2xl p-8 text-center transition-all bg-card flex flex-col items-center justify-center gap-3">
+                  <input
+                    type="file"
+                    accept=".pdf,.png,.jpg,.jpeg,.docx,.html"
+                    onChange={handleFileUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                  />
+                  <div className="w-12 h-12 rounded-2xl bg-[#00B87C]/10 flex items-center justify-center text-[#00B87C]">
+                    <Upload size={24} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground">
+                      {template.uploadedTemplateFileName
+                        ? `Selected: ${template.uploadedTemplateFileName}`
+                        : "Click or drag & drop to upload corporate template"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Supports PDF, PNG, JPG, DOCX, HTML (Max 5MB file size limit)
+                    </p>
+                  </div>
+                </div>
+
+                {uploadError && (
+                  <p className="text-xs font-bold text-rose-500 flex items-center gap-1.5">
+                    <AlertCircle size={14} /> {uploadError}
+                  </p>
+                )}
+
+                {template.uploadedTemplateFileName && (
+                  <div className="p-4 rounded-xl bg-card border border-border flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-3">
+                      <ShieldCheck size={18} className="text-[#00C781]" />
+                      <div>
+                        <p className="font-bold text-foreground">{template.uploadedTemplateFileName}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase">
+                          Format: {template.uploadedTemplateFileType?.toUpperCase()} • {template.uploadedTemplateStatus}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() =>
+                        onChange({
+                          ...template,
+                          uploadedTemplateFileName: "",
+                          uploadedTemplateAssetUrl: "",
+                        })
+                      }
+                      className="text-muted-foreground hover:text-rose-500 transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* SUBTAB 2: CUSTOMIZATION & SECTIONS */}
         {subTab === "design" && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                  Company Logo
-                </label>
-                <div className="border-2 border-dashed border-border hover:border-[#00C781]/40 rounded-xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2">
-                  <Upload size={20} className="text-muted-foreground" />
-                  <span className="text-xs text-foreground">
-                    Click to upload company logo
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">
-                    Supports PNG, JPG (Max 500KB)
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                  Signature Image
-                </label>
-                <div className="border-2 border-dashed border-border hover:border-[#00C781]/40 rounded-xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2">
-                  <Upload size={20} className="text-muted-foreground" />
-                  <span className="text-xs text-foreground">
-                    Click to upload digital signature
-                  </span>
-                  <span className="text-[10px] text-muted-foreground">
-                    Supports PNG (transparency requested)
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                  Header Accentuating Color
+                  Custom Payslip Document Title
                 </label>
                 <input
-                  type="color"
-                  value={template.headerColor}
-                  onChange={(e) =>
-                    onChange({
-                      ...template,
-                      headerColor: e.target.value,
-                    })
-                  }
-                  className="w-full bg-input-background border border-border rounded-xl px-4 py-1.5 h-12 outline-none cursor-pointer"
+                  type="text"
+                  value={template.customTitle || "PAYSLIP FOR THE MONTH"}
+                  onChange={(e) => onChange({ ...template, customTitle: e.target.value })}
+                  placeholder="e.g. SALARY PAYSLIP FOR THE MONTH"
+                  className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm text-foreground focus:border-[#00C781] outline-none"
                 />
               </div>
 
               <div className="space-y-2">
                 <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
-                  Footer text / Disclaimer
+                  Header Accent Color
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={template.headerColor || "#00B87C"}
+                    onChange={(e) => onChange({ ...template, headerColor: e.target.value })}
+                    className="w-14 h-11 bg-input-background border border-border rounded-xl p-1 cursor-pointer outline-none"
+                  />
+                  <input
+                    type="text"
+                    value={template.headerColor || "#00B87C"}
+                    onChange={(e) => onChange({ ...template, headerColor: e.target.value })}
+                    className="flex-1 bg-input-background border border-border rounded-xl px-4 py-3 text-sm text-foreground uppercase font-mono focus:border-[#00C781] outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  Organization Header Subtitle / Branch Address
                 </label>
                 <input
                   type="text"
-                  value={template.footerText}
-                  onChange={(e) =>
-                    onChange({
-                      ...template,
-                      footerText: e.target.value,
-                    })
-                  }
+                  value={template.headerText || "VIYAN HR EMS CORPORATE PAYSLIP"}
+                  onChange={(e) => onChange({ ...template, headerText: e.target.value })}
+                  placeholder="e.g. 100 Tech Park Road, Bangalore - 560001"
+                  className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm text-foreground focus:border-[#00C781] outline-none"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                  Footer Disclaimer Text
+                </label>
+                <input
+                  type="text"
+                  value={template.footerText || ""}
+                  onChange={(e) => onChange({ ...template, footerText: e.target.value })}
+                  placeholder="e.g. Computer-generated payslip. No physical signature required."
                   className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm text-foreground focus:border-[#00C781] outline-none"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-6 border-t border-border">
-              <button
-                onClick={() => {
-                  const printWindow = window.open("", "_blank");
-                  if (printWindow) {
-                    printWindow.document.write(
-                      "<html><head><title>Payslip Preview</title></head><body><h1>Sample Payslip PDF</h1><p>Generating file structure...</p></body></html>",
-                    );
-                    printWindow.document.close();
-                  }
-                  onToast("Payslip PDF document downloaded");
-                }}
-                className="px-5 py-2.5 border border-border text-xs font-bold uppercase tracking-wider text-foreground hover:bg-white/5 rounded-xl flex items-center gap-2 transition-all"
-              >
-                <Download size={14} /> Download PDF
-              </button>
-              <button
-                onClick={() =>
-                  onToast("Payslip template configuration saved successfully")
-                }
-                className="px-6 py-2.5 bg-[#00B87C] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
-              >
-                Save Template
-              </button>
+            {/* Confidentiality notes */}
+            <div className="space-y-2">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                Confidentiality & Compliance Note
+              </label>
+              <input
+                type="text"
+                value={template.notes || "Confidential - For Internal Use Only"}
+                onChange={(e) => onChange({ ...template, notes: e.target.value })}
+                placeholder="e.g. Confidential - Strictly for intended recipient"
+                className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm text-foreground focus:border-[#00C781] outline-none"
+              />
             </div>
-          </div>
-        )}
 
-        {subTab === "preview" && (
-          <div className="p-6 bg-white text-slate-800 rounded-xl space-y-6 max-w-2xl mx-auto shadow-md">
-            {/* Header banner */}
-            <div
-              className="p-6 rounded-lg flex justify-between items-start text-white"
-              style={{
-                backgroundColor: template.headerColor,
-              }}
-            >
+            {/* Visible Sections Matrix */}
+            <div className="space-y-4 pt-4 border-t border-border">
               <div>
-                <h4 className="text-xl font-bold">viyanHR Solutions Pvt Ltd</h4>
-                <p className="text-xs opacity-90 mt-1">
-                  100, Tech Park Road, Bangalore - 560001
+                <h4 className="text-xs font-black text-foreground uppercase tracking-wider mb-1">
+                  Payslip Section Visibility Matrix
+                </h4>
+                <p className="text-[11px] text-muted-foreground">
+                  Select which financial and statutory sections are displayed on the employee payslip.
                 </p>
               </div>
-              <div className="text-right">
-                <h5 className="font-bold text-xs uppercase opacity-75">
-                  Pay Slip
-                </h5>
-                <p className="text-lg font-extrabold mt-1">June 2026</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {[
+                  { key: "employeeInfo", label: "Employee Info", desc: "ID, Name, Dept, Designation" },
+                  { key: "earnings", label: "Earnings Breakdown", desc: "Basic, HRA, Allowances, Gross" },
+                  { key: "deductions", label: "Deductions Matrix", desc: "PF, ESI, PT, TDS deductions" },
+                  { key: "employerContrib", label: "Employer Contributions", desc: "Statutory PF & ESI contributions" },
+                  { key: "netPay", label: "Net Take-Home Pay", desc: "Final net disbursement total" },
+                  { key: "paymentInfo", label: "Bank Settlement Info", desc: "Bank Account & IFSC details" },
+                ].map((item) => (
+                  <label
+                    key={item.key}
+                    className={`p-4 rounded-xl border flex items-start gap-3 cursor-pointer transition-all ${visibleSections[item.key] ? "bg-emerald-500/5 border-[#00C781]/40" : "bg-card border-border opacity-70"}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={!!visibleSections[item.key]}
+                      onChange={() => handleToggleSection(item.key)}
+                      className="mt-1 w-4 h-4 rounded border-border text-[#00B87C] focus:ring-[#00B87C]/20"
+                    />
+                    <div>
+                      <span className="text-xs font-bold text-foreground block">{item.label}</span>
+                      <span className="text-[10px] text-muted-foreground block mt-0.5">{item.desc}</span>
+                    </div>
+                  </label>
+                ))}
               </div>
             </div>
-
-            {/* Employee info */}
-            <div className="grid grid-cols-2 gap-4 text-xs border-b border-slate-200 pb-4">
-              <div>
-                <p className="text-slate-500 font-semibold">Employee ID:</p>
-                <p className="text-slate-800 font-bold">NEX-9041</p>
-              </div>
-              <div>
-                <p className="text-slate-500 font-semibold">Employee Name:</p>
-                <p className="text-slate-800 font-bold">John Doe</p>
-              </div>
-              <div>
-                <p className="text-slate-500 font-semibold">Department:</p>
-                <p className="text-slate-800 font-bold">Engineering</p>
-              </div>
-              <div>
-                <p className="text-slate-500 font-semibold">Designation:</p>
-                <p className="text-slate-800 font-bold">Senior Specialist</p>
-              </div>
-            </div>
-
-            {/* Calculations matrix */}
-            <div className="grid grid-cols-2 gap-8 text-xs">
-              <div className="space-y-2">
-                <h6 className="font-bold border-b border-slate-200 pb-1 text-slate-500">
-                  Earnings
-                </h6>
-                <div className="flex justify-between">
-                  <span>Basic Pay</span>
-                  <span className="font-bold">₹45,000.00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>HRA</span>
-                  <span className="font-bold">₹18,000.00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Special Allowance</span>
-                  <span className="font-bold">₹12,400.00</span>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <h6 className="font-bold border-b border-slate-200 pb-1 text-slate-500">
-                  Deductions
-                </h6>
-                <div className="flex justify-between">
-                  <span>PF Contribution</span>
-                  <span className="font-bold">₹1,800.00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>TDS</span>
-                  <span className="font-bold">₹4,500.00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Professional Tax</span>
-                  <span className="font-bold">₹200.00</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Totals banner */}
-            <div className="p-4 bg-slate-100 rounded-lg flex justify-between items-center text-xs font-bold">
-              <span>Gross Earnings: ₹75,400.00</span>
-              <span className="text-emerald-700 text-sm">
-                Net Pay: ₹68,900.00
-              </span>
-            </div>
-
-            {/* Footer */}
-            <p className="text-[10px] text-slate-400 text-center italic mt-6">
-              {template.footerText}
-            </p>
           </div>
         )}
 
+        {/* SUBTAB 3: LIVE PREVIEW */}
+        {subTab === "preview" && (
+          <div className="p-6 bg-card text-card-foreground rounded-2xl space-y-6 max-w-3xl mx-auto shadow-xl border border-border">
+            {/* Header banner */}
+            <div
+              className="p-6 rounded-xl flex flex-col sm:flex-row justify-between items-start text-white transition-all shadow-md"
+              style={{ backgroundColor: template.headerColor || "#00B87C" }}
+            >
+              <div>
+                <h4 className="text-xl font-black tracking-tight">{user?.name || "Viyan HR Solutions Pvt Ltd"}</h4>
+                <p className="text-xs opacity-90 mt-1 font-medium">
+                  {template.headerText || "VIYAN HR EMS CORPORATE PAYSLIP"}
+                </p>
+              </div>
+              <div className="text-left sm:text-right mt-3 sm:mt-0">
+                <h5 className="font-black text-xs uppercase opacity-75 tracking-wider">
+                  {template.customTitle || "PAYSLIP FOR THE MONTH"}
+                </h5>
+                <p className="text-lg font-extrabold mt-0.5">JUNE 2026</p>
+              </div>
+            </div>
+
+            {/* Template Source Indicator */}
+            {template.templateSource === "COMPANY_UPLOADED" && (
+              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-between text-xs text-blue-400 font-bold">
+                <span>Active Template: Company Uploaded ({template.uploadedTemplateFileName || "Custom File"})</span>
+                <span className="text-[10px] bg-blue-500/20 px-2 py-0.5 rounded font-black uppercase">
+                  {template.uploadedTemplateFileType || "PDF"}
+                </span>
+              </div>
+            )}
+
+            {/* Employee info */}
+            {visibleSections.employeeInfo && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs border-b border-border pb-4 bg-muted/30 p-4 rounded-xl">
+                <div>
+                  <p className="text-muted-foreground font-semibold text-[10px] uppercase">Employee ID</p>
+                  <p className="text-foreground font-bold">NEX-9041</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground font-semibold text-[10px] uppercase">Employee Name</p>
+                  <p className="text-foreground font-bold">John Doe</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground font-semibold text-[10px] uppercase">Department</p>
+                  <p className="text-foreground font-bold">Engineering</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground font-semibold text-[10px] uppercase">Designation</p>
+                  <p className="text-foreground font-bold">Senior Specialist</p>
+                </div>
+              </div>
+            )}
+
+            {/* Calculations matrix */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+              {visibleSections.earnings && (
+                <div className="space-y-2 bg-card p-4 rounded-xl border border-border">
+                  <h6 className="font-black text-[11px] border-b border-border pb-2 text-[#00C781] uppercase tracking-wider">
+                    Earnings Breakdown
+                  </h6>
+                  <div className="flex justify-between py-1">
+                    <span>Basic Pay</span>
+                    <span className="font-bold text-foreground">₹45,000.00</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span>House Rent Allowance (HRA)</span>
+                    <span className="font-bold text-foreground">₹18,000.00</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span>Special Allowance</span>
+                    <span className="font-bold text-foreground">₹12,400.00</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-t border-dashed border-border text-xs font-black text-foreground pt-2">
+                    <span>Gross Earnings</span>
+                    <span>₹75,400.00</span>
+                  </div>
+                </div>
+              )}
+
+              {visibleSections.deductions && (
+                <div className="space-y-2 bg-card p-4 rounded-xl border border-border">
+                  <h6 className="font-black text-[11px] border-b border-border pb-2 text-rose-500 uppercase tracking-wider">
+                    Statutory Deductions
+                  </h6>
+                  <div className="flex justify-between py-1">
+                    <span>Provident Fund (PF)</span>
+                    <span className="font-bold text-foreground">₹1,800.00</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span>Employee ESI (0.75%)</span>
+                    <span className="font-bold text-foreground">₹200.00</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span>Income Tax (TDS)</span>
+                    <span className="font-bold text-foreground">₹4,500.00</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-t border-dashed border-border text-xs font-black text-rose-500 pt-2">
+                    <span>Total Deductions</span>
+                    <span>-₹6,500.00</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Employer Contributions */}
+            {visibleSections.employerContrib && (
+              <div className="p-4 bg-muted/40 rounded-xl border border-border text-xs">
+                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider block mb-1">
+                  Employer Statutory Contributions (Not Deducted From Salary)
+                </span>
+                <div className="flex justify-between text-muted-foreground font-semibold">
+                  <span>Employer PF Contribution (12%): ₹1,800.00</span>
+                  <span>Employer ESI Contribution (3.25%): ₹2,450.00</span>
+                </div>
+              </div>
+            )}
+
+            {/* Totals banner */}
+            {visibleSections.netPay && (
+              <div className="p-5 bg-[#00B87C]/10 border border-[#00B87C]/20 rounded-xl flex justify-between items-center text-xs font-black">
+                <span className="text-foreground">TOTAL NET DISBURSEMENT</span>
+                <span className="text-[#00C781] text-lg font-black tracking-tight">
+                  ₹68,900.00
+                </span>
+              </div>
+            )}
+
+            {/* Bank details */}
+            {visibleSections.paymentInfo && (
+              <div className="p-3 bg-card border border-border rounded-xl text-xs flex justify-between items-center">
+                <span className="text-muted-foreground">Settlement Bank: HDFC Corporate Bank (A/C: ****5544)</span>
+                <span className="text-[10px] font-black uppercase text-[#00C781]">NEFT Direct Credit</span>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div className="text-[10px] text-muted-foreground text-center space-y-1 pt-4 border-t border-border">
+              <p className="font-bold italic">{template.footerText || "This is a computer-generated payslip and does not require a physical signature."}</p>
+              <p className="text-[9px] uppercase tracking-wider font-semibold text-muted-foreground">{template.notes}</p>
+            </div>
+          </div>
+        )}
+
+        {/* SUBTAB 4: EMAIL SETTINGS */}
         {subTab === "email" && (
-          <div className="space-y-4 max-w-lg mx-auto">
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="space-y-5 max-w-xl mx-auto">
+            <div>
+              <h3 className="text-sm font-black text-foreground uppercase tracking-wider mb-1">
+                Payslip Dispatch Email Template
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Configure subject lines and email body template when payslips are automatically dispatched to employees.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                 Default Email Subject
               </label>
               <input
                 type="text"
-                value={template.emailSubject}
-                onChange={(e) =>
-                  onChange({
-                    ...template,
-                    emailSubject: e.target.value,
-                  })
-                }
-                className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
+                value={template.emailSubject || ""}
+                onChange={(e) => onChange({ ...template, emailSubject: e.target.value })}
+                className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm text-foreground focus:border-[#00C781] outline-none"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            <div className="space-y-2">
+              <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                 Email Body Template
               </label>
               <textarea
-                value={template.emailBody}
-                rows={5}
-                onChange={(e) =>
-                  onChange({
-                    ...template,
-                    emailBody: e.target.value,
-                  })
-                }
-                className="w-full bg-input-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground focus:border-[#00C781] outline-none"
+                value={template.emailBody || ""}
+                rows={6}
+                onChange={(e) => onChange({ ...template, emailBody: e.target.value })}
+                className="w-full bg-input-background border border-border rounded-xl px-4 py-3 text-sm text-foreground focus:border-[#00C781] outline-none"
               />
             </div>
-
-            <button
-              onClick={() =>
-                onToast("Payslip Email template saved successfully")
-              }
-              className="w-full py-2.5 bg-[#00B87C] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
-            >
-              Save Email Template
-            </button>
           </div>
         )}
+
+        {/* ACTIONS FOOTER */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-border mt-8">
+          <button
+            onClick={() => setShowResetConfirm(true)}
+            className="w-full sm:w-auto px-5 py-2.5 border border-border text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-rose-500 hover:border-rose-500/40 rounded-xl transition-all"
+          >
+            Reset to EMS Default
+          </button>
+
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => {
+                const printWindow = window.open("", "_blank");
+                if (printWindow) {
+                  printWindow.document.write(
+                    "<html><head><title>Payslip Document Preview</title></head><body style='font-family:sans-serif;padding:40px;'><h1>VIYAN HR EMS PAYSLIP</h1><p>Sample Payslip PDF structure ready for generation.</p></body></html>"
+                  );
+                  printWindow.document.close();
+                }
+                onToast("Payslip PDF document downloaded");
+              }}
+              className="flex-1 sm:flex-initial px-5 py-2.5 border border-border text-xs font-bold uppercase tracking-wider text-foreground hover:bg-white/5 rounded-xl flex items-center justify-center gap-2 transition-all"
+            >
+              <Download size={14} /> Download Sample PDF
+            </button>
+            <button
+              onClick={handleSave}
+              className="flex-1 sm:flex-initial px-6 py-2.5 bg-[#00B87C] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:shadow-[0_8px_20px_rgba(0,184,124,0.3)] transition-all"
+            >
+              Save Template
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* RESET CONFIRMATION MODAL */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-card border border-border rounded-2xl p-6 space-y-4 text-foreground shadow-2xl">
+            <div className="flex items-center gap-3 text-amber-500">
+              <AlertCircle size={24} />
+              <h3 className="font-black text-base uppercase tracking-wider">Confirm Reset Payslip Template</h3>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Are you sure you want to reset the payslip template to system defaults? Custom uploaded templates, headers, accent colors, and custom section configurations will be reverted.
+            </p>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="px-4 py-2 border border-border rounded-xl text-xs font-bold uppercase hover:bg-white/5"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReset}
+                className="px-5 py-2 bg-rose-500 text-white rounded-xl text-xs font-bold uppercase hover:bg-rose-600 transition-all"
+              >
+                Confirm Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -3448,7 +3872,7 @@ export function SalaryStructuresSection({
   onConfigure,
 }: SalaryStructuresSectionProps) {
   const { employeesList } = useEmployees();
-  const [structures, setStructures] = useState<SalaryStructure[]>(() =>
+  const [structures,] = useState<SalaryStructure[]>(() =>
     payrollService.getSalaryStructures(),
   );
   const [searchQuery, setSearchQuery] = useState("");
@@ -3640,6 +4064,7 @@ export function SalaryStructureModal({
   onClose,
   onSaveSuccess,
 }: SalaryStructureModalProps) {
+  const { user } = useAuth();
   const PREVIEW_WORKING_DAYS = 22; // preview-only assumption; real run uses actual days for the month.
 
   const {
@@ -3746,8 +4171,8 @@ export function SalaryStructureModal({
       mockStructure,
       PREVIEW_WORKING_DAYS,
       0,
-      // 0 LOP
       "July 2026",
+      { settings: payrollSettingsService.getSettings(user?.organizationId) },
     );
   }, [
     employee,
@@ -3759,6 +4184,7 @@ export function SalaryStructureModal({
     watchedPf,
     esiApplicable,
     watchedPt,
+    user,
   ]);
   const onSubmit = (data: SalaryStructureFormValues) => {
     const ctcVal = Number(data.ctc);

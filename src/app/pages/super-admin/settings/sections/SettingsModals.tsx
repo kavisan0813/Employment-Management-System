@@ -1,10 +1,11 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
-import { useAuth } from "../../../../context/AuthContext";
+import { usePermissions } from "../../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../../shared/permission-engine/permissions";
 import { Users } from "lucide-react";
 export function SettingsModals() {
-  const { user } = useAuth();
-  const isHR = user?.role === "HR Manager";
+  const { hasPermissionKey } = usePermissions();
+  const isHR = !hasPermissionKey(P.ROLES_MANAGE);
   const {
     activeModal,
     confirmEditRoleSubmit,
@@ -76,6 +77,14 @@ export function SettingsModals() {
     setUsersList,
     showToast,
     usersList,
+    policiesList,
+    selectedPolicy,
+    policyForm,
+    setPolicyForm,
+    handleSavePolicySubmit,
+    handleArchivePolicySubmit,
+    holAutoMark,
+    setHolAutoMark,
   } = useSettingsContext();
   if (!activeModal) return null;
   const closeModal = () => setActiveModal(null);
@@ -115,22 +124,22 @@ export function SettingsModals() {
           schedulesList.map((s) =>
             s.code === selectedSchedule?.code
               ? {
-                  ...s,
-                  name: scheduleForm.name,
-                  code: scheduleForm.code,
-                  type: scheduleForm.type,
-                  startTime: scheduleForm.startTime,
-                  endTime: scheduleForm.endTime,
-                  breakDuration: scheduleForm.breakDuration,
-                  workingDays: scheduleForm.workingDays,
-                  weekends: scheduleForm.weekends,
-                  graceTime: scheduleForm.graceTime,
-                  halfDayRule: scheduleForm.halfDayRule,
-                  otEligible: scheduleForm.otEligible,
-                  dept: scheduleForm.dept,
-                  location: scheduleForm.location,
-                  status: scheduleForm.status,
-                }
+                ...s,
+                name: scheduleForm.name,
+                code: scheduleForm.code,
+                type: scheduleForm.type,
+                startTime: scheduleForm.startTime,
+                endTime: scheduleForm.endTime,
+                breakDuration: scheduleForm.breakDuration,
+                workingDays: scheduleForm.workingDays,
+                weekends: scheduleForm.weekends,
+                graceTime: scheduleForm.graceTime,
+                halfDayRule: scheduleForm.halfDayRule,
+                otEligible: scheduleForm.otEligible,
+                dept: scheduleForm.dept,
+                location: scheduleForm.location,
+                status: scheduleForm.status,
+              }
               : s,
           ),
         );
@@ -180,7 +189,6 @@ export function SettingsModals() {
           encashment: leaveTypeForm.encashment,
           approvalRequired: leaveTypeForm.approvalRequired,
           attachmentRequired: leaveTypeForm.attachmentRequired,
-          minNoticePeriod: leaveTypeForm.minNoticePeriod,
           maxConsecutiveLeave: leaveTypeForm.maxConsecutiveLeave,
           dept: leaveTypeForm.dept,
           location: leaveTypeForm.location,
@@ -194,23 +202,22 @@ export function SettingsModals() {
           leaveTypesList.map((l) =>
             l.code === selectedLeaveType?.code
               ? {
-                  ...l,
-                  name: leaveTypeForm.name,
-                  code: leaveTypeForm.code,
-                  days: leaveTypeForm.days,
-                  type: leaveTypeForm.type,
-                  carryForward: leaveTypeForm.carryForward,
-                  maxCarryForward: leaveTypeForm.maxCarryForward,
-                  encashment: leaveTypeForm.encashment,
-                  approvalRequired: leaveTypeForm.approvalRequired,
-                  attachmentRequired: leaveTypeForm.attachmentRequired,
-                  minNoticePeriod: leaveTypeForm.minNoticePeriod,
-                  maxConsecutiveLeave: leaveTypeForm.maxConsecutiveLeave,
-                  dept: leaveTypeForm.dept,
-                  location: leaveTypeForm.location,
-                  status: leaveTypeForm.status,
-                  description: leaveTypeForm.description,
-                }
+                ...l,
+                name: leaveTypeForm.name,
+                code: leaveTypeForm.code,
+                days: leaveTypeForm.days,
+                type: leaveTypeForm.type,
+                carryForward: leaveTypeForm.carryForward,
+                maxCarryForward: leaveTypeForm.maxCarryForward,
+                encashment: leaveTypeForm.encashment,
+                approvalRequired: leaveTypeForm.approvalRequired,
+                attachmentRequired: leaveTypeForm.attachmentRequired,
+                maxConsecutiveLeave: leaveTypeForm.maxConsecutiveLeave,
+                dept: leaveTypeForm.dept,
+                location: leaveTypeForm.location,
+                status: leaveTypeForm.status,
+                description: leaveTypeForm.description,
+              }
               : l,
           ),
         );
@@ -289,17 +296,17 @@ export function SettingsModals() {
           holidaysList.map((h) =>
             h.date === selectedHoliday?.date && h.name === selectedHoliday?.name
               ? {
-                  ...h,
-                  name: holidayForm.name,
-                  date: holidayForm.date,
-                  day: dayName,
-                  type: holidayForm.type,
-                  location: holidayForm.location,
-                  dept: holidayForm.dept,
-                  recurring: holidayForm.recurring,
-                  status: holidayForm.status,
-                  description: holidayForm.description,
-                }
+                ...h,
+                name: holidayForm.name,
+                date: holidayForm.date,
+                day: dayName,
+                type: holidayForm.type,
+                location: holidayForm.location,
+                dept: holidayForm.dept,
+                recurring: holidayForm.recurring,
+                status: holidayForm.status,
+                description: holidayForm.description,
+              }
               : h,
           ),
         );
@@ -369,21 +376,21 @@ export function SettingsModals() {
           locationsList.map((l) =>
             l.code === selectedLoc?.code
               ? {
-                  ...l,
-                  name: locForm.name,
-                  code: locForm.code,
-                  type: locForm.type,
-                  address: locForm.address,
-                  city: locForm.city,
-                  state: locForm.state,
-                  country: locForm.country,
-                  pincode: locForm.pincode,
-                  manager: locForm.manager,
-                  timezone: locForm.timezone,
-                  status: locForm.status,
-                  notes: locForm.notes,
-                  lastUpdated: new Date().toISOString().split("T")[0],
-                }
+                ...l,
+                name: locForm.name,
+                code: locForm.code,
+                type: locForm.type,
+                address: locForm.address,
+                city: locForm.city,
+                state: locForm.state,
+                country: locForm.country,
+                pincode: locForm.pincode,
+                manager: locForm.manager,
+                timezone: locForm.timezone,
+                status: locForm.status,
+                notes: locForm.notes,
+                lastUpdated: new Date().toISOString().split("T")[0],
+              }
               : l,
           ),
         );
@@ -440,14 +447,14 @@ export function SettingsModals() {
           deptsList.map((d) =>
             d.code === selectedDept?.code
               ? {
-                  ...d,
-                  name: deptForm.name,
-                  code: deptForm.code,
-                  head: deptForm.head,
-                  status: deptForm.status,
-                  budget: deptForm.budget,
-                  description: deptForm.description,
-                }
+                ...d,
+                name: deptForm.name,
+                code: deptForm.code,
+                head: deptForm.head,
+                status: deptForm.status,
+                budget: deptForm.budget,
+                description: deptForm.description,
+              }
               : d,
           ),
         );
@@ -542,14 +549,14 @@ export function SettingsModals() {
         usersList.map((u) =>
           u.email === selectedUser?.email
             ? {
-                ...u,
-                name: editForm.name,
-                email: editForm.email,
-                role: editForm.role,
-                dept: editForm.dept,
-                location: editForm.location,
-                status: editForm.status,
-              }
+              ...u,
+              name: editForm.name,
+              email: editForm.email,
+              role: editForm.role,
+              dept: editForm.dept,
+              location: editForm.location,
+              status: editForm.status,
+            }
             : u,
         ),
       );
@@ -565,9 +572,9 @@ export function SettingsModals() {
         usersList.map((u) =>
           u.email === selectedUser?.email
             ? {
-                ...u,
-                status: "Active",
-              }
+              ...u,
+              status: "Active",
+            }
             : u,
         ),
       );
@@ -583,9 +590,9 @@ export function SettingsModals() {
         usersList.map((u) =>
           u.email === selectedUser?.email
             ? {
-                ...u,
-                status: "Inactive",
-              }
+              ...u,
+              status: "Inactive",
+            }
             : u,
         ),
       );
@@ -812,7 +819,7 @@ export function SettingsModals() {
                         ...leaveTypeForm,
                         maxCarryForward:
                           e.target.value === "" ||
-                          isNaN(parseInt(e.target.value))
+                            isNaN(parseInt(e.target.value))
                             ? undefined
                             : parseInt(e.target.value),
                       })
@@ -906,40 +913,7 @@ export function SettingsModals() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "var(--muted-foreground)",
-                    textTransform: "uppercase",
-                    marginBottom: "6px",
-                  }}
-                >
-                  Min Notice Period (Days)
-                </label>
-                <input
-                  type="number"
-                  value={leaveTypeForm.minNoticePeriod}
-                  onChange={(e) =>
-                    setLeaveTypeForm({
-                      ...leaveTypeForm,
-                      minNoticePeriod:
-                        e.target.value === "" || isNaN(parseInt(e.target.value))
-                          ? undefined
-                          : parseInt(e.target.value),
-                    })
-                  }
-                  className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
-                  style={{
-                    backgroundColor: "var(--input-background)",
-                    borderColor: "var(--border)",
-                    color: "var(--foreground)",
-                  }}
-                />
-              </div>
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <label
                   style={{
@@ -2279,7 +2253,7 @@ export function SettingsModals() {
   }
   if (activeModal === "add_schedule" || activeModal === "edit_schedule") {
     const isEdit = activeModal === "edit_schedule";
-      const scheduleFormworkingDaysSet = new Set(scheduleForm.workingDays);
+    const scheduleFormworkingDaysSet = new Set(scheduleForm.workingDays);
     return (
       <div
         className="fixed inset-0 flex items-center justify-center p-4 z-[2000]"
@@ -2443,7 +2417,7 @@ export function SettingsModals() {
                       ...scheduleForm,
                       breakDuration:
                         (e.target.value === "" ||
-                        isNaN(parseInt(e.target.value))
+                          isNaN(parseInt(e.target.value))
                           ? undefined
                           : parseInt(e.target.value)) || 0,
                     })
@@ -2547,8 +2521,8 @@ export function SettingsModals() {
                         onClick={() => {
                           const next = isSelected
                             ? scheduleForm.workingDays.filter(
-                                (d: string) => d !== day,
-                              )
+                              (d: string) => d !== day,
+                            )
                             : [...scheduleForm.workingDays, day];
                           setScheduleForm({
                             ...scheduleForm,
@@ -2594,7 +2568,7 @@ export function SettingsModals() {
                       ...scheduleForm,
                       graceTime:
                         (e.target.value === "" ||
-                        isNaN(parseInt(e.target.value))
+                          isNaN(parseInt(e.target.value))
                           ? undefined
                           : parseInt(e.target.value)) || 0,
                     })
@@ -6152,18 +6126,18 @@ export function SettingsModals() {
                     (group: {
                       id: React.Key | null | undefined;
                       name:
-                        | string
-                        | number
-                        | boolean
-                        | React.ReactElement<
-                            string,
-                            string | React.JSXElementConstructor<string>
-                          >
-                        | Iterable<React.ReactNode>
-                        | React.ReactPortal
-                        | Iterable<React.ReactNode>
-                        | null
-                        | undefined;
+                      | string
+                      | number
+                      | boolean
+                      | React.ReactElement<
+                        string,
+                        string | React.JSXElementConstructor<string>
+                      >
+                      | Iterable<React.ReactNode>
+                      | React.ReactPortal
+                      | Iterable<React.ReactNode>
+                      | null
+                      | undefined;
                       modules: {
                         id: string;
                         name: string;
@@ -6441,6 +6415,140 @@ export function SettingsModals() {
         </div>
       );
       break;
+    case "add_policy":
+    case "edit_policy":
+      title = activeModal === "add_policy" ? "Create Corporate Policy" : "Edit Corporate Policy";
+      content = (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
+              Policy Category
+            </label>
+            <select
+              value={policyForm.category}
+              onChange={(e) => setPolicyForm({ ...policyForm, category: e.target.value as any })}
+              className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border bg-[var(--input-background)] border-[var(--border)] text-[var(--foreground)]"
+            >
+              <option value="HR">HR Policies</option>
+              <option value="Attendance">Attendance Policies</option>
+              <option value="Leave">Leave Policies</option>
+              <option value="Payroll">Payroll & Compensation</option>
+              <option value="Security">Security & Compliance</option>
+              <option value="Expense">Expense & Travel</option>
+              <option value="RemoteWork">Remote Work Policies</option>
+              <option value="CodeOfConduct">Code of Conduct</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
+              Policy Name
+            </label>
+            <input
+              type="text"
+              value={policyForm.name}
+              onChange={(e) => setPolicyForm({ ...policyForm, name: e.target.value })}
+              placeholder="e.g. Employee Code of Conduct"
+              className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border bg-[var(--input-background)] border-[var(--border)] text-[var(--foreground)]"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
+              Summary Description
+            </label>
+            <input
+              type="text"
+              value={policyForm.description}
+              onChange={(e) => setPolicyForm({ ...policyForm, description: e.target.value })}
+              placeholder="Brief overview of policy objectives"
+              className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border bg-[var(--input-background)] border-[var(--border)] text-[var(--foreground)]"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
+              Policy Content & Directives
+            </label>
+            <textarea
+              rows={5}
+              value={policyForm.content}
+              onChange={(e) => setPolicyForm({ ...policyForm, content: e.target.value })}
+              placeholder="Detailed terms, compliance requirements, guidelines..."
+              className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border bg-[var(--input-background)] border-[var(--border)] text-[var(--foreground)] font-mono text-xs"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
+                Effective Date
+              </label>
+              <input
+                type="date"
+                value={policyForm.effectiveDate}
+                onChange={(e) => setPolicyForm({ ...policyForm, effectiveDate: e.target.value })}
+                className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border bg-[var(--input-background)] border-[var(--border)] text-[var(--foreground)]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
+                Status
+              </label>
+              <select
+                value={policyForm.status}
+                onChange={(e) => setPolicyForm({ ...policyForm, status: e.target.value as any })}
+                className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border bg-[var(--input-background)] border-[var(--border)] text-[var(--foreground)]"
+              >
+                <option value="Active">Active</option>
+                <option value="Draft">Draft</option>
+                <option value="Archived">Archived</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      );
+      break;
+
+    case "archive_policy":
+      title = "Confirm Policy Archive";
+      content = (
+        <div className="space-y-3">
+          <p className="text-sm text-foreground">
+            Are you sure you want to archive <strong>{selectedPolicy?.name}</strong>?
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Archived policies will no longer be visible as active guidelines to staff, but will remain accessible for compliance audit records.
+          </p>
+        </div>
+      );
+      break;
+
+    case "confirm_auto_mark_holiday":
+      title = "Confirm Auto-mark Holidays";
+      content = (
+        <div className="space-y-3">
+          <p className="text-sm text-foreground">
+            Enabling auto-mark holidays will automatically process company public holidays as paid non-working days for employee attendance logs.
+          </p>
+          <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl space-y-2 text-xs">
+            <div className="flex justify-between">
+              <span className="font-semibold text-foreground">Scope Year:</span>
+              <span className="text-emerald-600 font-bold">2026 Calendar Year</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-semibold text-foreground">Location Scope:</span>
+              <span className="text-emerald-600 font-bold">All Corporate Offices</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-semibold text-foreground">Configured Holidays:</span>
+              <span className="text-emerald-600 font-bold">{holidaysList?.length || 10} Statutory Holidays</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-semibold text-foreground">Affected Headcount:</span>
+              <span className="text-emerald-600 font-bold">Entire Active Organization</span>
+            </div>
+          </div>
+        </div>
+      );
+      break;
+
     default:
       return null;
   }
@@ -6452,7 +6560,7 @@ export function SettingsModals() {
       }}
     >
       <div
-        className={`w-full ${activeModal === "create_role" || activeModal === "edit_role" ? "max-w-2xl" : "max-w-md"} rounded-2xl p-6 shadow-2xl border border-[var(--border)] relative`}
+        className={`w-full ${activeModal === "create_role" || activeModal === "edit_role" || activeModal === "add_policy" || activeModal === "edit_policy" ? "max-w-2xl" : "max-w-md"} rounded-2xl p-6 shadow-2xl border border-[var(--border)] relative`}
         style={{
           backgroundColor: "var(--card)",
           maxHeight: "90vh",
@@ -6504,7 +6612,32 @@ export function SettingsModals() {
           >
             Cancel
           </button>
-          {activeModal === "create_role" || activeModal === "edit_role" ? (
+          {activeModal === "add_policy" || activeModal === "edit_policy" ? (
+            <button
+              onClick={handleSavePolicySubmit}
+              className="px-4 py-2 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer bg-[#00B87C] hover:bg-[#00B87C]/90 border-none w-full sm:w-auto"
+            >
+              Save Policy
+            </button>
+          ) : activeModal === "archive_policy" ? (
+            <button
+              onClick={() => handleArchivePolicySubmit(selectedPolicy?.id || "")}
+              className="px-4 py-2 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer bg-rose-600 hover:bg-rose-700 border-none w-full sm:w-auto"
+            >
+              Archive Policy
+            </button>
+          ) : activeModal === "confirm_auto_mark_holiday" ? (
+            <button
+              onClick={() => {
+                setHolAutoMark(!holAutoMark);
+                showToast(`Auto-mark holidays ${!holAutoMark ? "enabled" : "disabled"}`, "success");
+                closeModal();
+              }}
+              className="px-4 py-2 text-sm font-semibold rounded-xl text-white transition-all cursor-pointer bg-[#00B87C] hover:bg-[#00B87C]/90 border-none w-full sm:w-auto"
+            >
+              Confirm & Apply
+            </button>
+          ) : activeModal === "create_role" || activeModal === "edit_role" ? (
             <button
               onClick={handleRoleSubmit}
               disabled={isSubmitting}

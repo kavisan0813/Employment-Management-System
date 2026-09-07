@@ -1,7 +1,6 @@
 // Barrel file for sections
 export { WorkSchedulesSection } from "./WorkSchedulesSection";
 export { HolidayCalendarSection } from "./HolidayCalendarSection";
-export { AttendancePolicySection } from "./AttendancePolicySection";
 export { LeavePolicySection } from "./LeavePolicySection";
 export { PayrollSettingsSection } from "./PayrollSettingsSection";
 export { PerformanceSettingsSection } from "./PerformanceSettingsSection";
@@ -19,7 +18,6 @@ export { OnboardingSettingsSection } from "./OnboardingSettingsSection";
 export { SettingsModals } from "./SettingsModals";
 export { SettingsToast } from "./SettingsToast";
 export { CompanyProfileSection } from "./CompanyProfileSection";
-export { DepartmentsSection } from "./DepartmentsSection";
 export { LocationsSection } from "./LocationsSection";
 export { UserManagementSection } from "./UserManagementSection";
 export { SecuritySettingsSection } from "./SecuritySettingsSection";
@@ -38,3 +36,16 @@ export { ConnectedDevicesSection } from "./ConnectedDevicesSection";
 export { DataDownloadsSection } from "./DataDownloadsSection";
 export { HelpFAQSection } from "./HelpFAQSection";
 export { ContactSupportSection } from "./ContactSupportSection";
+
+// REDESIGNED PLATFORM SECTIONS
+export { SettingsOverview } from "./SettingsOverview";
+export { OrganizationSection } from "./OrganizationSection";
+export { AppearanceBrandingSection } from "./AppearanceBrandingSection";
+export { PoliciesSection } from "./PoliciesSection";
+export { ApprovalWorkflowsCombinedSection } from "./ApprovalWorkflowsCombinedSection";
+export { RolesPermissionsSection } from "./RolesPermissionsSection";
+export { FeatureManagementSection } from "./FeatureManagementSection";
+export { NotificationPreferencesSection } from "./NotificationPreferencesSection";
+export { SecuritySessionsSection } from "./SecuritySessionsSection";
+export { IntegrationsSection } from "./IntegrationsSection";
+export { AuditLogsCombinedSection } from "./AuditLogsCombinedSection";

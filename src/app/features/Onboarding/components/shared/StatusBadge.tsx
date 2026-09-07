@@ -1,6 +1,5 @@
 /* ─── Status Badge Components ─── */
 
-import { CheckCircle2, Clock, Circle } from "lucide-react";
 import { safeGet } from "../../utils/helpers";
 
 /* Status dot colored by status */
@@ -45,15 +44,4 @@ export function XCircle({
       <line x1="9" y1="9" x2="15" y2="15" />
     </svg>
   );
-}
-
-/* Task status icon */
-export function TaskStatusIcon({ status }: { status: string }) {
-  if (status === "done")
-    return <CheckCircle2 size={16} className="text-[#00B87C] shrink-0" />;
-  if (status === "in-progress")
-    return <Clock size={16} className="text-[#F59E0B] shrink-0" />;
-  if (status === "overdue")
-    return <XCircle size={16} className="text-[#EF4444] shrink-0" />;
-  return <Circle size={16} className="text-[#D1D5DB] shrink-0" />;
 }

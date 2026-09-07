@@ -1,11 +1,17 @@
 import {
-  createContext,
   useContext,
   useState,
   useEffect,
   type ReactNode,
 } from "react";
+import { SettingsContext } from "./settings-context";
 import { useSearchParams } from "react-router";
+import { useAuth } from "../../../context/AuthContext";
+import {
+  getOnboardingMaxFileSizeMb,
+  setOnboardingMaxFileSizeMb,
+} from "../../../features/Onboarding/utils/fileValidation";
+import { payrollSettingsService } from "../../finance/payroll/payrollSettings.service";
 import {
   Building2,
   FolderTree,
@@ -321,6 +327,8 @@ export interface HolidayRecord {
   description: string;
 }
 
+import { policyService, type PolicyRecord, type PolicyCategory } from "./services/policyService";
+
 export interface LeaveTypeRecord {
   name: string;
   code: string;
@@ -331,7 +339,6 @@ export interface LeaveTypeRecord {
   encashment: boolean;
   approvalRequired: boolean;
   attachmentRequired: boolean;
-  minNoticePeriod: number;
   maxConsecutiveLeave: number;
   dept: string;
   location: string;
@@ -378,6 +385,7 @@ export const SectionTitle = ({ title }: { title: string }) => (
   </div>
 );
 export function useSettingsProviderValue(defaultTab: string = "company") {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [activeSubTab, setActiveSubTab] = useState(
     () => searchParams.get("tab") || defaultTab,
@@ -392,6 +400,59 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     const tab = searchParams.get("tab");
     if (tab) setActiveSubTab(tab);
   }, [searchParams]);
+
+  const [policiesList, setPoliciesList] = useState<PolicyRecord[]>(() =>
+    policyService.getPolicies(user?.organizationId)
+  );
+
+  useEffect(() => {
+    const orgId = user?.organizationId;
+    const syncPolicies = () => {
+      setPoliciesList(policyService.getPolicies(orgId));
+    };
+    syncPolicies();
+    return policyService.subscribe(syncPolicies);
+  }, [user?.organizationId]);
+
+  const [selectedPolicy, setSelectedPolicy] = useState<PolicyRecord | null>(null);
+  const [policyForm, setPolicyForm] = useState({
+    category: "HR" as PolicyCategory,
+    name: "",
+    description: "",
+    content: "",
+    effectiveDate: new Date().toISOString().split("T")[0],
+    status: "Active" as PolicyRecord["status"],
+  });
+
+  const handleSavePolicySubmit = () => {
+    if (!policyForm.name.trim() || !policyForm.category || !policyForm.content.trim()) {
+      showToast("Category, Policy Name, and Content are required", "error");
+      return;
+    }
+    const orgId = user?.organizationId || "";
+    policyService.savePolicy(
+      {
+        id: selectedPolicy?.id,
+        category: policyForm.category,
+        name: policyForm.name,
+        description: policyForm.description,
+        content: policyForm.content,
+        effectiveDate: policyForm.effectiveDate,
+        status: policyForm.status,
+      },
+      orgId,
+      user?.name || "Super Admin"
+    );
+    showToast(`Policy '${policyForm.name}' saved successfully`, "success");
+    setActiveModal(null);
+  };
+
+  const handleArchivePolicySubmit = (policyId: string) => {
+    const orgId = user?.organizationId || "";
+    policyService.archivePolicy(policyId, orgId, user?.name || "Super Admin");
+    showToast("Policy archived successfully", "success");
+    setActiveModal(null);
+  };
 
   const [permissions, setPermissions] =
     useState<Record<string, Record<string, string>>>(initialPermissions);
@@ -413,7 +474,10 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
       description: "",
       status: "Active",
       permissions: Object.keys(initialPermissions).reduce(
-        (acc, modId) => ({ ...acc, [modId]: "no" }),
+        (acc, modId) => {
+          acc[modId] = "no";
+          return acc;
+        },
         {},
       ),
     });
@@ -427,10 +491,10 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
       description: `${role.name} access level`,
       status: "Active",
       permissions: Object.keys(initialPermissions).reduce(
-        (acc, modId) => ({
-          ...acc,
-          [modId]: permissions[modId][role.id] || "no",
-        }),
+        (acc, modId) => {
+          acc[modId] = permissions[modId][role.id] || "no";
+          return acc;
+        },
         {},
       ),
     });
@@ -667,6 +731,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     onboardingDigitalSign: true,
     onboardingBlockPayroll: false,
     onboardingNotifyOverdue: true,
+    onboardingMaxFileSizeMb: String(getOnboardingMaxFileSizeMb(user?.organizationId)),
     offboardingEnabled: true,
     offboardingAutoTrigger: true,
     offboardingRequireExitInterview: true,
@@ -679,6 +744,12 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
 
   const updateExtraConfig = (key: string, value: string | boolean) => {
     setExtraConfig((prev) => ({ ...prev, [key]: value }));
+    if (key === "onboardingMaxFileSizeMb") {
+      const numVal = Number(value);
+      if (!isNaN(numVal) && numVal > 0) {
+        setOnboardingMaxFileSizeMb(numVal, user?.organizationId);
+      }
+    }
   };
 
   // Appearance & Preferences states
@@ -1106,7 +1177,6 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
       encashment: false,
       approvalRequired: true,
       attachmentRequired: false,
-      minNoticePeriod: 1,
       maxConsecutiveLeave: 3,
       dept: "All",
       location: "All Locations",
@@ -1123,7 +1193,6 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
       encashment: true,
       approvalRequired: true,
       attachmentRequired: false,
-      minNoticePeriod: 7,
       maxConsecutiveLeave: 10,
       dept: "All",
       location: "All Locations",
@@ -1140,7 +1209,6 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
       encashment: false,
       approvalRequired: false,
       attachmentRequired: true,
-      minNoticePeriod: 0,
       maxConsecutiveLeave: 5,
       dept: "All",
       location: "All Locations",
@@ -1162,7 +1230,6 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     encashment: false,
     approvalRequired: true,
     attachmentRequired: false,
-    minNoticePeriod: 1,
     maxConsecutiveLeave: 5,
     dept: "All",
     location: "All Locations",
@@ -1376,17 +1443,13 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
 
   const [payrollCycle, setPayrollCycle] = useState("Monthly");
   const [payrollCutoff, setPayrollCutoff] = useState("25");
-  const [payrollPayout, setPayrollPayout] = useState("1st");
+  const [payrollPayout, setPayrollPayout] = useState("30th");
   const [prGrossStructure] = useState("₹45,000 Avg");
-  const [prComponentsCount] = useState(6);
+  const [prComponentsCount, setPrComponentsCount] = useState(6);
   const [prNextRun] = useState("May 01, 2026");
 
-  const [prLastUpdatedBy, setPrLastUpdatedBy] = useState(
-    "Ryan Park (Super Admin)",
-  );
-  const [prLastUpdatedTime, setPrLastUpdatedTime] = useState(
-    "2026-04-25 09:45 AM",
-  );
+  const [prLastUpdatedBy, setPrLastUpdatedBy] = useState("Finance Admin");
+  const [prLastUpdatedTime, setPrLastUpdatedTime] = useState("Just now");
 
   // Attendance Rules
   const [prLopEnabled, setPrLopEnabled] = useState(true);
@@ -1396,7 +1459,7 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
 
   // Payslip Settings
   const [prPayslipLogo, setPrPayslipLogo] = useState(true);
-  const [prPayslipTemplate, setPrPayslipTemplate] = useState("Classic Green");
+  const [prPayslipTemplate, setPrPayslipTemplate] = useState("Modern Sleek");
   const [prAutoEmail, setPrAutoEmail] = useState(true);
 
   // Compliance
@@ -1405,121 +1468,71 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
   const [prTaxMode, setPrTaxMode] = useState("New Regime (Default)");
 
   // SalaryComponent is exported at module scope
+  const [salaryComponentsList, setSalaryComponentsList] = useState<SalaryComponent[]>([]);
 
-  const [salaryComponentsList] = useState<SalaryComponent[]>([
-    {
-      name: "Basic Pay",
-      type: "Earning",
-      amountType: "Percentage",
-      value: "50% of CTC",
-      taxable: true,
-    },
-    {
-      name: "HRA",
-      type: "Earning",
-      amountType: "Percentage",
-      value: "40% of Basic",
-      taxable: true,
-    },
-    {
-      name: "Conveyance",
-      type: "Earning",
-      amountType: "Fixed",
-      value: "₹1,600",
-      taxable: false,
-    },
-    {
-      name: "Medical",
-      type: "Earning",
-      amountType: "Fixed",
-      value: "₹1,250",
-      taxable: false,
-    },
-    {
-      name: "Special Allowance",
-      type: "Earning",
-      amountType: "Fixed",
-      value: "Variable",
-      taxable: true,
-    },
-    {
-      name: "Bonus",
-      type: "Earning",
-      amountType: "Fixed",
-      value: "Variable",
-      taxable: true,
-    },
-    {
-      name: "PF",
-      type: "Deduction",
-      amountType: "Percentage",
-      value: "12% of Basic",
-      taxable: false,
-    },
-    {
-      name: "ESI",
-      type: "Deduction",
-      amountType: "Percentage",
-      value: "0.75% of Gross",
-      taxable: false,
-    },
-    {
-      name: "Professional Tax",
-      type: "Deduction",
-      amountType: "Fixed",
-      value: "₹200",
-      taxable: false,
-    },
-    {
-      name: "Income Tax",
-      type: "Deduction",
-      amountType: "Percentage",
-      value: "Slab based",
-      taxable: false,
-    },
-    {
-      name: "Loan Recovery",
-      type: "Deduction",
-      amountType: "Fixed",
-      value: "Based on Plan",
-      taxable: false,
-    },
-  ]);
+  // Sync with payrollSettingsService (tenant-scoped)
+  useEffect(() => {
+    const orgId = user?.organizationId || "";
+    const syncSettings = () => {
+      const s = payrollSettingsService.getSettings(orgId);
+      setPayrollCycle(s.payCycle.frequency);
+      setPayrollCutoff(s.payCycle.cutoffDay || s.payCycle.processingDate);
+      setPayrollPayout(s.payCycle.payoutDate);
+      setPrLastUpdatedBy(s.lastUpdatedBy);
+      setPrLastUpdatedTime(s.lastUpdatedTime);
+      setPrLopEnabled(s.attendanceRules.lopEnabled);
+      setPrHalfDayCalc(s.attendanceRules.halfDayCalcTrigger);
+      setPrOtPay(s.attendanceRules.otPayEnabled);
+      setPrPfRate(`${s.pfConfig.employeeContrib}%`);
+      setPrEsiRate(`${s.esiConfig.employeeContrib}%`);
+      setPrTaxMode(s.tdsConfig.activeRegime === "newRegime" ? "New Regime (Default)" : "Old Regime");
+      setPrPayslipTemplate(s.payslipTemplate.name || "Modern Sleek");
+      setPrAutoEmail(s.payslipTemplate.autoEmail);
+      setPrComponentsCount(s.salaryComponents.filter((c) => c.type === "Earnings").length);
+      setSalaryComponentsList(
+        s.salaryComponents.map((c) => ({
+          id: c.id,
+          name: c.name,
+          type: c.type === "Earnings" ? "Earning" : "Deduction",
+          amountType: c.calculationBasis === "Fixed" ? "Fixed" : "Percentage",
+          value: c.formula || (c.fixedAmount ? `₹${c.fixedAmount}` : `${c.percentageValue}%`),
+          taxable: c.taxable,
+        }))
+      );
+    };
+
+    syncSettings();
+    const unsubscribe = payrollSettingsService.subscribe(syncSettings);
+    return unsubscribe;
+  }, [user?.organizationId]);
 
   const handlePayrollSubmit = () => {
     setIsSubmitting(true);
+    const orgId = user?.organizationId || "";
     setTimeout(() => {
-      setPrLastUpdatedBy("Ryan Park (Super Admin)");
-      const now = new Date();
-      setPrLastUpdatedTime(
-        `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`,
+      payrollSettingsService.updatePayCycle(
+        {
+          frequency: payrollCycle as any,
+          cutoffDay: payrollCutoff,
+          payoutDate: payrollPayout,
+        },
+        orgId,
+        user?.name || "Super Admin"
       );
       setIsSubmitting(false);
       showToast("Payroll settings updated successfully", "success");
       setActiveModal(null);
-    }, 1500);
+    }, 400);
   };
 
   const handleResetPayroll = () => {
     setIsSubmitting(true);
+    const orgId = user?.organizationId || "";
     setTimeout(() => {
-      setPayrollCycle("Monthly");
-      setPayrollCutoff("25");
-      setPayrollPayout("1st");
-      setPrLopEnabled(true);
-      setPrHalfDayCalc("Under 4 hours");
-      setPrOtPay(true);
-      setPrLateDeduct(false);
-      setPrPayslipLogo(true);
-      setPrPayslipTemplate("Classic Green");
-      setPrAutoEmail(true);
-
-      setPrPfRate("12%");
-      setPrEsiRate("0.75%");
-      setPrTaxMode("New Regime (Default)");
+      payrollSettingsService.resetToDefault(orgId, user?.name || "Super Admin");
       setIsSubmitting(false);
       showToast("Payroll settings reset to default", "success");
-    }, 1000);
+    }, 400);
   };
 
   // Performance Settings states
@@ -2138,6 +2151,16 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
     getStatusStyles,
     getRoleStyles,
 
+    // Policies Management
+    policiesList,
+    setPoliciesList,
+    selectedPolicy,
+    setSelectedPolicy,
+    policyForm,
+    setPolicyForm,
+    handleSavePolicySubmit,
+    handleArchivePolicySubmit,
+
     // UI helpers
     SectionTitle,
   };
@@ -2146,8 +2169,6 @@ export function useSettingsProviderValue(defaultTab: string = "company") {
 }
 
 export type SettingsContextType = ReturnType<typeof useSettingsProviderValue>;
-
-export const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export function useSettingsContext() {
   const ctx = useContext(SettingsContext);

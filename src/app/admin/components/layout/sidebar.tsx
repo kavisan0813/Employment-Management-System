@@ -15,6 +15,7 @@ import {
   Megaphone,
   User,
   LogOut,
+  Sliders,
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
 
@@ -70,35 +71,14 @@ export function Sidebar() {
           icon: ShieldCheck,
           path: "/platform-admin/roles",
         },
-      ],
-    },
-    /* {
-      title: "Workforce System",
-      id: "workforce",
-      items: [
-        { id: "shiftTemplates", label: "Shifts", icon: Cpu, path: "/platform-admin/shifts" },
-        { id: "biometricGateways", label: "Biometrics", icon: Fingerprint, path: "/platform-admin/biometrics" },
-        { id: "complianceRules", label: "Compliance", icon: Layers, path: "/platform-admin/compliance" }
-      ]
-    }, */
-    /*  {
-      title: "Security & API",
-      id: "security_api",
-      items: [
         {
-          id: "featureFlags",
-          label: "Feature Flags",
-          icon: ToggleLeft,
+          id: "featureManagement",
+          label: "Feature Management",
+          icon: Sliders,
           path: "/platform-admin/features",
         },
-        {
-          id: "roleTemplates",
-          label: "Roles",
-          icon: ShieldAlert,
-          path: "/platform-admin/roles",
-        },
       ],
-    }, */
+    },
     {
       title: "SLA & Helpdesk",
       id: "helpdesk",
@@ -115,18 +95,6 @@ export function Sidebar() {
           icon: Megaphone,
           path: "/platform-admin/communication",
         },
-        /*  {
-          id: "auditLogs",
-          label: "Audit Logs",
-          icon: History,
-          path: "/platform-admin/audit-logs",
-        }, */
-        // {
-        //   id: "notifications",
-        //   label: "Notifications",
-        //   icon: Bell,
-        //   path: "/platform-admin/notifications",
-        // },
       ],
     },
     {
@@ -178,11 +146,10 @@ export function Sidebar() {
                   <NavLink
                     key={item.id}
                     to={item.path}
-                    className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                      isActive
-                        ? "bg-indigo-50/70 text-indigo-800"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"
-                    }`}
+                    className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${isActive
+                      ? "bg-indigo-50/70 text-indigo-800"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-950"
+                      }`}
                   >
                     <IconComp
                       className={`w-4 h-4 ${isActive ? "text-indigo-600" : "text-gray-400"}`}
@@ -231,5 +198,3 @@ export function Sidebar() {
     </aside>
   );
 }
-
-export { Sidebar as SidebarNav };

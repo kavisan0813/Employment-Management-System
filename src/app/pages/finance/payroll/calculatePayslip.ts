@@ -1,9 +1,8 @@
 /**
- * Payroll Engine — Pure Calculation Functions
+ * Payroll Engine — Pure Calculation Functions & Statutory Rule Evaluator
  *
- * PURE FUNCTIONS — no React, no state, no side effects, no localStorage.
- * Input: salary structure + working days + LOP → Output: payslip.
- * This file can be unit-tested independently.
+ * PURE FUNCTIONS — deterministic calculations for salary structure,
+ * LOP, overtime, incentives, statutory PF/ESI/PT/TDS rules, and gratuity.
  */
 
 import type {
@@ -11,70 +10,232 @@ import type {
   Payslip,
   PayslipEarnings,
   PayslipDeductions,
+  EmployerContributions,
+  PayrollSettingsState,
 } from "./payroll.types";
 
 /* ═══════════════════════════════════════════════════════════════════
- * HELPER: Professional Tax (PT)
- *
- * Slab-based monthly PT by state.
- * Values match FinancePayrollSettings.tsx defaults for Maharashtra
- * and Karnataka. Other states default to ₹200.
+ * FORMULA EVALUATOR (Safe, non-eval)
  * ═══════════════════════════════════════════════════════════════════ */
 
-const PT_SLABS: Record<string, { min: number; max: number; amount: number }[]> =
-  {
-    Maharashtra: [
-      { min: 0, max: 7500, amount: 0 },
-      { min: 7501, max: 10000, amount: 175 },
-      { min: 10001, max: Infinity, amount: 200 },
-    ],
-    Karnataka: [
-      { min: 0, max: 25000, amount: 0 },
-      { min: 25001, max: Infinity, amount: 200 },
-    ],
-    "Tamil Nadu": [
-      { min: 0, max: 21000, amount: 0 },
-      { min: 21001, max: 30000, amount: 135 },
-      { min: 30001, max: 45000, amount: 315 },
-      { min: 45001, max: 60000, amount: 690 },
-      { min: 60001, max: Infinity, amount: 1025 },
-    ],
-  };
-
 /**
- * Returns monthly Professional Tax based on gross salary and state.
- *
- * @param monthlyGross - Prorated gross salary for the month
- * @param state - State code (e.g. "Maharashtra", "Karnataka")
- * @returns PT amount in INR
+ * Safely evaluates salary component formula without using eval().
+ * Supports expressions such as:
+ * - "40% of Basic"
+ * - "10% of Gross"
+ * - "Basic * 0.4"
+ * - "Basic + HRA"
+ * - "15% of CTC"
  */
+export function evaluateFormula(
+  formula: string,
+  context: Record<string, number>,
+): number {
+  if (!formula || typeof formula !== "string") return 0;
+  const trimmed = formula.trim();
+  if (!trimmed) return 0;
+
+  // Handle "X% of Y" pattern e.g. "40% of Basic", "10% of Gross"
+  const pctOfMatch = trimmed.match(/^(\d+(?:\.\d+)?)%\s+of\s+(.+)$/i);
+  if (pctOfMatch) {
+    const pct = parseFloat(pctOfMatch[1]);
+    const targetKey = pctOfMatch[2].trim();
+    const baseValue = lookupContextValue(targetKey, context);
+    return Math.round((pct / 100) * baseValue);
+  }
+
+  // Replace variable identifiers with numerical values from context
+  let sanitized = trimmed;
+  const keys = Object.keys(context).sort((a, b) => b.length - a.length);
+  for (const key of keys) {
+    const val = context[key] ?? 0;
+    const regex = new RegExp(`\\b${escapeRegExp(key)}\\b`, "gi");
+    sanitized = sanitized.replace(regex, String(val));
+  }
+
+  // Convert remaining percentage patterns (e.g. "40%") to fraction (40/100)
+  sanitized = sanitized.replace(/(\d+(?:\.\d+)?)%/g, "($1/100)");
+
+  return safeMathEval(sanitized);
+}
+
+function lookupContextValue(key: string, context: Record<string, number>): number {
+  const lowerKey = key.toLowerCase();
+  for (const [k, v] of Object.entries(context)) {
+    if (k.toLowerCase() === lowerKey) return v;
+  }
+  return 0;
+}
+
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function safeMathEval(expr: string): number {
+  try {
+    if (!expr || typeof expr !== "string") return 0;
+    // Only allow digits, decimals, +, -, *, /, (, ), spaces
+    if (/[^0-9\.\+\-\*\/\(\)\s]/.test(expr)) {
+      return 0;
+    }
+
+    let pos = 0;
+
+    const skipWhitespace = () => {
+      while (pos < expr.length && /\s/.test(expr[pos])) {
+        pos++;
+      }
+    };
+
+    const parseFactor = (): number => {
+      skipWhitespace();
+      if (pos >= expr.length) return 0;
+
+      if (expr[pos] === "+") {
+        pos++;
+        return parseFactor();
+      }
+      if (expr[pos] === "-") {
+        pos++;
+        return -parseFactor();
+      }
+
+      if (expr[pos] === "(") {
+        pos++;
+        const val = parseExpression();
+        skipWhitespace();
+        if (pos < expr.length && expr[pos] === ")") {
+          pos++;
+        }
+        return val;
+      }
+
+      const start = pos;
+      while (pos < expr.length && /[0-9\.]/.test(expr[pos])) {
+        pos++;
+      }
+
+      if (start === pos) return 0;
+
+      const val = parseFloat(expr.slice(start, pos));
+      return isNaN(val) ? 0 : val;
+    };
+
+    const parseTerm = (): number => {
+      let left = parseFactor();
+      while (true) {
+        skipWhitespace();
+        if (pos >= expr.length) break;
+        const op = expr[pos];
+        if (op === "*" || op === "/") {
+          pos++;
+          const right = parseFactor();
+          if (op === "*") {
+            left = left * right;
+          } else {
+            left = right !== 0 ? left / right : 0;
+          }
+        } else {
+          break;
+        }
+      }
+      return left;
+    };
+
+    const parseExpression = (): number => {
+      let left = parseTerm();
+      while (true) {
+        skipWhitespace();
+        if (pos >= expr.length) break;
+        const op = expr[pos];
+        if (op === "+" || op === "-") {
+          pos++;
+          const right = parseTerm();
+          if (op === "+") {
+            left = left + right;
+          } else {
+            left = left - right;
+          }
+        } else {
+          break;
+        }
+      }
+      return left;
+    };
+
+    const result = parseExpression();
+    skipWhitespace();
+    if (pos < expr.length) {
+      return 0;
+    }
+
+    if (typeof result === "number" && !isNaN(result) && isFinite(result)) {
+      return Math.round(result);
+    }
+  } catch (e) {
+    console.warn("Payroll formula evaluation warning:", expr, e);
+  }
+  return 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * HELPER: Professional Tax (PT)
+ * ═══════════════════════════════════════════════════════════════════ */
+
+const DEFAULT_PT_SLABS: Record<string, { min: number; max: number; amount: number }[]> = {
+  Maharashtra: [
+    { min: 0, max: 7500, amount: 0 },
+    { min: 7501, max: 10000, amount: 175 },
+    { min: 10001, max: Infinity, amount: 200 },
+  ],
+  Karnataka: [
+    { min: 0, max: 25000, amount: 0 },
+    { min: 25001, max: Infinity, amount: 200 },
+  ],
+  "Tamil Nadu": [
+    { min: 0, max: 21000, amount: 0 },
+    { min: 21001, max: 30000, amount: 135 },
+    { min: 30001, max: 45000, amount: 315 },
+    { min: 45001, max: 60000, amount: 690 },
+    { min: 60001, max: Infinity, amount: 1025 },
+  ],
+};
+
 export function getProfessionalTax(
   monthlyGross: number,
   state: string,
+  customSlabs?: { state: string; minSalary: number; maxSalary: number; amount: number }[],
 ): number {
-  const slabs = PT_SLABS[state];
-  if (!slabs) {
-    // Default: ₹200 if gross > ₹15,000, else ₹0
+  if (customSlabs && customSlabs.length > 0) {
+    const matchingStateSlabs = customSlabs.filter(
+      (s) => s.state.toLowerCase() === state.toLowerCase(),
+    );
+    if (matchingStateSlabs.length > 0) {
+      for (const slab of matchingStateSlabs) {
+        if (monthlyGross >= slab.minSalary && monthlyGross <= slab.maxSalary) {
+          return slab.amount;
+        }
+      }
+    }
+  }
+
+  const defaultSlabs = DEFAULT_PT_SLABS[state];
+  if (!defaultSlabs) {
     return monthlyGross > 15000 ? 200 : 0;
   }
-  for (const slab of slabs) {
+  for (const slab of defaultSlabs) {
     if (monthlyGross >= slab.min && monthlyGross <= slab.max) {
       return slab.amount;
     }
   }
-  return 200; // fallback
+  return 200;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
- * HELPER: TDS (Income Tax) — Simplified Estimate
- *
- * ⚠️ SIMPLIFIED: Real TDS computation requires employee declarations
- * (80C, 80D, HRA exemption, regime choice etc.). This is a rough
- * monthly estimate using the New Tax Regime FY 2025-26 slabs applied
- * to annual CTC. Suitable for demo/prototype purposes only.
+ * HELPER: TDS (Income Tax)
  * ═══════════════════════════════════════════════════════════════════ */
 
-const NEW_REGIME_SLABS: { min: number; max: number; rate: number }[] = [
+const NEW_REGIME_SLABS = [
   { min: 0, max: 300000, rate: 0 },
   { min: 300001, max: 700000, rate: 0.05 },
   { min: 700001, max: 1000000, rate: 0.1 },
@@ -83,132 +244,159 @@ const NEW_REGIME_SLABS: { min: number; max: number; rate: number }[] = [
   { min: 1500001, max: Infinity, rate: 0.3 },
 ];
 
-/**
- * Returns estimated monthly TDS based on annual CTC.
- *
- * Uses New Tax Regime slabs. Returns ₹0 if CTC ≤ standard deduction
- * threshold. Includes 4% Health & Education Cess.
- *
- * @param annualCTC - Annual CTC in INR
- * @returns Estimated monthly TDS in INR (rounded)
- */
-export function estimateTDS(annualCTC: number): number {
-  // Standard deduction of ₹75,000 (Budget 2024)
-  const taxableIncome = Math.max(0, annualCTC - 75000);
+const OLD_REGIME_SLABS = [
+  { min: 0, max: 250000, rate: 0 },
+  { min: 250001, max: 500000, rate: 0.05 },
+  { min: 500001, max: 1000000, rate: 0.2 },
+  { min: 1000001, max: Infinity, rate: 0.3 },
+];
+
+export function estimateTDS(
+  annualCTC: number,
+  regime: "oldRegime" | "newRegime" = "newRegime",
+): number {
+  const stdDeduction = regime === "newRegime" ? 75000 : 50000;
+  const taxableIncome = Math.max(0, annualCTC - stdDeduction);
 
   if (taxableIncome <= 0) return 0;
 
+  const slabs = regime === "newRegime" ? NEW_REGIME_SLABS : OLD_REGIME_SLABS;
   let annualTax = 0;
-  for (const slab of NEW_REGIME_SLABS) {
+  for (const slab of slabs) {
     if (taxableIncome > slab.min) {
       const taxableInSlab = Math.min(taxableIncome, slab.max) - slab.min;
       annualTax += taxableInSlab * slab.rate;
     }
   }
 
-  // Add 4% Health & Education Cess
+  // 4% Health & Education Cess
   annualTax = annualTax * 1.04;
-
-  // Monthly estimate
   return Math.round(annualTax / 12);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
- * MAIN: calculatePayslip — Pure Function
- *
- * Takes a salary structure and attendance data, returns a fully
- * computed payslip with earnings, statutory deductions, and net pay.
+ * OPTIONS & MAIN CALCULATION
  * ═══════════════════════════════════════════════════════════════════ */
 
+export interface CalculatePayslipOptions {
+  bonus?: number;
+  incentives?: number;
+  overtimeHours?: number;
+  overtimeMultiplier?: number;
+  regime?: "oldRegime" | "newRegime";
+  settings?: PayrollSettingsState;
+}
+
 /**
- * Calculates a single employee's payslip for a given month.
- *
- * @param structure - Employee's salary structure
- * @param totalWorkingDays - Total working days in the month (e.g. 22)
- * @param lopDays - Number of Loss-of-Pay (absent) days
- * @param month - Month label (e.g. "July 2026")
- * @returns Fully computed Payslip object
- *
- * @example
- * // Employee: CTC ₹6,00,000 (Basic ₹25,000, HRA ₹10,000, Allow ₹15,000)
- * // Full attendance (22 working days, 0 LOP), PF applicable, Maharashtra
- * //
- * // Earnings: Basic=25000, HRA=10000, Allowances=15000, Gross=50000
- * // Deductions: PF=3000 (12% of 25000), ESI=0 (gross>21000), PT=200, TDS≈1517
- * // Net ≈ 50000 - 4717 = ₹45,283
- *
- * @example
- * // Employee: CTC ₹12,00,000 (Basic ₹50,000, HRA ₹20,000, Allow ₹30,000)
- * // Full attendance, PF applicable, Karnataka
- * //
- * // Earnings: Gross = 100000
- * // Deductions: PF=6000 (12% of 50000), ESI=0 (gross>21000), PT=200, TDS≈5850
- * // Net ≈ 100000 - 12050 = ₹87,950
- *
- * @example
- * // Employee: CTC ₹3,00,000 (Basic ₹12,500, HRA ₹5,000, Allow ₹7,500)
- * // 2 LOP days out of 22 working days, PF + ESI applicable, Maharashtra
- * //
- * // Proration: payableDays=20, ratio=20/22 ≈ 0.909
- * // Earnings: Basic≈11364, HRA≈4545, Allow≈6818, Gross≈22727
- * // Deductions: PF≈1364, ESI=0 (gross>21000), PT=200, TDS≈0 (CTC<3.75L)
- * // Net ≈ 22727 - 1564 = ₹21,163
- *
- * @example
- * // Employee: CTC ₹2,40,000 (Basic ₹10,000, HRA ₹4,000, Allow ₹6,000)
- * // Full attendance, PF + ESI applicable, Maharashtra
- * //
- * // Earnings: Gross = 20000
- * // Deductions: PF=1200, ESI=150 (0.75% of 20000, gross<=21000), PT=200, TDS=0
- * // Net = 20000 - 1550 = ₹18,450
+ * Calculates a single employee's payslip for a given month with full statutory & settings rules.
  */
 export function calculatePayslip(
   structure: SalaryStructure,
   totalWorkingDays: number,
   lopDays: number,
   month: string,
-  bonus: number = 0,
+  bonusOrOptions: number | CalculatePayslipOptions = 0,
 ): Payslip {
-  // Validate inputs
-  const safeTotalDays = Math.max(1, totalWorkingDays);
-  const safeLopDays = Math.max(0, Math.min(lopDays, safeTotalDays));
+  // Normalize options
+  let opts: CalculatePayslipOptions = {};
+  if (typeof bonusOrOptions === "number") {
+    opts = { bonus: bonusOrOptions };
+  } else if (bonusOrOptions && typeof bonusOrOptions === "object") {
+    opts = bonusOrOptions;
+  }
+
+  const bonus = Math.max(0, opts.bonus || 0);
+  const incentives = Math.max(0, opts.incentives || 0);
+  const overtimeHours = Math.max(0, opts.overtimeHours || 0);
+  const overtimeMultiplier = Math.max(1, opts.overtimeMultiplier || 1.5);
+  const settings = opts.settings;
+  const regime = opts.regime || settings?.tdsConfig?.activeRegime || "newRegime";
+
+  // Validate days & proration
+  const safeTotalDays = Math.max(1, totalWorkingDays || 22);
+  const safeLopDays = Math.max(0, Math.min(lopDays || 0, safeTotalDays));
   const payableDays = safeTotalDays - safeLopDays;
   const prorationRatio = payableDays / safeTotalDays;
 
-  // ── Earnings (prorated) ──────────────────────────────────────────
-  const proratedBasic = Math.round(structure.basic * prorationRatio);
-  const proratedHRA = Math.round(structure.hra * prorationRatio);
-  const proratedAllowances = Math.round(structure.allowances * prorationRatio);
-  const gross = proratedBasic + proratedHRA + proratedAllowances + bonus;
+  // ── Prorated Core Earnings ─────────────────────────────────────────
+  const proratedBasic = Math.round((structure.basic || 0) * prorationRatio);
+  const proratedHRA = Math.round((structure.hra || 0) * prorationRatio);
+  const proratedAllowances = Math.round((structure.allowances || 0) * prorationRatio);
+
+  // Overtime Calculation: hourlyRate = Basic / (workingDays * 8)
+  const hourlyRate = (proratedBasic > 0 ? proratedBasic : structure.basic || 0) / (safeTotalDays * 8);
+  const overtimePay = Math.round(overtimeHours * hourlyRate * overtimeMultiplier);
+
+  // Total Gross
+  const gross = proratedBasic + proratedHRA + proratedAllowances + overtimePay + bonus + incentives;
 
   const earnings: PayslipEarnings = {
     basic: proratedBasic,
     hra: proratedHRA,
     allowances: proratedAllowances,
+    overtimePay,
+    incentives,
     bonus,
     gross,
   };
 
   // ── Deductions ───────────────────────────────────────────────────
 
-  // PF: 12% of basic (capped at ₹15,000 wage ceiling if applicable)
+  // PF Calculation
   let pf = 0;
-  if (structure.pfApplicable) {
-    const pfWage = Math.min(proratedBasic, 15000);
-    pf = Math.round(pfWage * 0.12);
+  let employerPf = 0;
+  const pfEnabled = settings?.pfConfig ? settings.pfConfig.enabled : true;
+  if (structure.pfApplicable && pfEnabled) {
+    const pfCeiling = settings?.pfConfig?.wageCeiling
+      ? parseFloat(settings.pfConfig.wageCeiling)
+      : 15000;
+    const pfWage = Math.min(proratedBasic, pfCeiling);
+
+    const empRate = settings?.pfConfig?.employeeContrib
+      ? parseFloat(settings.pfConfig.employeeContrib) / 100
+      : 0.12;
+    const emprRate = settings?.pfConfig?.employerContrib
+      ? parseFloat(settings.pfConfig.employerContrib) / 100
+      : 0.12;
+
+    pf = Math.round(pfWage * empRate);
+    employerPf = Math.round(pfWage * emprRate);
   }
 
-  // ESI: 0.75% of gross, only if gross ≤ ₹21,000
+  // ESI Calculation
   let esi = 0;
-  if (structure.esiApplicable && gross <= 21000) {
-    esi = Math.round(gross * 0.0075);
+  let employerEsi = 0;
+  const esiEnabled = settings?.esiConfig ? settings.esiConfig.enabled : true;
+  const esiLimit = settings?.esiConfig?.salaryLimit
+    ? parseFloat(settings.esiConfig.salaryLimit)
+    : 21000;
+
+  if (structure.esiApplicable && esiEnabled && gross <= esiLimit) {
+    const empRate = settings?.esiConfig?.employeeContrib
+      ? parseFloat(settings.esiConfig.employeeContrib) / 100
+      : 0.0075;
+    const emprRate = settings?.esiConfig?.employerContrib
+      ? parseFloat(settings.esiConfig.employerContrib) / 100
+      : 0.0325;
+
+    esi = Math.round(gross * empRate);
+    employerEsi = Math.round(gross * emprRate);
   }
 
-  // Professional Tax: state slab-based
-  const pt = getProfessionalTax(gross, structure.ptState);
+  // Professional Tax
+  let pt = 0;
+  const ptEnabled = settings?.ptConfig ? settings.ptConfig.enabled : true;
+  if (ptEnabled) {
+    const customPtSlabs = settings?.ptConfig?.slabs;
+    pt = getProfessionalTax(gross, structure.ptState, customPtSlabs);
+  }
 
-  // TDS: simplified estimate from annual CTC
-  const tds = estimateTDS(structure.ctc);
+  // TDS Calculation
+  let tds = 0;
+  const tdsEnabled = settings?.tdsConfig ? settings.tdsConfig.enabled : true;
+  if (tdsEnabled) {
+    tds = estimateTDS(structure.ctc, regime);
+  }
 
   const totalDeductions = pf + esi + pt + tds;
 
@@ -220,7 +408,22 @@ export function calculatePayslip(
     total: totalDeductions,
   };
 
-  // ── Net Pay ──────────────────────────────────────────────────────
+  // Gratuity Accrual (Employer Liability Provision)
+  const gratuityEnabled = settings?.gratuityConfig ? settings.gratuityConfig.enabled : true;
+  let gratuityAccrual = 0;
+  if (gratuityEnabled) {
+    // Statutory Gratuity Provision Formula: (15 / 26) * (Basic / 12)
+    gratuityAccrual = Math.round((15 / 26) * (proratedBasic / 12));
+  }
+
+  const employerContributions: EmployerContributions = {
+    pf: employerPf,
+    esi: employerEsi,
+    gratuity: gratuityAccrual,
+    total: employerPf + employerEsi + gratuityAccrual,
+  };
+
+  // ── Net Pay Calculation ──────────────────────────────────────────
   const netPay = Math.max(0, gross - totalDeductions);
 
   return {
@@ -234,9 +437,14 @@ export function calculatePayslip(
     totalWorkingDays: safeTotalDays,
     payableDays,
     lopDays: safeLopDays,
+    overtimeHours,
     earnings,
     deductions,
+    employerContributions,
     bonus,
+    incentives,
+    overtimePay,
+    regimeUsed: regime,
     netPay,
   };
 }

@@ -195,6 +195,7 @@ export function FinanceIncrement() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(url);
       setIsExporting(false);
       setShowExportModal(false);
       showToast(
@@ -476,7 +477,7 @@ export function FinanceIncrement() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-lg text-[11px] font-black ${emp.attendancePct >= 95 ? "bg-emerald-500/10 text-emerald-600" : emp.attendancePct >= 90 ? "bg-blue-500/10 text-blue-600" : "bg-rose-500/10 text-rose-600"}`}
+                      className={`px-2.5 py-0.5 rounded-lg text-[11px] font-black ${emp.attendancePct >= 95 ? "bg-emerald-500/10 text-emerald-600" : emp.attendancePct >= 90 ? "bg-blue-500/10 text-blue-600" : "bg-rose-500/10 text-rose-600"}`}
                     >
                       {emp.attendancePct}%
                     </span>

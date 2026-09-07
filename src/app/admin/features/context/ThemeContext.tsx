@@ -1,6 +1,5 @@
 import React, {
   createContext,
-  useContext,
   useEffect,
   useState,
   useMemo,
@@ -52,12 +51,4 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
-}
-
-export function useThemeContext() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) {
-    throw new Error("useThemeContext must be used within a ThemeProvider");
-  }
-  return ctx;
 }

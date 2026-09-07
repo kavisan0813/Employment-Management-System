@@ -146,6 +146,8 @@ export interface ExitEmployee {
   totalDeductions?: number;
   ffApprovedBy?: string;
   ffApprovedDate?: string;
+  settlementStatus?: string;
+  paymentStatus?: string;
   reason?: string;
   createdBy?: string;
   createdDate?: string;

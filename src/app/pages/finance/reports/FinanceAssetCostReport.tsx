@@ -35,6 +35,7 @@ const FinanceAssetCostChart = React.lazy(
 );
 import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
+import { useAuth } from "../../../context/AuthContext";
 
 /* ─── Adjusted Mock Data to match user KPIs: ₹2.4Cr, ₹42L, ₹8L, 14 ─── */
 import * as m from "motion/react-m";
@@ -563,6 +564,7 @@ function SortIcon({
 }
 export function FinanceAssetCostReport() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState<string>("category");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
@@ -576,6 +578,18 @@ export function FinanceAssetCostReport() {
   const [selectedCatFilter, setSelectedCatFilter] = useState("All Categories");
   const [showFYDropdown, setShowFYDropdown] = useState(false);
   const [showCatDropdown, setShowCatDropdown] = useState(false);
+
+  if (!user?.organizationId) {
+    return (
+      <div className="p-8 text-center bg-card rounded-2xl border border-border my-8 max-w-2xl mx-auto shadow-sm">
+        <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto mb-3 border border-amber-500/20">
+          <AlertTriangle size={24} />
+        </div>
+        <h3 className="text-lg font-bold text-foreground">Tenant Context Required</h3>
+        <p className="text-sm text-muted-foreground mt-1">Please log in to an active organization workspace to view asset financial reports.</p>
+      </div>
+    );
+  }
   const totalAssetValue = ASSET_COST_BY_CATEGORY.reduce(
     (s, c) => s + c.totalValue,
     0,

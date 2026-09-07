@@ -3,11 +3,9 @@
  *  DATA-DRIVEN SIDEBAR NAVIGATION
  *
  *  One flat navigation tree. Each item declares what permission
- *  is required to see it. The Sidebar iterates this tree and
- *  renders only the items the user's resolved permissions include.
- *
- *  This replaces the 5 hardcoded `if/else` role blocks that
- *  were previously in Sidebar.tsx.
+ *  and feature key is required to see it. The Sidebar iterates this
+ *  tree and renders only the items that pass both permission and
+ *  feature checks.
  * ─────────────────────────────────────────────────────────────────
  */
 
@@ -20,9 +18,11 @@ import {
   Home,
   Lock,
   Sprout,
+  Building2,
   type LucideIcon,
 } from "lucide-react";
 import { P } from "./permissions";
+import { FEATURE_KEYS, type FeatureKey } from "../feature-engine/featureRegistry";
 
 // ── Types ───────────────────────────────────────────────────────
 export interface NavItem {
@@ -30,6 +30,8 @@ export interface NavItem {
   path: string;
   /** Permission key(s) required to see this item. If empty, always visible. */
   requiredPermission?: string | string[];
+  /** Feature key required to see this item */
+  featureKey?: FeatureKey;
   disabled?: boolean;
 }
 
@@ -42,6 +44,8 @@ export interface NavGroup {
   items?: NavItem[];
   /** Permission required for the entire group. If omitted, group is visible if any child item is visible. */
   requiredPermission?: string | string[];
+  /** Feature key required for the entire group */
+  featureKey?: FeatureKey;
 }
 
 // ── Helper: check if a user has a required permission ───────────
@@ -57,15 +61,23 @@ export function hasRequiredPermission(
 
 /**
  * Filter the full navigation tree to only items the user can see.
- * Returns a new array with groups/items removed if the user lacks permission.
+ * Evaluates both Permission AND Feature enablement.
  */
 export function filterNavigation(
   groups: NavGroup[],
   userPermissions: Set<string>,
+  isFeatureEnabled?: (featureKey: string) => boolean,
 ): NavGroup[] {
   return groups
     .map((group) => {
-      // Check group-level permission
+      // Check group-level feature & permission
+      if (
+        group.featureKey &&
+        isFeatureEnabled &&
+        !isFeatureEnabled(group.featureKey)
+      ) {
+        return null;
+      }
       if (
         group.requiredPermission &&
         !hasRequiredPermission(userPermissions, group.requiredPermission)
@@ -75,9 +87,16 @@ export function filterNavigation(
 
       // If group has sub-items, filter them
       if (group.items) {
-        const filteredItems = group.items.filter((item) =>
-          hasRequiredPermission(userPermissions, item.requiredPermission),
-        );
+        const filteredItems = group.items.filter((item) => {
+          if (
+            item.featureKey &&
+            isFeatureEnabled &&
+            !isFeatureEnabled(item.featureKey)
+          ) {
+            return false;
+          }
+          return hasRequiredPermission(userPermissions, item.requiredPermission);
+        });
         // If no items remain visible, hide the entire group
         if (filteredItems.length === 0) return null;
         return { ...group, items: filteredItems };
@@ -89,9 +108,6 @@ export function filterNavigation(
 }
 
 // ── The full navigation tree ────────────────────────────────────
-// Every possible sidebar item for every role, annotated with
-// the permission required to see it. The Sidebar component calls
-// filterNavigation() with the user's resolved permission set.
 
 export const FULL_NAVIGATION: NavGroup[] = [
   // ━━━ Home ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -128,6 +144,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Reports & Analytics",
         path: "/reports",
+        featureKey: FEATURE_KEYS.REPORTS,
         requiredPermission: [
           P.REPORTS_ALL,
           P.REPORTS_ORG,
@@ -149,6 +166,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Employees",
         path: "/employees",
+        featureKey: FEATURE_KEYS.EMPLOYEES,
         requiredPermission: [
           P.EMPLOYEES_FULL,
           P.EMPLOYEES_MANAGE,
@@ -160,6 +178,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Departments",
         path: "/departments",
+        featureKey: FEATURE_KEYS.DEPARTMENTS,
         requiredPermission: [
           P.DEPARTMENTS_FULL,
           P.DEPARTMENTS_MANAGE,
@@ -169,6 +188,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Recruitment",
         path: "/recruitment",
+        featureKey: FEATURE_KEYS.RECRUITMENT,
         requiredPermission: [
           P.RECRUITMENT_FULL,
           P.RECRUITMENT_MANAGE,
@@ -178,12 +198,18 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Onboarding",
         path: "/onboarding",
+        featureKey: FEATURE_KEYS.ONBOARDING,
         requiredPermission: [P.ONBOARDING_FULL, P.ONBOARDING_MANAGE],
       },
       {
         label: "Offboarding",
         path: "/offboarding",
-        requiredPermission: [P.OFFBOARDING_FULL, P.OFFBOARDING_MANAGE],
+        featureKey: FEATURE_KEYS.OFFBOARDING,
+        requiredPermission: [
+          P.OFFBOARDING_FULL,
+          P.OFFBOARDING_MANAGE,
+          P.OFFBOARDING_VIEW,
+        ],
       },
     ],
   },
@@ -196,6 +222,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Attendance",
         path: "/attendance",
+        featureKey: FEATURE_KEYS.ATTENDANCE,
         requiredPermission: [
           P.ATTENDANCE_FULL,
           P.ATTENDANCE_MANAGE,
@@ -205,8 +232,9 @@ export const FULL_NAVIGATION: NavGroup[] = [
         ],
       },
       {
-        label: "Schedule",
+        label: "Schedule Management",
         path: "/schedule",
+        featureKey: FEATURE_KEYS.SCHEDULE,
         requiredPermission: [
           P.SCHEDULE_FULL,
           P.SCHEDULE_MANAGE,
@@ -216,6 +244,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Leave Management",
         path: "/leave",
+        featureKey: FEATURE_KEYS.LEAVE,
         requiredPermission: [
           P.LEAVE_FULL,
           P.LEAVE_MANAGE,
@@ -227,6 +256,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Performance",
         path: "/performance",
+        featureKey: FEATURE_KEYS.PERFORMANCE,
         requiredPermission: [
           P.PERFORMANCE_FULL,
           P.PERFORMANCE_VIEW,
@@ -238,16 +268,12 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Training",
         path: "/training",
+        featureKey: FEATURE_KEYS.TRAINING,
         requiredPermission: [
           P.TRAINING_FULL,
           P.TRAINING_MANAGE,
           P.TRAINING_ASSIGN,
         ],
-      },
-      {
-        label: "Documents",
-        path: "/documents",
-        requiredPermission: [P.DOCUMENTS_FULL, P.DOCUMENTS_MANAGE],
       },
     ],
   },
@@ -260,11 +286,13 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Payroll",
         path: "/payroll",
+        featureKey: FEATURE_KEYS.PAYROLL,
         requiredPermission: [P.PAYROLL_FULL, P.PAYROLL_VIEW, P.PAYROLL_MANAGE],
       },
       {
         label: "Expenses",
         path: "/expenses",
+        featureKey: FEATURE_KEYS.EXPENSES,
         requiredPermission: [
           P.EXPENSES_FULL,
           P.EXPENSES_FINAL_APPROVAL,
@@ -277,15 +305,18 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Asset Management",
         path: "/asset-management",
+        featureKey: FEATURE_KEYS.ASSETS,
         requiredPermission: [
           P.ASSETS_FULL,
           P.ASSETS_MANAGE,
           P.ASSETS_VIEW_COST,
+          P.ASSETS_VIEW,
         ],
       },
       {
         label: "Finance Clearance & F&F",
         path: "/finance/settlements",
+        featureKey: FEATURE_KEYS.SETTLEMENTS,
         requiredPermission: [
           P.OFFBOARDING_FINANCE_MANAGE,
           P.SETTLEMENTS_FULL,
@@ -296,6 +327,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Increment & Appraisal",
         path: "/appraisal",
+        featureKey: FEATURE_KEYS.PERFORMANCE,
         requiredPermission: [
           P.APPRAISAL_FULL,
           P.APPRAISAL_MANAGE,
@@ -306,6 +338,7 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Audit Logs",
         path: "/settings/audit-logs",
+        featureKey: FEATURE_KEYS.AUDIT_LOGS,
         requiredPermission: [P.AUDIT_LOGS_FULL, P.AUDIT_LOGS_VIEW],
       },
     ],
@@ -319,7 +352,14 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "Manage Account",
         path: "/admin/manage-account",
+        featureKey: FEATURE_KEYS.MANAGE_ACCOUNT,
         requiredPermission: [P.MANAGE_ACCOUNT_VIEW, P.MANAGE_ACCOUNT_MANAGE],
+      },
+      {
+        label: "Organization Management",
+        path: "/admin/organizations",
+        featureKey: FEATURE_KEYS.MANAGE_ACCOUNT,
+        requiredPermission: [P.MANAGE_ACCOUNT_MANAGE, P.MANAGE_ACCOUNT_VIEW],
       },
     ],
   },
@@ -338,66 +378,67 @@ export const FULL_NAVIGATION: NavGroup[] = [
       {
         label: "My Attendance",
         path: "/employee/attendance",
+        featureKey: FEATURE_KEYS.ATTENDANCE,
         requiredPermission: P.ATTENDANCE_SELF,
       },
       {
         label: "My Leaves",
         path: "/employee/leave",
+        featureKey: FEATURE_KEYS.LEAVE,
         requiredPermission: [P.LEAVE_SELF, P.LEAVE_APPLY],
       },
       {
         label: "My Payslips",
         path: "/payslips",
+        featureKey: FEATURE_KEYS.PAYROLL,
         requiredPermission: P.PAYROLL_PAYSLIPS,
       },
       {
         label: "My Schedule",
         path: "/employee/schedule",
+        featureKey: FEATURE_KEYS.SCHEDULE,
         requiredPermission: [P.SCHEDULE_SELF, P.SCHEDULE_VIEW],
       },
       {
         label: "My Performance",
         path: "/employee/performance",
+        featureKey: FEATURE_KEYS.PERFORMANCE,
         requiredPermission: P.PERFORMANCE_SELF,
       },
       {
         label: "My Training",
         path: "/training",
+        featureKey: FEATURE_KEYS.TRAINING,
         requiredPermission: P.TRAINING_LEARN,
-      },
-      {
-        label: "My Documents",
-        path: "/my-documents",
-        requiredPermission: P.DOCUMENTS_SELF,
       },
       {
         label: "My Expenses",
         path: "/expenses",
+        featureKey: FEATURE_KEYS.EXPENSES,
         requiredPermission: P.EXPENSES_SUBMIT,
       },
       {
         label: "My Assets",
         path: "/my-assets",
+        featureKey: FEATURE_KEYS.ASSETS,
         requiredPermission: P.ASSETS_SELF,
       },
       {
         label: "My Goals",
         path: "/goals",
+        featureKey: FEATURE_KEYS.GOALS,
         requiredPermission: [P.GOALS_SELF, P.GOALS_VIEW],
       },
       {
         label: "My Exit",
         path: "/my-exit",
+        featureKey: FEATURE_KEYS.OFFBOARDING,
         requiredPermission: P.MY_WORKSPACE_VIEW,
-      },
-      {
-        label: "My Profile",
-        path: "/profile",
-        requiredPermission: P.PROFILE_SELF,
       },
       {
         label: "Support Ticket",
         path: "/support",
+        featureKey: FEATURE_KEYS.SUPPORT,
         requiredPermission: P.SUPPORT_SELF,
       },
     ],
@@ -407,26 +448,19 @@ export const FULL_NAVIGATION: NavGroup[] = [
   {
     label: "My Journey",
     icon: Sprout,
+    featureKey: FEATURE_KEYS.ONBOARDING,
     requiredPermission: P.ONBOARDING_COMPLETE_TASKS,
     items: [
       {
         label: "🌱 My Onboarding",
         path: "/my-onboarding",
+        featureKey: FEATURE_KEYS.ONBOARDING,
         requiredPermission: P.ONBOARDING_COMPLETE_TASKS,
-      },
-      {
-        label: "My Profile",
-        path: "/profile",
-        requiredPermission: P.PROFILE_SELF,
-      },
-      {
-        label: "My Documents",
-        path: "/my-documents",
-        requiredPermission: P.DOCUMENTS_SELF,
       },
       {
         label: "My Training",
         path: "/training",
+        featureKey: FEATURE_KEYS.TRAINING,
         requiredPermission: P.TRAINING_LEARN,
       },
     ],

@@ -1,4 +1,5 @@
-import { ThumbsUp, Lightbulb, Rocket, CheckCircle2 } from "lucide-react";
+import React, { useState } from "react";
+import { ThumbsUp, Lightbulb, Rocket, CheckCircle2, Search } from "lucide-react";
 import type { FeatureRequest } from "../types/types";
 import { useSupportTickets } from "../hooks/useSupportTickets";
 
@@ -9,6 +10,18 @@ export function FeatureRequests({
   featureRequests: FeatureRequest[];
   actions: ReturnType<typeof useSupportTickets>["actions"];
 }) {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+
+  const filtered = featureRequests.filter((fr) => {
+    const matchSearch =
+      fr.featureName.toLowerCase().includes(search.toLowerCase()) ||
+      fr.description.toLowerCase().includes(search.toLowerCase()) ||
+      fr.organization.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === "ALL" || fr.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
+
   const statusColor = (s: string) => {
     if (s === "New") return "bg-blue-50 text-blue-700 border-blue-200";
     if (s === "Under Review")
@@ -33,17 +46,44 @@ export function FeatureRequests({
         <div>
           <h1 className="text-lg font-bold tracking-tight text-gray-900 flex items-center gap-2">
             <Lightbulb className="w-5 h-5 text-indigo-600" />
-            Feature Requests
+            Feature Update Requests
           </h1>
           <p className="text-sm text-gray-500 mt-1 font-semibold">
-            Customer-requested features with voting and roadmap tracking.
+            Customer feature update requests, vote counts, and roadmap tracking.
           </p>
         </div>
       </div>
 
       <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
+        {/* Filters */}
+        <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-xs flex flex-wrap items-center gap-3">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search feature update requests..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:border-indigo-500 font-medium"
+            />
+          </div>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium outline-none"
+          >
+            <option value="ALL">All Statuses</option>
+            <option value="New">New</option>
+            <option value="Under Review">Under Review</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Released">Released</option>
+          </select>
+        </div>
+
+        {/* Request Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[...featureRequests]
+          {[...filtered]
             .sort((a, b) => b.votes - a.votes)
             .map((fr) => (
               <div
@@ -92,6 +132,12 @@ export function FeatureRequests({
                 </div>
               </div>
             ))}
+
+          {filtered.length === 0 && (
+            <div className="col-span-full py-12 text-center text-gray-400 bg-white rounded-2xl border border-gray-200">
+              No feature update requests match your filter criteria.
+            </div>
+          )}
         </div>
       </div>
     </div>

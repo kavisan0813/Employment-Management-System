@@ -12,19 +12,6 @@
  */
 
 import { usePermissions } from "./PermissionContext";
-import { permissionKey } from "./permissions";
-
-/**
- * Check a single permission by module + action.
- *
- * @example
- * const canApproveLeave = usePermission("leave", "approve");
- * if (canApproveLeave) showApprovalButton();
- */
-export function usePermission(module: string, action: string): boolean {
-  const { hasPermission } = usePermissions();
-  return hasPermission(module, action);
-}
 
 /**
  * Check a single permission by its pre-built key.
@@ -38,40 +25,24 @@ export function usePermissionKey(key: string): boolean {
   return hasPermissionKey(key);
 }
 
-/**
- * Check if the user has ANY of the given permission keys.
- *
- * @example
- * const canSeeFinance = useHasAnyPermission([P.PAYROLL_VIEW, P.EXPENSES_VIEW]);
- */
+export function usePermission(module: string, action: string): boolean {
+  const { hasPermission } = usePermissions();
+  return hasPermission(module, action);
+}
+
 export function useHasAnyPermission(keys: string[]): boolean {
   const { hasAnyPermission } = usePermissions();
   return hasAnyPermission(keys);
 }
 
-/**
- * Check if the user has ALL of the given permission keys.
- *
- * @example
- * const isFullAdmin = useHasAllPermissions([P.SETTINGS_FULL, P.MANAGE_ACCOUNT_MANAGE]);
- */
 export function useHasAllPermissions(keys: string[]): boolean {
   const { hasAllPermissions } = usePermissions();
   return hasAllPermissions(keys);
 }
 
-/**
- * Non-hook version for use outside React components.
- * Takes the permission set directly instead of reading from context.
- *
- * @example
- * const perms = resolvePermissions(assignments);
- * if (checkPermission(perms, "leave", "approve")) { ... }
- */
 export function checkPermission(
-  permissions: Set<string>,
-  module: string,
-  action: string,
+  userPermissions: Set<string>,
+  key: string,
 ): boolean {
-  return permissions.has(permissionKey(module, action));
+  return userPermissions.has(key);
 }

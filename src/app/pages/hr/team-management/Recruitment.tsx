@@ -5365,7 +5365,7 @@ export function Recruitment() {
       }
     }
     // Deep clone the mock data recruitmentPipeline so we don't mutate global mock object
-    return JSON.parse(JSON.stringify(recruitmentPipeline)) as Record<
+    return structuredClone(recruitmentPipeline) as Record<
       Stage,
       Candidate[]
     >;

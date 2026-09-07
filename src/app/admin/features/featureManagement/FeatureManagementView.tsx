@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   ToggleLeft,
   Plus,
@@ -12,8 +12,12 @@ import {
 import { db } from "../../mockData";
 import { FeatureFlag } from "../../types";
 import { toast } from "sonner";
+import { notifyFeatureStateChange } from "../../../shared/feature-engine/featureEvents";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 
 export default function FeatureManagementView() {
+  const { hasPermissionKey } = usePermissions();
   const [flags, setFlags] = useState<FeatureFlag[]>(() => db.featureFlags.get());
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
@@ -34,6 +38,10 @@ export default function FeatureManagementView() {
   // Load flags
 
   const handleToggleStatus = (id: string) => {
+    if (!hasPermissionKey(P.PLATFORM_ADMIN_FULL)) {
+      toast.error("Permission denied: Action requires Platform Admin authorization.");
+      return;
+    }
     const updatedFlags = flags.map((flag) => {
       if (flag.id === id) {
         const nextStatus: "Active" | "Inactive" =
@@ -52,10 +60,16 @@ export default function FeatureManagementView() {
 
     setFlags(updatedFlags);
     db.featureFlags.save(updatedFlags);
+    notifyFeatureStateChange();
   };
 
   const handleAddFlagSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!hasPermissionKey(P.PLATFORM_ADMIN_FULL)) {
+      toast.error("Permission denied: Action requires Platform Admin authorization.");
+      return;
+    }
 
     if (!newFlag.key || !newFlag.name) {
       toast.error("Please enter both key and name.");
@@ -89,6 +103,7 @@ export default function FeatureManagementView() {
     const updatedList = [createdFlag, ...flags];
     setFlags(updatedList);
     db.featureFlags.save(updatedList);
+    notifyFeatureStateChange();
     setIsAddModalOpen(false);
 
     // Reset Form
@@ -190,36 +205,33 @@ export default function FeatureManagementView() {
           return (
             <div
               key={flag.id}
-              className={`bg-white rounded-2xl border p-5 flex flex-col justify-between shadow-xs transition-all relative ${
-                isActive
+              className={`bg-white rounded-2xl border p-5 flex flex-col justify-between shadow-xs transition-all relative ${isActive
                   ? "border-gray-200 hover:border-indigo-300 hover:shadow-md"
                   : "border-gray-150 bg-gray-50/30 opacity-80"
-              }`}
+                }`}
             >
               <div>
                 {/* Badge Category & Status */}
                 <div className="flex items-center justify-between mb-3.5">
                   <span
-                    className={`px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
-                      flag.category === "Core"
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${flag.category === "Core"
                         ? "bg-blue-50 text-blue-700 border border-blue-100"
                         : flag.category === "Beta"
                           ? "bg-purple-50 text-purple-700 border border-purple-100"
                           : flag.category === "Experimental"
                             ? "bg-amber-50 text-amber-700 border border-amber-100"
                             : "bg-gray-50 text-gray-600 border border-gray-150"
-                    }`}
+                      }`}
                   >
                     {flag.category}
                   </span>
 
                   <button
                     onClick={() => handleToggleStatus(flag.id)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer border ${
-                      isActive
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer border ${isActive
                         ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
                         : "bg-gray-100 text-gray-500 border-gray-300 hover:bg-gray-200"
-                    }`}
+                      }`}
                   >
                     {isActive ? (
                       <Play className="w-3 h-3 fill-current" />

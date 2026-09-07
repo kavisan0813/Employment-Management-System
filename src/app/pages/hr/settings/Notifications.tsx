@@ -1,5 +1,7 @@
-import { useEffect, useReducer, useCallback } from "react";
+import { useEffect, useReducer, useCallback, useRef } from "react";
 import { useNavigate } from "react-router";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import {
   Bell,
   Check,
@@ -27,13 +29,13 @@ import { useAuth } from "../../../context/AuthContext";
 interface NotificationItem {
   id: number;
   type:
-    "Leave" | "Payroll" | "Alert" | "Info" | "Birthday" | "Expense" | "Success";
+  "Leave" | "Payroll" | "Alert" | "Info" | "Birthday" | "Expense" | "Success";
   title: string;
   description: string;
   time: string;
   read: boolean;
   category:
-    "Approvals" | "Payroll" | "Mentions" | "System" | "Expenses" | "Alerts";
+  "Approvals" | "Payroll" | "Mentions" | "System" | "Expenses" | "Alerts";
 }
 
 interface AnnouncementItem {
@@ -243,7 +245,7 @@ const loadAnnouncements = (): AnnouncementItem[] => {
 export function Notifications() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const { hasPermissionKey } = usePermissions();
   const __initialState = {
     activeFilter: "All" as
       "All" | "Unread" | "Approvals" | "Mentions" | "System",
@@ -297,6 +299,20 @@ export function Notifications() {
     formErrors,
     preferences,
   } = __state;
+  const announcementDialogRef = useRef<HTMLDialogElement>(null);
+  const deleteDialogRef = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const el = announcementDialogRef.current;
+    if (!el) return;
+    if (activeModal) el.showModal();
+    else el.close();
+  }, [activeModal]);
+  useEffect(() => {
+    const el = deleteDialogRef.current;
+    if (!el) return;
+    if (deleteAnnouncementConfirm) el.showModal();
+    else el.close();
+  }, [deleteAnnouncementConfirm]);
   const setActiveFilter = useCallback(
     (val: any) =>
       __updateState((prev: any) => ({
@@ -423,7 +439,6 @@ export function Notifications() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Storage-backed state
   // Visual/a11y and CRUD states
   // Form State
@@ -646,7 +661,7 @@ export function Notifications() {
     }
   };
 
-  if (user?.role === "Finance") {
+  if (!hasPermissionKey(P.NOTIFICATIONS_MANAGE)) {
     return <FinanceNotificationsView />;
   }
 
@@ -1284,312 +1299,315 @@ export function Notifications() {
       </div>
 
       {/* MODAL: CREATE/EDIT ANNOUNCEMENT */}
-      {(activeModal === "create_announcement" ||
-        activeModal === "edit_announcement") && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            zIndex: 2000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            className="rounded-2xl p-6 max-w-xl w-full mx-4 animate-in fade-in zoom-in-95 duration-200"
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              boxShadow: "0 12px 40px rgba(0,0,0,0.2)",
-            }}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2
-                style={{
-                  fontSize: "18px",
-                  fontWeight: 700,
-                  color: "var(--foreground)",
-                  margin: 0,
-                }}
-              >
-                {activeModal === "create_announcement"
-                  ? "New Announcement"
-                  : "Edit Announcement"}
-              </h2>
-              <button
-                onClick={() => {
-                  setActiveModal(null);
-                  setEditAnnouncement(null);
-                }}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "var(--muted-foreground)",
-                  cursor: "pointer",
-                }}
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label
+      <dialog
+        ref={announcementDialogRef}
+        id="announcement-dialog"
+        onClose={() => setActiveModal(null)}
+        aria-labelledby="announcement-dialog-title"
+        style={{
+          borderRadius: "16px",
+          padding: 0,
+          backgroundColor: "transparent",
+          border: "none",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.2)",
+          width: "100%",
+          maxWidth: "36rem",
+          margin: "auto",
+        }}
+      >
+            <div
+              className="rounded-2xl p-6 max-w-xl w-full mx-4 animate-in fade-in zoom-in-95 duration-200"
+              style={{
+                backgroundColor: "var(--card)",
+                border: "1px solid var(--border)",
+                boxShadow: "0 12px 40px rgba(0,0,0,0.2)",
+              }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2
+                  id="announcement-dialog-title"
                   style={{
-                    display: "block",
-                    fontSize: "11px",
+                    fontSize: "18px",
                     fontWeight: 700,
-                    color: "var(--muted-foreground)",
-                    textTransform: "uppercase",
-                    marginBottom: "6px",
-                  }}
-                >
-                  Announcement Title
-                </label>
-                <input
-                  type="text"
-                  value={formTitle}
-                  onChange={(e) => setFormTitle(e.target.value)}
-                  placeholder="Enter descriptive title..."
-                  className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
-                  style={{
-                    backgroundColor: "var(--input-background)",
-                    borderColor: formErrors.title ? "#EF4444" : "var(--border)",
                     color: "var(--foreground)",
-                  }}
-                />
-                {formErrors.title && (
-                  <p
-                    style={{
-                      color: "#EF4444",
-                      fontSize: "12px",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {formErrors.title}
-                  </p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "var(--muted-foreground)",
-                      textTransform: "uppercase",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    Category
-                  </label>
-                  <select
-                    value={formCategory}
-                    onChange={(e) =>
-                      setFormCategory(
-                        e.target.value as AnnouncementItem["type"],
-                      )
-                    }
-                    className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border"
-                    style={{
-                      backgroundColor: "var(--input-background)",
-                      borderColor: "var(--border)",
-                      color: "var(--foreground)",
-                    }}
-                  >
-                    <option value="HR UPDATE">HR Update</option>
-                    <option value="URGENT">Urgent</option>
-                    <option value="IMPORTANT">Important</option>
-                    <option value="INFO">General Info</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "var(--muted-foreground)",
-                      textTransform: "uppercase",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    Target Audience
-                  </label>
-                  <select
-                    value={formAudience}
-                    onChange={(e) => setFormAudience(e.target.value)}
-                    className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border"
-                    style={{
-                      backgroundColor: "var(--input-background)",
-                      borderColor: "var(--border)",
-                      color: "var(--foreground)",
-                    }}
-                  >
-                    <option value="All Employees">All Employees</option>
-                    <option value="Engineering">Engineering Dept</option>
-                    <option value="Sales">Sales Team</option>
-                    <option value="Managers">Managers Only</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "var(--muted-foreground)",
-                    textTransform: "uppercase",
-                    marginBottom: "6px",
-                  }}
-                >
-                  Content
-                </label>
-                <div
-                  className="rounded-xl border overflow-hidden"
-                  style={{
-                    borderColor: formErrors.content
-                      ? "#EF4444"
-                      : "var(--border)",
-                  }}
-                >
-                  <div
-                    className="flex items-center gap-1 px-2 py-1 border-b"
-                    style={{
-                      backgroundColor: "var(--input-background)",
-                      borderColor: "var(--border)",
-                    }}
-                  >
-                    <button
-                      type="button"
-                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
-                    >
-                      <Bold size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
-                    >
-                      <Italic size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
-                    >
-                      <Underline size={14} />
-                    </button>
-                    <div className="w-px h-4 bg-gray-300 mx-1" />
-                    <button
-                      type="button"
-                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
-                    >
-                      <List size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
-                    >
-                      <Link2 size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700 ml-auto"
-                    >
-                      <RotateCcw size={14} />
-                    </button>
-                  </div>
-                  <textarea
-                    rows={4}
-                    value={formContent}
-                    onChange={(e) => setFormContent(e.target.value)}
-                    placeholder="Compose your announcement here..."
-                    className="w-full px-3 py-2.5 text-sm outline-none resize-none"
-                    style={{
-                      backgroundColor: "var(--card)",
-                      color: "var(--foreground)",
-                    }}
-                  />
-                </div>
-                {formErrors.content && (
-                  <p
-                    style={{
-                      color: "#EF4444",
-                      fontSize: "12px",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {formErrors.content}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between pt-2">
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2 text-xs font-semibold cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formPinned}
-                      onChange={(e) => setFormPinned(e.target.checked)}
-                      style={{ accentColor: "#00B87C" }}
-                    />
-                    Pin Announcement
-                  </label>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={
-                    activeModal === "create_announcement"
-                      ? handlePostAnnouncement
-                      : handleUpdateAnnouncement
-                  }
-                  style={{
-                    backgroundColor: "#00B87C",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "10px",
-                    padding: "10px 20px",
-                    fontSize: "13px",
-                    fontWeight: 700,
-                    cursor: "pointer",
+                    margin: 0,
                   }}
                 >
                   {activeModal === "create_announcement"
-                    ? "Post Announcement"
-                    : "Save Changes"}
+                    ? "New Announcement"
+                    : "Edit Announcement"}
+                </h2>
+                <button
+                  onClick={() => {
+                    setActiveModal(null);
+                    setEditAnnouncement(null);
+                  }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "var(--muted-foreground)",
+                    cursor: "pointer",
+                  }}
+                >
+                  <X size={20} />
                 </button>
               </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      color: "var(--muted-foreground)",
+                      textTransform: "uppercase",
+                      marginBottom: "6px",
+                    }}
+                  >
+                    Announcement Title
+                  </label>
+                  <input
+                    type="text"
+                    value={formTitle}
+                    onChange={(e) => setFormTitle(e.target.value)}
+                    placeholder="Enter descriptive title..."
+                    className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border transition-all"
+                    style={{
+                      backgroundColor: "var(--input-background)",
+                      borderColor: formErrors.title ? "#EF4444" : "var(--border)",
+                      color: "var(--foreground)",
+                    }}
+                  />
+                  {formErrors.title && (
+                    <p
+                      style={{
+                        color: "#EF4444",
+                        fontSize: "12px",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {formErrors.title}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        color: "var(--muted-foreground)",
+                        textTransform: "uppercase",
+                        marginBottom: "6px",
+                      }}
+                    >
+                      Category
+                    </label>
+                    <select
+                      value={formCategory}
+                      onChange={(e) =>
+                        setFormCategory(
+                          e.target.value as AnnouncementItem["type"],
+                        )
+                      }
+                      className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border"
+                      style={{
+                        backgroundColor: "var(--input-background)",
+                        borderColor: "var(--border)",
+                        color: "var(--foreground)",
+                      }}
+                    >
+                      <option value="HR UPDATE">HR Update</option>
+                      <option value="URGENT">Urgent</option>
+                      <option value="IMPORTANT">Important</option>
+                      <option value="INFO">General Info</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        color: "var(--muted-foreground)",
+                        textTransform: "uppercase",
+                        marginBottom: "6px",
+                      }}
+                    >
+                      Target Audience
+                    </label>
+                    <select
+                      value={formAudience}
+                      onChange={(e) => setFormAudience(e.target.value)}
+                      className="w-full rounded-xl px-3 py-2.5 text-sm outline-none border"
+                      style={{
+                        backgroundColor: "var(--input-background)",
+                        borderColor: "var(--border)",
+                        color: "var(--foreground)",
+                      }}
+                    >
+                      <option value="All Employees">All Employees</option>
+                      <option value="Engineering">Engineering Dept</option>
+                      <option value="Sales">Sales Team</option>
+                      <option value="Managers">Managers Only</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      color: "var(--muted-foreground)",
+                      textTransform: "uppercase",
+                      marginBottom: "6px",
+                    }}
+                  >
+                    Content
+                  </label>
+                  <div
+                    className="rounded-xl border overflow-hidden"
+                    style={{
+                      borderColor: formErrors.content
+                        ? "#EF4444"
+                        : "var(--border)",
+                    }}
+                  >
+                    <div
+                      className="flex items-center gap-1 px-2 py-1 border-b"
+                      style={{
+                        backgroundColor: "var(--input-background)",
+                        borderColor: "var(--border)",
+                      }}
+                    >
+                      <button
+                        type="button"
+                        className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                      >
+                        <Bold size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                      >
+                        <Italic size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                      >
+                        <Underline size={14} />
+                      </button>
+                      <div className="w-px h-4 bg-gray-300 mx-1" />
+                      <button
+                        type="button"
+                        className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                      >
+                        <List size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700"
+                      >
+                        <Link2 size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        className="p-1.5 rounded text-gray-500 hover:bg-neutral-200 dark:hover:bg-zinc-700 ml-auto"
+                      >
+                        <RotateCcw size={14} />
+                      </button>
+                    </div>
+                    <textarea
+                      rows={4}
+                      value={formContent}
+                      onChange={(e) => setFormContent(e.target.value)}
+                      placeholder="Compose your announcement here..."
+                      className="w-full px-3 py-2.5 text-sm outline-none resize-none"
+                      style={{
+                        backgroundColor: "var(--card)",
+                        color: "var(--foreground)",
+                      }}
+                    />
+                  </div>
+                  {formErrors.content && (
+                    <p
+                      style={{
+                        color: "#EF4444",
+                        fontSize: "12px",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {formErrors.content}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2 text-xs font-semibold cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formPinned}
+                        onChange={(e) => setFormPinned(e.target.checked)}
+                        style={{ accentColor: "#00B87C" }}
+                      />
+                      Pin Announcement
+                    </label>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={
+                      activeModal === "create_announcement"
+                        ? handlePostAnnouncement
+                        : handleUpdateAnnouncement
+                    }
+                    style={{
+                      backgroundColor: "#00B87C",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "10px",
+                      padding: "10px 20px",
+                      fontSize: "13px",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {activeModal === "create_announcement"
+                      ? "Post Announcement"
+                      : "Save Changes"}
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </dialog>
 
       {/* DELETE ANNOUNCEMENT CONFIRMATION MODAL */}
-      {deleteAnnouncementConfirm && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            zIndex: 2000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+      <dialog
+        ref={deleteDialogRef}
+        id="delete-announcement-dialog"
+        onClose={() => setDeleteAnnouncementConfirm(null)}
+        aria-labelledby="delete-announcement-dialog-title"
+        style={{
+          borderRadius: "16px",
+          padding: 0,
+          backgroundColor: "transparent",
+          border: "none",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.2)",
+          width: "100%",
+          maxWidth: "24rem",
+          margin: "auto",
+        }}
+      >
           <div
-            className="rounded-2xl p-6 max-w-sm w-full mx-4 text-center animate-in fade-in zoom-in-95 duration-200"
+            className="rounded-2xl p-6 w-full text-center animate-in fade-in zoom-in-95 duration-200"
             style={{
               backgroundColor: "var(--card)",
               border: "1px solid var(--border)",
@@ -1599,7 +1617,10 @@ export function Notifications() {
             <div className="w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center mx-auto mb-4">
               <Trash2 className="text-rose-500" size={24} />
             </div>
-            <h3 className="text-lg font-bold text-foreground mb-2">
+            <h3
+              id="delete-announcement-dialog-title"
+              className="text-lg font-bold text-foreground mb-2"
+            >
               Delete Announcement?
             </h3>
             <p className="text-sm text-muted-foreground mb-6">
@@ -1625,8 +1646,7 @@ export function Notifications() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </dialog>
 
       {/* SUCCESS TOAST */}
       {showSuccessToast && (
@@ -1945,7 +1965,6 @@ const loadFinanceNotifications = (): FinanceNotificationItem[] => {
 
 function FinanceNotificationsView() {
   const navigate = useNavigate();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     activeFilter: "All" as
       "All" | "Unread" | "Payroll" | "Expenses" | "System" | "Alerts",
@@ -2037,7 +2056,6 @@ function FinanceNotificationsView() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Finance-specific Notifications state
   // Close modals/drawers on Escape key press
   useEffect(() => {
@@ -2238,11 +2256,10 @@ function FinanceNotificationsView() {
               <button
                 key={tab.key}
                 onClick={() => setActiveFilter(tab.key)}
-                className={`px-6 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap cursor-pointer ${
-                  isActive
-                    ? "text-[#00B87C]"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`px-6 py-4 text-[13px] font-semibold tracking-wider uppercase transition-all relative whitespace-nowrap cursor-pointer ${isActive
+                  ? "text-[#00B87C]"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 {tab.label}
                 {isActive && (

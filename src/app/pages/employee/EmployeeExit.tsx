@@ -20,6 +20,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   OFFBOARDING_EXITS_KEY,
   OFFBOARDING_UPDATED_EVENT,
+  formatExitStatusLabel,
   publishEmployeeExitAction,
   uploadExitDocuments,
 } from "../../features/Offboarding/services/offboardingWorkflow";
@@ -430,13 +431,7 @@ function StatusTracker({
               Current Status
             </span>
             <span className="text-[13px] font-black text-foreground">
-              {status === "pending_manager"
-                ? "Pending Manager Approval"
-                : status === "pending_hr"
-                  ? "Pending HR Approval"
-                  : status === "rejected"
-                    ? "Rejected"
-                    : "Approved"}
+              {formatExitStatusLabel(status)}
             </span>
           </div>
         </div>

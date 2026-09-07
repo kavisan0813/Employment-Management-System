@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import type { NewHire, OnboardingPhase } from "../../types/onboarding.types";
 import { useAuth } from "../../../../context/AuthContext";
+import { usePermissions } from "../../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../../shared/permission-engine/permissions";
 import { showToast } from "../../../../components/workflow/ToastNotification";
 
 interface CompanyProcessProps {
@@ -20,23 +22,18 @@ interface CompanyProcessProps {
   handleEscalate: () => void;
 }
 
-/**
- * Map a task owner/verifier name to the platform roles allowed to act on it.
- * The structure is fully dynamic — tasks are grouped by the role configured
- * on the template, never by a hardcoded HR/IT/Finance/Admin list.
- */
-const OWNER_TO_ROLES: Record<string, string[]> = {
-  hr: ["HR Manager", "HR"],
-  finance: ["Finance", "Finance Manager"],
-  it: ["IT", "IT Admin", "IT Manager"],
-  admin: ["Admin"],
-  manager: ["Manager", "Team Lead", "Engineering Manager"],
-};
-
 const rolesForOwner = (owner: string): string[] => {
-  const normalized = owner.toLowerCase();
-  for (const key of Object.keys(OWNER_TO_ROLES)) {
-    if (normalized.includes(key)) return OWNER_TO_ROLES[key];
+  if (owner === "IT") {
+    return ["IT Administrator", "Super Admin", "Platform Admin"];
+  }
+  if (owner === "Finance") {
+    return ["Finance", "Finance Manager", "Super Admin", "Platform Admin"];
+  }
+  if (owner === "Manager") {
+    return ["Manager", "Super Admin", "Platform Admin"];
+  }
+  if (owner === "HR") {
+    return ["HR Manager", "Super Admin", "Platform Admin"];
   }
   // Default: any matching system role plus super admins.
   return [owner];
@@ -50,11 +47,21 @@ export function CompanyProcess({
   handleEscalate,
 }: CompanyProcessProps) {
   const { user } = useAuth();
+  const { hasPermissionKey } = usePermissions();
 
   const canActOnOwner = (owner: string): boolean => {
-    const role = user?.role;
-    if (role === "Platform Admin" || role === "Super Admin") return true;
-    return rolesForOwner(owner).includes(role || "");
+    if (
+      hasPermissionKey(P.ONBOARDING_FULL) ||
+      hasPermissionKey(P.ONBOARDING_MANAGE) ||
+      hasPermissionKey(P.PLATFORM_ADMIN_FULL)
+    ) {
+      return true;
+    }
+    if (owner === "IT" && hasPermissionKey(P.OFFBOARDING_CLEARANCE_IT)) return true;
+    if (owner === "Finance" && (hasPermissionKey(P.PAYROLL_FULL) || hasPermissionKey(P.ONBOARDING_FINANCE_SETUP))) return true;
+    if (owner === "Manager" && (hasPermissionKey(P.EMPLOYEES_VIEW_TEAM) || hasPermissionKey(P.ATTENDANCE_APPROVE_TEAM))) return true;
+    if (owner === "HR" && hasPermissionKey(P.EMPLOYEES_MANAGE)) return true;
+    return false;
   };
 
   const handleAttachDocumentToTask = (

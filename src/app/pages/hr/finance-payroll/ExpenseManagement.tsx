@@ -1,5 +1,7 @@
 import { lazy, useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import {
   Receipt,
   Plus,
@@ -86,7 +88,6 @@ const Cell = lazy(() =>
 );
 import { toast } from "sonner";
 import { AnimatePresence } from "motion/react";
-import { useAuth } from "../../../context/AuthContext";
 import { EmployeeExpenses } from "../../employee/EmployeeExpenses";
 
 /* ─── Mock Data ─────────────────────────── */
@@ -250,9 +251,9 @@ interface ExpenseClaim {
   paymentMode: string;
 }
 export function Expenses() {
-  const { user } = useAuth();
+  const { hasPermissionKey } = usePermissions();
   const navigate = useNavigate();
-  const [claims] = useState<ExpenseClaim[]>(initialClaims);
+  const [claims, setClaims] = useState<ExpenseClaim[]>(initialClaims);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
 
@@ -285,7 +286,9 @@ export function Expenses() {
   const [showFinanceShare, setShowFinanceShare] = useState(false);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showReturnModal, setShowReturnModal] = useState(false);
   const [showPaidModal, setShowPaidModal] = useState(false);
+  const [returnReason, setReturnReason] = useState("");
   const [selectedClaim, setSelectedClaim] = useState<ExpenseClaim | null>(null);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -545,7 +548,7 @@ export function Expenses() {
   }, [filteredClaims]);
 
   // If user is an employee, show the Self-Service Portal
-  if (user?.role === "Employee") {
+  if (!hasPermissionKey(P.EXPENSES_VIEW) && !hasPermissionKey(P.EXPENSES_FULL)) {
     return <EmployeeExpenses />;
   }
   return (
@@ -695,7 +698,27 @@ export function Expenses() {
                     icon={<FileSpreadsheet size={16} />}
                     label="Export as Excel"
                     onClick={() => {
-                      toast.success("Excel Export Started");
+                      toast.info("Excel Export: Generating CSV compatible report");
+                      const headers = ["ID", "Employee", "Department", "Category", "Date", "Amount", "Approval Status", "Reimbursement Status", "Payment Mode"];
+                      const rows = filteredClaims.map((c) => [
+                        c.id,
+                        `"${c.employee.name}"`,
+                        `"${c.employee.dept}"`,
+                        `"${c.category}"`,
+                        c.date,
+                        c.amount,
+                        c.approvalStatus,
+                        c.reimbursementStatus,
+                        `"${c.paymentMode}"`,
+                      ].join(","));
+                      const csv = [headers.join(","), ...rows].join("\n");
+                      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `expenses_export_${new Date().toISOString().split("T")[0]}.csv`;
+                      a.click();
+                      URL.revokeObjectURL(url);
                       setShowExportMenu(false);
                     }}
                   />
@@ -703,7 +726,27 @@ export function Expenses() {
                     icon={<FileJson size={16} />}
                     label="Export as CSV"
                     onClick={() => {
-                      toast.success("CSV Export Started");
+                      const headers = ["ID", "Employee", "Department", "Category", "Date", "Amount", "Approval Status", "Reimbursement Status", "Payment Mode"];
+                      const rows = filteredClaims.map((c) => [
+                        c.id,
+                        `"${c.employee.name}"`,
+                        `"${c.employee.dept}"`,
+                        `"${c.category}"`,
+                        c.date,
+                        c.amount,
+                        c.approvalStatus,
+                        c.reimbursementStatus,
+                        `"${c.paymentMode}"`,
+                      ].join(","));
+                      const csv = [headers.join(","), ...rows].join("\n");
+                      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `expenses_export_${new Date().toISOString().split("T")[0]}.csv`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                      toast.success("CSV Export Downloaded Successfully");
                       setShowExportMenu(false);
                     }}
                   />
@@ -740,7 +783,7 @@ export function Expenses() {
           label={`${managerActionCount} Claims Need Manager Action`}
           onClick={() => setShowManagerQueue(true)}
         />
-        {user?.role !== "HR Manager" && (
+        {hasPermissionKey(P.EXPENSES_FINAL_APPROVAL) && (
           <StatusChip
             dotColor="bg-emerald-500"
             label={`${dueTodayCount} Reimbursements Due Today`}
@@ -1234,6 +1277,15 @@ export function Expenses() {
                                 onClick={() => {
                                   setSelectedClaim(claim);
                                   setShowRejectModal(true);
+                                  setActiveActionId(null);
+                                }}
+                              />
+                              <ActionItem
+                                icon={<RotateCcw size={14} />}
+                                label="Return for Correction"
+                                onClick={() => {
+                                  setSelectedClaim(claim);
+                                  setShowReturnModal(true);
                                   setActiveActionId(null);
                                 }}
                               />
@@ -1999,6 +2051,15 @@ export function Expenses() {
                 </button>
                 <button
                   onClick={() => {
+                    if (selectedClaim) {
+                      setClaims((prev) =>
+                        prev.map((c) =>
+                          c.id === selectedClaim.id
+                            ? { ...c, approvalStatus: "Approved" }
+                            : c,
+                        ),
+                      );
+                    }
                     toast.success("Claim Approved successfully");
                     setShowApproveModal(false);
                   }}
@@ -2080,12 +2141,97 @@ export function Expenses() {
                 </button>
                 <button
                   onClick={() => {
+                    if (selectedClaim) {
+                      setClaims((prev) =>
+                        prev.map((c) =>
+                          c.id === selectedClaim.id
+                            ? { ...c, approvalStatus: "Rejected" }
+                            : c,
+                        ),
+                      );
+                    }
                     toast.error("Claim Rejected successfully");
                     setShowRejectModal(false);
                   }}
                   className="flex-[2] py-3 text-sm font-black text-white bg-rose-500 rounded-2xl shadow-xl shadow-rose-500/20"
                 >
                   Reject Claim
+                </button>
+              </div>
+            </m.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Return / Send Back Modal ── */}
+      <AnimatePresence>
+        {showReturnModal && (
+          <div className="fixed inset-0 z-[8000] flex items-center justify-center p-4">
+            <m.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowReturnModal(false)}
+              className="absolute inset-0 bg-black/40"
+            />
+            <m.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-md bg-card border border-border rounded-[32px] shadow-2xl p-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-black text-foreground">
+                  Return for Correction
+                </h3>
+                <button
+                  onClick={() => setShowReturnModal(false)}
+                  className="p-2 rounded-xl hover:bg-muted text-muted-foreground transition-all"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <p className="text-sm font-medium text-muted-foreground mb-6 tracking-tight">
+                Send this claim back to the employee for corrections (e.g. upload missing receipt or adjust description).
+              </p>
+              <div className="space-y-1.5 mb-8">
+                <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Correction Request Note*
+                </label>
+                <textarea
+                  rows={3}
+                  value={returnReason}
+                  onChange={(e) => setReturnReason(e.target.value)}
+                  className="w-full px-4 py-3 text-sm rounded-2xl border border-border bg-muted/30 font-medium outline-none focus:border-amber-500 transition-colors"
+                  placeholder="e.g. Please attach itemized tax receipt and resubmit..."
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowReturnModal(false)}
+                  className="flex-1 py-3 text-sm font-black text-muted-foreground bg-muted rounded-2xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (selectedClaim) {
+                      setClaims((prev) =>
+                        prev.map((c) =>
+                          c.id === selectedClaim.id
+                            ? { ...c, approvalStatus: "Returned" }
+                            : c,
+                        ),
+                      );
+                    }
+                    toast.info("Claim Returned for Correction");
+                    setShowReturnModal(false);
+                    setReturnReason("");
+                  }}
+                  className="flex-[2] py-3 text-sm font-black text-white bg-amber-500 rounded-2xl shadow-xl shadow-amber-500/20"
+                >
+                  Return to Employee
                 </button>
               </div>
             </m.div>
@@ -2190,6 +2336,15 @@ export function Expenses() {
                 </button>
                 <button
                   onClick={() => {
+                    if (selectedClaim) {
+                      setClaims((prev) =>
+                        prev.map((c) =>
+                          c.id === selectedClaim.id
+                            ? { ...c, reimbursementStatus: "Paid" }
+                            : c,
+                        ),
+                      );
+                    }
                     toast.success("Marked as Reimbursed successfully");
                     setShowPaidModal(false);
                   }}
@@ -2773,7 +2928,7 @@ export function Expenses() {
                 <p className="text-base font-black text-foreground">
                   {formatCurrency(item.amount)}
                 </p>
-                {user?.role !== "HR Manager" && (
+                {hasPermissionKey(P.EXPENSES_FINAL_APPROVAL) && (
                   <button
                     onClick={() => toast.success("Marked as Paid")}
                     className="px-5 py-2.5 bg-white text-slate-900 border border-border text-[11px] font-black rounded-xl shadow-lg hover:bg-[#00B87C]/[0.08] transition-all"

@@ -18,7 +18,11 @@ import { P } from "./permissions";
 
 // ── Scope types ─────────────────────────────────────────────────
 export type ScopeType =
-  "organization" | "branch" | "department" | "team" | "self";
+  | "organization"
+  | "branch"
+  | "department"
+  | "team"
+  | "self";
 
 // ── Role assignment (mirrors user_role_assignments table) ───────
 export interface RoleAssignment {
@@ -56,6 +60,17 @@ export const ROLE_IDS = {
 } as const;
 
 export type SystemRoleId = (typeof ROLE_IDS)[keyof typeof ROLE_IDS];
+
+export const ROLE_HIERARCHY: Record<SystemRoleId, number> = {
+  [ROLE_IDS.PLATFORM_ADMIN]: 0,
+  [ROLE_IDS.SUPER_ADMIN]: 1,
+  [ROLE_IDS.HR_MANAGER]: 2,
+  [ROLE_IDS.FINANCE_MANAGER]: 2,
+  [ROLE_IDS.DEPT_MANAGER]: 3,
+  [ROLE_IDS.IT_ADMIN]: 3,
+  [ROLE_IDS.TEAM_LEAD]: 4,
+  [ROLE_IDS.EMPLOYEE]: 5,
+};
 
 // ── Default role templates ──────────────────────────────────────
 // These mirror the Module × Role Permission Matrix from the arch doc.
@@ -548,18 +563,6 @@ export const LEGACY_ROLE_MAP: Record<string, SystemRoleId> = {
   "Team Lead": ROLE_IDS.TEAM_LEAD,
   Employee: ROLE_IDS.EMPLOYEE,
 };
-
-// ── Hierarchy for approval routing ──────────────────────────────
-export const ROLE_HIERARCHY: SystemRoleId[] = [
-  ROLE_IDS.PLATFORM_ADMIN,
-  ROLE_IDS.SUPER_ADMIN,
-  ROLE_IDS.HR_MANAGER,
-  ROLE_IDS.FINANCE_MANAGER,
-  ROLE_IDS.IT_ADMIN,
-  ROLE_IDS.DEPT_MANAGER,
-  ROLE_IDS.TEAM_LEAD,
-  ROLE_IDS.EMPLOYEE,
-];
 
 /**
  * Resolve the effective permission set from a list of role assignments.

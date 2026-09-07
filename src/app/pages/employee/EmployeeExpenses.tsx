@@ -1,4 +1,4 @@
-import { useMemo, useReducer, useCallback } from "react";
+import { useState, useRef, useMemo, useReducer, useCallback } from "react";
 import {
   Receipt,
   Plus,
@@ -430,7 +430,6 @@ const MONTH_DATE_MAP: Record<string, string> = {
 };
 
 export function EmployeeExpenses() {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     expenses: MOCK_EXPENSES as Expense[],
     activeTab: "All" as "All" | "Pending" | "Approved" | "Rejected",
@@ -608,8 +607,10 @@ export function EmployeeExpenses() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
-  // New expense form state
+  const [searchQuery, setSearchQuery] = useState("");
+  const isSubmittingRef = useRef(false);
+  const [receiptFileName, setReceiptFileName] = useState<string | null>(null);
+
   const handleExport = () => {
     const rows = filteredExpenses.map((e) =>
       [
@@ -637,6 +638,8 @@ export function EmployeeExpenses() {
   };
 
   const handleSubmitExpense = () => {
+    if (isSubmittingRef.current) return;
+
     if (!newExpenseTitle.trim()) {
       showToast("Missing Title", "error", "Please enter an expense title.");
       return;
@@ -649,6 +652,8 @@ export function EmployeeExpenses() {
       showToast("Invalid Amount", "error", "Please enter a valid amount.");
       return;
     }
+
+    isSubmittingRef.current = true;
     const newExp: Expense = {
       id: `EXP-${Math.floor(1000 + Math.random() * 9000)}`,
       title: newExpenseTitle,
@@ -666,13 +671,13 @@ export function EmployeeExpenses() {
             day: "numeric",
           }),
       amount: Number(newExpenseAmount),
-      receiptStatus: "Pending",
+      receiptStatus: receiptFileName ? "Attached" : "Pending",
       status: "Pending",
       description: newExpenseDesc || `${newExpenseCat} expense claim`,
       project: "Operations",
       paymentMode: newExpensePayment,
     };
-    setExpenses((prev) => [newExp, ...prev]);
+    setExpenses((prev: Expense[]) => [newExp, ...prev]);
     showToast(
       "Expense Submitted",
       "success",
@@ -686,10 +691,12 @@ export function EmployeeExpenses() {
     setNewExpenseDesc("");
     setNewExpensePayment("Personal Card");
     setNewExpenseCat("Travel");
+    setReceiptFileName(null);
+    isSubmittingRef.current = false;
   };
 
   const filteredExpenses = useMemo(() => {
-    return expenses.filter((e) => {
+    return expenses.filter((e: Expense) => {
       const tabMatch = activeTab === "All" || e.status === activeTab;
       const catMatch =
         selectedCategory === "All Categories" ||
@@ -701,9 +708,14 @@ export function EmployeeExpenses() {
         e.date.includes(
           MONTH_DATE_MAP[selectedMonth] ?? selectedMonth.slice(0, 3),
         );
-      return tabMatch && catMatch && statusMatch && monthMatch;
+      const searchMatch =
+        !searchQuery ||
+        e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.vendor.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.id.toLowerCase().includes(searchQuery.toLowerCase());
+      return tabMatch && catMatch && statusMatch && monthMatch && searchMatch;
     });
-  }, [expenses, activeTab, selectedCategory, selectedMonth, selectedStatus]);
+  }, [expenses, activeTab, selectedCategory, selectedMonth, selectedStatus, searchQuery]);
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
@@ -808,8 +820,15 @@ export function EmployeeExpenses() {
           <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col">
             {/* Table Header Row */}
             <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <SectionHeader title="EXPENSE CLAIMS" count="8 total" />
-              <div className="flex items-center gap-2">
+              <SectionHeader title="EXPENSE CLAIMS" count={`${filteredExpenses.length} total`} />
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Search claims..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="px-3 py-1.5 bg-secondary border border-border rounded-lg text-[12px] font-bold text-foreground outline-none focus:border-primary transition-all w-[140px] sm:w-[180px]"
+                />
                 {/* Category Dropdown */}
                 <div className="relative">
                   <div
@@ -1367,19 +1386,35 @@ export function EmployeeExpenses() {
               </div>
 
               <div className="space-y-4">
-                <SectionHeader title="RECEIPT (OPTIONAL)" />
-                <div className="border-2 border-dashed border-border rounded-2xl p-8 bg-card flex flex-col items-center justify-center hover:border-primary transition-all cursor-pointer group">
+                <div className="flex items-center justify-between">
+                  <SectionHeader title="RECEIPT (OPTIONAL)" />
+                  <span className="text-[9px] font-black text-amber-600 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                    FRONTEND READY — BACKEND OBJECT STORAGE REQUIRED
+                  </span>
+                </div>
+                <label className="border-2 border-dashed border-border rounded-2xl p-6 bg-card flex flex-col items-center justify-center hover:border-primary transition-all cursor-pointer group">
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setReceiptFileName(e.target.files[0].name);
+                        showToast("Receipt Selected", "info", `Attached ${e.target.files[0].name}`);
+                      }
+                    }}
+                  />
                   <UploadCloud
                     size={28}
-                    className="text-primary mb-3 group-hover:scale-110 transition-transform"
+                    className="text-primary mb-2 group-hover:scale-110 transition-transform"
                   />
                   <p className="text-[13px] font-black text-foreground">
-                    Click to upload receipt
+                    {receiptFileName ? `Selected: ${receiptFileName}` : "Click to upload receipt"}
                   </p>
                   <p className="text-[11px] font-bold text-muted-foreground mt-1 uppercase tracking-tighter">
                     JPG, PNG, PDF · MAX 10MB
                   </p>
-                </div>
+                </label>
               </div>
             </div>
 

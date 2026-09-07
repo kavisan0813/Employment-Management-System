@@ -1445,39 +1445,6 @@ NexHR Management
             </div>
           </div>
 
-          <div className="rounded-2xl p-6 shadow-sm bg-card border border-border">
-            <h3 className="text-base font-black mb-6 text-foreground">
-              Recent Activity
-            </h3>
-            <div className="relative pl-3 space-y-7">
-              <div className="absolute left-[27px] top-4 bottom-4 w-[2px] z-0 rounded-full bg-border"></div>
-              {activities.map((act) => (
-                <div
-                  key={act.title}
-                  className="flex items-start gap-4 relative z-10 group cursor-pointer"
-                  onClick={getActivityRoute(act.title)}
-                >
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-110 bg-card border-2 border-background">
-                    <act.icon size={18} className="text-primary" />
-                  </div>
-                  <div className="pt-2">
-                    <p className="text-[14px] font-bold transition-colors group-hover:text-primary text-foreground">
-                      {act.title}
-                    </p>
-                    <p className="text-[12px] font-semibold mt-0.5 text-muted-foreground">
-                      {act.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button
-              className="w-full mt-6 py-2.5 rounded-xl font-bold text-sm transition-colors hover:opacity-80 text-foreground border border-border bg-background"
-              onClick={() => navigate("/settings/audit-logs")}
-            >
-              View All Activity
-            </button>
-          </div>
 
           <div className="rounded-2xl p-6 shadow-sm bg-card border border-border">
             <h3 className="text-base font-black mb-5 text-foreground">

@@ -227,9 +227,9 @@ export function ManagerPersonalPerformance() {
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard label="CURRENT RATING" value="4.6" suffix="★" color="amber" />
+        <KPICard label="PERFORMANCE SCORE" value="92%" suffix="" color="teal" />
         <KPICard label="GOALS MET" value="8/10" suffix="" color="green" />
-        <KPICard label="REVIEW STATUS" value="Open" suffix="" color="teal" />
+        <KPICard label="REVIEW STATUS" value="Open" suffix="" color="amber" />
         <KPICard label="MY BAND" value="A+" suffix="" color="purple" />
       </div>
 

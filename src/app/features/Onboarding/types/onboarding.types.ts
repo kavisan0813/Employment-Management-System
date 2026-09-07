@@ -76,6 +76,9 @@ export interface DocumentItem {
   issuedByOrg?: boolean;
   /** Identifies the onboarding record this document belongs to. */
   employeeId?: string;
+  fileName?: string;
+  fileSize?: string;
+  fileType?: string;
 }
 
 export type TaskPriority = "Low" | "Medium" | "High";

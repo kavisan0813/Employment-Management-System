@@ -41,16 +41,6 @@ export const getTodayHRDateStr = (): string => {
   return `${monthStr} ${dayStr}, ${date.getFullYear()}`;
 };
 
-// Helper to convert HR date string ("Apr 06, 2026") to Employee date string ("06 Apr 2026")
-export const hrDateToEmployeeDate = (hrDate: string): string => {
-  const parts = hrDate.replace(",", "").split(" ");
-  if (parts.length < 3) return hrDate;
-  const month = parts[0];
-  const day = parts[1];
-  const year = parts[2];
-  return `${day} ${month} ${year}`;
-};
-
 // Helper to check if punch-in time is late
 export const isPunchInLate = (punchInISO: string): boolean => {
   const punchDate = new Date(punchInISO);

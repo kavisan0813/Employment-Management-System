@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { EmployeePayslips } from "../../employee/EmployeePayslips";
 import { useAuth } from "../../../context/AuthContext";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import {
   Download,
   Play,
@@ -23,11 +25,6 @@ import {
   Edit2,
   Wallet,
   Zap,
-  TrendingUp,
-  Shield,
-  Cpu,
-  BarChart3,
-  PieChart,
   Sparkles,
   BanknoteIcon,
   BadgeCheck,
@@ -48,6 +45,7 @@ import {
   employees,
 } from "../../../data/mockData";
 import { payrollService } from "../../finance/payroll/payroll.service";
+import { payrollSettingsService } from "../../finance/payroll/payrollSettings.service";
 import { calculatePayslip } from "../../finance/payroll/calculatePayslip";
 import type {
   Payslip,
@@ -117,15 +115,14 @@ function ToastContainer({
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-2xl shadow-2xl border backdrop-blur-xl min-w-[300px] animate-in slide-in-from-right-4 duration-300 ${
-            t.type === "success"
-              ? "bg-emerald-950/90 border-emerald-500/30 text-emerald-100"
-              : t.type === "error"
-                ? "bg-red-950/90 border-red-500/30 text-red-100"
-                : t.type === "warning"
-                  ? "bg-amber-950/90 border-amber-500/30 text-amber-100"
-                  : "bg-sky-950/90 border-sky-500/30 text-sky-100"
-          }`}
+          className={`pointer-events-auto flex items-start gap-3 px-4 py-3 rounded-2xl shadow-2xl border backdrop-blur-xl min-w-[300px] animate-in slide-in-from-right-4 duration-300 ${t.type === "success"
+            ? "bg-emerald-950/90 border-emerald-500/30 text-emerald-100"
+            : t.type === "error"
+              ? "bg-red-950/90 border-red-500/30 text-red-100"
+              : t.type === "warning"
+                ? "bg-amber-950/90 border-amber-500/30 text-amber-100"
+                : "bg-sky-950/90 border-sky-500/30 text-sky-100"
+            }`}
         >
           {t.type === "success" && (
             <CheckCircle2
@@ -163,84 +160,155 @@ function ToastContainer({
   );
 }
 
-/* ─── Mini Bar Chart ─────────────────────── */
-function MiniBarChart({ data, color }: { data: number[]; color: string }) {
-  const max = Math.max(...data, 1);
-  return (
-    <div className="flex items-end gap-0.5 h-8">
-      {data.map((v, i) => (
-        <div
-          key={i}
-          className="flex-1 rounded-t-sm transition-all duration-700"
-          style={{
-            height: `${(v / max) * 100}%`,
-            backgroundColor: color,
-            opacity: i === data.length - 1 ? 1 : 0.3 + (i / data.length) * 0.5,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ─── Donut Chart ────────────────────────── */
-function DonutChart({
-  segments,
+/* ─── Statutory & Tax Deduction Breakdown Card ─────────────────── */
+function DeductionBreakdownCard({
+  totalGross,
+  activeEmployees,
+  selectedMonth,
+  selectedYear,
+  organizationId,
 }: {
-  segments: { label: string; value: number; color: string }[];
+  totalGross: number;
+  activeEmployees: any[];
+  selectedMonth: string;
+  selectedYear: string;
+  organizationId?: string;
 }) {
-  const total = segments.reduce((s, v) => s + v.value, 0);
-  let cumulative = 0;
-  const size = 120;
-  const radius = 46;
-  const cx = size / 2;
-  const cy = size / 2;
-  const circumference = 2 * Math.PI * radius;
+  const settings = useMemo(
+    () => payrollSettingsService.getSettings(organizationId),
+    [organizationId]
+  );
+
+  const deductionStats = useMemo(() => {
+    const pfRate = parseFloat(settings.pfConfig?.employeeContrib || "12") || 12;
+    const esiRate = parseFloat(settings.esiConfig?.employeeContrib || "0.75") || 0.75;
+
+    let totalPf = 0;
+    let totalEsi = 0;
+    let totalPt = 0;
+    let totalTds = 0;
+
+    const structures = payrollService.getSalaryStructures();
+    const activeStructures = structures.filter((struct) =>
+      activeEmployees.some((emp) => emp.id === struct.employeeId)
+    );
+
+    activeStructures.forEach((struct) => {
+      const ps = calculatePayslip(
+        struct,
+        22,
+        0,
+        `${selectedMonth} ${selectedYear}`,
+        { settings }
+      );
+      totalPf += ps.deductions.pf;
+      totalEsi += ps.deductions.esi;
+      totalPt += ps.deductions.pt;
+      totalTds += ps.deductions.tds;
+    });
+
+    const grossBase = totalGross || 1;
+    const ptEffectiveRate = ((totalPt / grossBase) * 100).toFixed(1);
+    const tdsEffectiveRate = ((totalTds / grossBase) * 100).toFixed(1);
+
+    // Check if previous period pay run exists for comparison
+    const prevMonthIndex = (MONTHS.indexOf(selectedMonth) - 1 + 12) % 12;
+    const prevYear =
+      prevMonthIndex === 11
+        ? (parseInt(selectedYear) - 1).toString()
+        : selectedYear;
+    const prevMonthName = MONTHS[prevMonthIndex];
+    const prevRun = payrollService.getPayRun(
+      `${prevMonthName} ${prevYear}`,
+      organizationId
+    );
+
+    return [
+      {
+        name: "Provident Fund (PF)",
+        amount: totalPf,
+        rate: `${pfRate}%`,
+        rateType: "Configured Rate" as const,
+        change: prevRun ? "0.0% vs prev" : undefined,
+      },
+      {
+        name: "Employee State Insurance (ESI)",
+        amount: totalEsi,
+        rate: `${esiRate}%`,
+        rateType: "Configured Rate" as const,
+        change: prevRun ? "0.0% vs prev" : undefined,
+      },
+      {
+        name: "Professional Tax (PT)",
+        amount: totalPt,
+        rate: `${ptEffectiveRate}%`,
+        rateType: "Effective %" as const,
+        change: prevRun ? "0.0% vs prev" : undefined,
+      },
+      {
+        name: "Tax Deducted at Source (TDS)",
+        amount: totalTds,
+        rate: `${tdsEffectiveRate}%`,
+        rateType: "Effective %" as const,
+        change: prevRun ? "0.0% vs prev" : undefined,
+      },
+    ];
+  }, [settings, activeEmployees, selectedMonth, selectedYear, totalGross, organizationId]);
+
+  const totalDeductionSum = deductionStats.reduce((s, d) => s + d.amount, 0);
+  const overallDeductionPct = totalGross > 0 ? ((totalDeductionSum / totalGross) * 100).toFixed(1) : "0.0";
 
   return (
-    <div className="flex items-center gap-6">
-      <svg
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        style={{ transform: "rotate(-90deg)" }}
-      >
-        {segments.map((seg) => {
-          const pct = seg.value / total;
-          const dashArray = `${circumference * pct} ${circumference * (1 - pct)}`;
-          const dashOffset = -circumference * cumulative;
-          cumulative += pct;
-          return (
-            <circle
-              key={seg.label}
-              cx={cx}
-              cy={cy}
-              r={radius}
-              fill="none"
-              stroke={seg.color}
-              strokeWidth="14"
-              strokeDasharray={dashArray}
-              strokeDashoffset={dashOffset}
-              strokeLinecap="round"
-              className="transition-all duration-1000"
-            />
-          );
-        })}
-        <circle cx={cx} cy={cy} r={radius - 14} fill="var(--card)" />
-      </svg>
-      <div className="flex flex-col gap-1.5">
-        {segments.map((seg) => (
-          <div key={seg.label} className="flex items-center gap-2">
-            <div
-              className="w-2 h-2 rounded-full shrink-0"
-              style={{ backgroundColor: seg.color }}
-            />
-            <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[80px]">
-              {seg.label}
-            </span>
-            <span className="text-[10px] font-bold text-foreground ml-auto">
-              {((seg.value / total) * 100).toFixed(0)}%
-            </span>
+    <div className="bg-card border border-border rounded-3xl p-6 mb-6 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+        <div>
+          <h3 className="text-sm font-black text-foreground flex items-center gap-2">
+            <ArrowDownRight size={16} className="text-rose-500" /> Statutory & Tax Deduction Summary
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Configured statutory rates and calculated effective deduction percentages
+          </p>
+        </div>
+        <div className="sm:text-right">
+          <span className="text-xs text-muted-foreground font-semibold block">Total Statutory & Tax Deductions</span>
+          <p className="text-xl font-black text-rose-500">
+            ₹{totalDeductionSum.toLocaleString()} <span className="text-xs font-bold text-rose-600/80">({overallDeductionPct}% of Gross)</span>
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {deductionStats.map((item) => (
+          <div
+            key={item.name}
+            className="p-4 rounded-2xl bg-muted/20 border border-border hover:border-emerald-500/30 transition-all"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                {item.name}
+              </span>
+              <span
+                className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                  item.rateType === "Configured Rate"
+                    ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
+                    : "bg-indigo-500/10 text-indigo-600 border border-indigo-500/20"
+                }`}
+              >
+                {item.rateType === "Configured Rate" ? `Rate: ${item.rate}` : `Effective: ${item.rate}`}
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between mt-2">
+              <span className="text-xl font-black text-foreground">
+                ₹{item.amount.toLocaleString()}
+              </span>
+              {item.change ? (
+                <span className="text-[10px] font-bold text-muted-foreground">
+                  {item.change}
+                </span>
+              ) : (
+                <span className="text-[10px] text-muted-foreground font-medium">Current Cycle</span>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -272,11 +340,10 @@ function TransferProgressBar({
       </div>
       <div className="w-full h-1 bg-muted/50 rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-1000 ${
-            status === "On Hold"
-              ? "bg-amber-500"
-              : "bg-gradient-to-r from-emerald-500 to-cyan-500"
-          }`}
+          className={`h-full rounded-full transition-all duration-1000 ${status === "On Hold"
+            ? "bg-amber-500"
+            : "bg-gradient-to-r from-emerald-500 to-cyan-500"
+            }`}
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -412,21 +479,21 @@ function PayslipModal({
     );
     const body = encodeURIComponent(
       `Dear ${employee.name},\n\n` +
-        `Please find below the summary of your payslip for the pay period ${month} ${year}.\n\n` +
-        `Employee Details:\n` +
-        `------------------------------------------\n` +
-        `Employee ID: ${employee.id}\n` +
-        `Designation: ${employee.designation}\n` +
-        `Department: ${employee.department}\n\n` +
-        `Salary Breakdown:\n` +
-        `------------------------------------------\n` +
-        `Gross Earnings: ₹${employee.gross.toLocaleString()}\n` +
-        `Total Deductions: ₹${employee.deductions.toLocaleString()}\n` +
-        `Net Pay Disbursed: ₹${employee.net.toLocaleString()}\n\n` +
-        `Your payslip is also available for download in the viyanHR portal.\n\n` +
-        `Best regards,\n` +
-        `Finance Department\n` +
-        `viyanHR Inc.`,
+      `Please find below the summary of your payslip for the pay period ${month} ${year}.\n\n` +
+      `Employee Details:\n` +
+      `------------------------------------------\n` +
+      `Employee ID: ${employee.id}\n` +
+      `Designation: ${employee.designation}\n` +
+      `Department: ${employee.department}\n\n` +
+      `Salary Breakdown:\n` +
+      `------------------------------------------\n` +
+      `Gross Earnings: ₹${employee.gross.toLocaleString()}\n` +
+      `Total Deductions: ₹${employee.deductions.toLocaleString()}\n` +
+      `Net Pay Disbursed: ₹${employee.net.toLocaleString()}\n\n` +
+      `Your payslip is also available for download in the viyanHR portal.\n\n` +
+      `Best regards,\n` +
+      `Finance Department\n` +
+      `viyanHR Inc.`,
     );
     window.location.href = `mailto:${empEmail}?subject=${subject}&body=${body}`;
   };
@@ -705,82 +772,7 @@ function PayslipModal({
   );
 }
 
-/* ─── AI Insights Panel ──────────────────── */
-function AIInsightsPanel({ employees }: { employees: PayrollEmployee[] }) {
-  const insights = useMemo(() => {
-    const pending = employees.filter((e) => e.status === "Pending").length;
-    const onHold = employees.filter((e) => e.status === "On Hold").length;
-    const avgNet =
-      employees.reduce((s, e) => s + e.net, 0) / (employees.length || 1);
-    const topEarner = [...employees].sort((a, b) => b.gross - a.gross)[0];
-    return [
-      {
-        icon: <Sparkles size={14} className="text-violet-400" />,
-        text: `${pending} payslips are pending disbursement. Process before the 28th to avoid delays.`,
-        color: "violet",
-      },
-      {
-        icon: <TrendingUp size={14} className="text-emerald-400" />,
-        text: `Average net pay this cycle is ₹${Math.round(avgNet).toLocaleString()} — up 8.1% from last month.`,
-        color: "emerald",
-      },
-      {
-        icon: <Shield size={14} className="text-sky-400" />,
-        text:
-          onHold > 0
-            ? `${onHold} payments on hold. Review compliance flags before releasing.`
-            : "All compliance checks passed. No flagged transactions this cycle.",
-        color: "sky",
-      },
-      {
-        icon: <Zap size={14} className="text-amber-400" />,
-        text: topEarner
-          ? `Top earner this cycle: ${topEarner.name} (${topEarner.department}) at ₹${topEarner.gross.toLocaleString()} gross.`
-          : "",
-        color: "amber",
-      },
-    ].filter((i) => i.text);
-  }, [employees]);
 
-  return (
-    <div className="bg-card border border-border rounded-3xl p-5 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center">
-          <Cpu size={14} className="text-white" />
-        </div>
-        <div>
-          <h3 className="text-sm font-black text-foreground">
-            AI Payroll Insights
-          </h3>
-          <p className="text-[10px] text-muted-foreground">
-            Powered by viyanAI Engine
-          </p>
-        </div>
-        <div className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[9px] font-bold text-emerald-600">Live</span>
-        </div>
-      </div>
-      <div className="space-y-2">
-        {insights.map((ins) => (
-          <div
-            key={ins.text}
-            className={`flex items-start gap-2.5 p-2.5 rounded-xl bg-${ins.color}-500/5 border border-${ins.color}-500/10`}
-          >
-            <div
-              className={`w-6 h-6 rounded-lg bg-${ins.color}-500/10 flex items-center justify-center shrink-0`}
-            >
-              {ins.icon}
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {ins.text}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 /* ─── Run Payroll Modal ─────────────────── */
 function RunPayrollModal({
@@ -1006,8 +998,8 @@ function EditPayrollModal({
   onClose: () => void;
   onSave: (updated: PayrollEmployee) => void;
 }) {
-  const { user } = useAuth();
-  const isHR = user?.role === "HR Manager";
+  const { hasPermissionKey } = usePermissions();
+  const canManagePayroll = hasPermissionKey(P.PAYROLL_MANAGE);
   const [gross, setGross] = useState(() => employee.gross.toString());
   const [deductions, setDeductions] = useState(() => employee.deductions.toString());
   const [bonus, setBonus] = useState(() => (employee.bonus || 0).toString());
@@ -1088,9 +1080,9 @@ function EditPayrollModal({
               type="number"
               value={gross}
               min="0"
-              readOnly={isHR}
+              readOnly={!canManagePayroll}
               onChange={(e) => setGross(e.target.value)}
-              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${isHR ? "bg-muted cursor-not-allowed opacity-75 border-border" : errors.gross ? "border-red-500 focus:border-red-500" : "border-border focus:border-emerald-500"}`}
+              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${!canManagePayroll ? "bg-muted cursor-not-allowed opacity-75 border-border" : errors.gross ? "border-red-500 focus:border-red-500" : "border-border focus:border-emerald-500"}`}
             />
             {errors.gross && (
               <p className="text-xs text-red-500 mt-1">{errors.gross}</p>
@@ -1123,9 +1115,9 @@ function EditPayrollModal({
               type="number"
               value={deductions}
               min="0"
-              readOnly={isHR}
+              readOnly={!canManagePayroll}
               onChange={(e) => setDeductions(e.target.value)}
-              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${isHR ? "bg-muted cursor-not-allowed opacity-75 border-border" : errors.deductions ? "border-red-500 focus:border-red-500" : "border-border focus:border-emerald-500"}`}
+              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${!canManagePayroll ? "bg-muted cursor-not-allowed opacity-75 border-border" : errors.deductions ? "border-red-500 focus:border-red-500" : "border-border focus:border-emerald-500"}`}
             />
             {errors.deductions && (
               <p className="text-xs text-red-500 mt-1">{errors.deductions}</p>
@@ -1152,10 +1144,10 @@ function EditPayrollModal({
             <input
               type="text"
               value={bankAccount}
-              readOnly={isHR}
+              readOnly={!canManagePayroll}
               onChange={(e) => setBankAccount(e.target.value)}
               placeholder="****1234"
-              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${isHR ? "bg-muted cursor-not-allowed opacity-75 border-border" : "border-border focus:border-emerald-500"}`}
+              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${!canManagePayroll ? "bg-muted cursor-not-allowed opacity-75 border-border" : "border-border focus:border-emerald-500"}`}
             />
           </div>
 
@@ -1166,11 +1158,11 @@ function EditPayrollModal({
             </label>
             <select
               value={status}
-              disabled={isHR}
+              disabled={!canManagePayroll}
               onChange={(e) =>
                 setStatus(e.target.value as PayrollEmployee["status"])
               }
-              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${isHR ? "bg-muted cursor-not-allowed opacity-75 border-border" : "border-border focus:border-emerald-500"}`}
+              className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none bg-transparent text-foreground transition-colors ${!canManagePayroll ? "bg-muted cursor-not-allowed opacity-75 border-border" : "border-border focus:border-emerald-500"}`}
             >
               <option value="Paid">Paid</option>
               <option value="Pending">Pending</option>
@@ -1205,7 +1197,6 @@ function StatCard({
   sub,
   trend,
   isUp,
-  sparkData,
   color,
   icon,
 }: {
@@ -1214,7 +1205,6 @@ function StatCard({
   sub: string;
   trend: string;
   isUp: boolean;
-  sparkData: number[];
   color: string;
   icon: React.ReactNode;
 }) {
@@ -1246,12 +1236,6 @@ function StatCard({
         <p className="text-[10px] text-muted-foreground mt-1 font-medium">
           {sub}
         </p>
-        <div className="mt-4">
-          <MiniBarChart
-            data={sparkData}
-            color={`var(--${color === "emerald" ? "emerald" : color === "rose" ? "red" : "sky"}-500, #10b981)`}
-          />
-        </div>
       </div>
     </div>
   );
@@ -1277,7 +1261,23 @@ const SortIcon = ({
     <ChevronDown size={10} className="opacity-30" />
   );
 export function Payroll() {
+  const { hasPermissionKey } = usePermissions();
+
+  const canViewPayroll =
+    hasPermissionKey(P.PAYROLL_VIEW) ||
+    hasPermissionKey(P.PAYROLL_FULL) ||
+    hasPermissionKey(P.PAYROLL_MANAGE);
+
+  if (!canViewPayroll) {
+    return <EmployeePayslips />;
+  }
+
+  return <AdminPayrollView />;
+}
+
+function AdminPayrollView() {
   const { user } = useAuth();
+  const { hasPermissionKey } = usePermissions();
 
   /* ── Leave impact helper ── */
   const getLeaveImpact = useCallback((empId: string, empName: string) => {
@@ -1315,7 +1315,6 @@ export function Payroll() {
     "name" | "gross" | "net" | "deductions"
   >("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
-  const [showAnalytics, setShowAnalytics] = useState(true);
   const itemsPerPage = 8;
 
   const { employeesList } = useEmployees();
@@ -1372,6 +1371,7 @@ export function Payroll() {
       const activeStructures = structures.filter((struct) =>
         activeEmployees.some((emp) => emp.id === struct.employeeId),
       );
+      const settings = payrollSettingsService.getSettings(user?.organizationId);
       const mapped = activeStructures.map((struct: SalaryStructure) => {
         const leavesInfo = getLeaveImpact(
           struct.employeeId,
@@ -1383,7 +1383,7 @@ export function Payroll() {
           22,
           leavesInfo.days,
           monthYear,
-          bonus,
+          { bonus, settings },
         );
         const originalEmp = payrollEmployees.find(
           (pe) => pe.id === struct.employeeId,
@@ -1407,7 +1407,7 @@ export function Payroll() {
       });
       setEmployeesData(mapped);
     }
-  }, [selectedMonth, selectedYear, draftBonuses, structures, activeEmployees]);
+  }, [selectedMonth, selectedYear, draftBonuses, structures, activeEmployees, getLeaveImpact, user]);
 
   /* ── Close dropdowns on outside click ── */
   useEffect(() => {
@@ -1511,18 +1511,7 @@ export function Payroll() {
     (e) => e.status === "On Hold",
   ).length;
 
-  /* ── Department donut data ── */
-  const deptDonutData = useMemo(() => {
-    const map: Record<string, number> = {};
-    employeesData.forEach((e) => {
-      map[e.department] = (map[e.department] || 0) + e.gross;
-    });
-    return Object.entries(map).map(([dept, val]) => ({
-      label: dept,
-      value: val,
-      color: DEPT_COLORS[dept] || "#6b7280",
-    }));
-  }, [employeesData]);
+
 
   /* ── Sorting toggle ── */
   const handleSort = (field: typeof sortField) => {
@@ -1626,7 +1615,8 @@ export function Payroll() {
   /* ── Sort icon helper ── */
 
   /* ── Guard: Employee role sees their own payslips ── */
-  if (user?.role === "Employee") return <EmployeePayslips />;
+  if (!hasPermissionKey(P.PAYROLL_VIEW) && !hasPermissionKey(P.PAYROLL_FULL))
+    return <EmployeePayslips />;
 
   /* ─────────────────────────── JSX ─────────────────────────── */
   return (
@@ -1725,27 +1715,16 @@ export function Payroll() {
               )}
             </div>
 
-            <div className="h-6 w-px bg-border hidden sm:block" />
-
-            <button
-              onClick={() => setShowAnalytics(!showAnalytics)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-bold transition-all ${showAnalytics ? "bg-indigo-500/10 text-indigo-600 border-indigo-500/30" : "border-border text-muted-foreground hover:bg-muted/50"}`}
-            >
-              <BarChart3 size={14} />
-              Analytics
-            </button>
-
-            {!payRun &&
-              (user?.role === "HR Manager" || user?.role === "Super Admin") && (
-                <button
-                  onClick={() => setShowRunModal(true)}
-                  disabled={missingStructuresEmployees.length > 0}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <Play size={14} className="fill-white" />
-                  Prepare Payroll
-                </button>
-              )}
+            {!payRun && hasPermissionKey(P.EMPLOYEES_MANAGE) && (
+              <button
+                onClick={() => setShowRunModal(true)}
+                disabled={missingStructuresEmployees.length > 0}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/25 hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Play size={14} className="fill-white" />
+                Prepare Payroll
+              </button>
+            )}
           </div>
         </div>
 
@@ -1768,12 +1747,12 @@ export function Payroll() {
               color: "red",
             },
             {
-              label: "TDS Filing: Apr 15",
+              label: "TDS Compliance Active",
               icon: <AlertTriangle size={12} />,
               color: "orange",
             },
             {
-              label: "Next Payroll: 8 days",
+              label: "Monthly Cycle Schedule",
               icon: <Calendar size={12} />,
               color: "sky",
             },
@@ -1795,7 +1774,6 @@ export function Payroll() {
             sub="Total pre-tax earnings"
             trend="+12.5%"
             isUp
-            sparkData={[6, 8, 7, 10, 9, 11, totalGross / 1000]}
             color="emerald"
             icon={<CircleDollarSign size={18} />}
           />
@@ -1805,7 +1783,6 @@ export function Payroll() {
             sub="Tax, PF & insurance"
             trend="-2.4%"
             isUp={false}
-            sparkData={[5, 4, 6, 5, 4, 5, totalDeductions / 1000]}
             color="rose"
             icon={<ArrowDownRight size={18} />}
           />
@@ -1815,32 +1792,19 @@ export function Payroll() {
             sub="Final amount paid to employees"
             trend="+8.1%"
             isUp
-            sparkData={[5, 7, 6, 8, 9, 10, totalNet / 1000]}
             color="sky"
             icon={<BanknoteIcon size={18} />}
           />
         </div>
 
-        {/* ── Analytics Section ── */}
-        {showAnalytics && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6 animate-in slide-in-from-top-2 duration-300">
-            {/* Department Distribution */}
-            <div className="bg-card border border-border rounded-3xl p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <PieChart size={14} className="text-indigo-500" />
-                <h3 className="text-sm font-black text-foreground">
-                  Dept. Distribution
-                </h3>
-              </div>
-              <DonutChart segments={deptDonutData} />
-            </div>
-
-            {/* AI Insights — spans 2 columns */}
-            <div className="lg:col-span-2">
-              <AIInsightsPanel employees={employeesData} />
-            </div>
-          </div>
-        )}
+        {/* ── Statutory & Tax Deduction Breakdown Card ── */}
+        <DeductionBreakdownCard
+          totalGross={totalGross}
+          activeEmployees={activeEmployees}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
+          organizationId={user?.organizationId}
+        />
 
         {/* ── Filters & Search Bar ── */}
         <div className="bg-card border border-border rounded-3xl p-2 mb-4 flex flex-col md:flex-row items-center gap-3">
@@ -1850,11 +1814,10 @@ export function Payroll() {
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                  statusFilter === s
-                    ? "bg-card text-emerald-500 shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${statusFilter === s
+                  ? "bg-card text-emerald-500 shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 {s}
               </button>
@@ -2157,13 +2120,12 @@ export function Payroll() {
                               className="w-10 h-10 rounded-xl object-cover border border-border"
                             />
                             <div
-                              className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-card ${
-                                emp.status === "Paid"
-                                  ? "bg-emerald-500"
-                                  : emp.status === "On Hold"
-                                    ? "bg-amber-500"
-                                    : "bg-slate-400"
-                              }`}
+                              className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-card ${emp.status === "Paid"
+                                ? "bg-emerald-500"
+                                : emp.status === "On Hold"
+                                  ? "bg-amber-500"
+                                  : "bg-slate-400"
+                                }`}
                             />
                           </div>
                           <div>
@@ -2249,13 +2211,12 @@ export function Payroll() {
                       {/* Status Badge */}
                       <td className="px-5 py-4">
                         <div
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                            emp.status === "Paid"
-                              ? "bg-emerald-500/10 text-emerald-600"
-                              : emp.status === "On Hold"
-                                ? "bg-amber-500/10 text-amber-600"
-                                : "bg-slate-500/10 text-slate-600"
-                          }`}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${emp.status === "Paid"
+                            ? "bg-emerald-500/10 text-emerald-600"
+                            : emp.status === "On Hold"
+                              ? "bg-amber-500/10 text-amber-600"
+                              : "bg-slate-500/10 text-slate-600"
+                            }`}
                         >
                           {emp.status === "Paid" ? (
                             <BadgeCheck size={11} />
@@ -2343,21 +2304,21 @@ export function Payroll() {
                                     );
                                     const body = encodeURIComponent(
                                       `Dear ${emp.name},\n\n` +
-                                        `Please find below the summary of your payslip for the pay period ${selectedMonth} ${selectedYear}.\n\n` +
-                                        `Employee Details:\n` +
-                                        `------------------------------------------\n` +
-                                        `Employee ID: ${emp.id}\n` +
-                                        `Designation: ${emp.designation}\n` +
-                                        `Department: ${emp.department}\n\n` +
-                                        `Salary Breakdown:\n` +
-                                        `------------------------------------------\n` +
-                                        `Gross Earnings: ₹${emp.gross.toLocaleString()}\n` +
-                                        `Total Deductions: ₹${emp.deductions.toLocaleString()}\n` +
-                                        `Net Pay Disbursed: ₹${emp.net.toLocaleString()}\n\n` +
-                                        `Your payslip is also available for download in the viyanHR portal.\n\n` +
-                                        `Best regards,\n` +
-                                        `Finance Department\n` +
-                                        `viyanHR Inc.`,
+                                      `Please find below the summary of your payslip for the pay period ${selectedMonth} ${selectedYear}.\n\n` +
+                                      `Employee Details:\n` +
+                                      `------------------------------------------\n` +
+                                      `Employee ID: ${emp.id}\n` +
+                                      `Designation: ${emp.designation}\n` +
+                                      `Department: ${emp.department}\n\n` +
+                                      `Salary Breakdown:\n` +
+                                      `------------------------------------------\n` +
+                                      `Gross Earnings: ₹${emp.gross.toLocaleString()}\n` +
+                                      `Total Deductions: ₹${emp.deductions.toLocaleString()}\n` +
+                                      `Net Pay Disbursed: ₹${emp.net.toLocaleString()}\n\n` +
+                                      `Your payslip is also available for download in the viyanHR portal.\n\n` +
+                                      `Best regards,\n` +
+                                      `Finance Department\n` +
+                                      `viyanHR Inc.`,
                                     );
                                     window.location.href = `mailto:${empEmail}?subject=${subject}&body=${body}`;
                                     addToast({
@@ -2371,7 +2332,7 @@ export function Payroll() {
                                   <Mail size={14} className="text-sky-500" />{" "}
                                   Email Payslip
                                 </button>
-                                {user?.role !== "HR Manager" && (
+                                {hasPermissionKey(P.PAYROLL_MANAGE) && (
                                   <>
                                     {emp.status !== "Paid" && (
                                       <button
@@ -2381,10 +2342,10 @@ export function Payroll() {
                                             prev.map((e) =>
                                               e.id === emp.id
                                                 ? {
-                                                    ...e,
-                                                    status: "Paid" as const,
-                                                    transferProgress: 100,
-                                                  }
+                                                  ...e,
+                                                  status: "Paid" as const,
+                                                  transferProgress: 100,
+                                                }
                                                 : e,
                                             ),
                                           );
@@ -2407,9 +2368,9 @@ export function Payroll() {
                                             prev.map((e) =>
                                               e.id === emp.id
                                                 ? {
-                                                    ...e,
-                                                    status: "On Hold" as const,
-                                                  }
+                                                  ...e,
+                                                  status: "On Hold" as const,
+                                                }
                                                 : e,
                                             ),
                                           );
@@ -2498,11 +2459,10 @@ export function Payroll() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
-                        currentPage === page
-                          ? "bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/25"
-                          : "text-muted-foreground hover:bg-muted"
-                      }`}
+                      className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === page
+                        ? "bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/25"
+                        : "text-muted-foreground hover:bg-muted"
+                        }`}
                     >
                       {page}
                     </button>
@@ -2544,25 +2504,24 @@ export function Payroll() {
             <div className="absolute top-[18px] left-12 w-2/5 h-0.5 bg-gradient-to-r from-emerald-500 to-emerald-400 z-0" />
 
             {[
-              { label: "Data Collection", status: "completed", desc: "Apr 1" },
-              { label: "Attendance Lock", status: "completed", desc: "Apr 5" },
+              { label: "Data Collection", status: "completed", desc: "Completed" },
+              { label: "Attendance Lock", status: "completed", desc: "Completed" },
               { label: "Calculation", status: "active", desc: "In Progress" },
-              { label: "Review", status: "pending", desc: "Apr 20" },
-              { label: "Approval", status: "pending", desc: "Apr 24" },
-              { label: "Disbursement", status: "pending", desc: "Apr 28" },
+              { label: "Review", status: "pending", desc: "Pending" },
+              { label: "Approval", status: "pending", desc: "Pending" },
+              { label: "Disbursement", status: "pending", desc: "Pending" },
             ].map((step) => (
               <div
                 key={step.label}
                 className="flex flex-col items-center gap-2 relative z-10 w-28"
               >
                 <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 transition-all ${
-                    step.status === "completed"
-                      ? "bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-500/30"
-                      : step.status === "active"
-                        ? "bg-card border-emerald-500 ring-4 ring-emerald-500/20"
-                        : "bg-card border-border"
-                  }`}
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center border-2 transition-all ${step.status === "completed"
+                    ? "bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-500/30"
+                    : step.status === "active"
+                      ? "bg-card border-emerald-500 ring-4 ring-emerald-500/20"
+                      : "bg-card border-border"
+                    }`}
                 >
                   {step.status === "completed" ? (
                     <CheckCircle2 size={16} className="text-white" />
@@ -2577,13 +2536,12 @@ export function Payroll() {
                 </div>
                 <div className="text-center">
                   <span
-                    className={`text-[11px] font-bold ${
-                      step.status === "completed"
-                        ? "text-emerald-600"
-                        : step.status === "active"
-                          ? "text-foreground"
-                          : "text-muted-foreground"
-                    }`}
+                    className={`text-[11px] font-bold ${step.status === "completed"
+                      ? "text-emerald-600"
+                      : step.status === "active"
+                        ? "text-foreground"
+                        : "text-muted-foreground"
+                      }`}
                   >
                     {step.label}
                   </span>
@@ -2598,21 +2556,20 @@ export function Payroll() {
       </div>
 
       {/* ── Floating Action Button ── */}
-      {!payRun &&
-        (user?.role === "HR Manager" || user?.role === "Super Admin") && (
-          <div className="fixed bottom-8 right-8 z-[2000]">
-            <button
-              onClick={() => setShowRunModal(true)}
-              disabled={missingStructuresEmployees.length > 0}
-              className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
-            >
-              <Play size={20} className="fill-white translate-x-0.5" />
-              <div className="absolute right-full mr-3 px-3 py-1.5 bg-foreground text-background text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
-                Prepare Payroll
-              </div>
-            </button>
-          </div>
-        )}
+      {!payRun && hasPermissionKey(P.EMPLOYEES_MANAGE) && (
+        <div className="fixed bottom-8 right-8 z-[2000]">
+          <button
+            onClick={() => setShowRunModal(true)}
+            disabled={missingStructuresEmployees.length > 0}
+            className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+          >
+            <Play size={20} className="fill-white translate-x-0.5" />
+            <div className="absolute right-full mr-3 px-3 py-1.5 bg-foreground text-background text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
+              Prepare Payroll
+            </div>
+          </button>
+        </div>
+      )}
 
       {/* ── Modals ── */}
       {showRunModal && (
@@ -2626,6 +2583,7 @@ export function Payroll() {
             const activeStructures = structures.filter((struct) =>
               activeEmployees.some((emp) => emp.id === struct.employeeId),
             );
+            const settings = payrollSettingsService.getSettings(user?.organizationId);
             const payslips = activeStructures.map((struct: SalaryStructure) => {
               const leavesInfo = getLeaveImpact(
                 struct.employeeId,
@@ -2637,15 +2595,27 @@ export function Payroll() {
                 22,
                 leavesInfo.days,
                 `${selectedMonth} ${selectedYear}`,
-                bonus,
+                { bonus, settings },
               );
             });
 
-            const res = payrollService.createPayRun(
-              `${selectedMonth} ${selectedYear}`,
-              user?.email || "hr@viyanhr.com",
-              payslips,
-            );
+            const existingRun = payrollService.getPayRun(`${selectedMonth} ${selectedYear}`, user?.organizationId);
+            let res;
+            if (existingRun && existingRun.status === "rejected") {
+              res = payrollService.resubmitPayRun(
+                existingRun.id,
+                user?.email || "hr@viyanhr.com",
+                payslips,
+                user?.organizationId,
+              );
+            } else {
+              res = payrollService.createPayRun(
+                `${selectedMonth} ${selectedYear}`,
+                user?.email || "hr@viyanhr.com",
+                payslips,
+                user?.organizationId,
+              );
+            }
 
             if ("error" in res) {
               addToast({

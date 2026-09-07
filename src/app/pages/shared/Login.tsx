@@ -1,5 +1,5 @@
 import { useState, useEffect, useTransition } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   Mail,
   Lock,
@@ -159,7 +159,8 @@ export function Login() {
       try {
         registeredUsers = registeredUsersRaw ? JSON.parse(registeredUsersRaw) : [];
       } catch (e) {
-        /* ignore */
+        console.log(e);
+
       }
       try {
         registeredAccount = registeredUsers.find(
@@ -243,7 +244,7 @@ export function Login() {
 
       const route =
         role === "Employee" &&
-        registeredAccount?.candidateStatus !== "Completed"
+          registeredAccount?.candidateStatus !== "Completed"
           ? "/onboarding"
           : role === "Platform Admin"
             ? "/platform-admin/dashboard"
@@ -519,7 +520,7 @@ export function Login() {
                 Forgot Password?
               </button>
             </div>
-              
+
 
             {/* Submit */}
             <button
@@ -572,9 +573,8 @@ export function Login() {
                     type="button"
                     onClick={() => handleDemoLogin(role)}
                     disabled={isPending}
-                    className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${
-                      isLast ? "col-span-2 justify-center" : ""
-                    }`}
+                    className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer group ${isLast ? "col-span-2 justify-center" : ""
+                      }`}
                     style={{
                       borderColor: config.color + "30",
                       backgroundColor: config.bg,
@@ -647,17 +647,13 @@ export function Login() {
             }}
           >
             New to viyanHR?{" "}
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("/signup");
-              }}
+            <Link
+              to="/signup"
               className="hover:underline transition-all"
               style={{ color: "var(--primary)", fontWeight: 800 }}
             >
               Create an Account
-            </a>
+            </Link>
           </p>
           <p
             style={{

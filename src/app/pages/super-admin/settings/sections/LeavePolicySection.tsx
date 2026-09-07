@@ -10,8 +10,13 @@ export function LeavePolicySection() {
     setActiveModal,
     setLeaveTypeForm,
     setSelectedLeaveType,
+    policiesList,
+    setSelectedPolicy,
+    setPolicyForm,
+    showToast,
   } = useSettingsContext();
 
+  const [activeCategoryFilter, setActiveCategoryFilter] = useState<string>("All");
   const [lpApprovalLevels, setLpApprovalLevels] = useState("1");
   const [lpAutoApprove, setLpAutoApprove] = useState(false);
   const [lpCarryForwardLimit, setLpCarryForwardLimit] = useState("10");
@@ -27,7 +32,7 @@ export function LeavePolicySection() {
       <div className="flex items-center gap-2 mb-4 text-[12px] font-medium">
         <span style={{ color: "var(--muted-foreground)" }}>Settings</span>
         <ChevronRight size={12} style={{ color: "var(--muted-foreground)" }} />
-        <span style={{ color: "#00B87C" }}>Leave Policy</span>
+        <span style={{ color: "#00B87C" }}>Policies & Entitlements</span>
       </div>
 
       {/* Content Header */}
@@ -41,7 +46,7 @@ export function LeavePolicySection() {
               margin: 0,
             }}
           >
-            Leave Policy Configuration
+            Corporate Policies & Entitlements
           </h2>
           <p
             style={{
@@ -56,19 +61,30 @@ export function LeavePolicySection() {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setActiveModal("confirm_save_policy")}
+            onClick={() => {
+              setPolicyForm({
+                category: "HR",
+                name: "",
+                description: "",
+                content: "",
+                effectiveDate: new Date().toISOString().split("T")[0],
+                status: "Active",
+              });
+              setSelectedPolicy(null);
+              setActiveModal("add_policy");
+            }}
             style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: "10px",
+              backgroundColor: "#00B87C",
+              color: "white",
+              border: "none",
+              borderRadius: "12px",
               padding: "8px 16px",
               fontSize: "13px",
               fontWeight: 600,
-              color: "var(--foreground)",
               cursor: "pointer",
             }}
           >
-            Save Policy
+            + Add Policy
           </button>
           <button
             onClick={() => {
@@ -82,7 +98,6 @@ export function LeavePolicySection() {
                 encashment: false,
                 approvalRequired: true,
                 attachmentRequired: false,
-                minNoticePeriod: 1,
                 maxConsecutiveLeave: 5,
                 dept: "All",
                 location: "All Locations",
@@ -93,9 +108,9 @@ export function LeavePolicySection() {
               setActiveModal("add_leave_type");
             }}
             style={{
-              backgroundColor: "#00B87C",
-              color: "white",
-              border: "none",
+              backgroundColor: "var(--card)",
+              color: "var(--foreground)",
+              border: "1px solid var(--border)",
               borderRadius: "12px",
               padding: "8px 16px",
               fontSize: "13px",
@@ -263,7 +278,6 @@ export function LeavePolicySection() {
                           encashment: l.encashment,
                           approvalRequired: l.approvalRequired,
                           attachmentRequired: l.attachmentRequired,
-                          minNoticePeriod: l.minNoticePeriod,
                           maxConsecutiveLeave: l.maxConsecutiveLeave,
                           dept: l.dept,
                           location: l.location,
@@ -580,9 +594,9 @@ export function LeavePolicySection() {
       </div>
 
       {/* SECTION 6: POLICY SUMMARY */}
-      <SectionTitle title="6. Policy Summary" />
+      <SectionTitle title="6. Leave Entitlements Summary" />
       <div
-        className="p-6 rounded-2xl border mb-6 shadow-sm"
+        className="p-6 rounded-2xl border mb-8 shadow-sm"
         style={{
           backgroundColor: "rgba(0, 184, 124, 0.05)",
           borderColor: "rgba(0, 184, 124, 0.2)",
@@ -608,13 +622,136 @@ export function LeavePolicySection() {
         </div>
       </div>
 
+      {/* SECTION 7: CORPORATE POLICIES DIRECTORY */}
+      <div className="flex justify-between items-center mb-4">
+        <SectionTitle title="7. Active Corporate Policies Directory" />
+        <button
+          onClick={() => {
+            setPolicyForm({
+              category: "HR",
+              name: "",
+              description: "",
+              content: "",
+              effectiveDate: new Date().toISOString().split("T")[0],
+              status: "Active",
+            });
+            setSelectedPolicy(null);
+            setActiveModal("add_policy");
+          }}
+          className="px-3 py-1.5 bg-[#00B87C] text-white rounded-xl text-xs font-bold cursor-pointer hover:bg-[#00B87C]/90"
+        >
+          + Add New Policy
+        </button>
+      </div>
+
+      {/* Policy Category Filter Pills */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {["All", "HR", "Attendance", "Leave", "Payroll", "Security", "Expense", "RemoteWork", "CodeOfConduct"].map(
+          (cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategoryFilter(cat)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
+                activeCategoryFilter === cat
+                  ? "bg-[#00B87C] text-white border-[#00B87C]"
+                  : "bg-card text-foreground border-border hover:bg-muted"
+              }`}
+            >
+              {cat === "All" ? "All Categories" : cat}
+            </button>
+          )
+        )}
+      </div>
+
+      {/* Policy Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        {policiesList
+          ?.filter(
+            (p: any) =>
+              activeCategoryFilter === "All" || p.category === activeCategoryFilter
+          )
+          .map((policy: any) => (
+            <div
+              key={policy.id}
+              className="p-5 rounded-2xl border border-border bg-card shadow-sm flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <span className="px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase bg-emerald-500/10 text-[#00B87C]">
+                    {policy.category}
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                      policy.status === "Active"
+                        ? "bg-emerald-500/10 text-emerald-600"
+                        : policy.status === "Draft"
+                        ? "bg-amber-500/10 text-amber-600"
+                        : "bg-gray-500/10 text-gray-500"
+                    }`}
+                  >
+                    {policy.status}
+                  </span>
+                </div>
+                <h4 className="text-sm font-bold text-foreground mb-1">
+                  {policy.name}
+                </h4>
+                <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+                  {policy.description || policy.content}
+                </p>
+                <div className="text-[11px] text-muted-foreground space-y-0.5 mb-4">
+                  <div>
+                    <span className="font-semibold">Version:</span> {policy.version || "v1.0"}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Effective:</span> {policy.effectiveDate}
+                  </div>
+                  <div>
+                    <span className="font-semibold">Last Updated:</span> {policy.updatedAt} by {policy.updatedBy}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-3 border-t border-border mt-auto">
+                <button
+                  onClick={() => {
+                    setSelectedPolicy(policy);
+                    setPolicyForm({
+                      category: policy.category,
+                      name: policy.name,
+                      description: policy.description || "",
+                      content: policy.content || "",
+                      effectiveDate: policy.effectiveDate || new Date().toISOString().split("T")[0],
+                      status: policy.status,
+                    });
+                    setActiveModal("edit_policy");
+                  }}
+                  className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[#00B87C] text-[#00B87C] hover:bg-[#00B87C]/10 cursor-pointer"
+                >
+                  Edit Policy
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedPolicy(policy);
+                    setActiveModal("archive_policy");
+                  }}
+                  className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-rose-500/30 text-rose-500 hover:bg-rose-500/10 cursor-pointer"
+                >
+                  Archive
+                </button>
+              </div>
+            </div>
+          ))}
+      </div>
+
       {/* SAVE BAR */}
       <div
         className="flex justify-end items-center pt-4 mt-6"
         style={{ borderTop: "1px solid var(--border)" }}
       >
         <button
-          onClick={() => setActiveModal("confirm_save_policy")}
+          onClick={() => {
+            showToast("Policy configurations updated successfully", "success");
+          }}
           style={{
             backgroundColor: "#00B87C",
             color: "white",

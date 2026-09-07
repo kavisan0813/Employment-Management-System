@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router";
 import {
   Receipt,
-  Plus,
   Download,
   CheckCircle2,
   Clock,
@@ -18,7 +18,7 @@ import {
   FileText,
   Edit3,
   ChevronDown,
-  Gauge,
+  TrendingUp,
 } from "lucide-react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 
@@ -126,7 +126,7 @@ const MOCK_EXPENSES: Expense[] = [
     title: "Udemy Course — Advanced React",
     vendor: "Draft · Not yet submitted",
     category: "Training",
-    date: "—",
+    date: "Apr 1, 2026",
     amount: 1999,
     receiptStatus: "Pending",
     status: "Draft",
@@ -301,7 +301,6 @@ interface SummaryCardProps {
   subValue: string;
   chip?: string;
   chipColor?: "green" | "amber" | "purple" | "sky";
-  progress?: number;
 }
 
 function SummaryCard({
@@ -313,7 +312,6 @@ function SummaryCard({
   subValue,
   chip,
   chipColor,
-  progress,
 }: SummaryCardProps) {
   return (
     <div className="bg-card p-5 rounded-2xl border border-border shadow-sm relative group hover:-translate-y-[2px] hover:border-[#00B87C] hover:shadow-[0_0_15px_rgba(0,184,124,0.3)] transition-all">
@@ -322,16 +320,6 @@ function SummaryCard({
           className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center ${color}`}
         >
           <Icon size={20} />
-        </div>
-        <div className="opacity-10 group-hover:opacity-20 transition-opacity">
-          <svg width="40" height="20" viewBox="0 0 40 20" fill="none">
-            <path
-              d="M0 15C5 12 10 18 15 10C20 2 25 15 30 5C35 -5 40 10 40 10"
-              stroke="currentColor"
-              strokeWidth="2"
-              className={color}
-            />
-          </svg>
         </div>
       </div>
       <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
@@ -360,16 +348,6 @@ function SummaryCard({
       <p className="text-[12px] font-bold text-muted-foreground mt-2">
         {subValue}
       </p>
-      {progress !== undefined && (
-        <div className="mt-4 space-y-2">
-          <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-            <div
-              className="h-full bg-amber-500 transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -410,18 +388,8 @@ const MONTHS = [
   "November",
   "December",
 ];
-const CATEGORIES_ALL = [
-  "All Categories",
-  "Travel",
-  "Food",
-  "Equipment",
-  "Accommodation",
-  "Transport",
-  "Medical",
-  "Training",
-  "Communication",
-  "Other",
-];
+const YEARS = ["All Years", "2026", "2025", "2024"];
+
 const STATUSES_ALL = ["All Status", "Approved", "Pending", "Rejected", "Draft"];
 const MONTH_DATE_MAP: Record<string, string> = {
   March: "Mar",
@@ -430,6 +398,7 @@ const MONTH_DATE_MAP: Record<string, string> = {
 };
 
 export function ManagerPersonalExpenses() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
     "All" | "Pending" | "Approved" | "Rejected"
   >("All");
@@ -437,12 +406,20 @@ export function ManagerPersonalExpenses() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedMonth, setSelectedMonth] = useState("All Months");
+  const [selectedYear, setSelectedYear] = useState("2026");
   const [selectedStatus, setSelectedStatus] = useState("All Status");
   const [showCatDrop, setShowCatDrop] = useState(false);
   const [showMonthDrop, setShowMonthDrop] = useState(false);
+  const [showYearDrop, setShowYearDrop] = useState(false);
   const [showStatusDrop, setShowStatusDrop] = useState(false);
   const [newExpenseDesc, setNewExpenseDesc] = useState("");
   const [newExpenseCat, setNewExpenseCat] = useState("Travel");
+
+  // Dynamic category list derived safely from current dataset
+  const categoriesList = useMemo(() => {
+    const cats = Array.from(new Set(MOCK_EXPENSES.map((e) => e.category)));
+    return ["All Categories", ...cats];
+  }, []);
 
   const handleExport = () => {
     const rows = filteredExpenses.map((e) =>
@@ -483,9 +460,11 @@ export function ManagerPersonalExpenses() {
         e.date.includes(
           MONTH_DATE_MAP[selectedMonth] ?? selectedMonth.slice(0, 3),
         );
-      return tabMatch && catMatch && statusMatch && monthMatch;
+      const yearMatch =
+        selectedYear === "All Years" || e.date.includes(selectedYear);
+      return tabMatch && catMatch && statusMatch && monthMatch && yearMatch;
     });
-  }, [activeTab, selectedCategory, selectedMonth, selectedStatus]);
+  }, [activeTab, selectedCategory, selectedMonth, selectedYear, selectedStatus]);
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20">
@@ -500,7 +479,7 @@ export function ManagerPersonalExpenses() {
               My Expenses
             </h1>
             <p className="text-[13px] font-bold text-muted-foreground">
-              Manage and track your reimbursement claims
+              Manage and track your personal reimbursement claims
             </p>
           </div>
         </div>
@@ -530,11 +509,6 @@ export function ManagerPersonalExpenses() {
         <div className="flex items-center gap-2 text-[12px] font-bold text-foreground">
           <span className="w-2 h-2 rounded-full bg-amber-500" /> 2 claims
           pending approval
-        </div>
-        <div className="hidden md:block w-[1px] h-4 bg-border" />
-        <div className="flex items-center gap-2 text-[12px] font-bold text-foreground">
-          <span className="w-2 h-2 rounded-full bg-sky-500" /> Monthly limit:
-          ₹15,000 | Used: ₹8,750 (58%)
         </div>
       </div>
 
@@ -571,15 +545,14 @@ export function ManagerPersonalExpenses() {
           chipColor="sky"
         />
         <SummaryCard
-          icon={Gauge}
+          icon={TrendingUp}
           color="text-purple-500"
           bg="bg-purple-500/10"
-          label="MONTHLY LIMIT"
-          value="₹15,000"
-          subValue="₹6,250 remaining"
-          progress={58}
-          chip="58% used"
-          chipColor="amber"
+          label="TOTAL YTD REIMBURSED"
+          value="₹14,300"
+          subValue="5 approved claims"
+          chip="Year 2026"
+          chipColor="purple"
         />
       </div>
 
@@ -591,13 +564,14 @@ export function ManagerPersonalExpenses() {
             {/* Table Header Row */}
             <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <SectionHeader title="EXPENSE CLAIMS" count="8 total" />
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {/* Category Dropdown */}
                 <div className="relative">
                   <div
                     onClick={() => {
                       setShowCatDrop(!showCatDrop);
                       setShowMonthDrop(false);
+                      setShowYearDrop(false);
                       setShowStatusDrop(false);
                     }}
                     className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
@@ -607,7 +581,7 @@ export function ManagerPersonalExpenses() {
                   </div>
                   {showCatDrop && (
                     <div className="absolute top-full mt-1 left-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[160px]">
-                      {CATEGORIES_ALL.map((c) => (
+                      {categoriesList.map((c) => (
                         <button
                           key={c}
                           onClick={() => {
@@ -622,12 +596,44 @@ export function ManagerPersonalExpenses() {
                     </div>
                   )}
                 </div>
+                {/* Year Dropdown */}
+                <div className="relative">
+                  <div
+                    onClick={() => {
+                      setShowYearDrop(!showYearDrop);
+                      setShowCatDrop(false);
+                      setShowMonthDrop(false);
+                      setShowStatusDrop(false);
+                    }}
+                    className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
+                  >
+                    Year: {selectedYear}{" "}
+                    <ChevronDown size={14} className="text-muted-foreground" />
+                  </div>
+                  {showYearDrop && (
+                    <div className="absolute top-full mt-1 left-0 z-50 bg-card border border-border rounded-xl shadow-xl overflow-hidden min-w-[120px]">
+                      {YEARS.map((y) => (
+                        <button
+                          key={y}
+                          onClick={() => {
+                            setSelectedYear(y);
+                            setShowYearDrop(false);
+                          }}
+                          className={`w-full text-left px-4 py-2.5 text-[12px] font-bold hover:bg-secondary transition-colors ${selectedYear === y ? "text-primary font-black" : "text-foreground"}`}
+                        >
+                          {y}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 {/* Month Dropdown */}
                 <div className="relative">
                   <div
                     onClick={() => {
                       setShowMonthDrop(!showMonthDrop);
                       setShowCatDrop(false);
+                      setShowYearDrop(false);
                       setShowStatusDrop(false);
                     }}
                     className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
@@ -659,6 +665,7 @@ export function ManagerPersonalExpenses() {
                       setShowStatusDrop(!showStatusDrop);
                       setShowCatDrop(false);
                       setShowMonthDrop(false);
+                      setShowYearDrop(false);
                     }}
                     className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg text-[11px] font-black text-foreground cursor-pointer hover:bg-secondary/80 transition-all"
                   >
@@ -818,182 +825,105 @@ export function ManagerPersonalExpenses() {
           </div>
         </div>
 
-        {/* Right Column — Widgets */}
+        {/* Right Column — Yearly Expense Summary */}
         <div className="space-y-6">
-          {/* Widget 1 — Budget Tracker */}
-          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
-            <SectionHeader title="BUDGET TRACKER" />
-            <p className="text-[11px] font-bold text-muted-foreground mt-1 mb-6 uppercase tracking-wider">
-              April 2026 · ₹15,000 LIMIT
-            </p>
-            <div className="space-y-5">
-              {[
-                {
-                  label: "Travel",
-                  val: 4200,
-                  limit: 15000,
-                  color: "text-sky-500",
-                  bar: "bg-sky-500",
-                },
-                {
-                  label: "Food",
-                  val: 2150,
-                  limit: 15000,
-                  color: "text-amber-500",
-                  bar: "bg-amber-500",
-                },
-                {
-                  label: "Equipment",
-                  val: 1400,
-                  limit: 15000,
-                  color: "text-purple-500",
-                  bar: "bg-purple-500",
-                },
-                {
-                  label: "Transport",
-                  val: 1000,
-                  limit: 15000,
-                  color: "text-rose-500",
-                  bar: "bg-rose-500",
-                },
-              ].map((item) => (
-                <div key={item.label} className="space-y-2">
-                  <div className="flex items-center justify-between text-[12px] font-black">
-                    <span className="text-muted-foreground">{item.label}</span>
-                    <span className={item.color}>
-                      ₹{item.val.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full ${item.bar}`}
-                      style={{ width: `${(item.val / item.limit) * 100}%` }}
-                    />
-                  </div>
-                  <p className="text-[11px] font-bold text-muted-foreground/60 text-right uppercase tracking-tighter">
-                    ₹{(item.limit - item.val).toLocaleString()} remaining
-                  </p>
-                </div>
-              ))}
+          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm space-y-5">
+            <div className="flex items-center justify-between">
+              <SectionHeader title="YEARLY SUMMARY" />
+              <span className="px-2.5 py-1 bg-secondary text-primary rounded-lg text-[11px] font-black border border-primary/20">
+                {selectedYear}
+              </span>
             </div>
-            <div className="mt-8 pt-6 border-t border-border">
-              <div className="flex items-center justify-between mb-3 text-[13px] font-semibold uppercase tracking-wider">
-                <span className="text-foreground">Used: ₹8,750</span>
-                <span className="text-primary">Left: ₹6,250</span>
-              </div>
-              <div className="h-2 w-full bg-secondary rounded-full overflow-hidden mb-2">
-                <div
-                  className="h-full bg-amber-500 rounded-full"
-                  style={{ width: "58%" }}
-                />
-              </div>
-              <p className="text-[11px] font-black text-amber-500 text-right">
-                58% OF BUDGET EXPENDED
-              </p>
-            </div>
-          </div>
 
-          {/* Widget 2 — Quick Submit */}
-          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
-            <SectionHeader title="QUICK SUBMIT" />
-            <div className="grid grid-cols-3 gap-2 mt-5">
-              {[
-                {
-                  label: "Travel",
-                  icon: Plane,
-                  color: "text-sky-500",
-                  bg: "bg-sky-500/10",
-                },
-                {
-                  label: "Food",
-                  icon: Utensils,
-                  color: "text-amber-500",
-                  bg: "bg-amber-500/10",
-                },
-                {
-                  label: "Equip.",
-                  icon: Monitor,
-                  color: "text-purple-500",
-                  bg: "bg-purple-500/10",
-                },
-                {
-                  label: "Stay",
-                  icon: Bed,
-                  color: "text-emerald-500",
-                  bg: "bg-emerald-500/10",
-                },
-                {
-                  label: "Transp.",
-                  icon: Car,
-                  color: "text-rose-500",
-                  bg: "bg-rose-500/10",
-                },
-                {
-                  label: "Other",
-                  icon: Plus,
-                  color: "text-muted-foreground",
-                  bg: "bg-secondary",
-                },
-              ].map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => setShowAddModal(true)}
-                  className="flex flex-col items-center justify-center p-2 h-[72px] bg-secondary/50 border border-border rounded-xl hover:border-primary hover:bg-primary/5 transition-all group"
-                >
-                  <item.icon
-                    size={16}
-                    className={`${item.color} mb-1.5 group-hover:scale-110 transition-transform`}
-                  />
-                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-tighter">
-                    {item.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+            {(() => {
+              const yearExpenses = MOCK_EXPENSES.filter(
+                (e) => selectedYear === "All Years" || e.date.includes(selectedYear),
+              );
+              const totalAmount = yearExpenses.reduce((s, e) => s + e.amount, 0);
+              const approvedAmount = yearExpenses
+                .filter((e) => e.status === "Approved")
+                .reduce((s, e) => s + e.amount, 0);
+              const pendingAmount = yearExpenses
+                .filter((e) => e.status === "Pending")
+                .reduce((s, e) => s + e.amount, 0);
 
-          {/* Widget 3 — Timeline */}
-          <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
-            <SectionHeader title="TIMELINE" />
-            <div className="mt-6 space-y-6">
-              {[
-                { label: "Submitted", sub: "Apr 5, 2026", status: "completed" },
-                {
-                  label: "Approved",
-                  sub: "Apr 6, 2026 · Rajan K.",
-                  status: "completed",
-                },
-                { label: "Finance", sub: "In Progress", status: "active" },
-                { label: "Payroll", sub: "Est. Apr 25", status: "pending" },
-              ].map((step, i, arr) => (
-                <div key={step.label} className="relative flex gap-4">
-                  {i !== arr.length - 1 && (
-                    <div
-                      className={`absolute left-[9px] top-5 w-[2px] h-8 ${step.status === "completed" ? "bg-primary" : "bg-border"}`}
-                    />
-                  )}
-                  <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 border ${
-                      step.status === "completed"
-                        ? "bg-primary text-white border-primary"
-                        : step.status === "active"
-                          ? "border-sky-500 bg-sky-500/10 animate-pulse"
-                          : "border-border bg-secondary"
-                    }`}
+              const catTotals: Record<string, number> = {};
+              yearExpenses.forEach((e) => {
+                catTotals[e.category] = (catTotals[e.category] || 0) + e.amount;
+              });
+
+              return (
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-secondary/50 rounded-xl border border-border">
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                        Total
+                      </p>
+                      <p className="text-[15px] font-black text-foreground">
+                        ₹{totalAmount.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="p-3 bg-emerald-500/5 rounded-xl border border-emerald-500/10">
+                      <p className="text-[10px] font-bold text-primary uppercase tracking-widest">
+                        Approved
+                      </p>
+                      <p className="text-[15px] font-black text-primary">
+                        ₹{approvedAmount.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="p-3 bg-amber-500/5 rounded-xl border border-amber-500/10">
+                      <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest">
+                        Pending
+                      </p>
+                      <p className="text-[15px] font-black text-amber-600">
+                        ₹{pendingAmount.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="p-3 bg-sky-500/5 rounded-xl border border-sky-500/10">
+                      <p className="text-[10px] font-bold text-sky-600 uppercase tracking-widest">
+                        Reimbursed
+                      </p>
+                      <p className="text-[15px] font-black text-sky-600">
+                        ₹{approvedAmount.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest">
+                      Category Breakdown
+                    </p>
+                    {Object.entries(catTotals).map(([cat, amt]) => {
+                      const pct =
+                        totalAmount > 0 ? Math.round((amt / totalAmount) * 100) : 0;
+                      return (
+                        <div key={cat} className="space-y-1">
+                          <div className="flex justify-between items-center text-[12px] font-bold">
+                            <span className="text-foreground">{cat}</span>
+                            <span className="text-muted-foreground">
+                              ₹{amt.toLocaleString()} ({pct}%)
+                            </span>
+                          </div>
+                          <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-primary rounded-full transition-all duration-300"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => navigate("/reports")}
+                    className="w-full py-3 bg-primary text-white text-[13px] font-black rounded-xl hover:opacity-95 shadow-md shadow-[#00B87C]/20 transition-all flex items-center justify-center gap-2 mt-2"
                   >
-                    {step.status === "completed" && <CheckCircle2 size={12} />}
-                  </div>
-                  <div>
-                    <p className="text-[12px] font-black text-foreground leading-none">
-                      {step.label}
-                    </p>
-                    <p className="text-[11px] font-bold text-muted-foreground mt-1.5">
-                      {step.sub}
-                    </p>
-                  </div>
+                    View Detailed Report →
+                  </button>
                 </div>
-              ))}
-            </div>
+              );
+            })()}
           </div>
         </div>
       </div>

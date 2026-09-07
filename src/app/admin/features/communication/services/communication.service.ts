@@ -251,6 +251,41 @@ export const communicationService = {
     return newAnn;
   },
 
+  async updateAnnouncement(
+    announcementId: string,
+    title: string,
+    messageBody: string,
+    targetType: TargetType,
+    targetCriteria: string,
+    channels: AnnouncementChannel[],
+    urgency: AnnouncementUrgency,
+    scheduledAt: string | null,
+    recurrence: RecurrenceType | null,
+  ): Promise<Announcement> {
+    await delay(500);
+    let updated: Announcement | null = null;
+    announcements = announcements.map((a) => {
+      if (a.announcement_id === announcementId) {
+        updated = {
+          ...a,
+          title,
+          message_body: messageBody,
+          target_type: targetType,
+          target_criteria: targetCriteria,
+          channels,
+          urgency,
+          scheduled_at: scheduledAt,
+          recurrence,
+          updated_at: new Date().toISOString(),
+        };
+        return updated;
+      }
+      return a;
+    });
+    if (!updated) throw new Error("Announcement not found");
+    return updated;
+  },
+
   async getEstimatedRecipientCount(
     targetType: TargetType,
     targetCriteria: string,

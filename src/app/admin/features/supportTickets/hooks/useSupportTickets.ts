@@ -114,8 +114,21 @@ export function useSupportTickets() {
     },
     actions: {
       loadAll,
-      updateTicketStatus: (id: string, status: Ticket["status"]) => {
-        SupportService.updateTicketStatus(id, status);
+      updateTicketStatus: (
+        id: string,
+        status: Ticket["status"],
+        resolution?: Ticket["resolution"],
+        resolutionNote?: string,
+      ) => {
+        SupportService.updateTicketStatus(id, status, resolution, resolutionNote);
+        loadAll();
+      },
+      updateTicketResolution: (
+        id: string,
+        resolution: NonNullable<Ticket["resolution"]>,
+        note?: string,
+      ) => {
+        SupportService.updateTicketResolution(id, resolution, note);
         loadAll();
       },
       assignTicket: (id: string, agent: string) => {
@@ -132,6 +145,17 @@ export function useSupportTickets() {
       },
       voteForFeature: (id: string) => {
         SupportService.voteForFeature(id);
+        loadAll();
+      },
+      rateFeedbackAsSuperAdmin: (id: string, rating: 1 | 2 | 3 | 4 | 5) => {
+        SupportService.rateFeedbackAsSuperAdmin(id, rating);
+        loadAll();
+      },
+      updateFeedbackResponse: (
+        id: string,
+        data: { status?: Feedback["status"]; adminResponse?: string },
+      ) => {
+        SupportService.updateFeedbackResponse(id, data);
         loadAll();
       },
       updateSLAPolicy: (id: string, updates: Partial<SLAPolicy>) => {

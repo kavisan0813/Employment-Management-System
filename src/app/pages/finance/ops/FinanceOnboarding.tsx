@@ -271,7 +271,6 @@ const ALL_HIRES_TABLE = [
 ];
 type Tab = "Pending Tasks" | "All New Hires" | "Completed" | "Settings";
 export function FinanceOnboarding() {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     activeTab: "Pending Tasks" as Tab,
     showBankModal: false,
@@ -556,7 +555,6 @@ export function FinanceOnboarding() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Modal states
   // Bank form
   // PF form

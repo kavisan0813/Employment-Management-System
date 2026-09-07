@@ -252,7 +252,6 @@ const GOALS = [
 ];
 
 export function ManagerTeamPerformance() {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     teamPerformance: MOCK_TEAM_PERFORMANCE,
     completedReviews: MOCK_COMPLETED_REVIEWS,
@@ -454,7 +453,6 @@ export function ManagerTeamPerformance() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   const filteredPerformance = teamPerformance.filter((row) => {
     // Dept filter
     if (deptFilter !== "All Employees" && row.dept !== deptFilter) {
@@ -566,7 +564,6 @@ export function ManagerTeamPerformance() {
       const compCommentsMap: Record<string, string> = {};
       const expandedCommentsMap: Record<string, boolean> = {};
       Object.entries(draft.competencies).forEach(([id, c]) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         compRatingsMap[id] = (c as any).rating;
         compCommentsMap[id] = (c as any).comment;
         if ((c as any).comment) {
@@ -580,7 +577,6 @@ export function ManagerTeamPerformance() {
       const goalStatusMap: Record<string, string> = {};
       const goalCommentsMap: Record<string, string> = {};
       Object.entries(draft.goals).forEach(([id, g]) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         goalStatusMap[id] = (g as any).status;
         goalCommentsMap[id] = (g as any).comment;
       });
@@ -746,7 +742,6 @@ export function ManagerTeamPerformance() {
   const calcAvg = () => {
     const values = Object.values(compRatings);
     if (values.length === 0) return "0.0";
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sum = values.reduce((a: any, b: any) => a + b, 0);
     return ((sum as number) / values.length).toFixed(1);
   };

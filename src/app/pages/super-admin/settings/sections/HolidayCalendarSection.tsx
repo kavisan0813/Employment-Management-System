@@ -1,5 +1,7 @@
 import React from "react";
 import { useSettingsContext } from "../SettingsContext";
+import { usePermissions } from "../../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../../shared/permission-engine/permissions";
 import {
   MapPin,
   CalendarDays,
@@ -22,6 +24,8 @@ interface HolidayRecord {
 }
 
 export function HolidayCalendarSection() {
+  const { hasPermissionKey } = usePermissions();
+  const canManageHolidays = hasPermissionKey(P.ATTENDANCE_MANAGE) || hasPermissionKey(P.ROLES_MANAGE);
   const {
     SectionTitle,
     holAutoMark,
@@ -666,17 +670,17 @@ export function HolidayCalendarSection() {
           {
             label: "Auto-mark holidays in Attendance",
             state: holAutoMark,
-            setter: setHolAutoMark,
+            onClick: () => setActiveModal("confirm_auto_mark_holiday"),
           },
           {
             label: "Include Optional/Restricted Holidays",
             state: holOptional,
-            setter: setHolOptional,
+            onClick: () => setHolOptional(!holOptional),
           },
           {
             label: "Region-specific Holiday Calendars",
             state: holRegionSpecific,
-            setter: setHolRegionSpecific,
+            onClick: () => setHolRegionSpecific(!holRegionSpecific),
           },
         ].map((row) => (
           <div
@@ -693,7 +697,7 @@ export function HolidayCalendarSection() {
               {row.label}
             </span>
             <button
-              onClick={() => row.setter(!row.state)}
+              onClick={row.onClick}
               style={{
                 width: "36px",
                 height: "20px",

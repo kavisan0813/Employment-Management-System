@@ -1,4 +1,6 @@
-import React, { lazy, useReducer, useCallback } from "react";
+import React, { lazy, useReducer, useCallback, useRef, useState } from "react";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import { useAuth } from "../../../context/AuthContext";
 import {
   Package,
@@ -22,6 +24,7 @@ import {
   FileText,
   Calendar,
   MoreVertical,
+  Edit,
 } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import { toast } from "sonner";
@@ -95,7 +98,7 @@ interface Asset {
   value: number;
   assignedDate: string | null;
   status:
-    "Assigned" | "Pending Return" | "Overdue" | "Available" | "Maintenance";
+  "Assigned" | "Pending Return" | "Overdue" | "Available" | "Maintenance";
 }
 const MOCK_ASSETS: Asset[] = [
   {
@@ -178,8 +181,9 @@ const MOCK_ASSETS: Asset[] = [
   },
 ];
 export function AssetManagement() {
+  const { hasPermissionKey } = usePermissions();
   const { user } = useAuth();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const inventoryTableRef = useRef<HTMLDivElement>(null);
   const __initialState = {
     activeTab: "All Assets",
     searchQuery: "",
@@ -188,6 +192,14 @@ export function AssetManagement() {
     isAssignModalOpen: false,
     isRecoverModalOpen: false,
     isEscalationModalOpen: false,
+    isBreakdownModalOpen: false,
+    isEditModalOpen: false,
+    editAssetName: "",
+    editAssetCategory: "Laptop" as Asset["category"],
+    editAssetSerialNo: "",
+    editAssetDepartment: "",
+    editAssetValue: "",
+    editAssetStatus: "Available" as Asset["status"],
     selectedAsset: null as Asset | null,
     isDetailPanelOpen: false,
     detailTab: "Details",
@@ -286,6 +298,14 @@ export function AssetManagement() {
     isAssignModalOpen,
     isRecoverModalOpen,
     isEscalationModalOpen,
+    isBreakdownModalOpen,
+    isEditModalOpen,
+    editAssetName,
+    editAssetCategory,
+    editAssetSerialNo,
+    editAssetDepartment,
+    editAssetValue,
+    editAssetStatus,
     selectedAsset,
     isDetailPanelOpen,
     detailTab,
@@ -329,6 +349,29 @@ export function AssetManagement() {
     newMaintenanceDesc,
     isAddingLog,
   } = __state;
+
+  const setIsBreakdownModalOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isBreakdownModalOpen:
+          typeof val === "function" ? val(prev.isBreakdownModalOpen) : val,
+      })),
+    [],
+  );
+  const setIsEditModalOpen = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        isEditModalOpen:
+          typeof val === "function" ? val(prev.isEditModalOpen) : val,
+      })),
+    [],
+  );
+  const setEditAssetName = useCallback((val: any) => __updateState({ editAssetName: val }), []);
+  const setEditAssetCategory = useCallback((val: any) => __updateState({ editAssetCategory: val }), []);
+  const setEditAssetSerialNo = useCallback((val: any) => __updateState({ editAssetSerialNo: val }), []);
+  const setEditAssetDepartment = useCallback((val: any) => __updateState({ editAssetDepartment: val }), []);
+  const setEditAssetValue = useCallback((val: any) => __updateState({ editAssetValue: val }), []);
+  const setEditAssetStatus = useCallback((val: any) => __updateState({ editAssetStatus: val }), []);
   const setActiveTab = useCallback(
     (val: any) =>
       __updateState((prev: any) => ({
@@ -707,7 +750,6 @@ export function AssetManagement() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Modal States
   // Selected Asset for Modals
   // Detail Slide Panel State
@@ -718,43 +760,6 @@ export function AssetManagement() {
   // Recover Asset Form States
   // Dynamic Asset Log States (assetId -> logs array)
   // Maintenance form inputs
-  const tabs = [
-    "All Assets",
-    "Assigned",
-    "Available",
-    "Pending Return",
-    "Maintenance",
-    "Reports",
-  ];
-  const filteredAssets = assets.filter((asset) => {
-    if (activeTab !== "All Assets" && activeTab !== "Reports") {
-      if (activeTab === "Assigned" && asset.status !== "Assigned") return false;
-      if (activeTab === "Available" && asset.status !== "Available")
-        return false;
-      if (
-        activeTab === "Pending Return" &&
-        asset.status !== "Pending Return" &&
-        asset.status !== "Overdue"
-      )
-        return false;
-      if (activeTab === "Maintenance" && asset.status !== "Maintenance")
-        return false;
-    }
-    if (categoryFilter !== "All" && asset.category !== categoryFilter)
-      return false;
-    if (deptFilter !== "All" && asset.department !== deptFilter) return false;
-    if (statusFilter !== "All" && asset.status !== statusFilter) return false;
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return (
-        asset.name.toLowerCase().includes(query) ||
-        asset.serialNo.toLowerCase().includes(query) ||
-        asset.assetId.toLowerCase().includes(query) ||
-        (asset.assignedTo && asset.assignedTo.toLowerCase().includes(query))
-      );
-    }
-    return true;
-  });
   const getCategoryIcon = (category: string, size = 16) => {
     switch (category) {
       case "Laptop":
@@ -821,6 +826,36 @@ export function AssetManagement() {
     setSelectedAsset(asset);
     setDetailTab("Details");
     setIsDetailPanelOpen(true);
+  };
+  const openEditModal = (asset: Asset) => {
+    setSelectedAsset(asset);
+    setEditAssetName(asset.name);
+    setEditAssetCategory(asset.category);
+    setEditAssetSerialNo(asset.serialNo);
+    setEditAssetDepartment(asset.department || "");
+    setEditAssetValue(asset.value.toString());
+    setEditAssetStatus(asset.status);
+    setIsEditModalOpen(true);
+  };
+  const handleEditAsset = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedAsset) return;
+    const updated = assets.map((a) =>
+      a.id === selectedAsset.id
+        ? {
+            ...a,
+            name: editAssetName || a.name,
+            category: editAssetCategory || a.category,
+            serialNo: editAssetSerialNo || a.serialNo,
+            department: editAssetDepartment || null,
+            value: parseFloat(editAssetValue) || 0,
+            status: editAssetStatus as Asset["status"],
+          }
+        : a,
+    );
+    setAssets(updated);
+    setIsEditModalOpen(false);
+    toast.success(`Asset ${selectedAsset.assetId} updated successfully`);
   };
   const handleExport = () => {
     toast.success("Exporting assets to CSV...");
@@ -940,56 +975,84 @@ export function AssetManagement() {
     setReplacementRequired(true);
   };
 
-  // Dynamic stats calculation
-  const totalAssetsCount = 1284 + (assets.length - 6);
-  const assignedCount =
-    1198 + (assets.filter((a) => a.status === "Assigned").length - 2);
-  const pendingReturnCount =
-    23 + (assets.filter((a) => a.status === "Pending Return").length - 1);
-  const overdueCount =
-    4 + (assets.filter((a) => a.status === "Overdue").length - 1);
-  const maintenanceCount =
-    12 + (assets.filter((a) => a.status === "Maintenance").length - 1);
-  const totalValueSum = assets.reduce((sum, a) => sum + a.value, 0);
-  const orgTotalValue = (2.4 + (totalValueSum - 1330000) / 10000000).toFixed(2);
+  // Dynamic operational stats calculation (directly from dataset)
+  const totalAssetsCount = assets.length;
+  const assignedCount = assets.filter((a) => a.status === "Assigned").length;
+  const availableCount = assets.filter((a) => a.status === "Available").length;
+  const pendingReturnCount = assets.filter((a) => a.status === "Pending Return").length;
+  const overdueCount = assets.filter((a) => a.status === "Overdue").length;
+  const maintenanceCount = assets.filter((a) => a.status === "Maintenance").length;
 
-  // Reports dashboard computations
-  const categoryCounts = assets.reduce(
-    (acc, a) => {
-      acc[a.category] = (acc[a.category] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-  const categoryChartData = Object.entries(categoryCounts).map(
-    ([name, value]) => ({
-      name,
-      value,
-    }),
-  );
-  const deptValues = assets.reduce(
-    (acc, a) => {
-      const dept = a.department || "Unassigned";
-      acc[dept] = (acc[dept] || 0) + a.value;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-  const deptChartData = Object.entries(deptValues).map(([name, value]) => ({
-    name,
-    value: Math.round(value as number),
-  }));
-  const statusCounts = assets.reduce(
-    (acc, a) => {
-      acc[a.status] = (acc[a.status] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-  const statusChartData = Object.entries(statusCounts).map(([name, value]) => ({
-    name,
-    value,
-  }));
+  const tabs = [
+    "All Assets",
+    "Assigned",
+    "Available",
+    "Pending Return",
+    "Maintenance",
+  ];
+
+  // Dynamic filter dropdown options
+  const deptSet = new Set<string>();
+  for (const a of assets) {
+    if (a.department) deptSet.add(a.department);
+  }
+  const deptOptions = ["All", ...Array.from(deptSet)];
+  const categorySet = new Set<string>();
+  for (const a of assets) {
+    if (a.category) categorySet.add(a.category);
+  }
+  const categoryOptions = ["All", ...Array.from(categorySet)];
+  const statusOptions = [
+    "All",
+    "Assigned",
+    "Available",
+    "Pending Return",
+    "Overdue",
+    "Maintenance",
+  ];
+
+  const filteredAssets = assets.filter((asset) => {
+    if (activeTab !== "All Assets") {
+      if (activeTab === "Assigned" && asset.status !== "Assigned") return false;
+      if (activeTab === "Available" && asset.status !== "Available") return false;
+      if (
+        activeTab === "Pending Return" &&
+        asset.status !== "Pending Return" &&
+        asset.status !== "Overdue"
+      )
+        return false;
+      if (activeTab === "Maintenance" && asset.status !== "Maintenance")
+        return false;
+    }
+    if (categoryFilter !== "All" && asset.category !== categoryFilter)
+      return false;
+    if (deptFilter !== "All" && asset.department !== deptFilter) return false;
+    if (statusFilter !== "All" && asset.status !== statusFilter) return false;
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      return (
+        asset.name.toLowerCase().includes(query) ||
+        asset.serialNo.toLowerCase().includes(query) ||
+        asset.assetId.toLowerCase().includes(query) ||
+        (asset.assignedTo && asset.assignedTo.toLowerCase().includes(query)) ||
+        (asset.department && asset.department.toLowerCase().includes(query))
+      );
+    }
+    return true;
+  });
+
+  if (!user?.organizationId) {
+    return (
+      <div className="p-8 text-center bg-card rounded-2xl border border-border my-8 max-w-2xl mx-auto shadow-sm">
+        <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto mb-3 border border-amber-500/20">
+          <AlertCircle size={24} />
+        </div>
+        <h3 className="text-lg font-bold text-foreground">Tenant Context Required</h3>
+        <p className="text-sm text-muted-foreground mt-1">Please log in to an active organization workspace to view and manage company assets.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Page Header */}
@@ -1004,22 +1067,22 @@ export function AssetManagement() {
                 Asset Management
               </h1>
               <p className="text-[13px] text-muted-foreground font-medium">
-                Assign, track and recover company assets
+                Track, assign and manage organization assets
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 bg-card border border-border text-foreground rounded-xl font-semibold text-[13px] hover:bg-muted transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-card border border-border text-foreground rounded-xl font-semibold text-[13px] hover:bg-muted transition-colors shadow-sm cursor-pointer"
             >
               <Download size={16} />
               Export
             </button>
-            {user?.role !== "HR Manager" && (
+            {hasPermissionKey(P.ASSETS_MANAGE) && (
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white rounded-xl font-bold text-[13px] hover:bg-[#009665] transition-all shadow-sm hover:shadow active:scale-[0.98]"
+                className="flex items-center gap-2 px-4 py-2 bg-[#00B87C] text-white rounded-xl font-bold text-[13px] hover:bg-[#009665] transition-all shadow-sm hover:shadow active:scale-[0.98] cursor-pointer"
               >
                 <Plus size={16} strokeWidth={3} />
                 Add Asset
@@ -1028,52 +1091,22 @@ export function AssetManagement() {
           </div>
         </div>
 
-        {/* Info Bar */}
-        <div className="bg-secondary border border-[#A7F3D0] rounded-xl px-4 py-2.5 flex items-center gap-6 mb-6">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#10B981]" />
-            <span className="text-[13px] font-medium text-[#065F46]">
-              <strong className="font-bold text-[#047857]">
-                {totalAssetsCount.toLocaleString("en-IN")}
-              </strong>{" "}
-              assets tracked across organization
-            </span>
-          </div>
-          <div className="w-px h-4 bg-[#6EE7B7]" />
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#F59E0B]" />
-            <span className="text-[13px] font-medium text-[#92400E]">
-              <strong className="font-bold text-[#B45309]">
-                {pendingReturnCount}
-              </strong>{" "}
-              assets pending return
-            </span>
-          </div>
-          <div className="w-px h-4 bg-[#6EE7B7]" />
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#EF4444]" />
-            <span className="text-[13px] font-medium text-[#991B1B]">
-              <strong className="font-bold text-[#B91C1C]">
-                {overdueCount}
-              </strong>{" "}
-              assets overdue recovery — exit employees
-            </span>
-          </div>
-        </div>
-
-        {/* KPI Cards Row */}
-        <div className="grid grid-cols-6 gap-4 mb-8">
+        {/* Operational KPI Cards Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
           {[
             {
+              key: "TOTAL_ASSETS",
               icon: Package,
               label: "TOTAL ASSETS",
               value: totalAssetsCount.toLocaleString("en-IN"),
-              subtext: "Across all categories",
+              subtext: "Across all categories (Click for Breakdown)",
               bg: "#E0F2FE",
               color: "#0EA5E9",
               valColor: "#0EA5E9",
+              isClickable: true,
             },
             {
+              key: "ASSIGNED",
               icon: CheckCircle2,
               label: "ASSIGNED",
               value: assignedCount.toLocaleString("en-IN"),
@@ -1083,63 +1116,60 @@ export function AssetManagement() {
               valColor: "#00B87C",
             },
             {
-              icon: RefreshCcw,
-              label: "PENDING RETURN",
-              value: pendingReturnCount.toString(),
-              subtext: "from exiting employees",
-              bg: "#FEF3C7",
-              color: "#F59E0B",
-              valColor: "#F59E0B",
-            },
-            {
-              icon: AlertCircle,
-              label: "OVERDUE RECOVERY",
-              value: overdueCount.toString(),
-              subtext: "assets not returned",
-              bg: "#FEE2E2",
-              color: "#EF4444",
-              valColor: "#EF4444",
-            },
-            {
-              icon: IndianRupee,
-              label: "TOTAL ASSET VALUE",
-              value: `₹${orgTotalValue}Cr`,
-              subtext: "book value FY 2025-26",
-              bg: "#EDE9FE",
-              color: "#8B5CF6",
-              valColor: "#8B5CF6",
-            },
-            {
-              icon: Wrench,
-              label: "IN MAINTENANCE",
-              value: maintenanceCount.toString(),
-              subtext: "sent for repair/service",
+              key: "AVAILABLE",
+              icon: Package,
+              label: "AVAILABLE",
+              value: availableCount.toLocaleString("en-IN"),
+              subtext: "in stock / ready to assign",
               bg: "#F3F4F6",
               color: "#6B7280",
               valColor: "#4B5563",
             },
+            {
+              key: "MAINTENANCE",
+              icon: Wrench,
+              label: "MAINTENANCE",
+              value: maintenanceCount.toString(),
+              subtext: "sent for repair/service",
+              bg: "#CCFBF1",
+              color: "#0F766E",
+              valColor: "#0F766E",
+            },
+            {
+              key: "PENDING_RETURN",
+              icon: RefreshCcw,
+              label: "PENDING RETURN / OVERDUE",
+              value: (pendingReturnCount + overdueCount).toString(),
+              subtext: `${pendingReturnCount} pending, ${overdueCount} overdue`,
+              bg: "#FEF3C7",
+              color: "#F59E0B",
+              valColor: "#F59E0B",
+            },
           ].map((kpi) => (
             <div
               key={kpi.label}
+              tabIndex={0}
+              role="button"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  if (kpi.key === "TOTAL_ASSETS") setIsBreakdownModalOpen(true);
+                }
+              }}
               onClick={() => {
-                if (kpi.label === "TOTAL ASSETS") {
-                  setActiveTab("All Assets");
-                  setCategoryFilter("All");
-                  setDeptFilter("All");
-                  setStatusFilter("All");
-                } else if (kpi.label === "ASSIGNED") {
+                if (kpi.key === "TOTAL_ASSETS") {
+                  setIsBreakdownModalOpen(true);
+                } else if (kpi.key === "ASSIGNED") {
                   setActiveTab("Assigned");
                   setStatusFilter("All");
-                } else if (kpi.label === "PENDING RETURN") {
-                  setActiveTab("Pending Return");
-                  setStatusFilter("Pending Return");
-                } else if (kpi.label === "OVERDUE RECOVERY") {
-                  setActiveTab("Pending Return");
-                  setStatusFilter("Overdue");
-                } else if (kpi.label === "TOTAL ASSET VALUE") {
-                  setActiveTab("Reports");
-                } else if (kpi.label === "IN MAINTENANCE") {
+                } else if (kpi.key === "AVAILABLE") {
+                  setActiveTab("Available");
+                  setStatusFilter("All");
+                } else if (kpi.key === "MAINTENANCE") {
                   setActiveTab("Maintenance");
+                  setStatusFilter("All");
+                } else if (kpi.key === "PENDING_RETURN") {
+                  setActiveTab("Pending Return");
                   setStatusFilter("All");
                 }
               }}
@@ -1155,6 +1185,11 @@ export function AssetManagement() {
                 >
                   <kpi.icon size={20} />
                 </div>
+                {kpi.isClickable && (
+                  <span className="text-[10px] font-bold text-[#0EA5E9] bg-[#E0F2FE] px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    Breakdown
+                  </span>
+                )}
               </div>
               <p className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-1">
                 {kpi.label}
@@ -1180,7 +1215,7 @@ export function AssetManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 text-[14px] font-bold transition-all relative ${activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
+              className={`pb-3 text-[14px] font-bold transition-all relative cursor-pointer ${activeTab === tab ? "text-[#00B87C]" : "text-muted-foreground hover:text-foreground"}`}
             >
               {tab}
               {activeTab === tab && (
@@ -1199,74 +1234,19 @@ export function AssetManagement() {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="relative flex-1 max-w-[320px]">
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <div className="relative flex-1 min-w-[240px] max-w-[320px]">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               size={16}
             />
             <input
               type="text"
-              placeholder="Search asset name, serial number, employee..."
+              placeholder="Search Asset, ID, Serial No, Employee, Dept..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 bg-input-background border border-border rounded-xl text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C] transition-all"
             />
-          </div>
-
-          {/* Category Filter */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setCategoryDropdownOpen(!categoryDropdownOpen);
-                setDeptDropdownOpen(false);
-                setStatusDropdownOpen(false);
-              }}
-              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${categoryFilter !== "All" ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]" : "bg-card border-border text-foreground hover:bg-muted"}`}
-            >
-              Category{categoryFilter !== "All" ? `: ${categoryFilter}` : ""}{" "}
-              <ChevronDown
-                size={14}
-                className={
-                  categoryFilter !== "All"
-                    ? "text-[#00B87C]"
-                    : "text-muted-foreground"
-                }
-              />
-            </button>
-            {categoryDropdownOpen && (
-              <>
-                <div
-                  className="fixed inset-0 z-40"
-                  onClick={() => setCategoryDropdownOpen(false)}
-                />
-                <div className="absolute left-0 mt-1.5 w-48 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden">
-                  {[
-                    "All",
-                    "Laptop",
-                    "Smartphone",
-                    "Monitor",
-                    "Vehicle",
-                    "Other",
-                  ].map((cat) => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => {
-                        setCategoryFilter(cat);
-                        setCategoryDropdownOpen(false);
-                      }}
-                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${categoryFilter === cat ? "text-[#00B87C] bg-[#00B87C]/5" : "text-foreground"}`}
-                    >
-                      {cat}
-                      {categoryFilter === cat && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
           </div>
 
           {/* Department Filter */}
@@ -1296,14 +1276,7 @@ export function AssetManagement() {
                   onClick={() => setDeptDropdownOpen(false)}
                 />
                 <div className="absolute left-0 mt-1.5 w-48 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden">
-                  {[
-                    "All",
-                    "Engineering",
-                    "Product",
-                    "Finance",
-                    "Marketing",
-                    "Operations",
-                  ].map((dept) => (
+                  {deptOptions.map((dept) => (
                     <button
                       key={dept}
                       type="button"
@@ -1315,6 +1288,54 @@ export function AssetManagement() {
                     >
                       {dept}
                       {deptFilter === dept && (
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Category Filter */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setCategoryDropdownOpen(!categoryDropdownOpen);
+                setDeptDropdownOpen(false);
+                setStatusDropdownOpen(false);
+              }}
+              className={`flex items-center gap-2 px-3 py-2 border rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${categoryFilter !== "All" ? "bg-[#00B87C]/10 border-[#00B87C] text-[#00B87C]" : "bg-card border-border text-foreground hover:bg-muted"}`}
+            >
+              Asset Type{categoryFilter !== "All" ? `: ${categoryFilter}` : ""}{" "}
+              <ChevronDown
+                size={14}
+                className={
+                  categoryFilter !== "All"
+                    ? "text-[#00B87C]"
+                    : "text-muted-foreground"
+                }
+              />
+            </button>
+            {categoryDropdownOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setCategoryDropdownOpen(false)}
+                />
+                <div className="absolute left-0 mt-1.5 w-48 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden">
+                  {categoryOptions.map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => {
+                        setCategoryFilter(cat);
+                        setCategoryDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-[13px] font-semibold hover:bg-muted transition-colors flex items-center justify-between cursor-pointer ${categoryFilter === cat ? "text-[#00B87C] bg-[#00B87C]/5" : "text-foreground"}`}
+                    >
+                      {cat}
+                      {categoryFilter === cat && (
                         <div className="w-1.5 h-1.5 rounded-full bg-[#00B87C]" />
                       )}
                     </button>
@@ -1351,14 +1372,7 @@ export function AssetManagement() {
                   onClick={() => setStatusDropdownOpen(false)}
                 />
                 <div className="absolute left-0 mt-1.5 w-48 bg-card border border-border rounded-xl shadow-lg z-50 py-1.5 overflow-hidden">
-                  {[
-                    "All",
-                    "Assigned",
-                    "Available",
-                    "Pending Return",
-                    "Overdue",
-                    "Maintenance",
-                  ].map((stat) => (
+                  {statusOptions.map((stat) => (
                     <button
                       key={stat}
                       type="button"
@@ -1400,276 +1414,13 @@ export function AssetManagement() {
           </div>
         </div>
 
-        {/* Asset Table */}
-        {activeTab === "Reports" ? (
-          <div className="space-y-6 animate-in fade-in duration-300">
-            {/* Reports Dashboard Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Category Distribution Chart */}
-              <div className="bg-card p-6 border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                <h3 className="text-[12px] font-black text-foreground uppercase tracking-wider mb-6">
-                  Asset Category Distribution
-                </h3>
-                <div className="h-[260px] flex items-center justify-center">
-                  {categoryChartData.length === 0 ? (
-                    <span className="text-muted-foreground font-semibold text-[13px]">
-                      No data available
-                    </span>
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={categoryChartData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={90}
-                          paddingAngle={5}
-                          dataKey="value"
-                        >
-                          {categoryChartData.map((entry, index) => {
-                            const colors = [
-                              "#0EA5E9",
-                              "#00B87C",
-                              "#F59E0B",
-                              "#EF4444",
-                              "#8B5CF6",
-                            ];
-                            return (
-                              <Cell
-                                key={entry.name}
-                                fill={colors[index % colors.length]}
-                              />
-                            );
-                          })}
-                        </Pie>
-                        <Tooltip
-                          formatter={(value) => [`${value} assets`, "Count"]}
-                        />
-                        <Legend
-                          verticalAlign="bottom"
-                          height={36}
-                          iconType="circle"
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-              </div>
-
-              {/* Department Valuation Chart */}
-              <div className="bg-card p-6 border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                <h3 className="text-[12px] font-black text-foreground uppercase tracking-wider mb-6">
-                  Asset Valuation by Department
-                </h3>
-                <div className="h-[260px]">
-                  {deptChartData.length === 0 ? (
-                    <div className="h-full flex items-center justify-center">
-                      <span className="text-muted-foreground font-semibold text-[13px]">
-                        No data available
-                      </span>
-                    </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={deptChartData}>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          vertical={false}
-                          opacity={0.1}
-                          stroke="var(--border)"
-                        />
-                        <XAxis
-                          dataKey="name"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{
-                            fontSize: 11,
-                            fontWeight: 600,
-                            fill: "var(--muted-foreground)",
-                          }}
-                        />
-                        <YAxis
-                          axisLine={false}
-                          tickLine={false}
-                          tickFormatter={(value) => `₹${value / 1000}k`}
-                          tick={{
-                            fontSize: 11,
-                            fontWeight: 600,
-                            fill: "var(--muted-foreground)",
-                          }}
-                        />
-                        <Tooltip
-                          formatter={(value) => [
-                            `₹${Number(value).toLocaleString("en-IN")}`,
-                            "Total Value",
-                          ]}
-                        />
-                        <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                          {deptChartData.map((entry) => (
-                            <Cell key={entry.name} fill="#8B5CF6" />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-              </div>
-
-              {/* Status Breakdown Chart */}
-              <div className="bg-card p-6 border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
-                <h3 className="text-[12px] font-black text-foreground uppercase tracking-wider mb-6">
-                  Asset Status Breakdown
-                </h3>
-                <div className="h-[260px]">
-                  {statusChartData.length === 0 ? (
-                    <div className="h-full flex items-center justify-center">
-                      <span className="text-muted-foreground font-semibold text-[13px]">
-                        No data available
-                      </span>
-                    </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={statusChartData} layout="vertical">
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          horizontal={false}
-                          opacity={0.1}
-                          stroke="var(--border)"
-                        />
-                        <XAxis
-                          type="number"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{
-                            fontSize: 11,
-                            fontWeight: 600,
-                            fill: "var(--muted-foreground)",
-                          }}
-                        />
-                        <YAxis
-                          dataKey="name"
-                          type="category"
-                          axisLine={false}
-                          tickLine={false}
-                          width={100}
-                          tick={{
-                            fontSize: 11,
-                            fontWeight: 600,
-                            fill: "var(--muted-foreground)",
-                          }}
-                        />
-                        <Tooltip
-                          formatter={(value) => [`${value} assets`, "Count"]}
-                        />
-                        <Bar dataKey="value" radius={[0, 8, 8, 0]}>
-                          {statusChartData.map((entry) => {
-                            const statusColors: Record<string, string> = {
-                              Assigned: "#00B87C",
-                              "Pending Return": "#F59E0B",
-                              Overdue: "#EF4444",
-                              Available: "#94A3B8",
-                              Maintenance: "#0EA5E9",
-                            };
-                            return (
-                              <Cell
-                                key={`cell-${entry.name}`}
-                                fill={statusColors[entry.name] || "#6B7280"}
-                              />
-                            );
-                          })}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-              </div>
-
-              {/* Financial & Depreciation Summary Card */}
-              <div className="bg-card p-6 border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col justify-between">
-                <div>
-                  <h3 className="text-[12px] font-black text-foreground uppercase tracking-wider mb-6">
-                    Financial Summary & Depreciation
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3.5 bg-muted rounded-xl border border-border/50">
-                      <div>
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
-                          Total Book Value
-                        </span>
-                        <span className="text-[20px] font-black text-[#00B87C]">
-                          ₹{totalValueSum.toLocaleString("en-IN")}
-                        </span>
-                      </div>
-                      <span className="text-[11px] font-bold text-muted-foreground">
-                        Original cost basis
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-3 bg-muted rounded-xl border border-border/50">
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
-                          Avg Asset Value
-                        </span>
-                        <span className="text-[15px] font-black text-foreground">
-                          ₹
-                          {assets.length === 0
-                            ? 0
-                            : Math.round(
-                                totalValueSum / assets.length,
-                              ).toLocaleString("en-IN")}
-                        </span>
-                      </div>
-                      <div className="p-3 bg-muted rounded-xl border border-border/50">
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
-                          Depreciated Value (-18%)
-                        </span>
-                        <span className="text-[15px] font-black text-foreground">
-                          ₹
-                          {Math.round(totalValueSum * 0.82).toLocaleString(
-                            "en-IN",
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {assets.length > 0 && (
-                  <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-wider block">
-                        Highest Value Asset
-                      </span>
-                      <span className="text-[13px] font-bold text-foreground truncate max-w-[200px] block">
-                        {
-                          assets.reduce(
-                            (max, a) => (a.value > max.value ? a : max),
-                            assets[0],
-                          ).name
-                        }
-                      </span>
-                    </div>
-                    <span className="text-[14px] font-black text-foreground">
-                      ₹
-                      {assets
-                        .reduce(
-                          (max, a) => (a.value > max.value ? a : max),
-                          assets[0],
-                        )
-                        .value.toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
+        {/* Operational Inventory Table */}
+        <div ref={inventoryTableRef} className="bg-card border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
+          <div className="px-6 py-4 border-b border-border bg-muted/50">
+            <h3 className="text-[11px] font-semibold text-[#94A3B8] tracking-wider">
+              ALL ASSETS
+            </h3>
           </div>
-        ) : (
-          <div className="bg-card border border-border rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
-            <div className="px-6 py-4 border-b border-border bg-muted/50">
-              <h3 className="text-[11px] font-semibold text-[#94A3B8] tracking-wider">
-                ALL ASSETS
-              </h3>
-            </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -1856,20 +1607,32 @@ export function AssetManagement() {
                         </td>
                         <td className="px-6 py-3">
                           <div className="flex items-center gap-2">
+                            {hasPermissionKey(P.ASSETS_MANAGE) && (
+                              <button
+                                onClick={() => openEditModal(asset)}
+                                className="px-2 py-1 bg-card border border-border text-foreground rounded-lg text-[11px] font-bold hover:bg-muted flex items-center gap-1 cursor-pointer"
+                                title="Edit Asset"
+                              >
+                                <Edit size={12} />
+                                Edit
+                              </button>
+                            )}
                             {asset.status === "Assigned" && (
                               <>
                                 <button
                                   onClick={() => openDetailPanel(asset)}
-                                  className="text-[12px] font-bold text-muted-foreground hover:text-foreground px-2 py-1 flex items-center gap-1"
+                                  className="text-[12px] font-bold text-muted-foreground hover:text-foreground px-2 py-1 flex items-center gap-1 cursor-pointer"
                                 >
                                   View <ChevronRight size={14} />
                                 </button>
-                                <button
-                                  onClick={() => openRecoverModal(asset)}
-                                  className="px-3 py-1 bg-card border border-border text-foreground rounded-lg text-[11px] font-bold hover:bg-muted"
-                                >
-                                  Recover
-                                </button>
+                                {hasPermissionKey(P.ASSETS_MANAGE) && (
+                                  <button
+                                    onClick={() => openRecoverModal(asset)}
+                                    className="px-3 py-1 bg-card border border-border text-foreground rounded-lg text-[11px] font-bold hover:bg-muted cursor-pointer"
+                                  >
+                                    Recover
+                                  </button>
+                                )}
                               </>
                             )}
                             {asset.status === "Pending Return" && (
@@ -1879,7 +1642,7 @@ export function AssetManagement() {
                                     `Reminder sent to ${asset.assignedTo}`,
                                   )
                                 }
-                                className="px-3 py-1.5 bg-[#FEF3C7] text-[#B45309] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#FDE68A]"
+                                className="px-3 py-1.5 bg-[#FEF3C7] text-[#B45309] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#FDE68A] cursor-pointer"
                               >
                                 Send Reminder <ChevronRight size={14} />
                               </button>
@@ -1887,15 +1650,15 @@ export function AssetManagement() {
                             {asset.status === "Overdue" && (
                               <button
                                 onClick={() => openEscalationModal(asset)}
-                                className="px-3 py-1.5 bg-[#FEE2E2] text-[#B91C1C] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#FECACA]"
+                                className="px-3 py-1.5 bg-[#FEE2E2] text-[#B91C1C] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#FECACA] cursor-pointer"
                               >
                                 Escalate <ChevronRight size={14} />
                               </button>
                             )}
-                            {asset.status === "Available" && (
+                            {asset.status === "Available" && hasPermissionKey(P.ASSETS_ASSIGN) && (
                               <button
                                 onClick={() => openAssignModal(asset)}
-                                className="px-3 py-1.5 bg-[#DCFCE7] text-[#00B87C] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#D1FAE5]"
+                                className="px-3 py-1.5 bg-[#DCFCE7] text-[#00B87C] rounded-lg text-[11px] font-black tracking-wide flex items-center gap-1 hover:bg-[#D1FAE5] cursor-pointer"
                               >
                                 Assign <Plus size={14} strokeWidth={3} />
                               </button>
@@ -1903,7 +1666,7 @@ export function AssetManagement() {
                             {asset.status === "Maintenance" && (
                               <button
                                 onClick={() => openDetailPanel(asset)}
-                                className="text-[12px] font-bold text-muted-foreground hover:text-foreground px-2 py-1 flex items-center gap-1"
+                                className="text-[12px] font-bold text-muted-foreground hover:text-foreground px-2 py-1 flex items-center gap-1 cursor-pointer"
                               >
                                 View <ChevronRight size={14} />
                               </button>
@@ -1927,7 +1690,6 @@ export function AssetManagement() {
               </table>
             </div>
           </div>
-        )}
       </div>
 
       {/* --- Add Asset Modal --- */}
@@ -3114,7 +2876,7 @@ export function AssetManagement() {
 
                     <div className="space-y-3">
                       {(maintenanceLogs[selectedAsset.assetId] || []).length ===
-                      0 ? (
+                        0 ? (
                         <p className="text-center text-[12px] text-muted-foreground font-semibold py-4">
                           No maintenance logs found
                         </p>
@@ -3164,7 +2926,7 @@ export function AssetManagement() {
                         ];
                         const randomName =
                           fileNames[
-                            Math.floor(Math.random() * fileNames.length)
+                          Math.floor(Math.random() * fileNames.length)
                           ];
                         const currentDocs =
                           assetDocuments[selectedAsset.assetId] || [];
@@ -3193,7 +2955,7 @@ export function AssetManagement() {
                     </button>
 
                     {(assetDocuments[selectedAsset.assetId] || []).length ===
-                    0 ? (
+                      0 ? (
                       <p className="text-center text-[12px] text-muted-foreground font-semibold py-4">
                         No documents uploaded
                       </p>
@@ -3258,20 +3020,254 @@ export function AssetManagement() {
                 {new Set(["Pending Return", "Overdue", "Maintenance"]).has(
                   selectedAsset.status,
                 ) && (
-                  <>
-                    <button className="py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted transition-colors">
-                      Edit Asset
-                    </button>
-                    <button className="py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted transition-colors flex items-center justify-center gap-2">
-                      <Download size={14} /> Download Report
-                    </button>
-                  </>
-                )}
+                    <>
+                      {hasPermissionKey(P.ASSETS_MANAGE) && (
+                        <button
+                          onClick={() => openEditModal(selectedAsset)}
+                          className="py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted transition-colors cursor-pointer"
+                        >
+                          Edit Asset
+                        </button>
+                      )}
+                      <button
+                        onClick={() => toast.success(`Exported asset log report for ${selectedAsset.assetId}`)}
+                        className="py-2.5 bg-card border border-border text-foreground rounded-xl text-[13px] font-bold hover:bg-muted transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Download size={14} /> Download Report
+                      </button>
+                    </>
+                  )}
               </div>
             </m.div>
           </>
         )}
       </AnimatePresence>
+
+      {/* Asset Breakdown Popup Modal */}
+      {isBreakdownModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-xl relative animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-border">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#E0F2FE] text-[#0EA5E9] flex items-center justify-center border border-[#BAE6FD]">
+                  <Package size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">Asset Portfolio Breakdown</h3>
+                  <p className="text-xs text-muted-foreground font-medium">Real-time organizational asset distribution</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsBreakdownModalOpen(false)}
+                className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-muted p-4 rounded-xl border border-border flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Managed Assets</p>
+                  <p className="text-2xl font-black text-foreground mt-0.5">{totalAssetsCount}</p>
+                </div>
+                <span className="text-xs font-bold text-[#00B87C] bg-[#DCFCE7] px-2.5 py-1 rounded-full border border-[#A7F3D0]">
+                  100% Accounted
+                </span>
+              </div>
+
+              {/* By Category */}
+              <div>
+                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Assets by Category</h4>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {Object.entries(
+                    assets.reduce((acc, a) => {
+                      acc[a.category] = (acc[a.category] || 0) + 1;
+                      return acc;
+                    }, {} as Record<string, number>)
+                  ).map(([cat, count]) => (
+                    <div key={cat} className="p-3 bg-card border border-border rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-[#0EA5E9]" />
+                        <span className="text-xs font-bold text-foreground">{cat}</span>
+                      </div>
+                      <span className="text-xs font-black text-muted-foreground">{String(count)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* By Status */}
+              <div>
+                <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Assets by Status</h4>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {[
+                    { status: "Assigned", color: "#00B87C", count: assignedCount },
+                    { status: "Available", color: "#6B7280", count: availableCount },
+                    { status: "Maintenance", color: "#0F766E", count: maintenanceCount },
+                    { status: "Pending Return", color: "#F59E0B", count: pendingReturnCount },
+                    { status: "Overdue", color: "#EF4444", count: overdueCount },
+                  ].map((st) => (
+                    <div key={st.status} className="p-3 bg-card border border-border rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: st.color }} />
+                        <span className="text-xs font-bold text-foreground">{st.status}</span>
+                      </div>
+                      <span className="text-xs font-black text-muted-foreground">{st.count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
+              <button
+                onClick={() => setIsBreakdownModalOpen(false)}
+                className="px-4 py-2 border border-border text-foreground rounded-xl text-xs font-bold hover:bg-muted transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setIsBreakdownModalOpen(false);
+                  setActiveTab("All Assets");
+                  setCategoryFilter("All");
+                  setDeptFilter("All");
+                  setStatusFilter("All");
+                  setSearchQuery("");
+                  if (inventoryTableRef.current) {
+                    inventoryTableRef.current.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="px-4 py-2 bg-[#00B87C] text-white rounded-xl text-xs font-bold hover:bg-[#009665] transition-all shadow-sm cursor-pointer"
+              >
+                View All Assets
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Asset Modal */}
+      {isEditModalOpen && selectedAsset && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-card border border-border rounded-2xl max-w-md w-full p-6 shadow-xl relative animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-border">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-[#00B87C] flex items-center justify-center border border-emerald-500/20">
+                  <Edit size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-foreground">Edit Asset Details</h3>
+                  <p className="text-xs text-muted-foreground font-medium">{selectedAsset.assetId}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditAsset} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">Asset Name</label>
+                <input
+                  type="text"
+                  required
+                  value={editAssetName}
+                  onChange={(e) => setEditAssetName(e.target.value)}
+                  className="w-full px-3 py-2 bg-input-background border border-border rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">Category</label>
+                  <select
+                    value={editAssetCategory}
+                    onChange={(e) => setEditAssetCategory(e.target.value)}
+                    className="w-full px-3 py-2 bg-input-background border border-border rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C]"
+                  >
+                    <option value="Laptop">Laptop</option>
+                    <option value="Smartphone">Smartphone</option>
+                    <option value="Monitor">Monitor</option>
+                    <option value="Vehicle">Vehicle</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">Serial Number</label>
+                  <input
+                    type="text"
+                    required
+                    value={editAssetSerialNo}
+                    onChange={(e) => setEditAssetSerialNo(e.target.value)}
+                    className="w-full px-3 py-2 bg-input-background border border-border rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">Department</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Engineering"
+                    value={editAssetDepartment}
+                    onChange={(e) => setEditAssetDepartment(e.target.value)}
+                    className="w-full px-3 py-2 bg-input-background border border-border rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">Value (₹)</label>
+                  <input
+                    type="number"
+                    required
+                    value={editAssetValue}
+                    onChange={(e) => setEditAssetValue(e.target.value)}
+                    className="w-full px-3 py-2 bg-input-background border border-border rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">Status</label>
+                <select
+                  value={editAssetStatus}
+                  onChange={(e) => setEditAssetStatus(e.target.value)}
+                  className="w-full px-3 py-2 bg-input-background border border-border rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-[#00B87C]/20 focus:border-[#00B87C]"
+                >
+                  <option value="Available">Available</option>
+                  <option value="Assigned">Assigned</option>
+                  <option value="Pending Return">Pending Return</option>
+                  <option value="Overdue">Overdue</option>
+                  <option value="Maintenance">Maintenance</option>
+                </select>
+              </div>
+
+              <div className="pt-4 border-t border-border flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(false)}
+                  className="px-4 py-2 border border-border text-foreground rounded-xl text-xs font-bold hover:bg-muted transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-[#00B87C] text-white rounded-xl text-xs font-bold hover:bg-[#009665] transition-all shadow-sm cursor-pointer"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -20,6 +20,13 @@ interface AllOrganizationsTableProps {
 
 export function AllOrganizationsTable({ hook }: AllOrganizationsTableProps) {
   const { filteredOrgs, filters, setActiveOrgId } = hook;
+  const allOrgs = filteredOrgs || [];
+  const totalOrgs = allOrgs.length;
+  const activeOrgs = allOrgs.filter((o) => o.status === "Active").length;
+  const trialOrgs = allOrgs.filter((o) => o.status === "Trial").length;
+  const suspendedOrgs = allOrgs.filter(
+    (o) => o.status === "Suspended" || o.status === "Inactive" || o.status === "Expired"
+  ).length;
 
   return (
     <div className="bg-slate-50/50 rounded-2xl shadow-sm border border-gray-100 min-h-[600px] overflow-hidden flex flex-col font-medium animate-in fade-in zoom-in-95 duration-200">
@@ -37,6 +44,61 @@ export function AllOrganizationsTable({ hook }: AllOrganizationsTableProps) {
       </div>
 
       <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-6">
+        {/* Organization Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div
+            onClick={() => filters.setStatusFilter("ALL")}
+            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+              filters.statusFilter === "ALL"
+                ? "bg-indigo-50 border-indigo-200 shadow-sm"
+                : "bg-white border-gray-200 hover:border-indigo-200 shadow-xs"
+            }`}
+          >
+            <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+              Total Organizations
+            </p>
+            <p className="text-2xl font-black text-gray-900 mt-1">{totalOrgs}</p>
+          </div>
+          <div
+            onClick={() => filters.setStatusFilter("Active")}
+            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+              filters.statusFilter === "Active"
+                ? "bg-emerald-50 border-emerald-200 shadow-sm"
+                : "bg-white border-gray-200 hover:border-emerald-200 shadow-xs"
+            }`}
+          >
+            <p className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">
+              Active Organizations
+            </p>
+            <p className="text-2xl font-black text-gray-900 mt-1">{activeOrgs}</p>
+          </div>
+          <div
+            onClick={() => filters.setStatusFilter("Trial")}
+            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+              filters.statusFilter === "Trial"
+                ? "bg-amber-50 border-amber-200 shadow-sm"
+                : "bg-white border-gray-200 hover:border-amber-200 shadow-xs"
+            }`}
+          >
+            <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">
+              Trial Organizations
+            </p>
+            <p className="text-2xl font-black text-gray-900 mt-1">{trialOrgs}</p>
+          </div>
+          <div
+            onClick={() => filters.setStatusFilter("Suspended")}
+            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+              filters.statusFilter === "Suspended"
+                ? "bg-rose-50 border-rose-200 shadow-sm"
+                : "bg-white border-gray-200 hover:border-rose-200 shadow-xs"
+            }`}
+          >
+            <p className="text-[11px] font-bold text-rose-600 uppercase tracking-wider">
+              Suspended / Inactive
+            </p>
+            <p className="text-2xl font-black text-gray-900 mt-1">{suspendedOrgs}</p>
+          </div>
+        </div>
         {/* Filters Header Container */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 flex-1 min-w-[200px]">
@@ -87,6 +149,17 @@ export function AllOrganizationsTable({ hook }: AllOrganizationsTableProps) {
                 Media & Entertainment
               </option>
             </select>
+            <button
+              onClick={() => {
+                filters.setSearchQuery("");
+                filters.setStatusFilter("ALL");
+                filters.setPlanFilter("ALL");
+                filters.setIndustryFilter("ALL");
+              }}
+              className="px-3 py-2 text-xs font-bold text-gray-600 hover:text-indigo-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+            >
+              Reset Filters
+            </button>
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   X,
   Building2,
@@ -143,11 +143,11 @@ export function DepartmentDetailModal({
   const teams =
     dept.teams && dept.teams.length > 0
       ? dept.teams.map((t: { name: string; lead: string }) => ({
-          name: t.name || "Unknown",
-          lead: t.lead || "TBD",
-          count: 0,
-          icon: Users,
-        }))
+        name: t.name || "Unknown",
+        lead: t.lead || "TBD",
+        count: 0,
+        icon: Users,
+      }))
       : getTeamsForDepartment(dept.name);
 
   const budgetUsedRaw = dept.budgetUsedAmount || "$350,000";
@@ -414,11 +414,10 @@ export function DepartmentDetailModal({
                   handleClose();
                   onToggleStatus(dept);
                 }}
-                className={`px-5 py-2.5 rounded-[12px] text-[14px] font-[600] transition-all border ${
-                  dept.status === "Active"
-                    ? "text-[#F5A623] bg-[#F5A623]/10 border-[#F5A623]/20 hover:bg-[#F5A623]/20"
-                    : "text-[#00B87C] dark:text-[#00C48C] bg-[#00B87C]/10 dark:bg-[#00C48C]/10 border-[#00B87C]/20 dark:border-[#00C48C]/20 hover:bg-[#00B87C]/20 dark:hover:bg-[#00C48C]/20"
-                }`}
+                className={`px-5 py-2.5 rounded-[12px] text-[14px] font-[600] transition-all border ${dept.status === "Active"
+                  ? "text-[#F5A623] bg-[#F5A623]/10 border-[#F5A623]/20 hover:bg-[#F5A623]/20"
+                  : "text-[#00B87C] dark:text-[#00C48C] bg-[#00B87C]/10 dark:bg-[#00C48C]/10 border-[#00B87C]/20 dark:border-[#00C48C]/20 hover:bg-[#00B87C]/20 dark:hover:bg-[#00C48C]/20"
+                  }`}
               >
                 {dept.status === "Active" ? "Deactivate" : "Activate"}
               </button>

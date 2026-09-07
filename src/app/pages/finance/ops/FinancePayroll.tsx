@@ -23,6 +23,8 @@ import { AnimatePresence } from "motion/react";
 import { showToast } from "../../../components/workflow/ToastNotification";
 import { useAuth } from "../../../context/AuthContext";
 import { payrollService } from "../payroll/payroll.service";
+import { usePermissionKey } from "../../../shared/permission-engine/usePermission";
+import { P } from "../../../shared/permission-engine/permissions";
 import type { Payslip as RealPayslip } from "../payroll/payroll.types";
 import { employees as mockEmployees } from "../../../data/mockData";
 import * as m from "motion/react-m";
@@ -114,12 +116,17 @@ const MOCK_RECORDS: PayrollRecord[] = [
 ];
 export function FinancePayroll() {
   const { user } = useAuth();
+  const hasPayrollManage = usePermissionKey(P.PAYROLL_MANAGE);
+  const hasPayrollFull = usePermissionKey(P.PAYROLL_FULL);
+  const canManagePayroll = hasPayrollManage || hasPayrollFull;
   const [activeMonth] = useState("April 2026");
   const [refreshKey, setRefreshKey] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEmployee, setSelectedEmployee] =
     useState<PayrollRecord | null>(null);
   const [showRunModal, setShowRunModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
   const [runModalStep, setRunModalStep] = useState<1 | 2>(1);
   const [genericModalTitle, setGenericModalTitle] = useState("");
   const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
@@ -186,9 +193,11 @@ export function FinancePayroll() {
       type: "text/csv",
     });
     const linkEl = document.createElement("a");
-    linkEl.href = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
+    linkEl.href = url;
     linkEl.download = `payroll_${type.toLowerCase().replace(/ /g, "_")}.csv`;
     linkEl.click();
+    URL.revokeObjectURL(url);
     showToast(`${type} exported successfully.`);
   };
   const filteredRecords = records.filter((rec: PayrollRecord) => {
@@ -1110,6 +1119,18 @@ export function FinancePayroll() {
               </div>
 
               <div className="p-8 pt-0 flex gap-4">
+                {runModalStep === 2 && activeRun?.status === "pending" && (
+                  <button
+                    onClick={() => {
+                      setShowRunModal(false);
+                      setShowRejectModal(true);
+                    }}
+                    className="flex-1 py-4 rounded-[20px] bg-rose-500/10 border border-rose-500/30 text-rose-500 font-black text-[13px] uppercase tracking-widest hover:bg-rose-500/20 transition-all active:scale-95"
+                  >
+                    Reject Run
+                  </button>
+                )}
+
                 <button
                   onClick={() =>
                     runModalStep === 2
@@ -1125,16 +1146,25 @@ export function FinancePayroll() {
                     if (runModalStep === 1) {
                       setRunModalStep(2);
                     } else {
+                      if (!canManagePayroll) {
+                        showToast("Permission denied: PAYROLL_MANAGE required", "error");
+                        return;
+                      }
                       setShowRunModal(false);
                       if (activeRun) {
                         if (activeRun.status === "pending") {
+                          if (activeRun.preparedBy === (user?.email || "finance@viyanhr.com")) {
+                            showToast("Maker-checker violation: Preparer cannot approve their own run.", "error");
+                            return;
+                          }
                           const res = payrollService.approvePayRun(
                             activeRun.id,
                             user?.email || "finance@viyanhr.com",
+                            user?.organizationId,
                           );
                           if (res.success) {
                             setRefreshKey((prev) => prev + 1);
-                            showToast("Payroll approved successfully.");
+                            showToast("Payroll approved & locked successfully.", "success");
                           } else {
                             showToast(
                               "error" in res ? res.error : "Unknown error",
@@ -1144,10 +1174,11 @@ export function FinancePayroll() {
                         } else if (activeRun.status === "approved") {
                           const res = payrollService.disbursePayRun(
                             activeRun.id,
+                            user?.organizationId,
                           );
                           if (res.success) {
                             setRefreshKey((prev) => prev + 1);
-                            showToast("Payroll disbursed successfully.");
+                            showToast("Payroll disbursed successfully. BANK INTEGRATION: BACKEND / EXTERNAL INTEGRATION REQUIRED", "success");
                             handleExport("Bank Transfer Format");
                           } else {
                             showToast(
@@ -1174,6 +1205,75 @@ export function FinancePayroll() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Rejection Modal */}
+      {showRejectModal && (
+        <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in"
+            onClick={() => setShowRejectModal(false)}
+          />
+          <div className="relative bg-card border border-border rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2 text-rose-500">
+                <AlertCircle size={20} />
+                <h3 className="text-lg font-bold text-foreground">Reject Payroll Run</h3>
+              </div>
+              <button
+                onClick={() => setShowRejectModal(false)}
+                className="p-1 hover:bg-muted rounded-xl transition-all"
+              >
+                <X size={18} className="text-muted-foreground" />
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Please provide a specific rejection reason for the preparer. The payroll run will return to Draft state for corrections.
+            </p>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="e.g. Discrepancy in Engineering overtime hours. Please verify LOP records."
+              rows={3}
+              className="w-full bg-input-background border border-border rounded-xl p-3 text-xs text-foreground focus:outline-none focus:border-rose-500"
+            />
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                onClick={() => setShowRejectModal(false)}
+                className="px-4 py-2 border border-border rounded-xl text-xs font-bold text-muted-foreground hover:text-foreground"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (!rejectReason.trim()) {
+                    showToast("Rejection reason is required.", "error");
+                    return;
+                  }
+                  if (activeRun) {
+                    const res = payrollService.rejectPayRun(
+                      activeRun.id,
+                      user?.email || "finance@viyanhr.com",
+                      rejectReason.trim(),
+                      user?.organizationId,
+                    );
+                    if (res.success) {
+                      setRefreshKey((prev) => prev + 1);
+                      showToast("Payroll run rejected and returned to Draft.", "info");
+                      setShowRejectModal(false);
+                      setRejectReason("");
+                    } else {
+                      showToast("error" in res ? res.error : "Failed to reject pay run.", "error");
+                    }
+                  }
+                }}
+                className="px-5 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all"
+              >
+                Confirm Rejection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Generic Modal */}
       {genericModalTitle && (
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4">

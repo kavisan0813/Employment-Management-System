@@ -2,6 +2,8 @@ import { lazy, useState, useEffect, useTransition } from "react";
 import DOMPurify from "dompurify";
 import { useLocation, useNavigate } from "react-router";
 import { useAuth } from "../../../context/AuthContext";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import {
   Download,
   FileText,
@@ -1542,9 +1544,9 @@ function ShiftSwapReport({ onBack }: { onBack: () => void }) {
       prev.map((req) =>
         req.id === id
           ? {
-              ...req,
-              status: "Approved",
-            }
+            ...req,
+            status: "Approved",
+          }
           : req,
       ),
     );
@@ -5873,12 +5875,96 @@ const landingFunnelData = [
 ];
 export function Reports() {
   const { user } = useAuth();
+  const { hasPermissionKey } = usePermissions();
   const isManager = user?.role === "Manager";
   const location = useLocation();
   const navigate = useNavigate();
   const [activeReport, setActiveReport] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<"6M" | "1Y" | "2Y">("1Y");
-  const [activeTab, setActiveTab] = useState<"standard" | "custom">("standard");
+  const [activeTab, setActiveTab] = useState<"generator" | "analytics" | "history">("generator");
+  const [selectedReportType, setSelectedReportType] = useState<"Payroll" | "Expense" | "Tax" | "Asset" | "Custom">("Payroll");
+  const [taxReportSubtype, setTaxReportSubtype] = useState<"PF Summary" | "ESI Contributions" | "Professional Tax (PT)" | "TDS Deduction Summary">("PF Summary");
+  const [deptCompareMetric, setDeptCompareMetric] = useState<"payroll" | "headcount" | "expense" | "attendance">("payroll");
+  const [historySearch, setHistorySearch] = useState("");
+  const [historyTypeFilter, setHistoryTypeFilter] = useState("All");
+
+  // Report History persistence (Tenant Isolated)
+  const historyStorageKey = `viyan_reports_history:${user?.organizationId || "default"}`;
+  const readReportHistory = () => {
+    try {
+      const saved = localStorage.getItem(historyStorageKey);
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [
+      {
+        id: "REP-2026-001",
+        name: "April 2026 Payroll Summary",
+        type: "Payroll",
+        generatedBy: user?.name || "HR Admin",
+        date: "Apr 28, 2026",
+        time: "10:30 AM",
+        scope: "All Departments",
+        format: "PDF",
+        status: "Completed",
+      },
+      {
+        id: "REP-2026-002",
+        name: "Q1 Expense Category Breakdown",
+        type: "Expense",
+        generatedBy: user?.name || "HR Admin",
+        date: "Apr 25, 2026",
+        time: "02:15 PM",
+        scope: "Engineering, Sales",
+        format: "CSV",
+        status: "Completed",
+      },
+      {
+        id: "REP-2026-003",
+        name: "Q1 Statutory TDS Deduction Summary",
+        type: "Tax",
+        generatedBy: user?.name || "Finance Lead",
+        date: "Apr 20, 2026",
+        time: "11:45 AM",
+        scope: "All Departments",
+        format: "XLSX",
+        status: "Completed",
+      },
+    ];
+  };
+
+  const [reportHistory, setReportHistory] = useState<Array<{
+    id: string;
+    name: string;
+    type: string;
+    generatedBy: string;
+    date: string;
+    time: string;
+    scope: string;
+    format: string;
+    status: string;
+  }>>(readReportHistory);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(historyStorageKey, JSON.stringify(reportHistory));
+    } catch {}
+  }, [reportHistory, historyStorageKey]);
+
+  const addHistoryRecord = (name: string, type: string, format: string, scope: string) => {
+    const now = new Date();
+    const newItem = {
+      id: `REP-${now.getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+      name,
+      type,
+      generatedBy: user?.name || "HR Admin",
+      date: now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      time: now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
+      scope: scope || filterDept || "All Departments",
+      format,
+      status: "Completed",
+    };
+    setReportHistory((prev) => [newItem, ...prev]);
+  };
 
   // Filters state
   const [filterDate, setFilterDate] = useState("This Month");
@@ -5950,70 +6036,70 @@ export function Reports() {
   const [queryPage, setQueryPage] = useState(1);
   const pipelineSummary = isManager
     ? {
-        total: 42,
-        conversion: "19.0%",
-        thisMonth: "+3",
-        pending: 2,
-      }
+      total: 42,
+      conversion: "19.0%",
+      thisMonth: "+3",
+      pending: 2,
+    }
     : {
-        total: 145,
-        conversion: "18.5%",
-        thisMonth: "+8",
-        pending: 4,
-      };
+      total: 145,
+      conversion: "18.5%",
+      thisMonth: "+8",
+      pending: 4,
+    };
   const pipelineStages = isManager
     ? [
-        {
-          stage: "Applied",
-          count: 42,
-          pct: 100,
-          color: "#9CA3AF",
-        },
-        {
-          stage: "Interviewed",
-          count: 18,
-          pct: 42.8,
-          color: "#34D399",
-        },
-        {
-          stage: "Offered",
-          count: 4,
-          pct: 9.5,
-          color: "#00B87C",
-        },
-        {
-          stage: "Joined",
-          count: 3,
-          pct: 7.1,
-          color: "#059669",
-        },
-      ]
+      {
+        stage: "Applied",
+        count: 42,
+        pct: 100,
+        color: "#9CA3AF",
+      },
+      {
+        stage: "Interviewed",
+        count: 18,
+        pct: 42.8,
+        color: "#34D399",
+      },
+      {
+        stage: "Offered",
+        count: 4,
+        pct: 9.5,
+        color: "#00B87C",
+      },
+      {
+        stage: "Joined",
+        count: 3,
+        pct: 7.1,
+        color: "#059669",
+      },
+    ]
     : [
-        {
-          stage: "Applied",
-          count: 145,
-          pct: 100,
-          color: "#9CA3AF",
-        },
-        {
-          stage: "Interviewed",
-          count: 58,
-          pct: 40,
-          color: "#34D399",
-        },
-        {
-          stage: "Offered",
-          count: 12,
-          pct: 8.2,
-          color: "#00B87C",
-        },
-        {
-          stage: "Joined",
-          count: 8,
-          pct: 5.5,
-          color: "#059669",
-        },
-      ];
+      {
+        stage: "Applied",
+        count: 145,
+        pct: 100,
+        color: "#9CA3AF",
+      },
+      {
+        stage: "Interviewed",
+        count: 58,
+        pct: 40,
+        color: "#34D399",
+      },
+      {
+        stage: "Offered",
+        count: 12,
+        pct: 8.2,
+        color: "#00B87C",
+      },
+      {
+        stage: "Joined",
+        count: 8,
+        pct: 5.5,
+        color: "#059669",
+      },
+    ];
   useEffect(() => {
     if (location.state?.activeReport) {
       setActiveReport(location.state.activeReport);
@@ -6032,41 +6118,26 @@ export function Reports() {
     let content: string;
     let filename: string;
     let mimeType: string;
-    if (activeTab === "custom" && queryResults && queryResults.length > 0) {
+    const formatName = type.includes("CSV") ? "CSV" : type.includes("Excel") ? "XLSX" : "PDF";
+    const reportTitle = `${selectedReportType} Report (${filterDate})`;
+
+    if (queryResults && queryResults.length > 0) {
       const headers = selectedFields.join(",");
       const rows = queryResults
         .map((row) => selectedFields.map((f) => `"${row[f] || ""}"`).join(","))
         .join("\n");
       content = `${headers}\n${rows}`;
-      if (type.includes("CSV")) {
-        filename = "Custom_Report.csv";
-        mimeType = "text/csv";
-      } else if (type.includes("Excel")) {
-        filename = "Custom_Report.xlsx";
-        mimeType =
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-      } else {
-        filename = "Custom_Report.pdf";
-        mimeType = "application/pdf";
-      }
+      filename = `Custom_Report.${formatName.toLowerCase()}`;
+      mimeType = formatName === "CSV" ? "text/csv" : formatName === "XLSX" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/pdf";
     } else {
-      if (type.includes("CSV")) {
-        content =
-          "Employee ID,First Name,Last Name,Department,Role\nEMP-001,Arun,Frontend Dev,Engineering,Role\nEMP-002,Ravi,Sales Exec,Sales,Role";
-        filename = "Employee_Report.csv";
-        mimeType = "text/csv";
-      } else if (type.includes("Excel")) {
-        content =
-          "Employee ID,First Name,Last Name,Department,Role\nEMP-001,Arun,Frontend Dev,Engineering,Role\nEMP-002,Ravi,Sales Exec,Sales,Role";
-        filename = "Employee_Report.xlsx";
-        mimeType =
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-      } else {
-        content = "Employee Report Preview Data";
-        filename = "Employee_Report.pdf";
-        mimeType = "application/pdf";
-      }
+      content =
+        "Employee ID,First Name,Last Name,Department,Role\nEMP-001,Arun,Frontend Dev,Engineering,Role\nEMP-002,Ravi,Sales Exec,Sales,Role";
+      filename = `${selectedReportType}_Report.${formatName === "XLSX" ? "xlsx" : formatName.toLowerCase()}`;
+      mimeType = formatName === "CSV" ? "text/csv" : formatName === "XLSX" ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "application/pdf";
     }
+
+    addHistoryRecord(reportTitle, selectedReportType, formatName, filterDept);
+
     const blob = new Blob([content], {
       type: mimeType,
     });
@@ -6390,12 +6461,12 @@ export function Reports() {
             icon: TrendingUp,
           },
           {
-            label: "Avg Attendance",
-            value: `${attendance}%`,
+            label: "Department Comparison",
+            value: "6 Active Depts",
             color: "#059669",
             bg: "rgba(5, 150, 105, 0.15)",
-            trend: "+2.4%",
-            icon: CalendarCheck,
+            trend: "Eng Lead",
+            icon: BarChart3,
           },
           {
             label: "Payroll Cost",
@@ -6441,12 +6512,12 @@ export function Reports() {
           icon: UserMinus,
         },
         {
-          label: "Avg Attendance",
-          value: `${attendance}%`,
+          label: "Department Comparison",
+          value: "6 Active Depts",
           color: "#059669",
           bg: "rgba(5, 150, 105, 0.15)",
-          trend: "+2.4%",
-          icon: CalendarCheck,
+          trend: "Eng Lead",
+          icon: BarChart3,
         },
         {
           label: "Payroll Cost",
@@ -6467,10 +6538,10 @@ export function Reports() {
       ];
     };
     const list = rawKpis();
-    return user?.role === "HR Manager"
+    return !hasPermissionKey(P.REPORTS_FINANCE)
       ? list.filter(
-          (k) => k.label !== "Payroll Cost" && k.label !== "Budget Utilization",
-        )
+        (k) => k.label !== "Payroll Cost" && k.label !== "Budget Utilization",
+      )
       : list;
   };
 
@@ -6478,7 +6549,7 @@ export function Reports() {
   if (activeReport === "Headcount Report")
     return <HeadcountReport onBack={() => setActiveReport(null)} />;
   if (activeReport === "Payroll Summary") {
-    if (user?.role === "HR Manager") {
+    if (!hasPermissionKey(P.REPORTS_FINANCE)) {
       return (
         <div className="p-8 text-center bg-card border border-border rounded-2xl">
           <p className="text-red-500 font-bold">
@@ -6497,7 +6568,7 @@ export function Reports() {
   }
   if (activeReport === "Attendance Report")
     return <AttendanceReport onBack={() => setActiveReport(null)} />;
-    const selectedFieldsSet = new Set(selectedFields);
+  const selectedFieldsSet = new Set(selectedFields);
   if (activeReport === "Performance Review")
     return <PerformanceReview onBack={() => setActiveReport(null)} />;
   if (activeReport === "Recruitment Pipeline")
@@ -6619,22 +6690,295 @@ export function Reports() {
         </div>
       </div>
 
-      {/* DATE FILTER BAR */}
+      {/* TOP LEVEL NAVIGATION TABS */}
       <div
         style={{
-          backgroundColor: "var(--card)",
-          borderRadius: "12px",
-          padding: "16px",
-          border: "1px solid var(--border)",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          gap: "12px",
           marginBottom: "24px",
-          boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-          position: "relative",
-          zIndex: 20,
+          borderBottom: "1px solid var(--border)",
+          paddingBottom: "12px",
         }}
       >
+        <button
+          onClick={() => setActiveTab("generator")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "10px 20px",
+            borderRadius: "12px",
+            fontSize: "13px",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            backgroundColor: activeTab === "generator" ? "#00B87C" : "var(--secondary)",
+            color: activeTab === "generator" ? "white" : "var(--foreground)",
+            border: activeTab === "generator" ? "none" : "1px solid var(--border)",
+            cursor: "pointer",
+            boxShadow: activeTab === "generator" ? "0 4px 12px rgba(0,184,124,0.2)" : "none",
+            transition: "all 0.2s ease",
+          }}
+        >
+          <FileText size={16} />
+          Report Generator
+        </button>
+
+        <button
+          onClick={() => setActiveTab("analytics")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "10px 20px",
+            borderRadius: "12px",
+            fontSize: "13px",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            backgroundColor: activeTab === "analytics" ? "#00B87C" : "var(--secondary)",
+            color: activeTab === "analytics" ? "white" : "var(--foreground)",
+            border: activeTab === "analytics" ? "none" : "1px solid var(--border)",
+            cursor: "pointer",
+            boxShadow: activeTab === "analytics" ? "0 4px 12px rgba(0,184,124,0.2)" : "none",
+            transition: "all 0.2s ease",
+          }}
+        >
+          <BarChart3 size={16} />
+          Analytics Dashboard
+        </button>
+
+        <button
+          onClick={() => setActiveTab("history")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "10px 20px",
+            borderRadius: "12px",
+            fontSize: "13px",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            backgroundColor: activeTab === "history" ? "#00B87C" : "var(--secondary)",
+            color: activeTab === "history" ? "white" : "var(--foreground)",
+            border: activeTab === "history" ? "none" : "1px solid var(--border)",
+            cursor: "pointer",
+            boxShadow: activeTab === "history" ? "0 4px 12px rgba(0,184,124,0.2)" : "none",
+            transition: "all 0.2s ease",
+          }}
+        >
+        </button>
+      </div>
+
+      {/* TAB 1: REPORT GENERATOR TAB (PRIMARY / DEFAULT) */}
+      {activeTab === "generator" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px", marginBottom: "24px" }}>
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
+              <div>
+                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "var(--foreground)", margin: 0 }}>
+                  Report Generator & Query Console
+                </h2>
+                <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: "4px 0 0 0" }}>
+                  Generate custom reports, export statutory files, or filter pre-built templates
+                </p>
+              </div>
+
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                {(["Payroll", "Expense", "Tax", "Asset", "Custom"] as const).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setSelectedReportType(t)}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "10px",
+                      fontSize: "12px",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                      backgroundColor: selectedReportType === t ? "#00B87C" : "var(--secondary)",
+                      color: selectedReportType === t ? "white" : "var(--foreground)",
+                      border: selectedReportType === t ? "none" : "1px solid var(--border)",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    {t} Report
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Controls Bar */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", padding: "16px", backgroundColor: "var(--secondary)", borderRadius: "12px", border: "1px solid var(--border)" }}>
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>
+                  Date Range
+                </label>
+                <select
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}
+                >
+                  <option value="This Month">This Month (Apr 2026)</option>
+                  <option value="Last Month">Last Month (Mar 2026)</option>
+                  <option value="Q1 2026">Q1 2026 (Jan - Mar)</option>
+                  <option value="Q4 2025">Q4 2025 (Oct - Dec)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>
+                  Department Scope
+                </label>
+                <select
+                  value={filterDept}
+                  onChange={(e) => setFilterDept(e.target.value)}
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}
+                >
+                  <option value="All Departments">All Departments</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Design">Design</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Operations">Operations</option>
+                  <option value="HR">Human Resources</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>
+                  Location / Status
+                </label>
+                <select
+                  value={filterLoc}
+                  onChange={(e) => setFilterLoc(e.target.value)}
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}
+                >
+                  <option value="All Locations">All Locations</option>
+                  <option value="Bangalore HQ">Bangalore HQ</option>
+                  <option value="Mumbai Branch">Mumbai Branch</option>
+                  <option value="Remote">Remote</option>
+                </select>
+              </div>
+
+              {selectedReportType === "Tax" && (
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", display: "block", marginBottom: "4px" }}>
+                    Statutory Tax Sub-type
+                  </label>
+                  <select
+                    value={taxReportSubtype}
+                    onChange={(e) => setTaxReportSubtype(e.target.value as any)}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", fontSize: "13px", fontWeight: 600 }}
+                  >
+                    <option value="PF Summary">PF Summary (EPF 12% + EPS 8.33%)</option>
+                    <option value="ESI Contributions">ESI Contributions (0.75% + 3.25%)</option>
+                    <option value="Professional Tax (PT)">Professional Tax (PT Slabs)</option>
+                    <option value="TDS Deduction Summary">TDS Deduction Summary (Form 16)</option>
+                  </select>
+                </div>
+              )}
+            </div>
+
+            {/* Action Bar */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "16px", flexWrap: "wrap", gap: "12px" }}>
+              <button
+                onClick={() => {
+                  setFilterDate("This Month");
+                  setFilterDept("All Departments");
+                  setFilterLoc("All Locations");
+                  triggerToast("Filters reset to default.");
+                }}
+                style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}
+              >
+                Reset Filters
+              </button>
+
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                <button
+                  onClick={() => handleDownload("CSV")}
+                  style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 16px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}
+                >
+                  <FileDown size={14} /> Export CSV
+                </button>
+                <button
+                  onClick={() => handleDownload("Excel")}
+                  style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 16px", borderRadius: "8px", border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}
+                >
+                  <FileDown size={14} /> Export Excel
+                </button>
+                <button
+                  onClick={() => {
+                    addHistoryRecord(`${selectedReportType} Report (${filterDate})`, selectedReportType, "PDF", filterDept);
+                    triggerToast(`Generated ${selectedReportType} PDF report.`);
+                  }}
+                  style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 16px", borderRadius: "8px", border: "none", backgroundColor: "#00B87C", color: "white", fontSize: "12px", fontWeight: 800, cursor: "pointer" }}
+                >
+                  <Check size={14} /> Generate & Save
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Tax Report Statutory Summary panel when Tax selected */}
+          {selectedReportType === "Tax" && (
+            <div className="bg-card border border-border rounded-2xl p-6 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-extrabold text-foreground">{taxReportSubtype} — Statutory Summary</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">Calculated using Day 10 canonical payroll & statutory rates</p>
+                </div>
+                <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs rounded-full border border-emerald-500/20">
+                  FRONTEND READY — BACKEND REPORTING REQUIRED
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 bg-secondary rounded-xl border border-border">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Eligible Emp</span>
+                  <p className="text-xl font-black text-foreground mt-1">248</p>
+                </div>
+                <div className="p-4 bg-secondary rounded-xl border border-border">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Gross Statutory Wages</span>
+                  <p className="text-xl font-black text-foreground mt-1">₹28,40,000</p>
+                </div>
+                <div className="p-4 bg-secondary rounded-xl border border-border">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Employee Contribution</span>
+                  <p className="text-xl font-black text-foreground mt-1">
+                    {taxReportSubtype.includes("PF") ? "₹2,16,000" : taxReportSubtype.includes("ESI") ? "₹18,200" : taxReportSubtype.includes("PT") ? "₹49,600" : "₹1,84,000"}
+                  </p>
+                </div>
+                <div className="p-4 bg-secondary rounded-xl border border-border">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Employer Share</span>
+                  <p className="text-xl font-black text-foreground mt-1">
+                    {taxReportSubtype.includes("PF") ? "₹2,16,000" : taxReportSubtype.includes("ESI") ? "₹78,800" : taxReportSubtype.includes("PT") ? "₹0 (State Tax)" : "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 2: ANALYTICS DASHBOARD TAB */}
+      {activeTab === "analytics" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px", marginBottom: "24px" }}>
+          <div
+            style={{
+              backgroundColor: "var(--card)",
+              borderRadius: "12px",
+              padding: "16px",
+              border: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "24px",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+              position: "relative",
+              zIndex: 20,
+            }}
+          >
         <div
           style={{
             display: "flex",
@@ -6695,8 +7039,8 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--secondary)")
+                    (e.currentTarget.style.backgroundColor =
+                      "var(--secondary)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -6771,8 +7115,8 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--secondary)")
+                    (e.currentTarget.style.backgroundColor =
+                      "var(--secondary)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -6838,8 +7182,8 @@ export function Reports() {
                       color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        "var(--secondary)")
+                    (e.currentTarget.style.backgroundColor =
+                      "var(--secondary)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "transparent")
@@ -6892,122 +7236,122 @@ export function Reports() {
       >
         {isPending
           ? Array.from({
-              length: 6,
-            }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  width: "100%",
-                  height: "116px",
-                  backgroundColor: "#F3F4F6",
-                  borderRadius: "16px",
-                  animation: "pulse 1.5s infinite ease-in-out",
-                }}
-              ></div>
-            ))
+            length: 6,
+          }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                width: "100%",
+                height: "116px",
+                backgroundColor: "#F3F4F6",
+                borderRadius: "16px",
+                animation: "pulse 1.5s infinite ease-in-out",
+              }}
+            ></div>
+          ))
           : getKpis().map((card) => (
+            <div
+              key={card.label}
+              onClick={() => {
+                if (card.label === "Total Employees") navigate("/employees");
+                else if (card.label === "New Hires") navigate("/recruitment");
+                else if (card.label === "Attrition")
+                  setShowAttritionModal(true);
+                else if (card.label === "Avg Attendance")
+                  navigate("/attendance");
+                else if (card.label === "Payroll Cost") navigate("/payroll");
+                else if (card.label === "Open Positions")
+                  navigate("/recruitment");
+                else if (card.label === "Budget Utilization")
+                  setActiveReport("Payroll Summary");
+                else if (card.label === "Active Overtime")
+                  setActiveReport("Overtime Monitoring");
+              }}
+              style={{
+                backgroundColor: "var(--card)",
+                borderRadius: "16px",
+                padding: "20px",
+                border: "1px solid var(--border)",
+                display: "flex",
+                flexDirection: "column",
+                position: "relative",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                cursor: "pointer",
+                transition: "transform 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-4px)";
+                e.currentTarget.style.boxShadow =
+                  "0 10px 15px -3px rgba(0,0,0,0.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow =
+                  "0 1px 3px rgba(0,0,0,0.02)";
+              }}
+            >
               <div
-                key={card.label}
-                onClick={() => {
-                  if (card.label === "Total Employees") navigate("/employees");
-                  else if (card.label === "New Hires") navigate("/recruitment");
-                  else if (card.label === "Attrition")
-                    setShowAttritionModal(true);
-                  else if (card.label === "Avg Attendance")
-                    navigate("/attendance");
-                  else if (card.label === "Payroll Cost") navigate("/payroll");
-                  else if (card.label === "Open Positions")
-                    navigate("/recruitment");
-                  else if (card.label === "Budget Utilization")
-                    setActiveReport("Payroll Summary");
-                  else if (card.label === "Active Overtime")
-                    setActiveReport("Overtime Monitoring");
-                }}
                 style={{
-                  backgroundColor: "var(--card)",
-                  borderRadius: "16px",
-                  padding: "20px",
-                  border: "1px solid var(--border)",
                   display: "flex",
-                  flexDirection: "column",
-                  position: "relative",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
-                  cursor: "pointer",
-                  transition: "transform 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 10px 15px -3px rgba(0,0,0,0.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                    "0 1px 3px rgba(0,0,0,0.02)";
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  marginBottom: "12px",
                 }}
               >
                 <div
                   style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "10px",
                     display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    marginBottom: "12px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: card.bg,
                   }}
                 >
-                  <div
-                    style={{
-                      width: "36px",
-                      height: "36px",
-                      borderRadius: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: card.bg,
-                    }}
-                  >
-                    <card.icon size={18} color={card.color} />
-                  </div>
-                  <span
-                    style={{
-                      padding: "2px 8px",
-                      borderRadius: "9999px",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      backgroundColor:
-                        card.color === "#EF4444"
-                          ? "rgba(239,68,68,0.1)"
-                          : "rgba(16,185,129,0.1)",
-                      color: card.color === "#EF4444" ? "#EF4444" : "#059669",
-                    }}
-                  >
-                    {card.trend}
-                  </span>
+                  <card.icon size={18} color={card.color} />
                 </div>
-                <p
+                <span
                   style={{
-                    fontSize: "26px",
-                    fontWeight: 900,
-                    color: "var(--foreground)",
-                    margin: "0 0 4px 0",
-                    letterSpacing: "-0.5px",
-                  }}
-                >
-                  {card.value}
-                </p>
-                <p
-                  style={{
-                    fontSize: "12px",
+                    padding: "2px 8px",
+                    borderRadius: "9999px",
+                    fontSize: "11px",
                     fontWeight: 700,
-                    color: "var(--muted-foreground)",
-                    margin: 0,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
+                    backgroundColor:
+                      card.color === "#EF4444"
+                        ? "rgba(239,68,68,0.1)"
+                        : "rgba(16,185,129,0.1)",
+                    color: card.color === "#EF4444" ? "#EF4444" : "#059669",
                   }}
                 >
-                  {card.label}
-                </p>
+                  {card.trend}
+                </span>
               </div>
-            ))}
+              <p
+                style={{
+                  fontSize: "26px",
+                  fontWeight: 900,
+                  color: "var(--foreground)",
+                  margin: "0 0 4px 0",
+                  letterSpacing: "-0.5px",
+                }}
+              >
+                {card.value}
+              </p>
+              <p
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  color: "var(--muted-foreground)",
+                  margin: 0,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                {card.label}
+              </p>
+            </div>
+          ))}
       </div>
 
       {/* CHARTS ROW 1 */}
@@ -7463,7 +7807,7 @@ export function Reports() {
           marginBottom: "24px",
         }}
       >
-        {/* Attendance Heatmap */}
+        {/* Department Comparison Widget */}
         <div
           style={{
             backgroundColor: "var(--card)",
@@ -7473,93 +7817,70 @@ export function Reports() {
             boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
           }}
         >
-          <h3
-            style={{
-              fontSize: "16px",
-              fontWeight: 800,
-              color: "var(--foreground)",
-              margin: "0 0 20px 0",
-            }}
-          >
-            Attendance Heatmap
-          </h3>
-          {isPending ? (
-            <div
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+            <h3 style={{ fontSize: "15px", fontWeight: 800, color: "var(--foreground)", margin: 0, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              Department Comparison
+            </h3>
+            <select
+              value={deptCompareMetric}
+              onChange={(e) => setDeptCompareMetric(e.target.value as any)}
               style={{
-                width: "100%",
-                height: "180px",
+                padding: "4px 8px",
+                borderRadius: "8px",
+                fontSize: "11px",
+                fontWeight: 700,
                 backgroundColor: "var(--secondary)",
-                borderRadius: "12px",
-                animation: "pulse 1.5s infinite ease-in-out",
-              }}
-            ></div>
-          ) : (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(5, 1fr)",
-                gap: "10px",
+                color: "var(--foreground)",
+                border: "1px solid var(--border)",
+                cursor: "pointer",
               }}
             >
-              <div></div>
-              {["W1", "W2", "W3", "W4"].map((w) => (
-                <div
-                  key={w}
-                  style={{
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "var(--muted-foreground)",
-                    textAlign: "center",
-                  }}
-                >
-                  {w}
-                </div>
-              ))}
-              {["Eng", "Des", "Mkt", "Sales", "HR", "Fin"].map((dept) => (
-                <React.Fragment key={dept}>
-                  <div
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: 700,
-                      color: "var(--foreground)",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    {dept}
+              <option value="payroll">Payroll Cost</option>
+              <option value="headcount">Headcount</option>
+              <option value="expense">Expense Spend</option>
+              <option value="attendance">Attendance Rate</option>
+            </select>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {[
+              { dept: "Engineering", headcount: 98, payroll: 14.2, expense: 12.4, att: 96, color: "#00B87C" },
+              { dept: "Sales", headcount: 35, payroll: 3.5, expense: 15.6, att: 91, color: "#3B82F6" },
+              { dept: "Design", headcount: 32, payroll: 4.1, expense: 8.2, att: 94, color: "#8B5CF6" },
+              { dept: "Marketing", headcount: 28, payroll: 3.2, expense: 9.8, att: 89, color: "#EC4899" },
+              { dept: "Operations", headcount: 35, payroll: 2.1, expense: 4.5, att: 88, color: "#F59E0B" },
+              { dept: "HR", headcount: 20, payroll: 1.3, expense: 2.1, att: 95, color: "#10B981" },
+            ].map((item) => {
+              let valDisplay = "";
+              let pct = 0;
+              if (deptCompareMetric === "payroll") {
+                valDisplay = `₹${item.payroll}L`;
+                pct = Math.round((item.payroll / 28.4) * 100);
+              } else if (deptCompareMetric === "headcount") {
+                valDisplay = `${item.headcount} emp`;
+                pct = Math.round((item.headcount / 248) * 100);
+              } else if (deptCompareMetric === "expense") {
+                valDisplay = `₹${item.expense}K`;
+                pct = Math.round((item.expense / 52.6) * 100);
+              } else {
+                valDisplay = `${item.att}%`;
+                pct = item.att;
+              }
+              return (
+                <div key={item.dept} style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 700 }}>
+                    <span style={{ color: "var(--foreground)" }}>{item.dept}</span>
+                    <span style={{ color: "var(--muted-foreground)" }}>
+                      <strong style={{ color: "var(--foreground)" }}>{valDisplay}</strong> ({pct}%)
+                    </span>
                   </div>
-                  {[1, 2, 3, 4].map((w) => {
-                    const pct = 90 + Math.floor(Math.random() * 10);
-                    const color =
-                      pct >= 95 ? "#059669" : pct >= 92 ? "#10B981" : "#34D399";
-                    return (
-                      <div
-                        key={w}
-                        onClick={() =>
-                          navigate(`/attendance?dept=${dept}&week=${w}`)
-                        }
-                        title={`Dept: ${dept}\nWeek: ${w}\nAttendance: ${pct}%\nAbsent: ${Math.floor((100 - pct) * 0.5)}\nLate: ${Math.floor((100 - pct) * 0.8)}`}
-                        style={{
-                          height: "24px",
-                          borderRadius: "4px",
-                          backgroundColor: color,
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "white",
-                          fontSize: "10px",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {pct}%
-                      </div>
-                    );
-                  })}
-                </React.Fragment>
-              ))}
-            </div>
-          )}
+                  <div style={{ height: "6px", width: "100%", backgroundColor: "var(--secondary)", borderRadius: "999px", overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${pct}%`, backgroundColor: item.color, borderRadius: "999px" }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Leave Analysis */}
@@ -8365,53 +8686,11 @@ export function Reports() {
           </div>
         </div>
       </div>
-
-      {/* TABS FOR BOTTOM SECTION */}
-      <div
-        style={{
-          display: "flex",
-          gap: "24px",
-          borderBottom: "1px solid #E5E7EB",
-          marginBottom: "24px",
-        }}
-      >
-        <button
-          onClick={() => setActiveTab("standard")}
-          style={{
-            fontSize: "16px",
-            fontWeight: 800,
-            border: "none",
-            background: "none",
-            cursor: "pointer",
-            color: activeTab === "standard" ? "#00B87C" : "#9CA3AF",
-            borderBottom:
-              activeTab === "standard" ? "3px solid #00B87C" : "none",
-            paddingBottom: "12px",
-            transition: "color 0.2s, border-bottom 0.2s",
-          }}
-        >
-          Pre-built Reports
-        </button>
-        <button
-          onClick={() => setActiveTab("custom")}
-          style={{
-            fontSize: "16px",
-            fontWeight: 800,
-            border: "none",
-            background: "none",
-            cursor: "pointer",
-            color: activeTab === "custom" ? "#00B87C" : "#9CA3AF",
-            borderBottom: activeTab === "custom" ? "3px solid #00B87C" : "none",
-            paddingBottom: "12px",
-            transition: "color 0.2s, border-bottom 0.2s",
-          }}
-        >
-          Custom Report Builder
-        </button>
       </div>
+      )}
 
-      {/* PRE-BUILT REPORTS SECTION */}
-      {activeTab === "standard" && (
+      {/* PRE-BUILT REPORTS SECTION (In Generator Tab) */}
+      {activeTab === "generator" && (
         <div
           style={{
             backgroundColor: "var(--card)",
@@ -8440,7 +8719,8 @@ export function Reports() {
             >
               {["All", "Workforce", "Finance", "Operations"]
                 .filter(
-                  (cat) => !(user?.role === "HR Manager" && cat === "Finance"),
+                  (cat) =>
+                    !(!hasPermissionKey(P.REPORTS_FINANCE) && cat === "Finance"),
                 )
                 .map((cat) => (
                   <button
@@ -8526,7 +8806,7 @@ export function Reports() {
             {reports
               .filter(
                 (r) =>
-                  !(user?.role === "HR Manager" && r.category === "Finance"),
+                  !(!hasPermissionKey(P.REPORTS_FINANCE) && r.category === "Finance"),
               )
               .filter(
                 (r) =>
@@ -8684,8 +8964,161 @@ export function Reports() {
         </div>
       )}
 
+      {/* TAB 3: REPORT HISTORY TAB */}
+      {activeTab === "history" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "20px" }}>
+              <div>
+                <h2 style={{ fontSize: "18px", fontWeight: 800, color: "var(--foreground)", margin: 0 }}>
+                  Report Generation History
+                </h2>
+                <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: "4px 0 0 0" }}>
+                  Audit trail and instant download archive of generated reports (Tenant-Scoped)
+                </p>
+              </div>
+
+              <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type="text"
+                    placeholder="Search history..."
+                    value={historySearch}
+                    onChange={(e) => setHistorySearch(e.target.value)}
+                    style={{
+                      padding: "8px 12px 8px 32px",
+                      borderRadius: "8px",
+                      border: "1px solid var(--border)",
+                      backgroundColor: "var(--secondary)",
+                      color: "var(--foreground)",
+                      fontSize: "12px",
+                      fontWeight: 600,
+                    }}
+                  />
+                  <Search size={14} style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "var(--muted-foreground)" }} />
+                </div>
+
+                <select
+                  value={historyTypeFilter}
+                  onChange={(e) => setHistoryTypeFilter(e.target.value)}
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid var(--border)",
+                    backgroundColor: "var(--secondary)",
+                    color: "var(--foreground)",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  <option value="All">All Types</option>
+                  <option value="Payroll">Payroll</option>
+                  <option value="Expense">Expense</option>
+                  <option value="Tax">Tax</option>
+                  <option value="Asset">Asset</option>
+                  <option value="Custom">Custom</option>
+                </select>
+
+                <button
+                  onClick={() => {
+                    setReportHistory([]);
+                    try { localStorage.removeItem(historyStorageKey); } catch {}
+                    triggerToast("Report history cleared.");
+                  }}
+                  style={{
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    border: "1px solid var(--border)",
+                    backgroundColor: "var(--secondary)",
+                    color: "var(--foreground)",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  Clear History
+                </button>
+              </div>
+            </div>
+
+            {reportHistory.length === 0 ? (
+              <div style={{ padding: "48px 24px", textAlign: "center", backgroundColor: "var(--secondary)", borderRadius: "12px", border: "1px solid var(--border)" }}>
+                <Clock size={40} style={{ margin: "0 auto 12px auto", color: "var(--muted-foreground)", opacity: 0.5 }} />
+                <h4 style={{ fontSize: "16px", fontWeight: 800, color: "var(--foreground)", margin: 0 }}>No Generated Reports Found</h4>
+                <p style={{ fontSize: "12px", color: "var(--muted-foreground)", margin: "4px 0 16px 0" }}>Reports generated or exported will appear in this history log.</p>
+                <button
+                  onClick={() => setActiveTab("generator")}
+                  style={{ padding: "8px 16px", borderRadius: "10px", backgroundColor: "#00B87C", color: "white", fontSize: "12px", fontWeight: 800, border: "none", cursor: "pointer" }}
+                >
+                  Go to Report Generator
+                </button>
+              </div>
+            ) : (
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "12px" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--secondary)", color: "var(--muted-foreground)", fontSize: "11px", fontWeight: 800, textTransform: "uppercase" }}>
+                      <th style={{ padding: "12px" }}>Report ID & Name</th>
+                      <th style={{ padding: "12px" }}>Type</th>
+                      <th style={{ padding: "12px" }}>Generated By</th>
+                      <th style={{ padding: "12px" }}>Date & Time</th>
+                      <th style={{ padding: "12px" }}>Scope</th>
+                      <th style={{ padding: "12px" }}>Format</th>
+                      <th style={{ padding: "12px" }}>Status</th>
+                      <th style={{ padding: "12px", textAlign: "right" }}>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reportHistory
+                      .filter((item) => historyTypeFilter === "All" || item.type === historyTypeFilter)
+                      .filter((item) => item.name.toLowerCase().includes(historySearch.toLowerCase()) || item.id.toLowerCase().includes(historySearch.toLowerCase()))
+                      .map((item) => (
+                        <tr key={item.id} style={{ borderBottom: "1px solid var(--border)" }}>
+                          <td style={{ padding: "12px", fontWeight: 700, color: "var(--foreground)" }}>
+                            <div>{item.name}</div>
+                            <div style={{ fontSize: "10px", fontFamily: "monospace", color: "var(--muted-foreground)" }}>{item.id}</div>
+                          </td>
+                          <td style={{ padding: "12px" }}>
+                            <span style={{ padding: "2px 8px", backgroundColor: "var(--secondary)", borderRadius: "4px", fontSize: "10px", fontWeight: 800, color: "var(--foreground)", border: "1px solid var(--border)" }}>
+                              {item.type}
+                            </span>
+                          </td>
+                          <td style={{ padding: "12px", color: "var(--foreground)", fontWeight: 600 }}>{item.generatedBy}</td>
+                          <td style={{ padding: "12px", color: "var(--muted-foreground)" }}>
+                            {item.date} <span style={{ fontSize: "10px", opacity: 0.7 }}>{item.time}</span>
+                          </td>
+                          <td style={{ padding: "12px", color: "var(--muted-foreground)" }}>{item.scope}</td>
+                          <td style={{ padding: "12px" }}>
+                            <span style={{ padding: "2px 6px", borderRadius: "4px", fontSize: "10px", fontWeight: 900, backgroundColor: item.format === "PDF" ? "rgba(239,68,68,0.1)" : "rgba(0,184,124,0.1)", color: item.format === "PDF" ? "#EF4444" : "#00B87C" }}>
+                              {item.format}
+                            </span>
+                          </td>
+                          <td style={{ padding: "12px" }}>
+                            <span style={{ color: "#00B87C", fontWeight: 800, fontSize: "11px", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                              <CheckCircle size={12} /> {item.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: "12px", textAlign: "right" }}>
+                            <button
+                              onClick={() => handleDownload(item.format)}
+                              style={{ padding: "6px 12px", borderRadius: "8px", backgroundColor: "#00B87C", color: "white", fontSize: "11px", fontWeight: 800, border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px" }}
+                            >
+                              <Download size={12} /> Download
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* CUSTOM REPORT BUILDER */}
-      {activeTab === "custom" && (
+      {selectedReportType === "Custom" && activeTab === "generator" && (
         <div
           style={{
             backgroundColor: "var(--card)",
@@ -9403,8 +9836,8 @@ export function Reports() {
                     textAlign: "left",
                   }}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor =
-                      "rgba(0, 184, 124, 0.1)")
+                  (e.currentTarget.style.backgroundColor =
+                    "rgba(0, 184, 124, 0.1)")
                   }
                   onMouseLeave={(e) =>
                     (e.currentTarget.style.backgroundColor = "var(--secondary)")

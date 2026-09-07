@@ -10,15 +10,11 @@ export interface OrganizationsViewProps {
 }
 
 export type DrawerTab =
-  "overview" | "users" | "billing" | "activity" | "settings";
-
-export const REGIONS = [
-  "North America",
-  "Europe",
-  "Asia Pacific",
-  "United Kingdom",
-  "Latin America",
-];
+  | "overview"
+  | "users"
+  | "billing"
+  | "activity"
+  | "settings";
 
 export const PLAN_PRICING: Record<string, number> = {
   Trial: 0,

@@ -13,6 +13,10 @@ import {
   Save,
   X,
 } from "lucide-react";
+import { toast } from "sonner";
+import { usePermissions } from "../../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../../shared/permission-engine/permissions";
+import { PermissionGate } from "../../../../shared/permission-engine/PermissionGate";
 
 export function OrganizationProfile({
   org,
@@ -25,6 +29,7 @@ export function OrganizationProfile({
     };
   };
 }) {
+  const { hasPermissionKey } = usePermissions();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<Organization>>({});
 
@@ -43,8 +48,14 @@ export function OrganizationProfile({
   }, [org]);
 
   const handleSave = () => {
+    if (!hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE)) {
+      toast.error("Access Denied: You do not have permission to edit organization details.");
+      setIsEditing(false);
+      return;
+    }
     if (hook?.actions?.updateOrg) {
       hook.actions.updateOrg(org.id, formData);
+      toast.success("Organization profile updated successfully.");
     }
     setIsEditing(false);
   };
@@ -95,29 +106,31 @@ export function OrganizationProfile({
           </div>
         </div>
         <div>
-          {!isEditing ? (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold rounded-xl text-sm transition-colors cursor-pointer shadow-sm"
-            >
-              <Edit2 className="w-4 h-4" /> Edit Profile
-            </button>
-          ) : (
-            <div className="flex items-center gap-2">
+          <PermissionGate requires={P.MANAGE_ACCOUNT_MANAGE}>
+            {!isEditing ? (
               <button
-                onClick={handleCancel}
+                onClick={() => setIsEditing(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold rounded-xl text-sm transition-colors cursor-pointer shadow-sm"
               >
-                <X className="w-4 h-4" /> Cancel
+                <Edit2 className="w-4 h-4" /> Edit Profile
               </button>
-              <button
-                onClick={handleSave}
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-colors cursor-pointer shadow-sm"
-              >
-                <Save className="w-4 h-4" /> Save
-              </button>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCancel}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold rounded-xl text-sm transition-colors cursor-pointer shadow-sm"
+                >
+                  <X className="w-4 h-4" /> Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-colors cursor-pointer shadow-sm"
+                >
+                  <Save className="w-4 h-4" /> Save
+                </button>
+              </div>
+            )}
+          </PermissionGate>
         </div>
       </div>
 

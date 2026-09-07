@@ -74,7 +74,7 @@ export function BackupRestoreSection() {
           </p>
         </div>
         <button
-          onClick={() => showToast("Backup process initiated")}
+          onClick={() => showToast("Backup process initiated (Backend Infrastructure Required)")}
           className="flex items-center gap-2"
           style={{
             backgroundColor: "#00B87C",
@@ -90,6 +90,19 @@ export function BackupRestoreSection() {
           <CloudUpload size={16} />
           Run Backup Now
         </button>
+      </div>
+
+      {/* PLATFORM ADMIN BACKUP NOTICE */}
+      <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 flex items-start gap-3 mb-6">
+        <AlertTriangle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+        <div className="space-y-1 text-xs">
+          <div className="font-bold">
+            PLATFORM ADMIN BACKUP BOUNDARY — BACKEND / INFRASTRUCTURE REQUIRED
+          </div>
+          <p className="text-amber-800 dark:text-amber-300/90 leading-relaxed">
+            Database snapshot creation, point-in-time recovery, and cloud storage replication require direct platform infrastructure orchestration.
+          </p>
+        </div>
       </div>
 
       {/* POLICY BLOCK 1: BACKUP STATUS */}

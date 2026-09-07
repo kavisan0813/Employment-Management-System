@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation, useSearchParams } from "react-router";
 import type {
   NewHire,
   OnboardingPhase,
@@ -9,10 +10,13 @@ import type {
 } from "../types/onboarding.types";
 import { safeGet, safeSet, initials, formatDate } from "../utils/helpers";
 import { showToast } from "../../../components/workflow/ToastNotification";
-
 import { ROLE_TEMPLATES } from "../../../shared/permission-engine/roles";
 import { INITIAL_DEPARTMENTS } from "../../Department/constants/department.constants";
 import { DEFAULT_ONBOARDING_TEMPLATES } from "../constants/defaultOnboardingTemplate";
+import { useAuth } from "../../../context/AuthContext";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
+import type { UploadedFilePayload } from "../modals/UploadDocumentModal";
 
 /* ─── Storage keys (shared with the employee-creation flow) ─── */
 export const ONB_QUEUE_KEY = "viyan_onboarding_queue:v1";
@@ -20,6 +24,9 @@ export const ONB_PHASES_KEY = "viyan_onboarding_phases:v1";
 export const ONB_DOCS_KEY = "viyan_onboarding_documents:v1";
 export const ONB_TEMPLATES_KEY = "viyan_onboarding_templates:v1";
 export const ONB_UPDATED_EVENT = "viyan:onboarding-updated";
+
+export const getTenantStorageKey = (baseKey: string, orgId?: string) =>
+  orgId ? `${baseKey}:${orgId}` : baseKey;
 
 /**
  * Build the checklist phases for an employee from a template's section/task
@@ -175,8 +182,21 @@ const readStore = <T>(key: string, fallback: T): T => {
   }
 };
 
+const writeStore = <T>(key: string, val: T): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(val));
+  } catch (e) {
+    console.error("Failed to write to localStorage", e);
+  }
+};
+
 export function useOnboarding() {
+  const { user } = useAuth();
+  const { hasPermissionKey } = usePermissions();
+
   /* ─── Core selection ─── */
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<
     "active" | "pre-joining" | "completed" | "templates"
@@ -255,56 +275,92 @@ export function useOnboarding() {
     readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []),
   );
 
+  const orgId = user?.organizationId;
+  const queueKey = getTenantStorageKey(ONB_QUEUE_KEY, orgId);
+  const phasesKey = getTenantStorageKey(ONB_PHASES_KEY, orgId);
+  const docsKey = getTenantStorageKey(ONB_DOCS_KEY, orgId);
+  const templatesKey = getTenantStorageKey(ONB_TEMPLATES_KEY, orgId);
+
   useEffect(() => {
-    localStorage.setItem("viyan_onboarding_queue:v1", JSON.stringify(newHires));
-  }, [newHires]);
-  useEffect(() => {
-    localStorage.setItem(
-      "viyan_onboarding_phases:v1",
-      JSON.stringify(phasesData),
+    setNewHires(readStore<NewHire[]>(queueKey, readStore<NewHire[]>(ONB_QUEUE_KEY, [])));
+    setPhasesData(
+      readStore<Record<string, OnboardingPhase[]>>(
+        phasesKey,
+        readStore<Record<string, OnboardingPhase[]>>(ONB_PHASES_KEY, {}),
+      ),
     );
-  }, [phasesData]);
-  useEffect(() => {
-    localStorage.setItem(
-      "viyan_onboarding_documents:v1",
-      JSON.stringify(documents),
+    setDocuments(
+      readStore<DocumentItem[]>(
+        docsKey,
+        readStore<DocumentItem[]>(ONB_DOCS_KEY, []),
+      ),
     );
-  }, [documents]);
-  useEffect(() => {
-    localStorage.setItem(
-      "viyan_onboarding_templates:v1",
-      JSON.stringify(templates),
+    setTemplates(
+      readStore<Template[]>(
+        templatesKey,
+        readStore<Template[]>(ONB_TEMPLATES_KEY, DEFAULT_ONBOARDING_TEMPLATES),
+      ),
     );
-  }, [templates]);
+  }, [orgId, queueKey, phasesKey, docsKey, templatesKey]);
+
+  useEffect(() => {
+    localStorage.setItem(queueKey, JSON.stringify(newHires));
+    if (orgId) localStorage.setItem(ONB_QUEUE_KEY, JSON.stringify(newHires));
+  }, [newHires, queueKey, orgId]);
+
+  useEffect(() => {
+    localStorage.setItem(phasesKey, JSON.stringify(phasesData));
+    if (orgId) localStorage.setItem(ONB_PHASES_KEY, JSON.stringify(phasesData));
+  }, [phasesData, phasesKey, orgId]);
+
+  useEffect(() => {
+    localStorage.setItem(docsKey, JSON.stringify(documents));
+    if (orgId) localStorage.setItem(ONB_DOCS_KEY, JSON.stringify(documents));
+  }, [documents, docsKey, orgId]);
+
+  useEffect(() => {
+    localStorage.setItem(templatesKey, JSON.stringify(templates));
+    if (orgId) localStorage.setItem(ONB_TEMPLATES_KEY, JSON.stringify(templates));
+  }, [templates, templatesKey, orgId]);
+
+  useEffect(() => {
+    const locState = location.state as { employeeId?: string; employeeName?: string } | null;
+    const stateEmpId = locState?.employeeId;
+    const urlEmpId =
+      searchParams.get("empId") ||
+      searchParams.get("employee") ||
+      searchParams.get("id") ||
+      stateEmpId;
+    if (urlEmpId && newHires.some((h) => h.id === urlEmpId)) {
+      setSelectedId(urlEmpId);
+    }
+  }, [location.state, searchParams, newHires]);
+
   useEffect(() => {
     const syncWorkflow = (event: StorageEvent | Event) => {
       if (
         event instanceof StorageEvent &&
         event.key &&
         !new Set([
-          "viyan_onboarding_queue:v1",
-          "viyan_onboarding_phases:v1",
-          "viyan_onboarding_documents:v1",
-          "viyan_onboarding_templates:v1",
+          ONB_QUEUE_KEY,
+          ONB_PHASES_KEY,
+          ONB_DOCS_KEY,
+          ONB_TEMPLATES_KEY,
+          queueKey,
+          phasesKey,
+          docsKey,
+          templatesKey,
           "viyan_departments",
         ]).has(event.key)
       )
         return;
-      setNewHires(readStore<NewHire[]>("viyan_onboarding_queue:v1", []));
+      setNewHires(readStore<NewHire[]>(queueKey, []));
       setPhasesData(
-        readStore<Record<string, OnboardingPhase[]>>(
-          "viyan_onboarding_phases:v1",
-          {},
-        ),
+        readStore<Record<string, OnboardingPhase[]>>(phasesKey, {}),
       );
-      setDocuments(
-        readStore<DocumentItem[]>("viyan_onboarding_documents:v1", []),
-      );
+      setDocuments(readStore<DocumentItem[]>(docsKey, []));
       setTemplates(
-        readStore<Template[]>(
-          "viyan_onboarding_templates:v1",
-          DEFAULT_ONBOARDING_TEMPLATES,
-        ),
+        readStore<Template[]>(templatesKey, DEFAULT_ONBOARDING_TEMPLATES),
       );
       const savedDepts = readStore<Array<{ name?: string }>>(
         "viyan_departments",
@@ -324,7 +380,7 @@ export function useOnboarding() {
       window.removeEventListener("storage", syncWorkflow);
       window.removeEventListener("viyan:onboarding-updated", syncWorkflow);
     };
-  }, []);
+  }, [queueKey, phasesKey, docsKey, templatesKey]);
 
   /* ─── Computed ─── */
   const selected = newHires.find((n) => n.id === selectedId) || newHires[0];
@@ -484,22 +540,133 @@ export function useOnboarding() {
     setShowUploadModal(true);
   };
 
-  const handleConfirmUpload = () => {
-    setDocuments((prev) =>
-      prev.map((d) =>
-        d.id === selectedDocId || d.name === uploadDocType
+  const handleConfirmUpload = (payload?: UploadedFilePayload) => {
+    // Handler-level authorization check
+    const canManageDocs =
+      hasPermissionKey(P.ONBOARDING_MANAGE) ||
+      hasPermissionKey(P.ONBOARDING_FULL) ||
+      hasPermissionKey(P.ONBOARDING_SELF) ||
+      hasPermissionKey(P.ONBOARDING_COMPLETE_TASKS);
+
+    if (!canManageDocs) {
+      showToast(
+        "Permission Denied",
+        "error",
+        "You do not have permission to upload onboarding documents.",
+      );
+      return;
+    }
+
+    const todayStr = new Date().toISOString().split("T")[0];
+    const uploaderName = user?.name || "HR Team";
+
+    const match = documents.find(
+      (d) => d.id === selectedDocId || d.name === uploadDocType,
+    );
+
+    let updatedDocsList: DocumentItem[] = [];
+
+    if (match) {
+      updatedDocsList = documents.map((d) =>
+        d.id === match.id
           ? {
               ...d,
               status: "uploaded" as const,
-              uploadedBy: "HR Team",
-              date: "Today",
+              uploadedBy: uploaderName,
+              date: todayStr,
+              fileName: payload?.fileName || d.fileName || `${d.name}.pdf`,
+              fileSize: payload?.formattedSize || d.fileSize || "1.5 MB",
+              fileType: payload?.fileType || d.fileType || "PDF",
+              verificationStatus: "pending" as const,
+            }
+          : d,
+      );
+    } else {
+      const newDoc: DocumentItem = {
+        id: `doc-${selectedId || "emp"}-${Date.now()}`,
+        name: uploadDocType || payload?.fileName || "Uploaded Document",
+        fileName: payload?.fileName || "document.pdf",
+        fileSize: payload?.formattedSize || "1.5 MB",
+        fileType: payload?.fileType || "PDF",
+        status: "uploaded" as const,
+        uploadedBy: uploaderName,
+        date: todayStr,
+        verificationStatus: "pending" as const,
+        mandatory: false,
+      };
+      updatedDocsList = [...documents, newDoc];
+    }
+
+    setDocuments(updatedDocsList);
+
+    // Persist to local storage & trigger update event
+    try {
+      const allDocs = readStore<DocumentItem[]>(docsKey, readStore<DocumentItem[]>(ONB_DOCS_KEY, []));
+      const merged = [
+        ...allDocs.filter((d) => !updatedDocsList.some((u) => u.id === d.id)),
+        ...updatedDocsList,
+      ];
+      writeStore(docsKey, merged);
+      writeStore(ONB_DOCS_KEY, merged);
+      window.dispatchEvent(new Event(ONB_UPDATED_EVENT));
+    } catch (e) {
+      console.error("Failed to persist updated onboarding documents", e);
+    }
+
+    if (selectedId) {
+      const currentHirePhases = safeGet<OnboardingPhase[]>(phasesData, selectedId) || [];
+      recalcProgress(selectedId, currentHirePhases);
+    }
+
+    showToast(
+      "Document Uploaded",
+      "success",
+      payload
+        ? `Uploaded "${payload.fileName}" (${payload.formattedSize}).`
+        : "Document uploaded successfully.",
+    );
+    setShowUploadModal(false);
+    setSelectedDocId(null);
+  };
+
+  const handleRemoveDoc = (docId: string) => {
+    if (!hasPermissionKey(P.ONBOARDING_MANAGE) && !hasPermissionKey(P.ONBOARDING_FULL)) {
+      showToast("Permission Denied", "error", "You do not have permission to remove documents.");
+      return;
+    }
+    setDocuments((prev) => prev.filter((d) => d.id !== docId));
+    try {
+      const allDocs = readStore<DocumentItem[]>(docsKey, readStore<DocumentItem[]>(ONB_DOCS_KEY, []));
+      const filtered = allDocs.filter((d) => d.id !== docId);
+      writeStore(docsKey, filtered);
+      writeStore(ONB_DOCS_KEY, filtered);
+      window.dispatchEvent(new Event(ONB_UPDATED_EVENT));
+    } catch (e) {
+      console.error("Failed to delete onboarding document from storage", e);
+    }
+    showToast("Document Removed", "info", "Document removed from onboarding record.");
+  };
+
+  const handleVerifyDoc = (docId: string, status: "approved" | "rejected") => {
+    if (!hasPermissionKey(P.ONBOARDING_MANAGE) && !hasPermissionKey(P.ONBOARDING_FULL)) {
+      showToast("Permission Denied", "error", "You do not have permission to verify documents.");
+      return;
+    }
+    setDocuments((prev) =>
+      prev.map((d) =>
+        d.id === docId
+          ? {
+              ...d,
+              verificationStatus: status === "approved" ? ("verified" as const) : ("rejected" as const),
             }
           : d,
       ),
     );
-    showToast("Uploaded", "success", "Document uploaded successfully.");
-    setShowUploadModal(false);
-    setSelectedDocId(null);
+    showToast(
+      status === "approved" ? "Document Verified" : "Document Rejected",
+      status === "approved" ? "success" : "error",
+      `Document status updated to ${status}.`,
+    );
   };
 
   const handleViewDoc = (name: string) => {

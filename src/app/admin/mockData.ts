@@ -95,6 +95,21 @@ const initialOrganizations: Organization[] = [
       "Assets",
       "Training",
     ],
+    featureOverrides: {
+      payroll: true,
+      training: true,
+      recruitment: true,
+      ai_scheduling: true,
+    },
+    branches: ["HQ San Francisco", "New York Hub", "Austin Tech Center"],
+    departments: ["Engineering", "Human Resources", "Finance", "Product", "Sales"],
+    settings: {
+      timezone: "America/Los_Angeles",
+      currency: "USD",
+      dateFormat: "MM/DD/YYYY",
+      allowSelfRegistration: false,
+      mfaRequired: true,
+    },
     joinedAt: "2024-01-15T08:00:00Z",
     lastActiveAt: "2026-06-20T01:00:00Z",
   },
@@ -129,6 +144,20 @@ const initialOrganizations: Organization[] = [
       "Leave Management",
       "Payroll",
     ],
+    featureOverrides: {
+      recruitment: true,
+      performance: true,
+      payroll: false, // Growth plan user, but payroll explicitly disabled for this org
+    },
+    branches: ["London HQ", "Edinburgh Branch"],
+    departments: ["Finance", "Operations", "Compliance"],
+    settings: {
+      timezone: "Europe/London",
+      currency: "GBP",
+      dateFormat: "DD/MM/YYYY",
+      allowSelfRegistration: false,
+      mfaRequired: false,
+    },
     joinedAt: "2024-05-10T12:30:00Z",
     lastActiveAt: "2026-06-19T23:45:00Z",
   },
@@ -155,6 +184,20 @@ const initialOrganizations: Organization[] = [
     storageUsedGB: 1.5,
     storageAllocatedGB: 10,
     enabledModules: ["Employee Management", "Attendance", "Leave Management"],
+    featureOverrides: {
+      payroll: true, // Starter plan org attempts to enable Enterprise-only Payroll -> Must remain UNAVAILABLE!
+      recruitment: true, // Requires Growth -> Must remain UNAVAILABLE!
+      attendance: true, // Starter -> Permitted
+    },
+    branches: ["Rome Office"],
+    departments: ["Research & Development"],
+    settings: {
+      timezone: "Europe/Rome",
+      currency: "EUR",
+      dateFormat: "DD/MM/YYYY",
+      allowSelfRegistration: true,
+      mfaRequired: false,
+    },
     joinedAt: "2026-06-10T09:15:00Z",
     lastActiveAt: "2026-06-20T01:10:00Z",
     trialEndsAt: "2026-07-10T09:15:00Z",

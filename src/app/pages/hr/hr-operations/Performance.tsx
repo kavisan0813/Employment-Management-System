@@ -1,5 +1,7 @@
 import React, { lazy, useMemo, useReducer, useCallback } from "react";
-import { useAuth } from "../../../context/AuthContext";
+import { EmployeePerformance } from "../../employee/EmployeePerformance";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 import {
   TrendingUp,
   Search,
@@ -68,9 +70,10 @@ interface ReviewHistory {
   employeeName: string;
   department: string;
   period: string;
+  month: string;
+  year: string;
   attendanceScore: number;
   performanceScore: number;
-  rating: number;
   recommendation: Recommendation;
   status: ReviewStatus;
 }
@@ -82,10 +85,11 @@ const reviewHistory: ReviewHistory[] = [
     employeeId: "EMP001",
     employeeName: "Sarah Johnson",
     department: "Engineering",
-    period: "Q1 2026",
+    period: "August 2026",
+    month: "August",
+    year: "2026",
     attendanceScore: 95,
     performanceScore: 92,
-    rating: 4.8,
     recommendation: "Increment",
     status: "Approved",
   },
@@ -94,10 +98,11 @@ const reviewHistory: ReviewHistory[] = [
     employeeId: "EMP002",
     employeeName: "Marcus Williams",
     department: "Marketing",
-    period: "Q1 2026",
+    period: "August 2026",
+    month: "August",
+    year: "2026",
     attendanceScore: 88,
     performanceScore: 85,
-    rating: 4.2,
     recommendation: "No Change",
     status: "Completed",
   },
@@ -106,10 +111,11 @@ const reviewHistory: ReviewHistory[] = [
     employeeId: "EMP003",
     employeeName: "Yuki Tanaka",
     department: "Design",
-    period: "Q1 2026",
+    period: "July 2026",
+    month: "July",
+    year: "2026",
     attendanceScore: 98,
     performanceScore: 95,
-    rating: 4.9,
     recommendation: "Promotion",
     status: "Approved",
   },
@@ -118,10 +124,11 @@ const reviewHistory: ReviewHistory[] = [
     employeeId: "EMP004",
     employeeName: "James Carter",
     department: "Finance",
-    period: "Q1 2026",
+    period: "July 2026",
+    month: "July",
+    year: "2026",
     attendanceScore: 82,
     performanceScore: 80,
-    rating: 3.9,
     recommendation: "No Change",
     status: "In Review",
   },
@@ -130,10 +137,11 @@ const reviewHistory: ReviewHistory[] = [
     employeeId: "EMP005",
     employeeName: "Emily Rodriguez",
     department: "HR",
-    period: "Q1 2026",
+    period: "August 2026",
+    month: "August",
+    year: "2026",
     attendanceScore: 91,
     performanceScore: 88,
-    rating: 4.3,
     recommendation: "Bonus",
     status: "Pending",
   },
@@ -220,13 +228,21 @@ function MetricItem({
 
 /* ─── Main Page ──────────────────────────────────────────── */
 export function Performance() {
-  const { user } = useAuth();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const { hasPermissionKey } = usePermissions();
+
+  const canViewPerformance =
+    hasPermissionKey(P.PERFORMANCE_VIEW) ||
+    hasPermissionKey(P.PERFORMANCE_REVIEW) ||
+    hasPermissionKey(P.PERFORMANCE_FULL) ||
+    hasPermissionKey(P.PERFORMANCE_REVIEW_TEAM) ||
+    hasPermissionKey(P.PERFORMANCE_REVIEW_DEPT);
   const __initialState = {
     selectedDept: "All Departments",
     selectedEmpId: "All Employees",
-    year: "2026",
-    period: "Quarterly",
+    selectedScope: "Department Performance",
+    selectedMonth: "August",
+    selectedYear: "2026",
+    period: "Monthly",
     status: "All",
     search: "",
     isModalOpen: false,
@@ -238,10 +254,9 @@ export function Performance() {
       id: string;
       name: string;
     } | null,
-    formPeriod: "Q1 2026",
+    formPeriod: "August 2026",
     formAttendanceScore: 95,
     formPerformanceScore: 90,
-    formRating: 4.5,
     formRecommendation: "No Change" as Recommendation,
     formStatus: "Pending" as ReviewStatus,
     formStrengths: "",
@@ -258,7 +273,9 @@ export function Performance() {
   const {
     selectedDept,
     selectedEmpId,
-    year,
+    selectedScope,
+    selectedMonth,
+    selectedYear,
     period,
     status,
     search,
@@ -271,7 +288,6 @@ export function Performance() {
     formPeriod,
     formAttendanceScore,
     formPerformanceScore,
-    formRating,
     formRecommendation,
     formStatus,
     formStrengths,
@@ -290,6 +306,27 @@ export function Performance() {
       __updateState((prev: any) => ({
         selectedEmpId:
           typeof val === "function" ? val(prev.selectedEmpId) : val,
+      })),
+    [],
+  );
+  const setSelectedScope = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedScope: typeof val === "function" ? val(prev.selectedScope) : val,
+      })),
+    [],
+  );
+  const setSelectedMonth = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedMonth: typeof val === "function" ? val(prev.selectedMonth) : val,
+      })),
+    [],
+  );
+  const setSelectedYear = useCallback(
+    (val: any) =>
+      __updateState((prev: any) => ({
+        selectedYear: typeof val === "function" ? val(prev.selectedYear) : val,
       })),
     [],
   );
@@ -431,7 +468,6 @@ export function Performance() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Form State
   // Close modals on Escape key press
   React.useEffect(() => {
@@ -468,7 +504,6 @@ export function Performance() {
       return {
         performanceScore: 0,
         attendanceScore: 0,
-        rating: 0,
         productivity: 0,
         teamwork: 0,
         taskCompletion: 0,
@@ -480,12 +515,10 @@ export function Performance() {
     }
     const totalPerf = history.reduce((acc, r) => acc + r.performanceScore, 0);
     const totalAtt = history.reduce((acc, r) => acc + r.attendanceScore, 0);
-    const totalRating = history.reduce((acc, r) => acc + r.rating, 0);
     const count = history.length;
 
     const avgPerf = Math.round(totalPerf / count);
     const avgAtt = Math.round(totalAtt / count);
-    const avgRating = Number((totalRating / count).toFixed(1));
 
     const avgProd = Math.min(100, Math.max(0, avgPerf + 2));
     const avgTeam = Math.min(100, Math.max(0, Math.round(avgPerf * 0.95)));
@@ -513,7 +546,6 @@ export function Performance() {
     return {
       performanceScore: avgPerf,
       attendanceScore: avgAtt,
-      rating: avgRating,
       productivity: avgProd,
       teamwork: avgTeam,
       taskCompletion: avgTask,
@@ -563,7 +595,6 @@ export function Performance() {
       return {
         performanceScore: perf,
         attendanceScore: att,
-        rating: review.rating,
         productivity: prod,
         teamwork: team,
         taskCompletion: task,
@@ -577,7 +608,6 @@ export function Performance() {
     // Generate from fallback mock details if no history record exists
     const empPerf = mainSelectedEmployee.performance || 85;
     const empAtt = 90;
-    const empRating = Number((empPerf / 20).toFixed(1));
 
     const prod = Math.min(100, Math.max(0, empPerf + 2));
     const team = Math.min(100, Math.max(0, Math.round(empPerf * 0.95)));
@@ -605,7 +635,6 @@ export function Performance() {
     return {
       performanceScore: empPerf,
       attendanceScore: empAtt,
-      rating: empRating,
       productivity: prod,
       teamwork: team,
       taskCompletion: task,
@@ -615,43 +644,6 @@ export function Performance() {
       eligible,
     };
   }, [selectedEmpId, mainSelectedEmployee, history, averages]);
-
-  const renderStars = (rating: number) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      if (rating >= i) {
-        stars.push(
-          <Star
-            key={i}
-            size={16}
-            fill="currentColor"
-            className="text-amber-500"
-          />,
-        );
-      } else if (rating >= i - 0.5) {
-        stars.push(
-          <div
-            key={i}
-            className="relative text-amber-500 inline-flex items-center justify-center w-4 h-4 shrink-0 select-none"
-          >
-            <Star size={16} fill="none" className="absolute" />
-            <div className="absolute top-0 left-0 overflow-hidden w-1/2 h-full">
-              <Star
-                size={16}
-                fill="currentColor"
-                className="absolute top-0 left-0 text-amber-500"
-              />
-            </div>
-          </div>,
-        );
-      } else {
-        stars.push(
-          <Star key={i} size={16} fill="none" className="text-amber-500" />,
-        );
-      }
-    }
-    return stars;
-  };
 
   const filteredHistory = useMemo(() => {
     return history.filter((r) => {
@@ -666,54 +658,60 @@ export function Performance() {
       const matchesDept =
         selectedDept === "All Departments" || r.department === selectedDept;
 
-      return matchesSearch && matchesStatus && matchesDept;
+      const matchesMonth =
+        !selectedMonth || selectedMonth === "All Months" || r.month === selectedMonth || r.period.includes(selectedMonth);
+
+      const matchesYear =
+        !selectedYear || r.year === selectedYear || r.period.includes(selectedYear);
+
+      return matchesSearch && matchesStatus && matchesDept && matchesMonth && matchesYear;
     });
-  }, [search, status, selectedDept, history]);
+  }, [search, status, selectedDept, selectedMonth, selectedYear, history]);
 
   const distributionData = useMemo(() => {
-    const exceptional = history.filter((r) => r.rating >= 4.5).length;
-    const exceeds = history.filter(
-      (r) => r.rating >= 4.0 && r.rating < 4.5,
-    ).length;
-    const meets = history.filter(
-      (r) => r.rating >= 3.0 && r.rating < 4.0,
-    ).length;
-    const below = history.filter((r) => r.rating < 3.0).length;
+    const approved = history.filter((r) => r.status === "Approved").length;
+    const completed = history.filter((r) => r.status === "Completed").length;
+    const inReview = history.filter((r) => r.status === "In Review").length;
+    const pending = history.filter((r) => r.status === "Pending").length;
     const total = history.length || 1;
 
     return [
       {
-        name: "Exceptional",
-        value: Math.round((exceptional / total) * 100),
+        name: "Approved",
+        value: Math.round((approved / total) * 100),
         color: "#10B981",
       },
       {
-        name: "Exceeds",
-        value: Math.round((exceeds / total) * 100),
+        name: "Completed",
+        value: Math.round((completed / total) * 100),
         color: "#14B8A6",
       },
       {
-        name: "Meets",
-        value: Math.round((meets / total) * 100),
+        name: "In Review",
+        value: Math.round((inReview / total) * 100),
         color: "#F59E0B",
       },
       {
-        name: "Below",
-        value: Math.round((below / total) * 100),
-        color: "#EF4444",
+        name: "Pending",
+        value: Math.round((pending / total) * 100),
+        color: "#64748B",
       },
     ];
   }, [history]);
+
+  if (!canViewPerformance) {
+    return <EmployeePerformance />;
+  }
 
   const handleExport = () => {
     toast.loading("Generating performance report...");
     setTimeout(() => {
       const headers =
-        "Employee,Dept,Period,Attendance,Performance,Rating,Recommendation,Status\n";
+        "Employee,Dept,Period,Attendance,Performance,Recommendation,Status\n";
       const rows = filteredHistory
         .map(
           (r) =>
-            `${r.employeeName},${r.department},${r.period},${r.attendanceScore}%,${r.performanceScore}%,${r.rating},${r.recommendation},${r.status}`,
+            `${r.employeeName},${r.department},${r.period},${r.attendanceScore}%,${r.performanceScore}%,${r.recommendation},${r.status}`,
         )
         .join("\n");
       const blob = new Blob([headers + rows], { type: "text/csv" });
@@ -721,10 +719,10 @@ export function Performance() {
       const a = document.createElement("a");
       a.setAttribute("hidden", "");
       a.setAttribute("href", url);
-      a.setAttribute("download", `Performance_Report_${year}.csv`);
+      a.setAttribute("download", `Performance_Report_${selectedYear}.csv`);
       document.body.appendChild(a);
       a.click();
-    URL.revokeObjectURL(a.href);
+      URL.revokeObjectURL(a.href);
       document.body.removeChild(a);
       toast.dismiss();
       toast.success("Report downloaded successfully!");
@@ -738,10 +736,9 @@ export function Performance() {
         ? selectedEmpId
         : employees[0]?.id || "";
     setSelectedEmpId(defaultEmp);
-    setFormPeriod(`Q1 ${year}`);
+    setFormPeriod(`${selectedMonth} ${selectedYear}`);
     setFormAttendanceScore(95);
     setFormPerformanceScore(90);
-    setFormRating(4.5);
     setFormRecommendation("No Change");
     setFormStatus("Pending");
     setFormStrengths("");
@@ -758,7 +755,6 @@ export function Performance() {
     setFormPeriod(review.period);
     setFormAttendanceScore(review.attendanceScore);
     setFormPerformanceScore(review.performanceScore);
-    setFormRating(review.rating);
     setFormRecommendation(review.recommendation);
     setFormStatus(review.status);
     setFormStrengths(
@@ -777,7 +773,6 @@ export function Performance() {
     setFormPeriod(review.period);
     setFormAttendanceScore(review.attendanceScore);
     setFormPerformanceScore(review.performanceScore);
-    setFormRating(review.rating);
     setFormRecommendation(review.recommendation);
     setFormStatus(review.status);
     setFormStrengths(
@@ -812,28 +807,11 @@ export function Performance() {
   const handleSaveReview = () => {
     const errors: Record<string, string> = {};
     if (!formPeriod.trim()) errors.period = "Period is required";
-    if (
-      isNaN(formAttendanceScore) ||
-      formAttendanceScore < 0 ||
-      formAttendanceScore > 100
-    ) {
-      errors.attendanceScore = "Attendance score must be between 0 and 100";
-    }
-    if (
-      isNaN(formPerformanceScore) ||
-      formPerformanceScore < 0 ||
-      formPerformanceScore > 100
-    ) {
-      errors.performanceScore = "Performance score must be between 0 and 100";
-    }
-    if (isNaN(formRating) || formRating < 1.0 || formRating > 5.0) {
-      errors.rating = "Rating must be between 1.0 and 5.0";
-    }
     if (!formStrengths.trim()) errors.strengths = "Strengths field is required";
     if (!formImprovement.trim())
       errors.improvement = "Improvement Areas field is required";
     if (
-      user?.role === "HR Manager" &&
+      !hasPermissionKey(P.PERFORMANCE_FULL) &&
       formRecommendation === "Promotion" &&
       formStatus === "Approved"
     ) {
@@ -854,7 +832,6 @@ export function Performance() {
             period: formPeriod,
             attendanceScore: formAttendanceScore,
             performanceScore: formPerformanceScore,
-            rating: formRating,
             recommendation: formRecommendation,
             status: formStatus,
           };
@@ -875,9 +852,10 @@ export function Performance() {
         employeeName: emp.name,
         department: emp.department,
         period: formPeriod,
+        month: selectedMonth,
+        year: selectedYear,
         attendanceScore: formAttendanceScore,
         performanceScore: formPerformanceScore,
-        rating: formRating,
         recommendation: formRecommendation,
         status: formStatus,
       };
@@ -920,17 +898,6 @@ export function Performance() {
       icon: <CheckCircle2 size={18} />,
       color: "#10B981",
       bg: "rgba(16,185,129,0.1)",
-    },
-    {
-      label: "Average Score",
-      val: (
-        history.reduce((acc, r) => acc + r.performanceScore, 0) /
-        (history.length || 1)
-      ).toFixed(1),
-      sub: "Average out of 100",
-      icon: <TrendingUp size={18} />,
-      color: "#0D9488",
-      bg: "rgba(13,148,136,0.1)",
     },
     {
       label: "Eligible for Increment",
@@ -990,7 +957,7 @@ export function Performance() {
       </div>
 
       {/* ── KPI Cards ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {stats.map((s) => (
           <div
             key={s.label}
@@ -1017,9 +984,33 @@ export function Performance() {
         ))}
       </div>
 
-      {/* ── Filter Section ── */}
+      {/* ── Filter & Scope Section ── */}
       <div className="bg-card p-5 rounded-2xl border border-border shadow-sm mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+          {/* Scope Selector */}
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
+              Performance Scope
+            </label>
+            <div className="relative">
+              <select
+                value={selectedScope}
+                onChange={(e) => setSelectedScope(e.target.value)}
+                className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
+              >
+                <option value="My Performance">My Performance</option>
+                <option value="Team Performance">Team Performance</option>
+                <option value="Department Performance">Department Performance</option>
+                <option value="Organization">Organization</option>
+              </select>
+              <ChevronDown
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+              />
+            </div>
+          </div>
+
+          {/* Department Filter */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Department
@@ -1047,22 +1038,23 @@ export function Performance() {
             </div>
           </div>
 
+          {/* Month Filter */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
-              Employee
+              Month
             </label>
             <div className="relative">
               <select
-                value={selectedEmpId}
-                onChange={(e) => setSelectedEmpId(e.target.value)}
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
                 className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
               >
-                <option value="All Employees">All Employees</option>
-                {filteredEmployees.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.name}
-                  </option>
-                ))}
+                <option value="All Months">All Months</option>
+                <option value="August">August</option>
+                <option value="July">July</option>
+                <option value="June">June</option>
+                <option value="May">May</option>
+                <option value="April">April</option>
               </select>
               <ChevronDown
                 size={14}
@@ -1071,14 +1063,15 @@ export function Performance() {
             </div>
           </div>
 
+          {/* Year Filter */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Year
             </label>
             <div className="relative">
               <select
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
                 className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
               >
                 <option>2026</option>
@@ -1092,28 +1085,7 @@ export function Performance() {
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
-              Period
-            </label>
-            <div className="relative">
-              <select
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-                className="w-full appearance-none px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold text-foreground outline-none focus:border-emerald-500 transition-all cursor-pointer"
-              >
-                <option>Monthly</option>
-                <option>Quarterly</option>
-                <option>Half-Yearly</option>
-                <option>Yearly</option>
-              </select>
-              <ChevronDown
-                size={14}
-                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
-              />
-            </div>
-          </div>
-
+          {/* Status Filter */}
           <div className="space-y-1.5">
             <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Status
@@ -1128,6 +1100,7 @@ export function Performance() {
                 <option>Pending</option>
                 <option>In Review</option>
                 <option>Completed</option>
+                <option>Approved</option>
               </select>
               <ChevronDown
                 size={14}
@@ -1136,6 +1109,7 @@ export function Performance() {
             </div>
           </div>
 
+          {/* Search Bar */}
           <div className="space-y-1.5 lg:col-span-2">
             <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
               Search
@@ -1155,17 +1129,48 @@ export function Performance() {
             </div>
           </div>
         </div>
-        <div className="mt-4 flex justify-end">
+
+        {/* Month Navigation Control Bar */}
+        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const months = ["April", "May", "June", "July", "August"];
+                const idx = months.indexOf(selectedMonth);
+                if (idx > 0) setSelectedMonth(months[idx - 1]);
+              }}
+              className="p-2 rounded-lg border border-border hover:bg-muted text-xs font-bold transition-all"
+            >
+              ‹ Previous Period
+            </button>
+            <span className="text-xs font-black text-foreground px-3 py-1 bg-muted rounded-lg border border-border">
+              {selectedMonth} {selectedYear}
+            </span>
+            <button
+              onClick={() => {
+                const months = ["April", "May", "June", "July", "August"];
+                const idx = months.indexOf(selectedMonth);
+                if (idx < months.length - 1) setSelectedMonth(months[idx + 1]);
+              }}
+              className="p-2 rounded-lg border border-border hover:bg-muted text-xs font-bold transition-all"
+            >
+              Next Period ›
+            </button>
+          </div>
+
           <button
             onClick={() => {
               setSelectedDept("All Departments");
               setSelectedEmpId("All Employees");
+              setSelectedScope("Department Performance");
+              setSelectedMonth("August");
+              setSelectedYear("2026");
               setStatus("All");
               setSearch("");
             }}
             className="flex items-center gap-2 text-xs font-black text-muted-foreground uppercase tracking-widest hover:text-emerald-600 transition-all"
           >
-            <RefreshCw size={14} /> Clear Filters
+            <RefreshCw size={14} /> Reset Period
           </button>
         </div>
       </div>
@@ -1174,162 +1179,166 @@ export function Performance() {
       <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden mb-6">
         <div className="p-6 border-b border-border flex items-center justify-between">
           <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-            Review History
+            Review History ({selectedMonth} {selectedYear})
           </h3>
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
-              Recent 5 records
+              {filteredHistory.length} Record(s) Found
             </span>
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-[#F3F4F6]">
-                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Employee
-                </th>
-                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Dept
-                </th>
-                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Period
-                </th>
-                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Att. Score
-                </th>
-                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Perf. Score
-                </th>
-                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Rating
-                </th>
-                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Recommendation
-                </th>
-                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredHistory.map((r) => (
-                <tr
-                  key={r.id}
-                  className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors cursor-pointer"
-                  onClick={() => setSelectedEmpId(r.employeeId)}
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center font-black text-muted-foreground text-xs uppercase">
-                        {r.employeeName
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </div>
-                      <div>
-                        <p className="text-sm font-black text-foreground">
-                          {r.employeeName}
-                        </p>
-                        <p className="text-[11px] font-bold text-muted-foreground">
-                          {r.employeeId}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs font-bold text-muted-foreground">
-                      {r.department}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs font-bold text-muted-foreground">
-                      {r.period}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-emerald-500"
-                          style={{ width: `${r.attendanceScore}%` }}
-                        />
-                      </div>
-                      <span className="text-xs font-bold text-foreground">
-                        {r.attendanceScore}%
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-teal-500"
-                          style={{ width: `${r.performanceScore}%` }}
-                        />
-                      </div>
-                      <span className="text-xs font-bold text-foreground">
-                        {r.performanceScore}%
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1 text-amber-500">
-                      <Star size={12} fill="currentColor" />
-                      <span className="text-xs font-black ml-0.5">
-                        {r.rating}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`text-xs font-bold ${r.recommendation === "Promotion" ? "text-emerald-600" : "text-muted-foreground"}`}
-                    >
-                      {r.recommendation}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <StatusBadge status={r.status} />
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleView(r);
-                        }}
-                        className="p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 transition-all"
-                      >
-                        <FileText size={16} />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(r);
-                        }}
-                        className="p-2 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-500/10 text-muted-foreground hover:text-amber-600 transition-all"
-                      >
-                        <Edit3 size={16} />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(r.id, r.employeeName);
-                        }}
-                        className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-muted-foreground hover:text-red-600 transition-all"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
+
+        {filteredHistory.length === 0 ? (
+          <div className="p-12 text-center flex flex-col items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 mb-3">
+              <Calendar size={24} />
+            </div>
+            <h4 className="text-base font-bold text-foreground mb-1">
+              No performance data available for this period.
+            </h4>
+            <p className="text-xs text-muted-foreground max-w-sm">
+              Try switching the period navigator above or resetting your filters to inspect active performance evaluations.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-[#F9FAFB] dark:bg-white/5 border-b border-[#F3F4F6]">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Employee
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Dept
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Period
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Att. Score
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Perf. Score
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Recommendation
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filteredHistory.map((r) => (
+                  <tr
+                    key={r.id}
+                    className="h-14 border-b border-[#F3F4F6] hover:bg-[#00B87C]/[0.08] transition-colors cursor-pointer"
+                    onClick={() => setSelectedEmpId(r.employeeId)}
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center font-black text-muted-foreground text-xs uppercase">
+                          {r.employeeName
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </div>
+                        <div>
+                          <p className="text-sm font-black text-foreground">
+                            {r.employeeName}
+                          </p>
+                          <p className="text-[11px] font-bold text-muted-foreground">
+                            {r.employeeId}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs font-bold text-muted-foreground">
+                        {r.department}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs font-bold text-muted-foreground">
+                        {r.period}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-emerald-500"
+                            style={{ width: `${r.attendanceScore}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-bold text-foreground">
+                          {r.attendanceScore}%
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-teal-500"
+                            style={{ width: `${r.performanceScore}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-bold text-foreground">
+                          {r.performanceScore}%
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`text-xs font-bold ${r.recommendation === "Promotion" ? "text-emerald-600" : "text-muted-foreground"}`}
+                      >
+                        {r.recommendation}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <StatusBadge status={r.status} />
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleView(r);
+                          }}
+                          className="p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-600 transition-all"
+                        >
+                          <FileText size={16} />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(r);
+                          }}
+                          className="p-2 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-500/10 text-muted-foreground hover:text-amber-600 transition-all"
+                        >
+                          <Edit3 size={16} />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(r.id, r.employeeName);
+                          }}
+                          className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 text-muted-foreground hover:text-red-600 transition-all"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {selectedEmpId === "All Employees" || !mainSelectedEmployee ? (
@@ -1382,11 +1391,8 @@ export function Performance() {
                     </p>
                     <div className="flex items-center gap-3">
                       <h4 className="text-[28px] font-bold text-emerald-600">
-                        {currentEmployeeMetrics.performanceScore}
+                        {currentEmployeeMetrics.performanceScore}/100
                       </h4>
-                      <div className="flex items-center gap-1 text-amber-500">
-                        {renderStars(currentEmployeeMetrics.rating)}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -1594,7 +1600,7 @@ export function Performance() {
                       key={`cell-${entry.color}`}
                       fill={
                         ["#10B981", "#14B8A6", "#0D9488", "#0891B2", "#0284C7"][
-                          index % 5
+                        index % 5
                         ]
                       }
                     />
@@ -1607,7 +1613,7 @@ export function Performance() {
 
         <div className="bg-card p-6 rounded-2xl border border-border shadow-sm">
           <h3 className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider mb-6 border-l-4 border-emerald-500 pl-3">
-            Rating Distribution
+            Review Status Distribution
           </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -1669,8 +1675,8 @@ export function Performance() {
                 </Dialog.Title>
                 <Dialog.Description className="text-sm font-bold text-muted-foreground">
                   {modalMode === "view"
-                    ? "Detailed performance analytics and ratings"
-                    : `Complete the appraisal for ${modalEmployee?.name || "the employee"}`}
+                    ? "Detailed performance analytics and review summary"
+                    : `Complete the appraisal evaluation for ${modalEmployee?.name || "the employee"}`}
                 </Dialog.Description>
               </div>
               <Dialog.Close className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all">
@@ -1735,83 +1741,43 @@ export function Performance() {
                       </div>
                     </div>
                     <div className="space-y-4">
-                      {modalMode === "view" ? (
-                        <>
-                          <MetricItem
-                            label="Attendance"
-                            val={formAttendanceScore}
-                            icon={Calendar}
-                          />
-                          <MetricItem
-                            label="Performance"
-                            val={formPerformanceScore}
-                            icon={Activity}
-                          />
-                        </>
-                      ) : (
-                        <>
-                          <div className="space-y-1.5">
-                            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-                              Attendance Score (0-100)
-                            </label>
-                            <input
-                              type="number"
-                              min="0"
-                              max="100"
-                              value={formAttendanceScore}
-                              onChange={(e) =>
-                                setFormAttendanceScore(
-                                  (e.target.value === "" ||
-                                  isNaN(parseInt(e.target.value))
-                                    ? undefined
-                                    : parseInt(e.target.value)) || 0,
-                                )
-                              }
-                              className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"
-                              style={{
-                                borderColor: formErrors.attendanceScore
-                                  ? "#EF4444"
-                                  : "var(--border)",
-                              }}
-                            />
-                            {formErrors.attendanceScore && (
-                              <p className="text-xs text-red-500 mt-1">
-                                {formErrors.attendanceScore}
-                              </p>
-                            )}
-                          </div>
-                          <div className="space-y-1.5">
-                            <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-                              Performance Score (0-100)
-                            </label>
-                            <input
-                              type="number"
-                              min="0"
-                              max="100"
-                              value={formPerformanceScore}
-                              onChange={(e) =>
-                                setFormPerformanceScore(
-                                  (e.target.value === "" ||
-                                  isNaN(parseInt(e.target.value))
-                                    ? undefined
-                                    : parseInt(e.target.value)) || 0,
-                                )
-                              }
-                              className="w-full px-4 py-2 rounded-xl bg-card border border-border text-sm font-bold text-foreground outline-none"
-                              style={{
-                                borderColor: formErrors.performanceScore
-                                  ? "#EF4444"
-                                  : "var(--border)",
-                              }}
-                            />
-                            {formErrors.performanceScore && (
-                              <p className="text-xs text-red-500 mt-1">
-                                {formErrors.performanceScore}
-                              </p>
-                            )}
-                          </div>
-                        </>
-                      )}
+                      {/* Attendance & Performance Scores — System Derived / Read-Only */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                            Attendance Score
+                          </label>
+                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded">
+                            System Derived
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          readOnly
+                          disabled
+                          value={`${formAttendanceScore}% (Calculated from Attendance module)`}
+                          className="w-full px-4 py-2 rounded-xl bg-muted border border-border text-xs font-bold text-muted-foreground cursor-not-allowed outline-none"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                            Performance Score
+                          </label>
+                          <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded">
+                            System Derived
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          readOnly
+                          disabled
+                          value={`${formPerformanceScore}/100 (Calculated from Goal Metrics)`}
+                          className="w-full px-4 py-2 rounded-xl bg-muted border border-border text-xs font-bold text-muted-foreground cursor-not-allowed outline-none"
+                        />
+                      </div>
+
                       <MetricItem label="Teamwork" val={85} icon={Users} />
                       <MetricItem
                         label="Task Completion"
@@ -1824,7 +1790,7 @@ export function Performance() {
 
                 {/* Review Form */}
                 <div className="lg:col-span-7 space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider ml-1">
                         Review Period
@@ -1844,33 +1810,6 @@ export function Performance() {
                       {formErrors.period && (
                         <p className="text-xs text-red-500 mt-1">
                           {formErrors.period}
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-                        Rating (1.0 - 5.0)
-                      </label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        min="1.0"
-                        max="5.0"
-                        value={formRating}
-                        onChange={(e) =>
-                          setFormRating(parseFloat(e.target.value) || 0)
-                        }
-                        readOnly={modalMode === "view"}
-                        className={`w-full px-4 py-2.5 rounded-xl border text-sm font-bold text-foreground outline-none bg-card ${modalMode === "view" ? "bg-muted cursor-not-allowed opacity-70 border-border" : "border-border"}`}
-                        style={{
-                          borderColor: formErrors.rating
-                            ? "#EF4444"
-                            : "var(--border)",
-                        }}
-                      />
-                      {formErrors.rating && (
-                        <p className="text-xs text-red-500 mt-1">
-                          {formErrors.rating}
                         </p>
                       )}
                     </div>
@@ -1907,7 +1846,7 @@ export function Performance() {
                           <option
                             value="Approved"
                             disabled={
-                              user?.role === "HR Manager" &&
+                              !hasPermissionKey(P.PERFORMANCE_FULL) &&
                               formRecommendation === "Promotion"
                             }
                           >

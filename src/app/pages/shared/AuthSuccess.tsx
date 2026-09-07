@@ -133,10 +133,12 @@ export function AuthSuccess() {
           {/* Success Badge */}
           <m.div
             initial={{
-              scale: 0,
+              scale: 0.95,
+              opacity: 0,
             }}
             animate={{
               scale: 1,
+              opacity: 1,
             }}
             transition={{
               delay: 0.3,

@@ -337,7 +337,6 @@ function KPICard({
   );
 }
 export function AuditLogs() {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     logs: LOGS as AuditLogEntry[],
     selectedLog: null as AuditLogEntry | null,
@@ -594,7 +593,6 @@ export function AuditLogs() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   const logsPerPage = 4;
   const todayLogsCount = useMemo(
     () => logs.filter((l) => l.timestamp.startsWith("Today")).length,
@@ -1128,13 +1126,13 @@ export function AuditLogs() {
             dateFilter !== "All" ||
             severityFilter !== "All" ||
             searchQuery) && (
-            <button
-              onClick={handleResetFilters}
-              className="text-[11px] font-black text-muted-foreground hover:text-foreground transition-all flex items-center gap-1 cursor-pointer"
-            >
-              <X size={14} /> Clear filters
-            </button>
-          )}
+              <button
+                onClick={handleResetFilters}
+                className="text-[11px] font-black text-muted-foreground hover:text-foreground transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <X size={14} /> Clear filters
+              </button>
+            )}
         </div>
 
         <div className="overflow-x-auto">
@@ -1180,112 +1178,113 @@ export function AuditLogs() {
                   const isUserBlocked = blockedUsersSet.has(log.user);
                   const isIpBlocked = blockedIPsSet.has(log.ip);
                   return (
-                  <m.tr
-                    key={log.id}
-                    initial={{
-                      opacity: 0,
-                    }}
-                    animate={{
-                      opacity: 1,
-                    }}
-                    className="group hover:bg-[#00B87C]/[0.08] transition-all cursor-pointer"
-                    style={{
-                      borderLeft:
-                        log.severity === "critical"
-                          ? "3px solid #EF4444"
-                          : log.severity === "warning"
-                            ? "3px solid #F59E0B"
-                            : "3px solid transparent",
-                    }}
-                    onClick={() => handleViewLog(log)}
-                  >
-                    <td className="px-5 py-3">
-                      <span className="text-[12px] font-bold text-foreground whitespace-nowrap">
-                        {log.timestamp}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3">
-                      <div className="flex items-center gap-2.5">
-                        {log.user === "Unknown" || log.user === "Unknown IP" ? (
-                          <div className="w-7 h-7 rounded-full bg-[#FEF2F2] flex items-center justify-center text-[#EF4444] font-black text-[9px]">
-                            <ShieldAlert size={14} />
+                    <m.tr
+                      key={log.id}
+                      initial={{
+                        opacity: 0,
+                      }}
+                      animate={{
+                        opacity: 1,
+                      }}
+                      className="group hover:bg-[#00B87C]/[0.08] transition-all cursor-pointer"
+                      style={{
+                        borderLeft:
+                          log.severity === "critical"
+                            ? "3px solid #EF4444"
+                            : log.severity === "warning"
+                              ? "3px solid #F59E0B"
+                              : "3px solid transparent",
+                      }}
+                      onClick={() => handleViewLog(log)}
+                    >
+                      <td className="px-5 py-3">
+                        <span className="text-[12px] font-bold text-foreground whitespace-nowrap">
+                          {log.timestamp}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-2.5">
+                          {log.user === "Unknown" || log.user === "Unknown IP" ? (
+                            <div className="w-7 h-7 rounded-full bg-[#FEF2F2] flex items-center justify-center text-[#EF4444] font-black text-[9px]">
+                              <ShieldAlert size={14} />
+                            </div>
+                          ) : (
+                            <div className="w-7 h-7 rounded-full bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6] font-black text-[9px]">
+                              {initials(log.user)}
+                            </div>
+                          )}
+                          <div className="flex flex-col">
+                            <span
+                              className={`text-[12px] font-bold ${log.severity === "critical" ? "text-[#EF4444]" : "text-foreground"}`}
+                            >
+                              {log.user}
+                            </span>
+                            {isUserBlocked && (
+                              <span className="text-[9px] font-extrabold text-[#EF4444] uppercase tracking-wider">
+                                Blocked
+                              </span>
+                            )}
                           </div>
-                        ) : (
-                          <div className="w-7 h-7 rounded-full bg-[#EDE9FE] flex items-center justify-center text-[#8B5CF6] font-black text-[9px]">
-                            {initials(log.user)}
-                          </div>
-                        )}
+                        </div>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${act.chip}`}
+                        >
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#F3F4F6] text-[#6B7280] text-[11px] font-semibold">
+                          {log.module}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className="text-[12px] font-medium text-foreground">
+                          {log.record}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3">
                         <div className="flex flex-col">
                           <span
-                            className={`text-[12px] font-bold ${log.severity === "critical" ? "text-[#EF4444]" : "text-foreground"}`}
+                            className={`text-[11px] font-mono font-bold ${log.severity === "critical" ? "text-[#EF4444]" : "text-muted-foreground"}`}
                           >
-                            {log.user}
+                            {log.ip}
                           </span>
-                          {isUserBlocked && (
+                          {isIpBlocked && (
                             <span className="text-[9px] font-extrabold text-[#EF4444] uppercase tracking-wider">
-                              Blocked
+                              Blocked IP
                             </span>
                           )}
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${act.chip}`}
-                      >
-                        {log.action}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3">
-                      <span className="px-2.5 py-0.5 rounded-full bg-[#F3F4F6] text-[#6B7280] text-[11px] font-semibold">
-                        {log.module}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3">
-                      <span className="text-[12px] font-medium text-foreground">
-                        {log.record}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3">
-                      <div className="flex flex-col">
-                        <span
-                          className={`text-[11px] font-mono font-bold ${log.severity === "critical" ? "text-[#EF4444]" : "text-muted-foreground"}`}
-                        >
-                          {log.ip}
+                      </td>
+                      <td className="px-5 py-3">
+                        <span className="text-[11px] font-medium text-muted-foreground">
+                          {log.device}
                         </span>
-                        {isIpBlocked && (
-                          <span className="text-[9px] font-extrabold text-[#EF4444] uppercase tracking-wider">
-                            Blocked IP
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-5 py-3">
-                      <span className="text-[11px] font-medium text-muted-foreground">
-                        {log.device}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${sev.chip}`}
-                      >
-                        {sev.icon} {sev.label}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3 text-center">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleViewLog(log);
-                        }}
-                        className={`text-[11px] font-black ${log.severity === "critical" ? "text-[#EF4444]" : "text-[#00B87C]"} hover:underline whitespace-nowrap cursor-pointer`}
-                      >
-                        {log.severity === "critical" ? "Review →" : "View →"}
-                      </button>
-                    </td>
-                  </m.tr>
-                );
-              })})()}
+                      </td>
+                      <td className="px-5 py-3">
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${sev.chip}`}
+                        >
+                          {sev.icon} {sev.label}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 text-center">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewLog(log);
+                          }}
+                          className={`text-[11px] font-black ${log.severity === "critical" ? "text-[#EF4444]" : "text-[#00B87C]"} hover:underline whitespace-nowrap cursor-pointer`}
+                        >
+                          {log.severity === "critical" ? "Review →" : "View →"}
+                        </button>
+                      </td>
+                    </m.tr>
+                  );
+                })
+              })()}
               {displayedLogs.length === 0 && (
                 <tr>
                   <td
@@ -1474,18 +1473,18 @@ export function AuditLogs() {
                           const updatedLogs = logs.map((l) =>
                             l.id === selectedLog.id
                               ? {
-                                  ...l,
-                                  isFlagged: !l.isFlagged,
-                                }
+                                ...l,
+                                isFlagged: !l.isFlagged,
+                              }
                               : l,
                           );
                           setLogs(updatedLogs);
                           setSelectedLog((prev) =>
                             prev
                               ? {
-                                  ...prev,
-                                  isFlagged: !prev.isFlagged,
-                                }
+                                ...prev,
+                                isFlagged: !prev.isFlagged,
+                              }
                               : null,
                           );
                           toast.success("Log updated.");
@@ -1500,20 +1499,20 @@ export function AuditLogs() {
                           const updatedLogs = logs.map((l) =>
                             l.id === selectedLog.id
                               ? {
-                                  ...l,
-                                  severity: "info" as const,
-                                  isFlagged: false,
-                                }
+                                ...l,
+                                severity: "info" as const,
+                                isFlagged: false,
+                              }
                               : l,
                           );
                           setLogs(updatedLogs);
                           setSelectedLog((prev) =>
                             prev
                               ? {
-                                  ...prev,
-                                  severity: "info" as const,
-                                  isFlagged: false,
-                                }
+                                ...prev,
+                                severity: "info" as const,
+                                isFlagged: false,
+                              }
                               : null,
                           );
                           toast.success("Log reviewed.");

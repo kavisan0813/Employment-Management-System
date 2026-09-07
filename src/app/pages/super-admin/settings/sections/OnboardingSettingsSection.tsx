@@ -437,6 +437,38 @@ export function OnboardingSettingsSection() {
               </button>
             </div>
           ))}
+
+          {/* Configurable Document Upload Size Limit */}
+          <div className="border-t pt-4 mt-4 flex items-center justify-between gap-4" style={{ borderColor: "var(--border)" }}>
+            <div>
+              <span className="text-[13px] font-medium text-gray-800 dark:text-gray-200 block">
+                Maximum Document Upload Size (MB)
+              </span>
+              <span className="text-[11px] text-[#94A3B8] mt-0.5 block">
+                Enforces maximum file size limit for all candidate and HR document uploads during onboarding. (1 MB to 100 MB)
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={extraConfig.onboardingMaxFileSizeMb || "10"}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  const num = Number(val);
+                  if (num > 0 && num <= 100) {
+                    updateExtraConfig("onboardingMaxFileSizeMb", val);
+                  } else if (val === "") {
+                    updateExtraConfig("onboardingMaxFileSizeMb", "");
+                  }
+                }}
+                className="w-20 rounded-xl px-3 py-1.5 text-sm border bg-white dark:bg-neutral-800 font-bold text-center"
+                style={{ borderColor: "#E5E7EB", color: "var(--foreground)" }}
+              />
+              <span className="text-xs font-bold text-muted-foreground">MB</span>
+            </div>
+          </div>
         </div>
       </div>
 

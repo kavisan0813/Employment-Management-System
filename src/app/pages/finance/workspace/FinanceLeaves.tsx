@@ -62,7 +62,6 @@ const LEAVE_TYPE_COLORS: Record<LeaveType, string> = {
 export function FinanceLeaves() {
   const navigate = useNavigate();
   const location = useLocation();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     activeTab: "My Requests" as LeaveTab,
     isApplyModalOpen: false,
@@ -191,7 +190,6 @@ export function FinanceLeaves() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   // Modal state
   // History filter
   // Initialize from navigation state if present
@@ -929,7 +927,7 @@ export function FinanceLeaves() {
                   </h3>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left bg-white dark:bg-zinc-900 rounded-xl overflow-hidden border border-border">
+                  <table className="w-full text-left bg-white dark:bg-card rounded-xl overflow-hidden border border-border">
                     <thead className="bg-muted/50">
                       <tr>
                         <th className="py-3 px-4 text-[11px] font-black text-muted-foreground uppercase tracking-widest">

@@ -98,7 +98,6 @@ export function Employees() {
 
     return [];
   }, [employees, scope, currentEmp, user]);
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   const __initialState = {
     search: () => searchParams.get("search") || "",
     selectedDept: () => {
@@ -248,7 +247,6 @@ export function Employees() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   const allowedDepartments = useMemo(() => {
     if (scope === "organization") {
@@ -913,10 +911,31 @@ export function Employees() {
         onCloseEdit={() => setEditEmployee(null)}
         onCloseDelete={() => setDeleteEmployee(null)}
         onImport={(emps) => {
+          if (
+            !hasPermissionKey(P.EMPLOYEES_MANAGE) &&
+            !hasPermissionKey(P.EMPLOYEES_FULL) &&
+            !hasPermissionKey(P.EMPLOYEES_CREATE)
+          ) {
+            showToast("Access Denied", "error", "You do not have permission to import employees.");
+            setShowImportModal(false);
+            return;
+          }
           if (bulkImportEmployees) bulkImportEmployees(emps);
           setShowImportModal(false);
         }}
         onSaveEdit={(id, form) => {
+          const isSelf = editEmployee?.email.toLowerCase() === user?.email?.toLowerCase();
+          const canManageEdit =
+            hasPermissionKey(P.EMPLOYEES_MANAGE) ||
+            hasPermissionKey(P.EMPLOYEES_FULL) ||
+            isSelf ||
+            scope === "department" ||
+            scope === "team";
+          if (!canManageEdit) {
+            showToast("Access Denied", "error", "You do not have permission to edit this employee.");
+            setEditEmployee(null);
+            return;
+          }
           if (updateEmployee) {
             updateEmployee(id, {
               ...form,
@@ -927,6 +946,15 @@ export function Employees() {
           setEditEmployee(null);
         }}
         onConfirmDelete={() => {
+          if (
+            !hasPermissionKey(P.EMPLOYEES_DELETE) &&
+            !hasPermissionKey(P.EMPLOYEES_MANAGE) &&
+            !hasPermissionKey(P.EMPLOYEES_FULL)
+          ) {
+            showToast("Access Denied", "error", "You do not have permission to delete employees.");
+            setDeleteEmployee(null);
+            return;
+          }
           if (deleteEmployee && removeEmployee) {
             removeEmployee(deleteEmployee.id);
             setDeleteEmployee(null);

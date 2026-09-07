@@ -1,6 +1,8 @@
 import { useRef, useEffect, useReducer, useCallback, useState } from "react";
 import { EmployeeSelfProfile } from "../employee/EmployeeSelfProfile";
 import { useAuth } from "../../context/AuthContext";
+import { usePermissions } from "../../shared/permission-engine/PermissionContext";
+import { P } from "../../shared/permission-engine/permissions";
 import {
   User,
   Building2,
@@ -36,7 +38,6 @@ import * as m from "motion/react-m";
 const profileTabs = [
   "Personal Info",
   "Employment",
-  "Recent Activity",
   "Settings",
 ];
 const settingsSections = [
@@ -69,33 +70,6 @@ const initialSkills = [
   "Performance Management",
   "HRIS Systems",
 ];
-const activityLog = [
-  {
-    action: "Updated payroll for March 2026",
-    time: "2 hours ago",
-    type: "payroll",
-  },
-  {
-    action: "Approved leave request from Emily Chen",
-    time: "5 hours ago",
-    type: "leave",
-  },
-  {
-    action: "Added new employee: Marcus Williams",
-    time: "Yesterday",
-    type: "employee",
-  },
-  {
-    action: "Generated Q1 Performance Report",
-    time: "2 days ago",
-    type: "report",
-  },
-  {
-    action: "Scheduled interview with candidate",
-    time: "3 days ago",
-    type: "recruitment",
-  },
-];
 const stats = [
   {
     label: "Employees Managed",
@@ -109,29 +83,31 @@ const stats = [
     icon: TrendingUp,
     color: "#14B8A6",
   },
-  {
-    label: "Tasks Completed",
-    value: "1,284",
-    icon: CheckCircle2,
-    color: "#22C55E",
-  },
-  {
-    label: "Avg Response Time",
-    value: "1.2h",
-    icon: Clock,
-    color: "#F59E0B",
-  },
 ];
 function Toggle({
   label,
   desc,
   defaultOn = false,
+  checked,
+  onChange,
 }: {
   label: string;
   desc: string;
   defaultOn?: boolean;
+  checked?: boolean;
+  onChange?: (val: boolean) => void;
 }) {
-  const [on, setOn] = useState(defaultOn);
+  const [internalOn, setInternalOn] = useState(defaultOn);
+  const on = checked !== undefined ? checked : internalOn;
+
+  const handleToggle = () => {
+    if (onChange) {
+      onChange(!on);
+    } else {
+      setInternalOn(!on);
+    }
+  };
+
   return (
     <div
       className="flex items-center justify-between py-4"
@@ -160,7 +136,8 @@ function Toggle({
         </p>
       </div>
       <button
-        onClick={() => setOn(!on)}
+        type="button"
+        onClick={handleToggle}
         className="rounded-full transition-all"
         style={{
           width: "44px",
@@ -232,7 +209,7 @@ function InputField({
 }
 export function UserProfile() {
   const { user, login } = useAuth();
-  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const { hasPermissionKey } = usePermissions();
   const __initialState = {
     activeTab: "Personal Info",
     activeSettingsSection: "company",
@@ -445,14 +422,37 @@ export function UserProfile() {
       })),
     [],
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // Load avatar from localStorage by user email
+  const bannerInputRef = useRef<HTMLInputElement>(null);
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  const [userNotifs, setUserNotifs] = useState({
+    onboarding: true,
+    leaves: true,
+    payroll: true,
+    reviews: false,
+    recruitment: true,
+    alerts: true,
+    digest: false,
+  });
+
+  // Load avatar, banner and user notifications from localStorage by user email
   useEffect(() => {
     if (user?.email) {
       const savedAvatar = localStorage.getItem(`viyan_avatar_${user.email}`);
       if (savedAvatar) {
         setAvatarPreview(savedAvatar);
+      }
+      const savedBanner = localStorage.getItem(`viyan_banner_${user.email}`);
+      if (savedBanner) {
+        setBannerPreview(savedBanner);
+      }
+      const savedNotifs = localStorage.getItem(`viyan_user_notifs_${user.email}`);
+      if (savedNotifs) {
+        try {
+          setUserNotifs(JSON.parse(savedNotifs));
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }, [user]);
@@ -475,6 +475,15 @@ export function UserProfile() {
   }, [user]);
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (!file.type.startsWith("image/")) {
+        showToast("Invalid File Type", "error", "Please upload a valid image file.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("File Too Large", "error", "Profile photo size must be under 5MB.");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (uploadEvent) => {
         if (uploadEvent.target?.result) {
@@ -490,8 +499,64 @@ export function UserProfile() {
           );
         }
       };
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(file);
     }
+  };
+  const handleRemoveAvatar = () => {
+    setAvatarPreview(null);
+    if (user?.email) {
+      localStorage.removeItem(`viyan_avatar_${user.email}`);
+    }
+    showToast("Avatar Reset", "info", "Profile photo reset to fallback initials.");
+  };
+  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (!file.type.startsWith("image/")) {
+        showToast("Invalid File Type", "error", "Please upload a valid image file.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("File Too Large", "error", "Banner image size must be under 5MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        if (uploadEvent.target?.result) {
+          const base64 = uploadEvent.target.result as string;
+          setBannerPreview(base64);
+          if (user?.email) {
+            localStorage.setItem(`viyan_banner_${user.email}`, base64);
+          }
+          showToast(
+            "Banner Updated",
+            "success",
+            "Your cover banner image has been updated.",
+          );
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleRemoveBanner = () => {
+    setBannerPreview(null);
+    if (user?.email) {
+      localStorage.removeItem(`viyan_banner_${user.email}`);
+    }
+    showToast("Banner Removed", "info", "Your cover banner image has been removed.");
+  };
+  const handleSaveUserNotifs = () => {
+    if (user?.email) {
+      localStorage.setItem(
+        `viyan_user_notifs_${user.email}`,
+        JSON.stringify(userNotifs),
+      );
+    }
+    showToast(
+      "Preferences Saved",
+      "success",
+      "User notification preferences saved successfully.",
+    );
   };
   const handleAddSkill = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.nativeEvent.isComposing) return;
@@ -568,16 +633,55 @@ export function UserProfile() {
   };
   const avatarInitials = user?.initials || "RP";
   const fullName = `${firstName} ${lastName}`;
-  if (user?.role === "Employee") {
+  if (!hasPermissionKey(P.EMPLOYEES_MANAGE) && !hasPermissionKey(P.PROFILE_EDIT)) {
     return <EmployeeSelfProfile />;
   }
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-700 w-full px-4 md:px-8 py-6 pb-20 text-foreground">
       {/* ─── Profile Hero Card ────────────────────────────────────── */}
       <div className="bg-card border border-border rounded-[32px] shadow-sm overflow-hidden relative">
-        {/* Gradient Banner */}
-        <div className="h-[130px] w-full bg-gradient-to-r from-[#00B87C] to-[#009966] relative">
-          <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] opacity-20" />
+        {/* Cover / Banner Section */}
+        <div className="h-[140px] md:h-[180px] w-full relative overflow-hidden group">
+          {bannerPreview ? (
+            <img
+              src={bannerPreview}
+              alt="Cover Banner"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-[#00B87C] to-[#009966] relative">
+              <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] opacity-20" />
+            </div>
+          )}
+
+          {/* Banner Controls Overlay */}
+          <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+            <button
+              type="button"
+              onClick={() => bannerInputRef.current?.click()}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/60 hover:bg-black/80 text-white text-[11px] font-bold backdrop-blur-md transition-all shadow-md cursor-pointer border-none"
+            >
+              <Camera size={13} />
+              <span>{bannerPreview ? "Change Cover" : "Upload Cover"}</span>
+            </button>
+            {bannerPreview && (
+              <button
+                type="button"
+                onClick={handleRemoveBanner}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-600/80 hover:bg-rose-700 text-white text-[11px] font-bold backdrop-blur-md transition-all shadow-md cursor-pointer border-none"
+              >
+                <X size={13} />
+                <span>Remove</span>
+              </button>
+            )}
+          </div>
+          <input
+            ref={bannerInputRef}
+            type="file"
+            className="hidden"
+            accept="image/*"
+            onChange={handleBannerChange}
+          />
         </div>
 
         {/* Hero Content */}
@@ -657,7 +761,6 @@ export function UserProfile() {
                 </div>
               )}
               {activeTab !== "Settings" &&
-                activeTab !== "Recent Activity" &&
                 (!isEditing ? (
                   <button
                     onClick={() => setIsEditing(true)}
@@ -989,43 +1092,6 @@ export function UserProfile() {
               </div>
             )}
 
-            {activeTab === "Recent Activity" && (
-              <div className="bg-card rounded-2xl p-8 border border-border shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1.5 h-5 bg-primary rounded-full"></div>
-                  <h3 className="text-[12px] font-semibold text-[#94A3B8] uppercase tracking-wider">
-                    RECENT ACTIVITY
-                  </h3>
-                </div>
-                <div className="flex flex-col gap-6 relative pl-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
-                  {activityLog.map((log) => (
-                    <div
-                      key={log.type}
-                      className="flex items-start gap-4 relative"
-                    >
-                      <div
-                        className="w-4.5 h-4.5 rounded-full border-4 border-card flex items-center justify-center absolute -left-[23px] top-1"
-                        style={{
-                          backgroundColor:
-                            activityTypeColor[log.type] || "var(--primary)",
-                          width: "18px",
-                          height: "18px",
-                        }}
-                      />
-                      <div>
-                        <p className="text-foreground text-[13px] font-bold leading-normal">
-                          {log.action}
-                        </p>
-                        <p className="text-muted-foreground text-[11px] mt-1">
-                          {log.time}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {activeTab === "Settings" && (
               <div className="flex flex-col md:flex-row gap-8">
                 {/* Settings sidebar */}
@@ -1236,52 +1302,68 @@ export function UserProfile() {
                         Notification Preferences
                       </h3>
                       <p className="text-muted-foreground text-[13px] mb-6">
-                        Control which alerts and updates you receive.
+                        Control which alerts and updates you receive. (User Preference)
                       </p>
                       <Toggle
                         label="New Employee Onboarding"
                         desc="Get notified when a new employee joins"
-                        defaultOn={true}
+                        checked={userNotifs.onboarding}
+                        onChange={(val) =>
+                          setUserNotifs((prev) => ({ ...prev, onboarding: val }))
+                        }
                       />
                       <Toggle
                         label="Leave Requests"
                         desc="Alerts for pending leave approvals"
-                        defaultOn={true}
+                        checked={userNotifs.leaves}
+                        onChange={(val) =>
+                          setUserNotifs((prev) => ({ ...prev, leaves: val }))
+                        }
                       />
                       <Toggle
                         label="Payroll Processed"
                         desc="Confirmation when payroll is run"
-                        defaultOn={true}
+                        checked={userNotifs.payroll}
+                        onChange={(val) =>
+                          setUserNotifs((prev) => ({ ...prev, payroll: val }))
+                        }
                       />
                       <Toggle
                         label="Performance Reviews"
                         desc="Reminders for upcoming review cycles"
-                        defaultOn={false}
+                        checked={userNotifs.reviews}
+                        onChange={(val) =>
+                          setUserNotifs((prev) => ({ ...prev, reviews: val }))
+                        }
                       />
                       <Toggle
                         label="Recruitment Updates"
                         desc="Candidate stage changes and new applications"
-                        defaultOn={true}
+                        checked={userNotifs.recruitment}
+                        onChange={(val) =>
+                          setUserNotifs((prev) => ({ ...prev, recruitment: val }))
+                        }
                       />
                       <Toggle
                         label="System Alerts"
                         desc="Critical system notifications and errors"
-                        defaultOn={true}
+                        checked={userNotifs.alerts}
+                        onChange={(val) =>
+                          setUserNotifs((prev) => ({ ...prev, alerts: val }))
+                        }
                       />
                       <Toggle
                         label="Email Digest"
                         desc="Weekly summary sent to your email"
-                        defaultOn={false}
+                        checked={userNotifs.digest}
+                        onChange={(val) =>
+                          setUserNotifs((prev) => ({ ...prev, digest: val }))
+                        }
                       />
                       <div className="flex justify-end mt-6">
                         <button
-                          onClick={() =>
-                            showToast(
-                              "Preferences",
-                              "success",
-                              "Notification preferences updated.",
-                            )
-                          }
+                          type="button"
+                          onClick={handleSaveUserNotifs}
                           className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white font-bold text-[13px] border-none cursor-pointer"
                           style={{
                             background:

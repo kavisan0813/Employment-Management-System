@@ -15,6 +15,7 @@ import {
   Clock,
   MonitorSmartphone,
   TestTube,
+  Edit3,
 } from "lucide-react";
 import DOMPurify from "dompurify";
 import { communicationService } from "../services/communication.service";
@@ -50,13 +51,13 @@ export function BroadcastAnnouncementsTab({
 
   // Modals state
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingAnnouncementId, setEditingAnnouncementId] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isTestOpen, setIsTestOpen] = useState(false);
   const [smsWarningOpen, setSmsWarningOpen] = useState(false);
-  const [cancelWarningOpen, setCancelWarningOpen] = useState<string | null>(
-    null,
-  );
+  const [cancelWarningOpen, setCancelWarningOpen] = useState<string | null>(null);
+  const [viewDetailsAnnouncement, setViewDetailsAnnouncement] = useState<Announcement | null>(null);
 
   // Form State
   const initialFormState = {
@@ -119,6 +120,7 @@ export function BroadcastAnnouncementsTab({
 
   const resetForm = () => {
     dispatchForm({ type: "reset" });
+    setEditingAnnouncementId(null);
   };
 
   const handleChannelToggle = (ch: AnnouncementChannel) => {
@@ -139,27 +141,47 @@ export function BroadcastAnnouncementsTab({
 
   const proceedWithCreate = async () => {
     try {
-      const ann = await communicationService.createAnnouncement(
-        title,
-        body,
-        targetType,
-        targetCriteria ? JSON.stringify(targetCriteria.split(",")) : "[]",
-        channels,
-        urgency,
-        scheduledAt,
-        recurrence,
-      );
-      dispatchForm({
-        type: "setField",
-        field: "pendingAnnouncementId",
-        value: ann.announcement_id,
-      });
+      if (editingAnnouncementId) {
+        const ann = await communicationService.updateAnnouncement(
+          editingAnnouncementId,
+          title,
+          body,
+          targetType,
+          targetCriteria ? JSON.stringify(targetCriteria.split(",")) : "[]",
+          channels,
+          urgency,
+          scheduledAt,
+          recurrence,
+        );
+        dispatchForm({
+          type: "setField",
+          field: "pendingAnnouncementId",
+          value: ann.announcement_id,
+        });
+        showToast("Announcement updated successfully", "success");
+      } else {
+        const ann = await communicationService.createAnnouncement(
+          title,
+          body,
+          targetType,
+          targetCriteria ? JSON.stringify(targetCriteria.split(",")) : "[]",
+          channels,
+          urgency,
+          scheduledAt,
+          recurrence,
+        );
+        dispatchForm({
+          type: "setField",
+          field: "pendingAnnouncementId",
+          value: ann.announcement_id,
+        });
+      }
       setIsCreateOpen(false);
       setSmsWarningOpen(false);
       setIsPreviewOpen(true);
       mutate();
     } catch (err) {
-      showToast("Failed to create draft", "error");
+      showToast("Failed to save announcement", "error");
       console.log(err);
     }
   };
@@ -238,9 +260,66 @@ export function BroadcastAnnouncementsTab({
       setCancelWarningOpen(null);
       mutate();
     } catch (err) {
-      showToast("Failed to cancel", "error");
+      showToast("Failed to cancel announcement", "error");
       console.log(err);
     }
+  };
+
+  const handleEdit = (ann: Announcement) => {
+    let parsedCriteria = "";
+    try {
+      const parsed = JSON.parse(ann.target_criteria);
+      parsedCriteria = Array.isArray(parsed) ? parsed.join(",") : "";
+    } catch (e) {
+      console.log(e);
+    }
+
+    dispatchForm({
+      type: "duplicate",
+      payload: {
+        title: ann.title,
+        body: ann.message_body,
+        targetType: ann.target_type,
+        targetCriteria: parsedCriteria,
+        channels: ann.channels,
+        urgency: ann.urgency,
+        scheduledAt: ann.scheduled_at,
+        recurrence: ann.recurrence,
+        pendingAnnouncementId: ann.announcement_id,
+      },
+    });
+
+    setEditingAnnouncementId(ann.announcement_id);
+    setIsCreateOpen(true);
+  };
+
+  const handleDuplicate = (ann: Announcement) => {
+    let parsedCriteria = "";
+    try {
+      const parsed = JSON.parse(ann.target_criteria);
+      parsedCriteria = Array.isArray(parsed) ? parsed.join(",") : "";
+    } catch (e) {
+      console.log(e);
+    }
+
+    dispatchForm({
+      type: "duplicate",
+      payload: {
+        title: `${ann.title} (Copy)`,
+        body: ann.message_body,
+        targetType: ann.target_type,
+        targetCriteria: parsedCriteria,
+        channels: ann.channels,
+        urgency: ann.urgency,
+        scheduledAt: null,
+        recurrence: null,
+        pendingAnnouncementId: null,
+      },
+    });
+
+    setEditingAnnouncementId(null);
+    setIsCreateOpen(true);
+    showToast("Announcement duplicated into new draft", "info");
   };
 
   const handleSendTest = async () => {
@@ -259,30 +338,6 @@ export function BroadcastAnnouncementsTab({
     } finally {
       setIsSendingTest(false);
     }
-  };
-
-  const handleDuplicate = (ann: Announcement) => {
-    let parsedCriteria = "";
-    try {
-      const parsed = JSON.parse(ann.target_criteria);
-      parsedCriteria = Array.isArray(parsed) ? parsed.join(",") : "";
-    } catch (e) {
-      console.log(e);
-    }
-
-    dispatchForm({
-      type: "duplicate",
-      payload: {
-        title: ann.title + " (Copy)",
-        body: ann.message_body,
-        targetType: ann.target_type,
-        targetCriteria: parsedCriteria,
-        channels: ann.channels,
-        urgency: ann.urgency,
-      },
-    });
-
-    setIsCreateOpen(true);
   };
 
   const getChannelIcon = (ch: string) => {
@@ -352,12 +407,13 @@ export function BroadcastAnnouncementsTab({
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="border border-gray-300 rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+            className="border border-gray-300 rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 font-semibold"
           >
             <option value="all">All Statuses</option>
             <option value="sent">Sent</option>
             <option value="scheduled">Scheduled</option>
             <option value="draft">Drafts</option>
+            <option value="cancelled">Cancelled</option>
           </select>
         </div>
         <button
@@ -365,7 +421,7 @@ export function BroadcastAnnouncementsTab({
             resetForm();
             setIsCreateOpen(true);
           }}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer shadow-sm"
         >
           <Plus className="w-4 h-4" /> Create Announcement
         </button>
@@ -448,7 +504,7 @@ export function BroadcastAnnouncementsTab({
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-500 mt-1 capitalize">
+                    <div className="text-xs text-gray-500 mt-1 capitalize font-medium">
                       Target: {ann.target_type.replace("_", " ")}
                     </div>
                   </td>
@@ -460,43 +516,63 @@ export function BroadcastAnnouncementsTab({
                     </div>
                   </td>
                   <td className="px-6 py-4">{getStatusBadge(ann.status)}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500 font-medium">
                     {ann.status === "sent" ? (
                       <div>
                         Sent:{" "}
-                        {format(new Date(ann.sent_at!), "MMM d, yyyy HH:mm")}
+                        {ann.sent_at ? format(new Date(ann.sent_at), "MMM d, yyyy HH:mm") : "N/A"}
                       </div>
                     ) : ann.status === "scheduled" ? (
                       <div className="text-amber-700">
                         Scheduled:{" "}
-                        {format(
-                          new Date(ann.scheduled_at!),
-                          "MMM d, yyyy HH:mm",
-                        )}
+                        {ann.scheduled_at ? format(new Date(ann.scheduled_at), "MMM d, yyyy HH:mm") : "N/A"}
                       </div>
                     ) : (
                       "N/A"
                     )}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    {ann.status === "scheduled" && (
+                    <div className="flex items-center justify-end gap-2">
+                      {/* View Action */}
                       <button
-                        onClick={() =>
-                          setCancelWarningOpen(ann.announcement_id)
-                        }
-                        className="text-red-600 hover:text-red-800 text-sm font-semibold flex items-center justify-end gap-1 w-full mb-2"
+                        onClick={() => setViewDetailsAnnouncement(ann)}
+                        title="View Details"
+                        className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors"
                       >
-                        <XCircle className="w-4 h-4" /> Cancel
+                        <Eye className="w-4 h-4" />
                       </button>
-                    )}
-                    {(ann.status === "sent" || ann.status === "cancelled") && (
+
+                      {/* Edit Action (Draft or Scheduled) */}
+                      {(ann.status === "draft" || ann.status === "scheduled") && (
+                        <button
+                          onClick={() => handleEdit(ann)}
+                          title="Edit Announcement"
+                          className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                      )}
+
+                      {/* Duplicate Action */}
                       <button
                         onClick={() => handleDuplicate(ann)}
-                        className="text-indigo-600 hover:text-indigo-800 text-sm font-semibold flex items-center justify-end gap-1 w-full"
+                        title="Duplicate as Draft"
+                        className="p-1.5 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg cursor-pointer transition-colors"
                       >
-                        <Copy className="w-4 h-4" /> Duplicate
+                        <Copy className="w-4 h-4" />
                       </button>
-                    )}
+
+                      {/* Cancel Action (Scheduled) */}
+                      {ann.status === "scheduled" && (
+                        <button
+                          onClick={() => setCancelWarningOpen(ann.announcement_id)}
+                          title="Cancel Scheduled Broadcast"
+                          className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                        >
+                          <XCircle className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
@@ -506,7 +582,7 @@ export function BroadcastAnnouncementsTab({
 
         {data && data.total > 0 && (
           <div className="px-6 py-3 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 font-semibold">
               Showing {(page - 1) * 10 + 1} to {Math.min(page * 10, data.total)}{" "}
               of {data.total}
             </span>
@@ -514,14 +590,14 @@ export function BroadcastAnnouncementsTab({
               <button
                 disabled={page === 1}
                 onClick={() => setPage(page - 1)}
-                className="px-3 py-1 bg-white border border-gray-300 rounded text-sm disabled:opacity-50"
+                className="px-3 py-1 bg-white border border-gray-300 rounded text-sm disabled:opacity-50 font-semibold"
               >
                 Prev
               </button>
               <button
                 disabled={page * 10 >= data.total}
                 onClick={() => setPage(page + 1)}
-                className="px-3 py-1 bg-white border border-gray-300 rounded text-sm disabled:opacity-50"
+                className="px-3 py-1 bg-white border border-gray-300 rounded text-sm disabled:opacity-50 font-semibold"
               >
                 Next
               </button>
@@ -530,18 +606,18 @@ export function BroadcastAnnouncementsTab({
         )}
       </div>
 
-      {/* CREATE MODAL */}
+      {/* CREATE / EDIT MODAL */}
       {isCreateOpen && (
         <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-xl">
             <div className="p-5 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Megaphone className="w-5 h-5 text-indigo-600" /> Create
-                Announcement
+                <Megaphone className="w-5 h-5 text-indigo-600" />
+                {editingAnnouncementId ? "Edit Announcement" : "Create Announcement"}
               </h2>
               <button
                 onClick={() => setIsCreateOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -567,7 +643,7 @@ export function BroadcastAnnouncementsTab({
                       value: e.target.value,
                     })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none font-semibold"
                   placeholder="Announcement Title"
                 />
               </div>
@@ -597,10 +673,11 @@ export function BroadcastAnnouncementsTab({
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Target Audience *
                   </label>
-                  <div className="space-y-2">
+                  <div className="space-y-2 font-medium">
                     <label className="flex items-center gap-2">
                       <input
                         type="radio"
+                        name="targetType"
                         checked={targetType === "all"}
                         onChange={() =>
                           dispatchForm({
@@ -615,6 +692,7 @@ export function BroadcastAnnouncementsTab({
                     <label className="flex items-center gap-2">
                       <input
                         type="radio"
+                        name="targetType"
                         checked={targetType === "plan_based"}
                         onChange={() =>
                           dispatchForm({
@@ -629,6 +707,7 @@ export function BroadcastAnnouncementsTab({
                     <label className="flex items-center gap-2">
                       <input
                         type="radio"
+                        name="targetType"
                         checked={targetType === "specific_orgs"}
                         onChange={() =>
                           dispatchForm({
@@ -643,6 +722,7 @@ export function BroadcastAnnouncementsTab({
                     <label className="flex items-center gap-2">
                       <input
                         type="radio"
+                        name="targetType"
                         checked={targetType === "role_based"}
                         onChange={() =>
                           dispatchForm({
@@ -673,7 +753,7 @@ export function BroadcastAnnouncementsTab({
                           ? "e.g. enterprise,pro"
                           : "e.g. org_id_1,org_id_2"
                       }
-                      className="mt-3 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none"
+                      className="mt-3 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none font-medium"
                     />
                   )}
                 </div>
@@ -682,7 +762,7 @@ export function BroadcastAnnouncementsTab({
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Delivery Channels *
                   </label>
-                  <div className="space-y-2">
+                  <div className="space-y-2 font-medium">
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -716,7 +796,7 @@ export function BroadcastAnnouncementsTab({
                       </span>
                     </label>
                     {channels.includes("sms") && (
-                      <div className="text-xs text-amber-700 bg-amber-50 p-2 rounded border border-amber-200 mt-1 flex gap-2">
+                      <div className="text-xs text-amber-700 bg-amber-50 p-2 rounded border border-amber-200 mt-1 flex gap-2 font-semibold">
                         <AlertTriangle className="w-4 h-4 shrink-0" /> SMS will
                         incur per-message costs.
                       </div>
@@ -739,7 +819,7 @@ export function BroadcastAnnouncementsTab({
                         value: e.target.value as AnnouncementUrgency,
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none font-semibold"
                   >
                     <option value="normal">Normal</option>
                     <option value="high">High (Red Alert)</option>
@@ -760,7 +840,7 @@ export function BroadcastAnnouncementsTab({
                           value: e.target.value,
                         })
                       }
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none font-semibold"
                     />
                   </div>
                 </div>
@@ -769,16 +849,16 @@ export function BroadcastAnnouncementsTab({
             <div className="p-5 border-t border-gray-200 bg-gray-50 flex justify-end gap-3 rounded-b-xl">
               <button
                 onClick={() => setIsCreateOpen(false)}
-                className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg"
+                className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 form="announcement-form"
                 type="submit"
-                className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg flex items-center gap-2"
+                className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg flex items-center gap-2 cursor-pointer shadow-sm"
               >
-                <Eye className="w-4 h-4" /> Save Draft & Preview
+                <Eye className="w-4 h-4" /> Save & Preview
               </button>
             </div>
           </div>
@@ -822,7 +902,7 @@ export function BroadcastAnnouncementsTab({
             <div className="p-5 border-t border-gray-200 bg-gray-50 flex justify-between rounded-b-xl">
               <button
                 onClick={() => setIsTestOpen(true)}
-                className="px-4 py-2 text-sm font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 rounded-lg flex items-center gap-2"
+                className="px-4 py-2 text-sm font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 rounded-lg flex items-center gap-2 cursor-pointer"
               >
                 <TestTube className="w-4 h-4" /> Send Test
               </button>
@@ -832,13 +912,13 @@ export function BroadcastAnnouncementsTab({
                     setIsPreviewOpen(false);
                     setIsCreateOpen(true);
                   }}
-                  className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg"
+                  className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg cursor-pointer"
                 >
                   Back to Edit
                 </button>
                 <button
                   onClick={handleProceedToConfirm}
-                  className="px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg flex items-center gap-2"
+                  className="px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg flex items-center gap-2 cursor-pointer shadow-sm"
                 >
                   <CheckCircle2 className="w-4 h-4" /> Proceed to Send
                 </button>
@@ -867,7 +947,7 @@ export function BroadcastAnnouncementsTab({
                     <h2 className="text-lg font-bold leading-tight">
                       Confirm Broadcast
                     </h2>
-                    <p className="text-indigo-100 text-xs">
+                    <p className="text-indigo-100 text-xs font-semibold">
                       Review audience scale before dispatching
                     </p>
                   </div>
@@ -900,12 +980,12 @@ export function BroadcastAnnouncementsTab({
                           <h4 className="font-bold text-amber-900 text-sm">
                             SMS Cost Warning
                           </h4>
-                          <p className="text-sm text-amber-800 mt-1">
+                          <p className="text-sm text-amber-800 mt-1 font-semibold">
                             Sending to {estimates.userCount.toLocaleString()}{" "}
                             users via SMS will incur an estimated carrier cost
                             of{" "}
                             <strong>
-                              ${estimates.estimatedSmsCost.toFixed(2)}
+                              ₹{(estimates.estimatedSmsCost * 83).toLocaleString("en-IN", { maximumFractionDigits: 2 })}
                             </strong>
                             .
                           </p>
@@ -914,7 +994,7 @@ export function BroadcastAnnouncementsTab({
                     )}
 
                   {scheduledAt && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex gap-2 items-center text-blue-800 text-sm">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex gap-2 items-center text-blue-800 text-sm font-semibold">
                       <Clock className="w-5 h-5 shrink-0" /> Will be queued for
                       delivery on{" "}
                       {format(new Date(scheduledAt), "MMM d, yyyy HH:mm")}.
@@ -924,13 +1004,13 @@ export function BroadcastAnnouncementsTab({
                 <div className="p-5 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
                   <button
                     onClick={() => setIsConfirmOpen(false)}
-                    className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg"
+                    className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleFinalSend}
-                    className="px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md flex items-center gap-2"
+                    className="px-5 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md flex items-center gap-2 cursor-pointer"
                   >
                     <Send className="w-4 h-4" /> Send to{" "}
                     {estimates?.orgCount.toLocaleString()} Orgs
@@ -942,12 +1022,88 @@ export function BroadcastAnnouncementsTab({
         </div>
       )}
 
+      {/* VIEW DETAILS MODAL */}
+      {viewDetailsAnnouncement && (
+        <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl w-full max-w-2xl shadow-xl flex flex-col max-h-[90vh] overflow-hidden">
+            <div className="p-5 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                <Eye className="w-5 h-5 text-indigo-600" /> Announcement Details
+              </h2>
+              <button
+                onClick={() => setViewDetailsAnnouncement(null)}
+                className="text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto space-y-4 text-xs font-semibold">
+              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                <div>
+                  <span className="text-[10px] text-gray-400 font-mono">
+                    ID: {viewDetailsAnnouncement.announcement_id}
+                  </span>
+                  <h3 className="text-lg font-bold text-gray-900 mt-0.5">
+                    {viewDetailsAnnouncement.title}
+                  </h3>
+                </div>
+                {getStatusBadge(viewDetailsAnnouncement.status)}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div>
+                  <span className="text-[10px] text-gray-400 uppercase block">Target Type</span>
+                  <span className="font-bold text-gray-800 capitalize">
+                    {viewDetailsAnnouncement.target_type.replace("_", " ")}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-gray-400 uppercase block">Urgency</span>
+                  <span className="font-bold text-gray-800 capitalize">
+                    {viewDetailsAnnouncement.urgency}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[10px] text-gray-400 uppercase block mb-1">Channels</span>
+                <div className="flex gap-2">
+                  {viewDetailsAnnouncement.channels.map((ch) => (
+                    <span key={ch} className="px-2 py-1 bg-gray-100 rounded text-[11px] font-bold text-gray-700 flex items-center gap-1">
+                      {getChannelIcon(ch)} {ch}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[10px] text-gray-400 uppercase block mb-1">Message Content</span>
+                <div
+                  className="p-4 bg-white border border-gray-200 rounded-xl prose prose-xs max-w-none font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(viewDetailsAnnouncement.message_body),
+                  }}
+                />
+              </div>
+            </div>
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end">
+              <button
+                onClick={() => setViewDetailsAnnouncement(null)}
+                className="px-4 py-2 bg-gray-800 text-white rounded-lg text-xs font-bold"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TEST SEND MODAL */}
       {isTestOpen && (
         <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-sm shadow-xl p-6">
-            <h3 className="font-bold text-gray-900 mb-2">Send Test</h3>
-            <p className="text-sm text-gray-600 mb-4">
+          <div className="bg-white rounded-xl w-full max-w-sm shadow-xl p-6 font-semibold">
+            <h3 className="font-bold text-gray-900 mb-2 text-base">Send Test</h3>
+            <p className="text-xs text-gray-600 mb-4 font-medium">
               Enter an email or phone number to receive a test copy.
             </p>
             <input
@@ -955,19 +1111,19 @@ export function BroadcastAnnouncementsTab({
               value={testContact}
               onChange={(e) => setTestContact(e.target.value)}
               placeholder="admin@example.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-4 outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs mb-4 outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
             />
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsTestOpen(false)}
-                className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300"
+                className="px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-300 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSendTest}
                 disabled={isSendingTest}
-                className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-50"
+                className="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-50 cursor-pointer"
               >
                 {isSendingTest ? "Sending..." : "Send Test"}
               </button>
@@ -979,31 +1135,31 @@ export function BroadcastAnnouncementsTab({
       {/* SMS WARNING MODAL */}
       {smsWarningOpen && (
         <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-sm shadow-xl flex flex-col overflow-hidden">
+          <div className="bg-white rounded-xl w-full max-w-sm shadow-xl flex flex-col overflow-hidden font-semibold">
             <div className="bg-amber-500 p-5 text-white flex items-center gap-3">
               <AlertTriangle className="w-6 h-6" />
               <h2 className="text-lg font-bold">SMS Cost Warning</h2>
             </div>
             <div className="p-6">
-              <p className="text-sm text-gray-700 font-medium leading-relaxed">
+              <p className="text-xs text-gray-700 font-medium leading-relaxed">
                 You are targeting <strong>All Organizations</strong> and have
                 included <strong>SMS</strong> as a delivery channel. This could
                 incur significant messaging costs.
               </p>
-              <p className="text-sm font-bold text-gray-900 mt-4">
+              <p className="text-xs font-bold text-gray-900 mt-4">
                 Do you want to continue?
               </p>
             </div>
             <div className="p-5 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
               <button
                 onClick={() => setSmsWarningOpen(false)}
-                className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg"
+                className="px-4 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={proceedWithCreate}
-                className="px-4 py-2 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-lg shadow-md"
+                className="px-4 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-lg shadow-md cursor-pointer"
               >
                 Yes, Continue
               </button>
@@ -1014,14 +1170,14 @@ export function BroadcastAnnouncementsTab({
 
       {/* CANCEL WARNING MODAL */}
       {cancelWarningOpen && (
-        <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50 p-4 font-semibold">
           <div className="bg-white rounded-xl w-full max-w-sm shadow-xl flex flex-col overflow-hidden">
             <div className="bg-red-600 p-5 text-white flex items-center gap-3">
               <XCircle className="w-6 h-6" />
               <h2 className="text-lg font-bold">Cancel Announcement</h2>
             </div>
             <div className="p-6">
-              <p className="text-sm text-gray-700 font-medium">
+              <p className="text-xs text-gray-700 font-medium">
                 Are you sure you want to cancel this scheduled announcement? It
                 will not be sent.
               </p>
@@ -1029,13 +1185,13 @@ export function BroadcastAnnouncementsTab({
             <div className="p-5 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
               <button
                 onClick={() => setCancelWarningOpen(null)}
-                className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg"
+                className="px-4 py-2 text-xs font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg cursor-pointer"
               >
                 Keep Scheduled
               </button>
               <button
                 onClick={handleCancelScheduled}
-                className="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-md"
+                className="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-md cursor-pointer"
               >
                 Cancel Announcement
               </button>

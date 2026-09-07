@@ -335,7 +335,7 @@ export function DepartmentsSection() {
                   }}
                 >
                   <span
-                    className="px-2 py-1 rounded-lg text-xs font-bold"
+                    className="px-2.5 py-0.5 rounded-lg text-xs font-bold"
                     style={{
                       backgroundColor: "var(--muted)",
                       color: "var(--foreground)",

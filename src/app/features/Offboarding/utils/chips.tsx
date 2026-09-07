@@ -1,9 +1,6 @@
 import React from "react";
-import { ExitType, ClearanceStatus } from "../types/offboarding.types";
+import { ExitType } from "../types/offboarding.types";
 import {
-  Check,
-  Clock,
-  X,
   User,
   Laptop,
   Briefcase,
@@ -49,29 +46,6 @@ export const exitTypeChip = (type: ExitType) => {
       return (
         <span className="inline-flex px-2 py-0.5 rounded-full bg-[#EDE9FE] text-[#7C3AED] border border-[#DDD6FE] text-[11px] font-semibold uppercase tracking-wider">
           {type}
-        </span>
-      );
-  }
-};
-
-export const clearanceChip = (status: ClearanceStatus) => {
-  switch (status) {
-    case "cleared":
-      return (
-        <span className="text-[11px] font-black text-[#00B87C] flex items-center gap-1">
-          <Check size={12} /> Done
-        </span>
-      );
-    case "pending":
-      return (
-        <span className="text-[11px] font-black text-amber-500 flex items-center gap-1">
-          <Clock size={12} /> Pending
-        </span>
-      );
-    case "not_started":
-      return (
-        <span className="text-[11px] font-semibold text-[#94A3B8] flex items-center gap-1">
-          <X size={12} /> Not Started
         </span>
       );
   }

@@ -1,5 +1,16 @@
+import type { ExitStatus } from "../services/offboardingWorkflow";
+
 export type ResignationStatus =
-  "pending_manager" | "pending_hr" | "approved" | "rejected";
+  | ExitStatus
+  | "exit_draft"
+  | "manager_review"
+  | "manager_approved"
+  | "manager_rejected"
+  | "hr_processing"
+  | "pending_manager"
+  | "pending_hr"
+  | "approved"
+  | "rejected";
 export interface ResignationRequest {
   id: string;
   employeeName: string;

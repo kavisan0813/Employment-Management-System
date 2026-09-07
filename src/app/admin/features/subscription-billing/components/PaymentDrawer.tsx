@@ -110,7 +110,7 @@ export function PaymentDrawer({
           {/* Amount hero */}
           <div className="px-5 pt-5 pb-4 border-b border-gray-100 text-center">
             <p className="text-3xl font-bold text-gray-900">
-              ${payment.amount.toLocaleString()}
+              ₹${payment.amount.toLocaleString("en-IN")}
             </p>
             <p className="text-[11px] text-gray-400 mt-1">{payment.currency}</p>
           </div>
@@ -172,14 +172,7 @@ export function PaymentDrawer({
               Retry Payment
             </button>
           )}
-          {payment.status === "Success" && (
-            <button
-              onClick={() => onRefund(payment.id)}
-              className="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold cursor-pointer transition-colors"
-            >
-              Issue Refund
-            </button>
-          )}
+
           <button
             onClick={onClose}
             className="ml-auto px-3.5 py-2.5 border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"

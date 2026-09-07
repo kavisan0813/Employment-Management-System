@@ -1,89 +1,117 @@
-import { Calendar, Umbrella, PartyPopper, Briefcase } from "lucide-react";
-import type { KPIMetrics } from "./attendance.types";
+import React from "react";
+import { CalendarDays, CalendarCheck, Palmtree, Briefcase } from "lucide-react";
 
 interface AttendanceKPICardsProps {
-  metrics: KPIMetrics;
-  selectedMonth: string;
+  selectedMonth: number; // 0-indexed (0 = Jan, 3 = Apr)
   selectedYear: number;
+  festivalHolidaysCount?: number;
 }
 
-const CARDS = [
-  {
-    key: "weekdays" as const,
-    label: "Weekdays",
-    icon: Calendar,
-    color: "var(--primary)",
-    bgLight: "rgba(0, 184, 124, 0.06)",
-    bgDark: "rgba(0, 184, 124, 0.08)",
-    desc: "Mon – Fri this month",
-  },
-  {
-    key: "weekendHolidays" as const,
-    label: "Weekend Holidays",
-    icon: Umbrella,
-    color: "#6366F1",
-    bgLight: "rgba(99, 102, 241, 0.06)",
-    bgDark: "rgba(99, 102, 241, 0.08)",
-    desc: "Saturday & Sunday off",
-  },
-  {
-    key: "festivalHolidays" as const,
-    label: "Festival Holidays",
-    icon: PartyPopper,
-    color: "#F59E0B",
-    bgLight: "rgba(245, 158, 11, 0.06)",
-    bgDark: "rgba(245, 158, 11, 0.08)",
-    desc: "Gazetted holidays",
-  },
-  {
-    key: "workingDays" as const,
-    label: "Working Days",
-    icon: Briefcase,
-    color: "#10B981",
-    bgLight: "rgba(16, 185, 129, 0.06)",
-    bgDark: "rgba(16, 185, 129, 0.08)",
-    desc: "Weekdays – holidays",
-  },
-];
-
 export function AttendanceKPICards({
-  metrics,
   selectedMonth,
   selectedYear,
+  festivalHolidaysCount = 2,
 }: AttendanceKPICardsProps) {
-  return (
-    <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-      {CARDS.map((card) => {
-        const Icon = card.icon;
-        const value = metrics[card.key];
+  // Calculate exact days in month, weekend count, weekday count
+  const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+  
+  let weekendDays = 0;
+  let weekdays = 0;
 
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayOfWeek = new Date(selectedYear, selectedMonth, day).getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      weekendDays++;
+    } else {
+      weekdays++;
+    }
+  }
+
+  const workingDays = Math.max(0, weekdays - festivalHolidaysCount);
+
+  const cards = [
+    {
+      id: "weekdays",
+      label: "WEEKDAYS",
+      value: weekdays,
+      desc: "Selected month",
+      icon: CalendarDays,
+      accentColor: "var(--primary)",
+      badgeBg: "rgba(0, 184, 124, 0.1)",
+      badgeText: "text-[#00B87C]",
+    },
+    {
+      id: "weekend_holidays",
+      label: "WEEKEND HOLIDAYS",
+      value: weekendDays,
+      desc: "Saturday + Sunday",
+      icon: CalendarCheck,
+      accentColor: "#64748B",
+      badgeBg: "rgba(100, 116, 139, 0.1)",
+      badgeText: "text-slate-600 dark:text-slate-400",
+    },
+    {
+      id: "festival_holidays",
+      label: "FESTIVAL HOLIDAYS",
+      value: festivalHolidaysCount,
+      desc: "Configured holidays",
+      icon: Palmtree,
+      accentColor: "#F59E0B",
+      badgeBg: "rgba(245, 158, 11, 0.1)",
+      badgeText: "text-amber-600 dark:text-amber-400",
+    },
+    {
+      id: "working_days",
+      label: "WORKING DAYS",
+      value: workingDays,
+      desc: "Expected working days",
+      icon: Briefcase,
+      accentColor: "#10B981",
+      badgeBg: "rgba(16, 185, 129, 0.15)",
+      badgeText: "text-emerald-600 dark:text-emerald-400",
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      {cards.map((card) => {
+        const IconComponent = card.icon;
         return (
           <div
-            key={card.key}
-            className="rounded-2xl border bg-card shadow-sm p-4 transition-all hover:shadow-md group"
+            key={card.id}
+            className="group relative p-4 rounded-2xl border bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md flex flex-col justify-between"
             style={{ borderColor: "var(--border)" }}
           >
-            <div className="flex items-start justify-between">
-              <div className="space-y-3 flex-1">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-8 h-8 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: card.bgLight }}
-                  >
-                    <Icon size={16} style={{ color: card.color }} />
-                  </div>
-                  <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                    {card.label}
-                  </p>
-                </div>
-                <p className="text-3xl font-black" style={{ color: card.color }}>
-                  {value}
-                </p>
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground truncate">
+                {card.label}
+              </span>
+              <div
+                className={`p-2 rounded-xl flex items-center justify-center ${card.badgeText}`}
+                style={{ backgroundColor: card.badgeBg }}
+              >
+                <IconComponent size={16} />
               </div>
             </div>
-            <p className="text-[10px] font-medium text-muted-foreground mt-2">
-              {card.desc} • {selectedMonth} {selectedYear}
-            </p>
+
+            <div className="flex items-baseline gap-2.5">
+              <span
+                className="text-3xl sm:text-4xl font-black leading-none tracking-tight"
+                style={{ color: card.id === "working_days" ? "#10B981" : "var(--foreground)" }}
+              >
+                {card.value}
+              </span>
+              <span className="text-xs font-bold text-muted-foreground truncate">
+                days
+              </span>
+            </div>
+
+            <div className="mt-2.5 pt-2 border-t flex items-center justify-between text-[11px] font-semibold text-muted-foreground" style={{ borderColor: "var(--border)" }}>
+              <span className="truncate">{card.desc}</span>
+              <span className="text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity text-[#00B87C]">
+                Active Filter
+              </span>
+            </div>
           </div>
         );
       })}

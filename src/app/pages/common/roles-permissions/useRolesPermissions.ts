@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { showToast } from "../../../components/workflow/ToastNotification";
+import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
+import { P } from "../../../shared/permission-engine/permissions";
 
 export const rolesData = [
   {
@@ -144,6 +146,7 @@ export const permissionGroups = [
 ];
 
 export function useRolesPermissions() {
+  const { hasPermissionKey } = usePermissions();
   const [expandedGroups, setExpandedGroups] = useState({
     core: true,
     hr: true,
@@ -166,13 +169,20 @@ export function useRolesPermissions() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const openCreateRoleModal = () => {
+    if (!hasPermissionKey(P.ROLES_MANAGE) && !hasPermissionKey(P.PLATFORM_ADMIN_FULL) && !hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE)) {
+      showToast("Permission denied: Role management authorization required", "error");
+      return;
+    }
     setSelectedRoleForEdit(null);
     setRoleForm({
       name: "",
       description: "",
       status: "Active",
       permissions: Object.keys(initialPermissions).reduce(
-        (acc, modId) => ({ ...acc, [modId]: "no" }),
+        (acc, modId) => {
+          acc[modId] = "no";
+          return acc;
+        },
         {},
       ),
     });
@@ -180,16 +190,24 @@ export function useRolesPermissions() {
   };
 
   const openEditRoleModal = (role: (typeof rolesData)[0]) => {
+    if (!hasPermissionKey(P.ROLES_MANAGE) && !hasPermissionKey(P.PLATFORM_ADMIN_FULL) && !hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE)) {
+      showToast("Permission denied: Role management authorization required", "error");
+      return;
+    }
+    if (role.id === "super_admin" && !hasPermissionKey(P.PLATFORM_ADMIN_FULL)) {
+      showToast("System role 'Super Admin' core permissions are protected", "error");
+      return;
+    }
     setSelectedRoleForEdit(role);
     setRoleForm({
       name: role.name,
       description: `${role.name} access level`,
       status: "Active",
       permissions: Object.keys(initialPermissions).reduce(
-        (acc, modId) => ({
-          ...acc,
-          [modId]: permissions[modId][role.id] || "no",
-        }),
+        (acc, modId) => {
+          acc[modId] = permissions[modId][role.id] || "no";
+          return acc;
+        },
         {},
       ),
     });
@@ -197,6 +215,10 @@ export function useRolesPermissions() {
   };
 
   const handleRoleSubmit = () => {
+    if (!hasPermissionKey(P.ROLES_MANAGE) && !hasPermissionKey(P.PLATFORM_ADMIN_FULL) && !hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE)) {
+      showToast("Permission denied: Action requires Role Management permission", "error");
+      return;
+    }
     if (!roleForm.name.trim()) {
       showToast("Role Name is required", "error");
       return;
@@ -247,6 +269,10 @@ export function useRolesPermissions() {
 
   const confirmEditRole = () => {
     if (!selectedRoleForEdit) return;
+    if (!hasPermissionKey(P.ROLES_MANAGE) && !hasPermissionKey(P.PLATFORM_ADMIN_FULL) && !hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE)) {
+      showToast("Permission denied: Role management authorization required", "error");
+      return;
+    }
     setIsSubmitting(true);
     setTimeout(() => {
       setRolesList((prev) =>
@@ -277,6 +303,14 @@ export function useRolesPermissions() {
   };
 
   const toggleCell = (modId: string, roleId: string) => {
+    if (!hasPermissionKey(P.ROLES_MANAGE) && !hasPermissionKey(P.PLATFORM_ADMIN_FULL) && !hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE)) {
+      showToast("Permission denied: Cannot mutate role permissions matrix", "error");
+      return;
+    }
+    if (roleId === "super_admin" && (modId === "settings" || modId === "employees")) {
+      showToast("System role 'Super Admin' core security permissions are immutable", "error");
+      return;
+    }
     const currentState = permissions[modId]?.[roleId] || "no";
     const nextState =
       currentState === "no" ? "view" : currentState === "view" ? "full" : "no";

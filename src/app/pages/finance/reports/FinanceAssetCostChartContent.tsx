@@ -27,7 +27,7 @@ const FinanceAssetCostChart = React.lazy(() =>
               layout="vertical"
               margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
               onClick={(
-                data: any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
+                data: any,
               ) => {
                 if (data?.activeLabel) {
                   setSelectedDept(data.activeLabel);

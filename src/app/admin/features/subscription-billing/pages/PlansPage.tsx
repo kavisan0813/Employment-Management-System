@@ -100,7 +100,7 @@ export function PlansPage() {
                   {/* Pricing */}
                   <div className="flex items-baseline gap-2 mb-3">
                     <span className="text-2xl font-bold text-gray-900">
-                      ${plan.monthlyPrice.toLocaleString()}
+                      ₹${plan.monthlyPrice.toLocaleString("en-IN")}
                     </span>
                     <span className="text-xs text-gray-400">/month</span>
                   </div>

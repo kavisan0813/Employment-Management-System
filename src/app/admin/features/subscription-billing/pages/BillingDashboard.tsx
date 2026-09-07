@@ -59,7 +59,7 @@ export function BillingDashboard({ onNavigateTab }: BillingDashboardProps) {
           {[
             {
               label: "Total MRR",
-              val: `$${subStats?.totalRevenue?.toLocaleString() || "0"}`,
+              val: `₹${subStats?.totalRevenue?.toLocaleString("en-IN") || "0"}`,
               sub: "Monthly recurring",
               change: "+14.2%",
               changeDirection: "up",
@@ -81,7 +81,7 @@ export function BillingDashboard({ onNavigateTab }: BillingDashboardProps) {
             },
             {
               label: "Revenue Collected",
-              val: `$${payStats?.totalCollected?.toLocaleString() || "0"}`,
+              val: `₹${payStats?.totalCollected?.toLocaleString("en-IN") || "0"}`,
               sub: "Successfully processed",
               change: "+8.5%",
               changeDirection: "up",
@@ -92,7 +92,7 @@ export function BillingDashboard({ onNavigateTab }: BillingDashboardProps) {
             },
             {
               label: "Overdue Invoices",
-              val: `$${invStats?.totalOverdue?.toLocaleString() || "0"}`,
+              val: `₹${invStats?.totalOverdue?.toLocaleString("en-IN") || "0"}`,
               sub: "Requires attention",
               changeDirection: "down",
               icon: FileText,

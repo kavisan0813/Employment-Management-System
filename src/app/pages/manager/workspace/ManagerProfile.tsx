@@ -536,25 +536,6 @@ export function ManagerProfile() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4 px-4">
-              <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner"
-                style={{
-                  backgroundColor: "rgba(34,197,94,0.1)",
-                  color: "#22C55E",
-                }}
-              >
-                <CheckCircle2 size={22} />
-              </div>
-              <div>
-                <p className="text-xl font-black text-foreground tracking-tight">
-                  1,048
-                </p>
-                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
-                  Tasks Completed
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

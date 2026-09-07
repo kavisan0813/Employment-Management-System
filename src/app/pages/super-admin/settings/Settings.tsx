@@ -1,3 +1,4 @@
+import { Navigate } from "react-router";
 import { usePermissions } from "../../../shared/permission-engine/PermissionContext";
 import { P } from "../../../shared/permission-engine/permissions";
 import { SettingsProvider } from "./SettingsContext";
@@ -10,32 +11,17 @@ import { ManagerSettings } from "../../manager/workspace/ManagerSettings";
 export function Settings() {
   const { hasPermissionKey } = usePermissions();
 
-  // Finance users with full payroll access get the finance-specific settings
-  if (
-    hasPermissionKey(P.PAYROLL_FULL) &&
-    !hasPermissionKey(P.SETTINGS_MANAGE)
-  ) {
-    return <FinanceSettings />;
+  // 1. Super Admin / Platform Admin with full settings permission
+  if (hasPermissionKey(P.SETTINGS_FULL) || hasPermissionKey(P.PLATFORM_ADMIN_FULL)) {
+    return (
+      <SettingsProvider defaultTab="company">
+        <SettingsLayout role="Super Admin" />
+      </SettingsProvider>
+    );
   }
 
-  // Manager-level users who can manage teams but not org settings
-  if (
-    hasPermissionKey(P.EXPENSES_APPROVE_TEAM) &&
-    !hasPermissionKey(P.SETTINGS_MANAGE)
-  ) {
-    return <ManagerSettings />;
-  }
-
-  // Employee-only (self settings)
-  if (
-    hasPermissionKey(P.SETTINGS_SELF) &&
-    !hasPermissionKey(P.SETTINGS_MANAGE)
-  ) {
-    return <SettingsLayout role="Employee" />;
-  }
-
-  // HR Manager — has manage but not full
-  if (hasPermissionKey(P.SETTINGS_SELF) && !hasPermissionKey(P.SETTINGS_FULL)) {
+  // 2. HR Manager — has manage settings permission
+  if (hasPermissionKey(P.SETTINGS_MANAGE)) {
     return (
       <SettingsProvider defaultTab="schedules">
         <SettingsLayout role="HR Manager" />
@@ -43,10 +29,22 @@ export function Settings() {
     );
   }
 
-  // Default to Super Admin / full settings
-  return (
-    <SettingsProvider defaultTab="company">
-      <SettingsLayout role="Super Admin" />
-    </SettingsProvider>
-  );
+  // 3. Finance users with full payroll access get finance-specific settings
+  if (hasPermissionKey(P.PAYROLL_FULL)) {
+    return <FinanceSettings />;
+  }
+
+  // 4. Manager-level users who can approve team expenses get manager settings
+  if (hasPermissionKey(P.EXPENSES_APPROVE_TEAM)) {
+    return <ManagerSettings />;
+  }
+
+  // 5. Employee-only self-service settings
+  if (hasPermissionKey(P.SETTINGS_SELF)) {
+    return <SettingsLayout role="Employee" />;
+  }
+
+  // 6. User with no valid settings permission -> Access Denied / 403
+  return <Navigate to="/403" replace />;
 }
+

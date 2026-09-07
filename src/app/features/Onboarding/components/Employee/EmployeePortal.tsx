@@ -12,6 +12,7 @@ import type {
 import { Progress } from "./Progress";
 import { PersonalInformation } from "./PersonalInformation";
 import { showToast } from "../../../../components/workflow/ToastNotification";
+import { UploadDocumentModal } from "../../modals/UploadDocumentModal";
 type TabKey = "personal" | "documents" | "forms" | "status";
 type AssignedTabKey =
   | "candidate-process"
@@ -276,34 +277,17 @@ export function EmployeePortal() {
     );
     updateProgress(nextPhases, documents);
   };
-  const handleAssignedDocUpload = (docId: string) => {
-    const nextDocs = documents.map((doc) =>
-      doc.id === docId
-        ? {
-            ...doc,
-            status: "uploaded" as DocumentStatus,
-            verificationStatus: "pending" as const,
-          }
-        : doc,
-    );
-    setDocuments(nextDocs);
-    const allDocs = JSON.parse(
-      localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
-    );
-    const updatedAllDocs = allDocs.map((d: DocumentItem) => {
-      const match = nextDocs.find((nd) => nd.id === d.id);
-      return match ? match : d;
+  const [uploadModalDoc, setUploadModalDoc] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+  const handleAssignedDocUpload = (docId: string, docName?: string) => {
+    const doc = documents.find((d) => d.id === docId);
+    setUploadModalDoc({
+      id: docId,
+      name: docName || doc?.name || "Required Document",
     });
-    localStorage.setItem(
-      "viyan_onboarding_documents:v1",
-      JSON.stringify(updatedAllDocs),
-    );
-    updateProgress(phases, nextDocs);
-    showToast(
-      "Document Uploaded",
-      "success",
-      "Your file is uploaded and is waiting for HR verification.",
-    );
   };
   const handleTrainingComplete = (courseId: string) => {
     const completed = hire.completedTraining || [];
@@ -945,6 +929,51 @@ export function EmployeePortal() {
           </div>
         )}
       </div>
+
+      {uploadModalDoc && (
+        <UploadDocumentModal
+          show={true}
+          onClose={() => setUploadModalDoc(null)}
+          documentTitle={uploadModalDoc.name}
+          existingDocNames={documents.map((d) => d.fileName || d.name)}
+          handleConfirmUpload={(payload) => {
+            const docId = uploadModalDoc.id;
+            const todayStr = new Date().toISOString().split("T")[0];
+            const nextDocs = documents.map((doc) =>
+              doc.id === docId
+                ? {
+                    ...doc,
+                    status: "uploaded" as DocumentStatus,
+                    fileName: payload?.fileName || doc.name,
+                    fileSize: payload?.formattedSize || "1.5 MB",
+                    fileType: payload?.fileType || "PDF",
+                    uploadedBy: user?.name || "Employee",
+                    date: todayStr,
+                    verificationStatus: "pending" as const,
+                  }
+                : doc,
+            );
+            setDocuments(nextDocs);
+            try {
+              const allDocs = JSON.parse(
+                localStorage.getItem("viyan_onboarding_documents:v1") || "[]",
+              );
+              const updatedAllDocs = allDocs.map((d: DocumentItem) => {
+                const match = nextDocs.find((nd) => nd.id === d.id);
+                return match ? match : d;
+              });
+              localStorage.setItem(
+                "viyan_onboarding_documents:v1",
+                JSON.stringify(updatedAllDocs),
+              );
+            } catch (e) {
+              console.error("Failed to update employee documents", e);
+            }
+            updateProgress(phases, nextDocs);
+            setUploadModalDoc(null);
+          }}
+        />
+      )}
     </div>
   );
 }

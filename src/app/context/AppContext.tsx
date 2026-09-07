@@ -180,14 +180,6 @@ export const RecruitmentProvider: React.FC<{ children: ReactNode }> = ({
   );
 };
 
-export const useRecruitment = () => {
-  const context = useContext(RecruitmentContext);
-  if (context === undefined) {
-    throw new Error("useRecruitment must be used within a RecruitmentProvider");
-  }
-  return context;
-};
-
 /* ─── Employees Context ─────────────────────────────────── */
 export interface Employee {
   id: string;

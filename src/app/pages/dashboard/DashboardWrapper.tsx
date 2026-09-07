@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { usePermissions } from "../../shared/permission-engine/PermissionContext";
+import { P } from "../../shared/permission-engine/permissions";
 
 const SuperAdminDashboard = lazy(() =>
   import("./SuperAdminDashboard").then((m) => ({
@@ -24,8 +25,7 @@ const EmployeeDashboard = lazy(() =>
 );
 
 export default function DashboardWrapper() {
-  const { user } = useAuth();
-  const role = user?.role;
+  const { hasPermissionKey } = usePermissions();
 
   return (
     <Suspense
@@ -35,13 +35,16 @@ export default function DashboardWrapper() {
         </div>
       }
     >
-      {role === "Super Admin" ? (
+      {hasPermissionKey(P.MANAGE_ACCOUNT_MANAGE) ||
+      hasPermissionKey(P.SETTINGS_FULL) ? (
         <SuperAdminDashboard />
-      ) : role === "HR Manager" ? (
+      ) : hasPermissionKey(P.EMPLOYEES_MANAGE) ||
+        hasPermissionKey(P.RECRUITMENT_FULL) ? (
         <HRDashboard />
-      ) : role === "Finance" ? (
+      ) : hasPermissionKey(P.PAYROLL_FULL) ? (
         <FinanceDashboard />
-      ) : role === "Manager" ? (
+      ) : hasPermissionKey(P.ATTENDANCE_APPROVE_TEAM) ||
+        hasPermissionKey(P.LEAVE_APPROVE_TEAM) ? (
         <ManagerDashboard />
       ) : (
         <EmployeeDashboard />
@@ -49,3 +52,4 @@ export default function DashboardWrapper() {
     </Suspense>
   );
 }
+

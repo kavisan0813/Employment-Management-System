@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 export function NotificationRulesSection() {
   const {
     SectionTitle,
+    showToast,
     notifyAttEmail,
     notifyAttPush,
     notifyAttSms,
@@ -142,6 +143,10 @@ export function NotificationRulesSection() {
     },
   ];
 
+  const handleSaveNotificationRules = () => {
+    showToast("Notification rules saved (In-App active — External Email/SMS/Push delivery requires backend provider)");
+  };
+
   return (
     <div>
       {/* Breadcrumb */}
@@ -152,7 +157,7 @@ export function NotificationRulesSection() {
       </div>
 
       {/* Content Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4">
         <div>
           <h2
             style={{
@@ -171,10 +176,11 @@ export function NotificationRulesSection() {
               marginTop: "2px",
             }}
           >
-            Configure when and how notifications are sent
+            Configure when and how notifications are sent across channels
           </p>
         </div>
         <button
+          onClick={handleSaveNotificationRules}
           style={{
             backgroundColor: "#00B87C",
             color: "white",
@@ -188,6 +194,16 @@ export function NotificationRulesSection() {
         >
           Save Rules
         </button>
+      </div>
+
+      {/* Honest Boundary Banner */}
+      <div className="mb-6 p-3.5 rounded-xl border bg-amber-500/10 border-amber-500/20 text-xs text-amber-700 dark:text-amber-300 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="font-bold uppercase tracking-wider bg-amber-500/20 px-2 py-0.5 rounded text-[10px]">
+            Delivery Boundary
+          </span>
+          <span>In-App notifications active. External Email/SMS/Push delivery requires backend SMTP/Twilio integration.</span>
+        </div>
       </div>
 
       {/* Section: NOTIFICATION PREFERENCES */}
@@ -448,6 +464,7 @@ export function NotificationRulesSection() {
         style={{ borderTop: "1px solid var(--border)" }}
       >
         <button
+          onClick={handleSaveNotificationRules}
           style={{
             backgroundColor: "#00B87C",
             color: "white",

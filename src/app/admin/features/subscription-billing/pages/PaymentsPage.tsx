@@ -102,7 +102,7 @@ export function PaymentsPage() {
             Payments
           </h1>
           <p className="text-sm text-gray-500 mt-1 font-semibold">
-            Track payment transactions, retry failures, and issue refunds.
+            Track payment transactions and retry failures.
           </p>
         </div>
       </div>
@@ -114,7 +114,7 @@ export function PaymentsPage() {
             {[
               {
                 label: "Collected",
-                val: `$${stats.totalCollected.toLocaleString()}`,
+                val: `₹${stats.totalCollected.toLocaleString("en-IN")}`,
                 sub: "Successfully processed",
                 icon: DollarSign,
                 bg: "bg-emerald-50",
@@ -123,7 +123,7 @@ export function PaymentsPage() {
               },
               {
                 label: "Failed",
-                val: `$${stats.totalFailed.toLocaleString()}`,
+                val: `₹${stats.totalFailed.toLocaleString("en-IN")}`,
                 sub: "Requires attention",
                 icon: XCircle,
                 bg: "bg-rose-50",
@@ -132,7 +132,7 @@ export function PaymentsPage() {
               },
               {
                 label: "Pending",
-                val: `$${stats.totalPending.toLocaleString()}`,
+                val: `₹${stats.totalPending.toLocaleString("en-IN")}`,
                 sub: "Awaiting settlement",
                 icon: Clock,
                 bg: "bg-amber-50",
@@ -141,7 +141,7 @@ export function PaymentsPage() {
               },
               {
                 label: "Refunded",
-                val: `$${stats.totalRefunded.toLocaleString()}`,
+                val: `₹${stats.totalRefunded.toLocaleString("en-IN")}`,
                 sub: "Returned to customer",
                 icon: RotateCw,
                 bg: "bg-blue-50",
